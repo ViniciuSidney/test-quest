@@ -11,7 +11,8 @@ Este diretório reúne a documentação oficial do **Test Quest — Now I Know.*
 - quatro telas principais planejadas e aprovadas;
 - manuais estruturais concluídos;
 - Tela Inicial oficial implementada na branch `dev`;
-- próxima etapa: Importação e Validação.
+- Tela de Importação e Validação oficial implementada;
+- próxima etapa: Tela de Resolução.
 
 ## Documentos principais
 

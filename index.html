@@ -124,59 +124,163 @@
       </div>
     </section>
 
-    <section id="telaImportacao" class="screen">
-      <div class="legacy-screen-toolbar">
-        <button id="btnVoltarInicioImportacao" class="ghost" type="button">Voltar ao início</button>
+    <section id="telaImportacao" class="screen screen--import" aria-labelledby="tituloPrepararResolucao">
+      <header class="import-header">
+        <button id="btnVoltarInicioImportacao" class="ghost import-header__action" type="button">
+          ← Voltar
+        </button>
+
+        <div class="import-header__text">
+          <h1 id="tituloPrepararResolucao">Preparar resolução</h1>
+          <p>Importe as questões e configure sua sessão.</p>
+        </div>
+
+        <button id="btnTemaImportacao" class="icon-button import-theme-toggle" type="button" data-theme-toggle>
+          🌙 Tema
+        </button>
+      </header>
+
+      <div class="import-layout">
+        <section class="import-panel import-content-panel" aria-labelledby="tituloImportarQuestoes">
+          <header class="import-panel__header">
+            <div>
+              <p class="import-section-kicker">Conteúdo da lista</p>
+              <h2 id="tituloImportarQuestoes">Importar questões</h2>
+              <p>Selecione um arquivo TXT ou cole o conteúdo no campo abaixo.</p>
+            </div>
+          </header>
+
+          <div class="file-import-block">
+            <label for="arquivoQuestoes">Arquivo de questões</label>
+            <div class="file-import-row">
+              <input id="arquivoQuestoes" type="file" accept=".txt,text/plain" />
+              <span id="nomeArquivoSelecionado" class="file-name" title="Nenhum arquivo selecionado">
+                Nenhum arquivo selecionado
+              </span>
+            </div>
+          </div>
+
+          <div class="import-content-grid">
+            <label class="import-textarea-field" for="entradaQuestoes">
+              <span>Conteúdo das questões</span>
+              <textarea
+                id="entradaQuestoes"
+                class="import-textarea"
+                placeholder="Cole aqui suas questões usando @questao, @discursiva e +++"
+                spellcheck="false"
+              ></textarea>
+            </label>
+
+            <aside class="counter-panel" aria-labelledby="tituloContadoresImportacao">
+              <h3 id="tituloContadoresImportacao">Resumo</h3>
+
+              <dl class="counter-list">
+                <div>
+                  <dt>Questões</dt>
+                  <dd id="contadorTotalImportacao">0</dd>
+                </div>
+                <div>
+                  <dt>Objetivas</dt>
+                  <dd id="contadorObjetivasImportacao">0</dd>
+                </div>
+                <div>
+                  <dt>Discursivas</dt>
+                  <dd id="contadorDiscursivasImportacao">0</dd>
+                </div>
+                <div>
+                  <dt>Assuntos</dt>
+                  <dd id="contadorAssuntosImportacao">0</dd>
+                </div>
+              </dl>
+
+              <p class="counter-panel__note">Os valores definitivos aparecem após a validação.</p>
+            </aside>
+          </div>
+        </section>
+
+        <div class="import-side-column">
+          <section class="import-panel import-settings-panel" aria-labelledby="tituloConfiguracoesImportacao">
+            <header class="import-panel__header import-panel__header--compact">
+              <div>
+                <p class="import-section-kicker">Sessão</p>
+                <h2 id="tituloConfiguracoesImportacao">Configurações</h2>
+              </div>
+            </header>
+
+            <label class="import-field" for="nomeLista">
+              <span>Nome da lista</span>
+              <input id="nomeLista" type="text" maxlength="80" placeholder="Ex.: Lista de Estatística" />
+            </label>
+
+            <fieldset class="session-options">
+              <legend>Opções</legend>
+
+              <label class="import-check-option">
+                <input id="opcaoEmbaralhar" type="checkbox" />
+                <span>
+                  <strong>Embaralhar questões</strong>
+                  <small>Altera a ordem da lista ao iniciar.</small>
+                </span>
+              </label>
+
+              <label class="import-check-option">
+                <input id="opcaoMostrarGabaritoFinal" type="checkbox" checked />
+                <span>
+                  <strong>Mostrar gabarito</strong>
+                  <small>Exibe respostas e explicações no resultado.</small>
+                </span>
+              </label>
+            </fieldset>
+          </section>
+
+          <section class="import-panel validation-panel" aria-labelledby="tituloValidacaoImportacao">
+            <header class="import-panel__header import-panel__header--compact">
+              <div>
+                <p class="import-section-kicker">Análise</p>
+                <h2 id="tituloValidacaoImportacao">Validação</h2>
+              </div>
+            </header>
+
+            <div
+              id="statusValidacao"
+              class="validation-status validation-status--idle"
+              data-status="idle"
+              aria-live="polite"
+              aria-atomic="true"
+            >
+              <span id="iconeStatusValidacao" class="validation-status__icon" aria-hidden="true">—</span>
+              <span class="validation-status__text">
+                <strong id="tituloStatusValidacao">Nenhuma validação realizada.</strong>
+                <span id="descricaoStatusValidacao">Aguardando conteúdo para análise.</span>
+              </span>
+            </div>
+
+            <div id="mensagensValidacao" class="validation-messages" aria-live="polite">
+              <ul class="validation-message-list">
+                <li>Cole ou carregue uma lista e selecione “Validar”.</li>
+              </ul>
+            </div>
+
+            <p id="mensagemImportacao" class="sr-only" aria-live="polite">
+              Cole ou carregue uma lista e selecione “Validar”.
+            </p>
+            <span id="indicadorSalvo" class="sr-only" aria-live="polite">Pronto</span>
+          </section>
+        </div>
+
+        <footer class="import-panel import-actionbar">
+          <div class="import-actions__support">
+            <button id="btnExemplo" class="secondary" type="button">Carregar exemplo</button>
+            <button id="btnAbrirModelo" class="ghost" type="button">Ver modelo</button>
+            <button id="btnLimpar" class="ghost import-clear-action" type="button">Limpar</button>
+          </div>
+
+          <div class="import-actions__flow">
+            <button id="btnValidar" class="secondary import-validate-action" type="button">Validar</button>
+            <button id="btnImportar" class="primary import-start-action" type="button" disabled>Começar</button>
+          </div>
+        </footer>
       </div>
-
-      <div class="panel">
-        <div class="panel-header">
-          <div>
-            <h2>1. Importar questões</h2>
-            <p>Cole o bloco de questões no formato informado ou carregue um arquivo <strong>.txt</strong>.</p>
-          </div>
-          <span id="indicadorSalvo" class="save-indicator">Pronto</span>
-        </div>
-
-        <div class="import-grid">
-          <div class="field">
-            <label for="arquivoQuestoes">Importar arquivo TXT</label>
-            <input id="arquivoQuestoes" type="file" accept=".txt,text/plain" />
-          </div>
-
-          <div class="field">
-            <label for="nomeLista">Nome da lista</label>
-            <input id="nomeLista" type="text" placeholder="Ex.: Lista 2 - Smart Home e IoT" />
-          </div>
-        </div>
-
-        <div class="options-line">
-          <label class="check-option">
-            <input id="opcaoEmbaralhar" type="checkbox" />
-            <span>Embaralhar questões</span>
-          </label>
-          <label class="check-option">
-            <input id="opcaoMostrarGabaritoFinal" type="checkbox" checked />
-            <span>Mostrar gabarito ao finalizar</span>
-          </label>
-        </div>
-
-        <div class="field">
-          <label for="entradaQuestoes">Conteúdo das questões</label>
-          <textarea id="entradaQuestoes" placeholder="Cole aqui suas questões usando @questao, @discursiva e +++"></textarea>
-        </div>
-
-        <div class="actions import-actions">
-          <button id="btnExemplo" class="secondary" type="button">Carregar exemplo</button>
-          <button id="btnValidar" class="secondary" type="button">Validar importação</button>
-          <button id="btnAbrirModelo" class="ghost" type="button">Ver modelo aceito</button>
-          <button id="btnLimpar" class="ghost" type="button">Limpar campos</button>
-          <button id="btnImportar" class="primary" type="button">Importar e começar</button>
-        </div>
-
-        <div id="mensagemImportacao" class="message" aria-live="polite"></div>
-      </div>
-
     </section>
 
     <section id="telaResolucao" class="screen">
@@ -282,7 +386,7 @@
     </section>
   </main>
 
-  <div id="modalModelo" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="tituloModalModelo">
+  <div id="modalModelo" class="modal hidden" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="tituloModalModelo">
     <button class="modal-backdrop" type="button" data-fechar-modelo aria-label="Fechar modal"></button>
 
     <div class="modal-card" role="document">

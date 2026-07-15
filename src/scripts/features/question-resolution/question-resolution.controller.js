@@ -2,6 +2,7 @@ import { CONFIG_KEY, STORAGE_KEY } from "../../core/constants.js";
 import { createInitialState } from "../../core/state.js";
 import { createScreenManager } from "../../core/screens.js";
 import { calculateHistoryMetrics, readHistory, recordCompletedSession, removeCompletedSession } from "../home/home.service.js";
+import { parseQuestions, QuestionImportError, summarizeQuestions } from "../question-import/question-import.parser.js";
 
 export function initQuestionResolution() {
   const exemploQuestoes = `@questao
@@ -43,6 +44,9 @@ export function initQuestionResolution() {
   let ultimoTick = Date.now();
   let saveTimeout = null;
   let substituicaoAutorizada = false;
+  let importValidation = createImportValidationState();
+  let importFileReadToken = 0;
+  let modalPreviousFocus = null;
 
   const entradaQuestoes = $("#entradaQuestoes");
   const arquivoQuestoes = $("#arquivoQuestoes");
@@ -50,6 +54,9 @@ export function initQuestionResolution() {
   const mensagemImportacao = $("#mensagemImportacao");
   const statusResumo = $("#statusResumo");
   const indicadorSalvo = $("#indicadorSalvo");
+  const btnImportar = $("#btnImportar");
+  const btnValidar = $("#btnValidar");
+  const nomeArquivoSelecionado = $("#nomeArquivoSelecionado");
 
   inicializar();
 
@@ -73,11 +80,15 @@ export function initQuestionResolution() {
     $("#btnExemplo").addEventListener("click", () => {
       entradaQuestoes.value = exemploQuestoes;
       nomeLista.value = "Lista exemplo - Smart Home e IoT";
-      mostrarMensagem("Exemplo carregado. Valide a importação antes de começar.", "ok");
+      atualizarNomeArquivo("Exemplo interno");
+      invalidarValidacaoImportacao("Exemplo carregado. Valide o conteúdo antes de começar.");
     });
 
-    $("#btnValidar").addEventListener("click", validarImportacao);
-    $("#btnLimpar").addEventListener("click", limparCamposImportacao);
+    btnValidar.addEventListener("click", validarImportacao);
+    $("#btnLimpar").addEventListener("click", () => limparCamposImportacao({ confirmar: true }));
+    entradaQuestoes.addEventListener("input", () => {
+      invalidarValidacaoImportacao("Conteúdo alterado. Valide novamente antes de começar.");
+    });
 
     $("#btnAbrirModelo")?.addEventListener("click", abrirModalModelo);
     $("#btnFecharModelo")?.addEventListener("click", fecharModalModelo);
@@ -88,26 +99,59 @@ export function initQuestionResolution() {
     });
 
     document.addEventListener("keydown", (evento) => {
-      if (evento.key === "Escape" && !$("#modalModelo")?.classList.contains("hidden")) {
+      const modal = $("#modalModelo");
+
+      if (!modal || modal.classList.contains("hidden")) {
+        return;
+      }
+
+      if (evento.key === "Escape") {
+        evento.preventDefault();
         fecharModalModelo();
+        return;
+      }
+
+      if (evento.key === "Tab") {
+        manterFocoNoModal(evento, modal);
       }
     });
 
     arquivoQuestoes.addEventListener("change", async (evento) => {
       const arquivo = evento.target.files[0];
-      if (!arquivo) return;
+      const readToken = ++importFileReadToken;
 
-      const texto = await arquivo.text();
-      entradaQuestoes.value = texto;
-
-      if (!nomeLista.value.trim()) {
-        nomeLista.value = arquivo.name.replace(/\.[^/.]+$/, "");
+      if (!arquivo) {
+        atualizarNomeArquivo();
+        return;
       }
 
-      mostrarMensagem(`Arquivo “${arquivo.name}” carregado.`, "ok");
+      try {
+        const texto = await arquivo.text();
+
+        if (readToken !== importFileReadToken) {
+          return;
+        }
+
+        entradaQuestoes.value = texto;
+        atualizarNomeArquivo(arquivo.name);
+
+        if (!nomeLista.value.trim()) {
+          nomeLista.value = arquivo.name.replace(/\.[^/.]+$/, "");
+        }
+
+        invalidarValidacaoImportacao(`Arquivo “${arquivo.name}” carregado. Valide o conteúdo.`);
+      } catch {
+        if (readToken !== importFileReadToken) {
+          return;
+        }
+
+        definirEstadoValidacao("invalid", {
+          errors: ["Não foi possível ler o arquivo selecionado. Escolha outro arquivo TXT."]
+        });
+      }
     });
 
-    $("#btnImportar").addEventListener("click", importarQuestoes);
+    btnImportar.addEventListener("click", importarQuestoes);
     $("#btnContinuarSessao").addEventListener("click", continuarSessao);
     $("#btnApagarSessao").addEventListener("click", apagarSessaoSalva);
 
@@ -151,18 +195,36 @@ export function initQuestionResolution() {
     });
   }
 
-  function limparCamposImportacao() {
+  function limparCamposImportacao({ confirmar = false } = {}) {
+    const possuiDados = Boolean(
+      entradaQuestoes.value.trim() ||
+      arquivoQuestoes.files?.length ||
+      nomeLista.value.trim()
+    );
+
+    if (confirmar && possuiDados && !confirm("Limpar todo o conteúdo e as configurações desta importação?")) {
+      return false;
+    }
+
+    importFileReadToken += 1;
     entradaQuestoes.value = "";
     arquivoQuestoes.value = "";
     nomeLista.value = "";
-    mostrarMensagem("Campos limpos.", "ok");
+    $("#opcaoEmbaralhar").checked = false;
+    $("#opcaoMostrarGabaritoFinal").checked = true;
+    atualizarNomeArquivo();
+    importValidation = createImportValidationState();
+    definirEstadoValidacao("idle");
+    return true;
   }
 
   function abrirModalModelo() {
     const modal = $("#modalModelo");
     if (!modal) return;
 
+    modalPreviousFocus = document.activeElement;
     modal.classList.remove("hidden");
+    modal.setAttribute("aria-hidden", "false");
     document.body.classList.add("modal-open");
     $("#btnFecharModelo")?.focus();
   }
@@ -172,8 +234,37 @@ export function initQuestionResolution() {
     if (!modal) return;
 
     modal.classList.add("hidden");
+    modal.setAttribute("aria-hidden", "true");
     document.body.classList.remove("modal-open");
-    $("#btnAbrirModelo")?.focus();
+
+    const focusTarget = modalPreviousFocus instanceof HTMLElement && modalPreviousFocus.isConnected
+      ? modalPreviousFocus
+      : $("#btnAbrirModelo");
+
+    focusTarget?.focus();
+    modalPreviousFocus = null;
+  }
+
+  function manterFocoNoModal(evento, modal) {
+    const focusable = [...modal.querySelectorAll(
+      'button:not([disabled]), [href], input:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+    )].filter((element) => !element.hasAttribute("hidden"));
+
+    if (!focusable.length) {
+      evento.preventDefault();
+      return;
+    }
+
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+
+    if (evento.shiftKey && document.activeElement === first) {
+      evento.preventDefault();
+      last.focus();
+    } else if (!evento.shiftKey && document.activeElement === last) {
+      evento.preventDefault();
+      first.focus();
+    }
   }
 
 
@@ -261,21 +352,45 @@ export function initQuestionResolution() {
     mostrarMensagemInicial("Progresso da sessão apagado.", "ok");
   }
 
-  function validarImportacao() {
+  async function validarImportacao() {
     const texto = entradaQuestoes.value.trim();
 
     if (!texto) {
-      mostrarMensagem("Cole as questões ou importe um arquivo TXT antes de validar.", "error");
+      definirEstadoValidacao("invalid", {
+        errors: ["Cole as questões ou selecione um arquivo TXT antes de validar."]
+      });
+      entradaQuestoes.focus();
       return;
     }
 
+    definirEstadoValidacao("loading");
+    await new Promise((resolve) => requestAnimationFrame(resolve));
+
     try {
-      const questoes = parseQuestoes(texto);
-      const objetivas = questoes.filter((q) => q.categoria === "objetiva").length;
-      const discursivas = questoes.filter((q) => q.categoria === "discursiva").length;
-      mostrarMensagem(`Importação válida: ${questoes.length} questões encontradas (${objetivas} objetivas e ${discursivas} discursivas).`, "ok");
-    } catch (erro) {
-      mostrarMensagem(erro.message, "error");
+      const questions = parseQuestions(texto);
+      const summary = summarizeQuestions(questions);
+
+      importValidation = {
+        status: "valid",
+        snapshot: texto,
+        questions,
+        summary,
+        errors: []
+      };
+
+      definirEstadoValidacao("valid", { questions, summary });
+    } catch (error) {
+      const errors = error instanceof QuestionImportError
+        ? error.issues
+        : [error instanceof Error ? error.message : String(error)];
+
+      importValidation = {
+        ...createImportValidationState(),
+        status: "invalid",
+        errors
+      };
+
+      definirEstadoValidacao("invalid", { errors });
     }
   }
 
@@ -283,7 +398,14 @@ export function initQuestionResolution() {
     const texto = entradaQuestoes.value.trim();
 
     if (!texto) {
-      mostrarMensagem("Cole as questões ou importe um arquivo TXT antes de começar.", "error");
+      definirEstadoValidacao("invalid", {
+        errors: ["Cole as questões ou selecione um arquivo TXT antes de começar."]
+      });
+      return;
+    }
+
+    if (importValidation.status !== "valid" || importValidation.snapshot !== texto) {
+      invalidarValidacaoImportacao("O conteúdo precisa ser validado antes de começar.");
       return;
     }
 
@@ -297,7 +419,10 @@ export function initQuestionResolution() {
     }
 
     try {
-      let questoes = parseQuestoes(texto);
+      let questoes = importValidation.questions.map((question) => ({
+        ...question,
+        alternativas: question.alternativas ? { ...question.alternativas } : null
+      }));
 
       if ($("#opcaoEmbaralhar").checked) {
         questoes = embaralhar(questoes);
@@ -321,91 +446,10 @@ export function initQuestionResolution() {
       trocarTela("resolucao");
       renderizarQuestao();
       iniciarCronometro();
-    } catch (erro) {
-      mostrarMensagem(erro.message, "error");
-    }
-  }
-
-  function parseQuestoes(texto) {
-    const blocos = texto
-      .split(/\n\s*\+\+\+\s*/g)
-      .map((bloco) => bloco.trim())
-      .filter(Boolean);
-
-    if (!blocos.length) {
-      throw new Error("Nenhum bloco de questão foi encontrado. Use +++ ao final de cada questão.");
-    }
-
-    return blocos.map((bloco, indice) => parseBloco(bloco, indice));
-  }
-
-  function parseBloco(bloco, indice) {
-    const primeiraLinha = bloco.trim().split(/\r?\n/)[0].trim().toLowerCase();
-    let categoria = "";
-
-    if (primeiraLinha.startsWith("@questao")) categoria = "objetiva";
-    if (primeiraLinha.startsWith("@discursiva")) categoria = "discursiva";
-
-    if (!categoria) {
-      throw new Error(`O bloco ${indice + 1} precisa começar com @questao ou @discursiva.`);
-    }
-
-    const corpo = bloco.replace(/^@(questao|discursiva)\s*/i, "").trim();
-    const dados = extrairCampos(corpo);
-
-    if (categoria === "objetiva") validarObjetiva(dados, indice);
-    if (categoria === "discursiva") validarDiscursiva(dados, indice);
-
-    return {
-      id: gerarId(indice),
-      categoria,
-      assunto: dados.assunto || "Sem assunto",
-      tipo: dados.tipo || categoria,
-      enunciado: dados.enunciado || "",
-      alternativas: categoria === "objetiva" ? {
-        A: dados.a, B: dados.b, C: dados.c, D: dados.d, E: dados.e
-      } : null,
-      correta: categoria === "objetiva" ? dados.correta.toUpperCase().trim() : null,
-      explicacao: dados.explicacao || "",
-      respostaEsperada: dados.resposta_esperada || "",
-      criterios: dados.criterios_de_correcao || ""
-    };
-  }
-
-  function extrairCampos(corpo) {
-    const regex = /(^|\n|\s)(criterios_de_correcao|resposta_esperada|explicacao|enunciado|correta|assunto|tipo|a|b|c|d|e)\s*:\s*/gi;
-    const matches = [...corpo.matchAll(regex)];
-    const dados = {};
-
-    matches.forEach((match, index) => {
-      const chave = match[2].toLowerCase();
-      const inicioValor = match.index + match[0].length;
-      const fimValor = index + 1 < matches.length ? matches[index + 1].index : corpo.length;
-      dados[chave] = corpo.slice(inicioValor, fimValor).trim();
-    });
-
-    return dados;
-  }
-
-  function validarObjetiva(dados, indice) {
-    const obrigatorios = ["assunto", "enunciado", "a", "b", "c", "d", "e", "correta", "explicacao"];
-    const ausentes = obrigatorios.filter((campo) => !dados[campo]);
-
-    if (ausentes.length > 0) {
-      throw new Error(`A questão objetiva ${indice + 1} está incompleta. Campos ausentes: ${ausentes.join(", ")}.`);
-    }
-
-    if (!["A", "B", "C", "D", "E"].includes(dados.correta.toUpperCase().trim())) {
-      throw new Error(`A questão objetiva ${indice + 1} possui alternativa correta inválida. Use A, B, C, D ou E.`);
-    }
-  }
-
-  function validarDiscursiva(dados, indice) {
-    const obrigatorios = ["assunto", "enunciado", "resposta_esperada", "criterios_de_correcao"];
-    const ausentes = obrigatorios.filter((campo) => !dados[campo]);
-
-    if (ausentes.length > 0) {
-      throw new Error(`A questão discursiva ${indice + 1} está incompleta. Campos ausentes: ${ausentes.join(", ")}.`);
+    } catch (error) {
+      definirEstadoValidacao("invalid", {
+        errors: [error instanceof Error ? error.message : String(error)]
+      });
     }
   }
 
@@ -867,7 +911,7 @@ export function initQuestionResolution() {
 
   function salvarEstadoDebounced() {
     if (!estado.questoes.length) return;
-    indicadorSalvo.textContent = "Salvando...";
+    if (indicadorSalvo) indicadorSalvo.textContent = "Salvando...";
     clearTimeout(saveTimeout);
     saveTimeout = setTimeout(salvarEstadoImediato, 350);
   }
@@ -875,7 +919,7 @@ export function initQuestionResolution() {
   function salvarEstadoImediato() {
     if (!estado.questoes.length) return;
     localStorage.setItem(STORAGE_KEY, JSON.stringify(estado));
-    indicadorSalvo.textContent = "Salvo localmente";
+    if (indicadorSalvo) indicadorSalvo.textContent = "Salvo localmente";
   }
 
   function atualizarResumoTopo() {
@@ -1045,17 +1089,117 @@ export function initQuestionResolution() {
     delete mensagem.dataset.type;
   }
 
-  function mostrarMensagem(texto, tipo = "ok") {
-    mensagemImportacao.textContent = texto;
-    mensagemImportacao.className = `message show ${tipo}`;
+  function createImportValidationState() {
+    return {
+      status: "idle",
+      snapshot: "",
+      questions: [],
+      summary: { total: 0, objective: 0, discursive: 0, subjects: 0 },
+      errors: []
+    };
   }
 
-  function gerarId(indice) {
-    if (window.crypto && typeof window.crypto.randomUUID === "function") {
-      return window.crypto.randomUUID();
+  function invalidarValidacaoImportacao(message) {
+    const hasContent = Boolean(entradaQuestoes.value.trim());
+    importValidation = createImportValidationState();
+
+    if (!hasContent) {
+      definirEstadoValidacao("idle");
+      return;
     }
 
-    return `q-${Date.now()}-${indice}-${Math.random().toString(16).slice(2)}`;
+    importValidation.status = "pending";
+    definirEstadoValidacao("pending", { message });
+  }
+
+  function definirEstadoValidacao(status, details = {}) {
+    const statusElement = $("#statusValidacao");
+    const titleElement = $("#tituloStatusValidacao");
+    const descriptionElement = $("#descricaoStatusValidacao");
+    const iconElement = $("#iconeStatusValidacao");
+    const messagesElement = $("#mensagensValidacao");
+
+    const definitions = {
+      idle: {
+        title: "Nenhuma validação realizada.",
+        description: "Aguardando conteúdo para análise.",
+        icon: "—",
+        messages: ["Cole ou carregue uma lista e selecione “Validar”."]
+      },
+      pending: {
+        title: "Conteúdo alterado.",
+        description: "Valide novamente antes de começar.",
+        icon: "!",
+        messages: [details.message || "Existem alterações que ainda não foram analisadas."]
+      },
+      loading: {
+        title: "Validando importação...",
+        description: "Analisando blocos, campos e tipos de questão.",
+        icon: "…",
+        messages: ["Aguarde enquanto o conteúdo é verificado."]
+      },
+      valid: {
+        title: "Importação válida.",
+        description: "Nenhum problema estrutural foi encontrado.",
+        icon: "✓",
+        messages: [
+          `${details.summary?.total || 0} questão(ões) pronta(s) para a sessão.`,
+          `${details.summary?.subjects || 0} assunto(s) identificado(s).`
+        ]
+      },
+      invalid: {
+        title: "Importação com problemas.",
+        description: "Revise os itens indicados antes de começar.",
+        icon: "×",
+        messages: details.errors?.length ? details.errors : ["Não foi possível validar o conteúdo."]
+      }
+    };
+
+    const definition = definitions[status] || definitions.idle;
+
+    statusElement.dataset.status = status;
+    statusElement.className = `validation-status validation-status--${status}`;
+    statusElement.setAttribute("aria-busy", status === "loading" ? "true" : "false");
+    titleElement.textContent = definition.title;
+    descriptionElement.textContent = definition.description;
+    iconElement.textContent = definition.icon;
+
+    messagesElement.replaceChildren();
+    const list = document.createElement("ul");
+    list.className = "validation-message-list";
+
+    definition.messages.forEach((message) => {
+      const item = document.createElement("li");
+      item.textContent = message;
+      list.appendChild(item);
+    });
+
+    messagesElement.appendChild(list);
+    mensagemImportacao.textContent = definition.messages.join(" ");
+    mensagemImportacao.className = "sr-only";
+
+    const summary = status === "valid"
+      ? details.summary || importValidation.summary
+      : { total: 0, objective: 0, discursive: 0, subjects: 0 };
+
+    atualizarContadoresImportacao(summary);
+
+    btnValidar.disabled = status === "loading";
+    btnValidar.textContent = status === "loading" ? "Validando..." : "Validar";
+    btnImportar.disabled = status !== "valid";
+  }
+
+  function atualizarContadoresImportacao(summary) {
+    $("#contadorTotalImportacao").textContent = String(summary.total || 0);
+    $("#contadorObjetivasImportacao").textContent = String(summary.objective || 0);
+    $("#contadorDiscursivasImportacao").textContent = String(summary.discursive || 0);
+    $("#contadorAssuntosImportacao").textContent = String(summary.subjects || 0);
+  }
+
+  function atualizarNomeArquivo(fileName = "") {
+    const displayName = fileName || "Nenhum arquivo selecionado";
+    nomeArquivoSelecionado.textContent = displayName;
+    nomeArquivoSelecionado.title = displayName;
   }
 
   function embaralhar(lista) {

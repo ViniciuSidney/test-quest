@@ -28,13 +28,26 @@
 - [ ] O temporizador não aumenta enquanto a Home está ativa.
 - [ ] O layout mobile usa rolagem interna sem rolagem no `body`.
 
-## Bloco C — Importação
+## Bloco C — Importação e Validação
 
-- [ ] O botão **Carregar exemplo** preenche os campos.
+- [ ] A tela abre no estado **Nenhuma validação realizada**.
+- [ ] O botão **Começar** inicia desabilitado.
+- [ ] O botão **Carregar exemplo** preenche o conteúdo e o nome da lista.
+- [ ] Carregar ou editar o conteúdo muda o estado para **Pendente**.
 - [ ] A validação reconhece duas questões no exemplo.
-- [ ] O modal do modelo abre e fecha corretamente.
+- [ ] Os contadores mostram 2 questões, 1 objetiva, 1 discursiva e 1 assunto.
+- [ ] O botão **Começar** só habilita após validação válida.
+- [ ] Editar o conteúdo após validar desabilita **Começar** novamente.
 - [ ] O arquivo em `public/examples` pode ser selecionado no input.
-- [ ] Uma lista inválida produz mensagem de erro.
+- [ ] O nome do arquivo aparece sem transbordar.
+- [ ] Uma lista inválida apresenta os campos ausentes.
+- [ ] Mais de um bloco inválido pode produzir mais de uma mensagem.
+- [ ] **Limpar** pede confirmação quando existem dados.
+- [ ] Após limpar, contadores e estado retornam ao início.
+- [ ] O modal do modelo abre e fecha pelo botão, fundo e tecla `Escape`.
+- [ ] O foco retorna ao botão **Ver modelo** após fechar o modal.
+- [ ] Tema claro e escuro preservam o contraste da tela.
+- [ ] A barra inferior permanece acessível em telas pequenas.
 
 ## Bloco D — Resolução
 

@@ -44,6 +44,10 @@ A proposta não é apenas registrar acertos, mas ajudar o usuário a:
 - layouts das quatro telas principais aprovados;
 - manuais estruturais concluídos;
 - Tela Inicial oficial implementada;
+- Tela de Importação e Validação oficial implementada;
+- estados inicial, pendente, validando, válido e inválido;
+- contadores definitivos de questões e assuntos;
+- parser de importação separado em módulo próprio;
 - navegação centralizada entre as quatro telas;
 - sessão em andamento movida para a Tela Inicial;
 - indicadores históricos de sessões concluídas;
@@ -51,18 +55,21 @@ A proposta não é apenas registrar acertos, mas ajudar o usuário a:
 
 ### Próxima etapa
 
-A próxima adaptação será a **Tela de Importação e Validação**. Depois dela, o ciclo seguirá para:
+A próxima adaptação será a **Tela de Resolução**. Depois dela, o ciclo seguirá para:
 
-1. Resolução;
-2. Resultado Final;
-3. modais e confirmações;
+1. Resultado Final;
+2. modais e confirmações restantes;
+3. modularização complementar;
 4. testes completos.
 
 A implementação continua sendo feita uma tela por vez, com testes e commits separados.
 
 ## Funcionalidades atuais
 
+- Tela de Importação e Validação com estados completos;
 - importação de questões por texto ou arquivo `.txt`;
+- contadores de questões objetivas, discursivas e assuntos;
+- bloqueio do início enquanto a lista não estiver validada;
 - suporte a questões objetivas e discursivas curtas;
 - correção automática das objetivas;
 - exibição de resposta esperada e critérios das discursivas;
@@ -81,8 +88,6 @@ A implementação continua sendo feita uma tela por vez, com testes e commits se
 
 ## Funcionalidades planejadas para o próximo ciclo
 
-- fluxo separado de Importação e Validação;
-- estados completos de validação;
 - marcações auxiliares nas alternativas objetivas;
 - nova Tela de Resolução;
 - filtros no Resultado Final;
@@ -201,9 +206,9 @@ src/scripts/features/question-resolution/question-resolution.controller.js
 
 Essa decisão preservou o funcionamento da aplicação durante a migração estrutural.
 
-A modularização já começou com o gerenciador de telas e o serviço da Tela Inicial. Ela continuará separando responsabilidades como:
+A modularização já começou com o gerenciador de telas, o serviço da Tela Inicial e o parser de importação. Ela continuará separando responsabilidades como:
 
-- importação e validação;
+- controle visual da importação e validação;
 - resolução;
 - temporizador;
 - resultados;
@@ -219,13 +224,20 @@ O CSS funcional atual permanece principalmente em:
 src/styles/pages/test-quest.css
 ```
 
-A Tela Inicial já possui estilos próprios em:
+A Tela Inicial e a Importação já possuem estilos próprios em:
 
 ```text
 src/styles/pages/home.css
+src/styles/pages/import.css
 ```
 
-Os demais estilos serão distribuídos progressivamente entre componentes, layouts e páginas.
+O parser da importação está em:
+
+```text
+src/scripts/features/question-import/question-import.parser.js
+```
+
+Os demais estilos e responsabilidades serão distribuídos progressivamente entre componentes, layouts e páginas.
 
 ## Formato das questões
 
@@ -336,7 +348,7 @@ Quando um ciclo estiver validado, as mudanças devem passar por revisão antes d
 
 ### Próximo ciclo
 
-- implementar as quatro telas oficiais;
+- implementar a Tela de Resolução e o Resultado Final;
 - preservar a lógica atual;
 - testar cada tela separadamente;
 - adaptar o estado da aplicação;
@@ -358,7 +370,7 @@ Quando um ciclo estiver validado, as mudanças devem passar por revisão antes d
 - não há sincronização entre dispositivos;
 - discursivas dependem de revisão manual;
 - o histórico completo ainda não foi implementado;
-- as novas telas estão documentadas, mas ainda não foram aplicadas integralmente;
+- a Tela Inicial e a Importação já foram aplicadas; Resolução e Resultado ainda usam a base visual legada;
 - parte da lógica e do CSS permanece concentrada em arquivos legados.
 
 ## Autoria

@@ -23,7 +23,13 @@ Todas as mudanças importantes do Test Quest serão registradas neste arquivo.
 - gerenciador central de telas;
 - serviço de histórico de sessões concluídas;
 - indicadores de questões respondidas, acertos, tempo e sessões;
-- botão temporário de retorno à Home na importação legada.
+- botão temporário de retorno à Home na importação legada;
+- Tela de Importação e Validação oficial;
+- painel de contadores de questões e assuntos;
+- estados inicial, pendente, validando, válido e inválido;
+- módulo `question-import.parser.js`;
+- coleta de múltiplos problemas de importação;
+- teste unitário do parser.
 
 ### Alterado
 
@@ -39,13 +45,22 @@ Todas as mudanças importantes do Test Quest serão registradas neste arquivo.
 - sessão salva deixa de ocupar a tela de importação;
 - retorno da Resolução direciona para a Tela Inicial;
 - retorno do Resultado preserva o histórico e encerra a sessão ativa;
-- botões de tema passam a compartilhar um único comportamento.
+- botões de tema passam a compartilhar um único comportamento;
+- botão Começar passa a exigir validação válida e atual;
+- qualquer edição no conteúdo invalida a análise anterior;
+- contadores aparecem somente após validação;
+- seletor de arquivo e configurações seguem o layout oficial;
+- parser deixa de permanecer concentrado no controlador da Resolução.
 
 ### Corrigido
 
 - temporizador não continua ao voltar para a Tela Inicial;
 - uma sessão reaberta para revisão deixa temporariamente de contar no histórico;
-- substituição de sessão ativa exige apenas uma confirmação no fluxo normal.
+- substituição de sessão ativa exige apenas uma confirmação no fluxo normal;
+- corrida entre leituras sucessivas de arquivos não sobrescreve a seleção mais recente;
+- ID duplicado do tipo da questão foi removido;
+- troca de tema na Importação não produz contraste intermediário incorreto;
+- modal do modelo restaura o foco ao ser fechado.
 
 ### Preservado
 

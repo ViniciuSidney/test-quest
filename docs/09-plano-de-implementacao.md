@@ -95,7 +95,7 @@ feat: implementa tela inicial do Test Quest
 
 # Etapa 2 — Importação e Validação
 
-**Status:** próxima etapa.
+**Status:** concluída nesta etapa de desenvolvimento.
 
 ## Implementar
 
@@ -109,7 +109,7 @@ feat: implementa tela inicial do Test Quest
 
 ## Integração
 
-- manter parser existente;
+- separar o parser em módulo próprio;
 - desabilitar Começar quando inválido;
 - invalidar após edição;
 - preservar modal do modelo.
@@ -132,6 +132,8 @@ feat: implementa tela de importação e validação
 ---
 
 # Etapa 3 — Resolução
+
+**Status:** próxima etapa.
 
 ## Implementar
 

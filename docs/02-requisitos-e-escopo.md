@@ -14,7 +14,7 @@
 | RF01 | Importar questões por texto colado | Implementado |
 | RF02 | Importar questões por arquivo `.txt` | Implementado |
 | RF03 | Validar o formato antes de iniciar | Implementado |
-| RF04 | Exibir contadores de questões, objetivas, discursivas e assuntos | A adaptar |
+| RF04 | Exibir contadores de questões, objetivas, discursivas e assuntos | Implementado |
 | RF05 | Resolver questões objetivas com alternativas A–E | Implementado |
 | RF06 | Resolver questões discursivas curtas | Implementado |
 | RF07 | Salvar respostas automaticamente no navegador | Implementado |

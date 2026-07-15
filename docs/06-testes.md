@@ -16,6 +16,36 @@
 
 ---
 
+
+## Pré-validação técnica da Importação — 2026-07-15
+
+Foram executados testes automatizados antes da entrega do pacote:
+
+- parser com lista objetiva e discursiva válida;
+- coleta de múltiplos erros;
+- exemplo interno;
+- arquivo TXT;
+- estados inicial, pendente, válido e inválido;
+- invalidação após edição;
+- botão Começar bloqueado e habilitado;
+- criação da sessão;
+- modal aberto e fechado com `Escape`;
+- restauração de foco;
+- tema claro e escuro;
+- desktop, tablet e mobile;
+- ausência de IDs duplicados;
+- console sem erros durante o fluxo testado.
+
+Teste unitário disponível:
+
+```bash
+node tests/import-parser.test.mjs
+```
+
+Os testes manuais da tabela continuam necessários no computador do usuário antes do commit definitivo.
+
+---
+
 # Carregamento e estrutura
 
 | Código | Teste | Resultado esperado | Status |

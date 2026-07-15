@@ -241,8 +241,13 @@ src/scripts
 ├── core
 │   ├── config.js
 │   ├── constants.js
+│   ├── screens.js
 │   └── state.js
 ├── features
+│   ├── home
+│   │   └── home.service.js
+│   ├── question-import
+│   │   └── question-import.parser.js
 │   └── question-resolution
 │       └── question-resolution.controller.js
 ├── shared
@@ -251,6 +256,8 @@ src/scripts
 ├── app.js
 └── main.js
 ```
+
+A navegação, o histórico da Home e o parser de importação já foram separados. O controlador principal ainda coordena eventos e transições entre as funcionalidades durante a migração gradual.
 
 ## Arquitetura-alvo
 

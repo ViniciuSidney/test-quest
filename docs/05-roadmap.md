@@ -49,13 +49,13 @@ Substituir as telas atuais pelas quatro telas aprovadas sem perder funcionalidad
 ### Etapas
 
 1. implementar Tela Inicial — **concluído**;
-2. implementar Importação e Validação — **próximo**;
-3. implementar Resolução;
+2. implementar Importação e Validação — **concluído**;
+3. implementar Resolução — **próximo**;
 4. implementar Resultado Final;
 5. padronizar modais;
 6. preservar IDs ou atualizar HTML/JS em conjunto.
 
-### Entregue na primeira etapa
+### Entregue até esta etapa
 
 - gerenciador central de telas;
 - Home responsiva;
@@ -64,7 +64,14 @@ Substituir as telas atuais pelas quatro telas aprovadas sem perder funcionalidad
 - histórico local de sessões concluídas;
 - indicadores históricos;
 - retorno seguro à Home;
-- interrupção do temporizador fora da Resolução.
+- interrupção do temporizador fora da Resolução;
+- Tela de Importação e Validação responsiva;
+- estados completos de validação;
+- contadores definitivos após validação;
+- início bloqueado para conteúdo inválido ou alterado;
+- parser isolado em módulo próprio;
+- relatório de múltiplos problemas de importação;
+- modal do modelo com foco restaurado.
 
 ### Funcionalidades novas
 
