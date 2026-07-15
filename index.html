@@ -151,9 +151,21 @@
           </header>
 
           <div class="file-import-block">
-            <label for="arquivoQuestoes">Arquivo de questões</label>
+            <p class="file-import-label">Arquivo de questões</p>
+
             <div class="file-import-row">
-              <input id="arquivoQuestoes" type="file" accept=".txt,text/plain" />
+              <div class="file-picker-control">
+                <input
+                  id="arquivoQuestoes"
+                  class="file-input"
+                  type="file"
+                  accept=".txt,text/plain"
+                />
+                <label class="file-picker-button" for="arquivoQuestoes">
+                  Escolher arquivo
+                </label>
+              </div>
+
               <span id="nomeArquivoSelecionado" class="file-name" title="Nenhum arquivo selecionado">
                 Nenhum arquivo selecionado
               </span>
@@ -420,6 +432,48 @@ enunciado: Texto da pergunta
 resposta_esperada: Resposta modelo
 criterios_de_correcao: Critérios de correção
 +++</code></pre>
+      </div>
+    </div>
+  </div>
+
+
+  <div
+    id="modalConfirmacao"
+    class="modal confirmation-modal hidden"
+    role="dialog"
+    aria-modal="true"
+    aria-hidden="true"
+    aria-labelledby="tituloModalConfirmacao"
+    aria-describedby="descricaoModalConfirmacao"
+  >
+    <button
+      class="modal-backdrop"
+      type="button"
+      data-cancelar-confirmacao
+      aria-label="Cancelar e fechar confirmação"
+    ></button>
+
+    <div class="modal-card confirmation-modal__card" role="document">
+      <div class="confirmation-modal__header">
+        <span class="confirmation-modal__icon" aria-hidden="true">!</span>
+
+        <div>
+          <p id="rotuloModalConfirmacao" class="eyebrow">Confirmar ação</p>
+          <h2 id="tituloModalConfirmacao">Deseja continuar?</h2>
+        </div>
+      </div>
+
+      <p id="descricaoModalConfirmacao" class="confirmation-modal__description">
+        Confirme para continuar com esta ação.
+      </p>
+
+      <div class="confirmation-modal__actions">
+        <button id="btnCancelarConfirmacao" class="secondary" type="button">
+          Cancelar
+        </button>
+        <button id="btnConfirmarAcao" class="primary" type="button">
+          Confirmar
+        </button>
       </div>
     </div>
   </div>

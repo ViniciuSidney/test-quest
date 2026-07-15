@@ -47,6 +47,8 @@ export function initQuestionResolution() {
   let importValidation = createImportValidationState();
   let importFileReadToken = 0;
   let modalPreviousFocus = null;
+  let confirmationPreviousFocus = null;
+  let confirmationResolver = null;
 
   const entradaQuestoes = $("#entradaQuestoes");
   const arquivoQuestoes = $("#arquivoQuestoes");
@@ -98,7 +100,31 @@ export function initQuestionResolution() {
       }
     });
 
+    $("#btnCancelarConfirmacao")?.addEventListener("click", () => fecharModalConfirmacao(false));
+    $("#btnConfirmarAcao")?.addEventListener("click", () => fecharModalConfirmacao(true));
+    $("#modalConfirmacao")?.addEventListener("click", (evento) => {
+      if (evento.target.matches("[data-cancelar-confirmacao]")) {
+        fecharModalConfirmacao(false);
+      }
+    });
+
     document.addEventListener("keydown", (evento) => {
+      const modalConfirmacao = $("#modalConfirmacao");
+
+      if (modalConfirmacao && !modalConfirmacao.classList.contains("hidden")) {
+        if (evento.key === "Escape") {
+          evento.preventDefault();
+          fecharModalConfirmacao(false);
+          return;
+        }
+
+        if (evento.key === "Tab") {
+          manterFocoNoModal(evento, modalConfirmacao);
+        }
+
+        return;
+      }
+
       const modal = $("#modalModelo");
 
       if (!modal || modal.classList.contains("hidden")) {
@@ -195,15 +221,25 @@ export function initQuestionResolution() {
     });
   }
 
-  function limparCamposImportacao({ confirmar = false } = {}) {
+  async function limparCamposImportacao({ confirmar = false } = {}) {
     const possuiDados = Boolean(
       entradaQuestoes.value.trim() ||
       arquivoQuestoes.files?.length ||
       nomeLista.value.trim()
     );
 
-    if (confirmar && possuiDados && !confirm("Limpar todo o conteúdo e as configurações desta importação?")) {
-      return false;
+    if (confirmar && possuiDados) {
+      const confirmado = await solicitarConfirmacao({
+        label: "Limpar importação",
+        title: "Limpar todo o conteúdo?",
+        message: "O arquivo selecionado, o texto importado, o nome da lista e as configurações desta importação serão removidos.",
+        confirmText: "Limpar conteúdo",
+        variant: "danger"
+      });
+
+      if (!confirmado) {
+        return false;
+      }
     }
 
     importFileReadToken += 1;
@@ -216,6 +252,82 @@ export function initQuestionResolution() {
     importValidation = createImportValidationState();
     definirEstadoValidacao("idle");
     return true;
+  }
+
+  function solicitarConfirmacao({
+    label = "Confirmar ação",
+    title = "Deseja continuar?",
+    message = "Confirme para continuar com esta ação.",
+    confirmText = "Confirmar",
+    variant = "primary"
+  } = {}) {
+    const modal = $("#modalConfirmacao");
+
+    if (!modal) {
+      return Promise.resolve(false);
+    }
+
+    if (confirmationResolver) {
+      fecharModalConfirmacao(false);
+    }
+
+    confirmationPreviousFocus = document.activeElement;
+    $("#rotuloModalConfirmacao").textContent = label;
+    $("#tituloModalConfirmacao").textContent = title;
+    $("#descricaoModalConfirmacao").textContent = message;
+
+    const confirmButton = $("#btnConfirmarAcao");
+    confirmButton.textContent = confirmText;
+    confirmButton.classList.remove(
+      "confirmation-modal__confirm--danger",
+      "confirmation-modal__confirm--warning"
+    );
+
+    if (variant === "danger") {
+      confirmButton.classList.add("confirmation-modal__confirm--danger");
+    } else if (variant === "warning") {
+      confirmButton.classList.add("confirmation-modal__confirm--warning");
+    }
+
+    modal.classList.remove("hidden");
+    modal.setAttribute("aria-hidden", "false");
+    document.body.classList.add("modal-open");
+
+    requestAnimationFrame(() => {
+      $("#btnCancelarConfirmacao")?.focus();
+    });
+
+    return new Promise((resolve) => {
+      confirmationResolver = resolve;
+    });
+  }
+
+  function fecharModalConfirmacao(confirmado) {
+    const modal = $("#modalConfirmacao");
+
+    if (!modal || modal.classList.contains("hidden")) {
+      return;
+    }
+
+    modal.classList.add("hidden");
+    modal.setAttribute("aria-hidden", "true");
+
+    if ($("#modalModelo")?.classList.contains("hidden")) {
+      document.body.classList.remove("modal-open");
+    }
+
+    const resolver = confirmationResolver;
+    confirmationResolver = null;
+
+    const focusTarget =
+      confirmationPreviousFocus instanceof HTMLElement &&
+      confirmationPreviousFocus.isConnected
+        ? confirmationPreviousFocus
+        : null;
+
+    confirmationPreviousFocus = null;
+    focusTarget?.focus();
+    resolver?.(Boolean(confirmado));
   }
 
   function abrirModalModelo() {
@@ -339,8 +451,16 @@ export function initQuestionResolution() {
     atualizarResumoTopo();
   }
 
-  function apagarSessaoSalva() {
-    if (!confirm("Tem certeza que deseja apagar o progresso salvo desta aplicação?")) return;
+  async function apagarSessaoSalva() {
+    const confirmado = await solicitarConfirmacao({
+      label: "Apagar progresso",
+      title: "Apagar a sessão salva?",
+      message: "Respostas, anotações, tempos e marcações da sessão em andamento serão removidos deste navegador.",
+      confirmText: "Apagar progresso",
+      variant: "danger"
+    });
+
+    if (!confirmado) return;
 
     pararCronometro();
     localStorage.removeItem(STORAGE_KEY);
@@ -394,7 +514,7 @@ export function initQuestionResolution() {
     }
   }
 
-  function importarQuestoes() {
+  async function importarQuestoes() {
     const texto = entradaQuestoes.value.trim();
 
     if (!texto) {
@@ -410,12 +530,18 @@ export function initQuestionResolution() {
     }
 
     const sessaoExistente = obterSessaoAtiva();
-    if (
-      sessaoExistente?.questoes?.length &&
-      !substituicaoAutorizada &&
-      !confirm("Iniciar esta lista substituirá a resolução em andamento. Deseja continuar?")
-    ) {
-      return;
+    if (sessaoExistente?.questoes?.length && !substituicaoAutorizada) {
+      const confirmado = await solicitarConfirmacao({
+        label: "Substituir sessão",
+        title: "Iniciar uma nova resolução?",
+        message: "A resolução em andamento será substituída pela lista que acabou de ser validada.",
+        confirmText: "Substituir sessão",
+        variant: "danger"
+      });
+
+      if (!confirmado) {
+        return;
+      }
     }
 
     try {
@@ -588,15 +714,25 @@ export function initQuestionResolution() {
     salvarEstadoImediato();
   }
 
-  function finalizar() {
+  async function finalizar() {
     registrarTempoAtual();
     salvarEstadoImediato();
 
     const r = calcularResultado(estado);
     const naoRespondidas = r.total - r.respondidas;
 
-    if (naoRespondidas > 0 && !confirm(`Você ainda tem ${naoRespondidas} questão(ões) sem resposta. Deseja finalizar mesmo assim?`)) {
-      return;
+    if (naoRespondidas > 0) {
+      const confirmado = await solicitarConfirmacao({
+        label: "Finalizar sessão",
+        title: "Existem questões não respondidas",
+        message: `Você ainda tem ${naoRespondidas} questão(ões) sem resposta. A sessão pode ser finalizada mesmo assim.`,
+        confirmText: "Finalizar mesmo assim",
+        variant: "warning"
+      });
+
+      if (!confirmado) {
+        return;
+      }
     }
 
     estado.finalizadoEm = new Date().toISOString();
@@ -936,16 +1072,21 @@ export function initQuestionResolution() {
     statusResumo.textContent = `${baseEstado.listaNome || "Lista sem nome"} • ${r.respondidas}/${r.total} respondidas • ${formatarTempo(r.tempoTotal)}`;
   }
 
-  function abrirNovaResolucao() {
+  async function abrirNovaResolucao() {
     const sessaoAtiva = obterSessaoAtiva();
 
-    if (
-      sessaoAtiva?.questoes?.length &&
-      !confirm(
-        "Você possui uma resolução em andamento. Ao começar uma nova lista, o progresso atual será substituído. Deseja preparar uma nova resolução?"
-      )
-    ) {
-      return;
+    if (sessaoAtiva?.questoes?.length) {
+      const confirmado = await solicitarConfirmacao({
+        label: "Nova resolução",
+        title: "Preparar uma nova lista?",
+        message: "Existe uma resolução em andamento. O progresso atual será substituído quando a nova lista for iniciada.",
+        confirmText: "Preparar nova lista",
+        variant: "danger"
+      });
+
+      if (!confirmado) {
+        return;
+      }
     }
 
     substituicaoAutorizada = Boolean(sessaoAtiva?.questoes?.length);

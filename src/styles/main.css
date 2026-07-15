@@ -8,7 +8,10 @@
 @import url("./utilities/scrollbar.css");
 @import url("./utilities/states.css");
 
+
 @import url("./pages/test-quest.css");
 
 @import url("./pages/home.css");
 @import url("./pages/import.css");
+
+@import url("./components/confirmation-modal.css");

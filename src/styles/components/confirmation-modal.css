@@ -1,0 +1,94 @@
+/* Modal customizado de confirmação */
+
+.confirmation-modal__card {
+  width: min(520px, 100%);
+  display: block;
+  padding: clamp(1.1rem, 2.2vw, 1.5rem);
+  color: var(--tq-text);
+  background: var(--tq-surface);
+  border-color: var(--tq-border);
+  border-radius: var(--tq-radius-lg);
+  box-shadow: 0 24px 70px rgba(13, 14, 34, 0.28);
+}
+
+.confirmation-modal__header {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr);
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.confirmation-modal__header h2 {
+  margin: 0.12rem 0 0;
+  color: var(--tq-text);
+  font-size: clamp(1.2rem, 2vw, 1.45rem);
+}
+
+.confirmation-modal__header .eyebrow {
+  margin: 0;
+  color: var(--tq-primary);
+}
+
+.confirmation-modal__icon {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  color: var(--tq-warning);
+  background: var(--tq-warning-soft);
+  border: 1px solid color-mix(in srgb, var(--tq-warning) 42%, var(--tq-border));
+  border-radius: 999px;
+  font-size: 1.2rem;
+  font-weight: 900;
+}
+
+.confirmation-modal__description {
+  margin: 1rem 0 0;
+  color: var(--tq-text-muted);
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+
+.confirmation-modal__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.7rem;
+  margin-top: 1.35rem;
+}
+
+.confirmation-modal__actions button {
+  min-width: 116px;
+  min-height: 44px;
+}
+
+.confirmation-modal__confirm--danger {
+  color: #fff;
+  background: var(--tq-danger);
+  border-color: var(--tq-danger);
+}
+
+.confirmation-modal__confirm--danger:hover {
+  background: color-mix(in srgb, var(--tq-danger) 84%, #000);
+  border-color: color-mix(in srgb, var(--tq-danger) 84%, #000);
+}
+
+.confirmation-modal__confirm--warning {
+  color: var(--tq-text);
+  background: var(--tq-warning-soft);
+  border-color: color-mix(in srgb, var(--tq-warning) 48%, var(--tq-border));
+}
+
+.confirmation-modal__confirm--warning:hover {
+  background: color-mix(in srgb, var(--tq-warning) 22%, var(--tq-surface));
+}
+
+@media (max-width: 520px) {
+  .confirmation-modal__actions {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .confirmation-modal__actions button {
+    width: 100%;
+  }
+}

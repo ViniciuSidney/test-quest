@@ -31,6 +31,12 @@ Todas as mudanças importantes do Test Quest serão registradas neste arquivo.
 - coleta de múltiplos problemas de importação;
 - teste unitário do parser.
 
+### Corrigido
+
+- envoltório visual desigual do seletor de arquivo;
+- largura insuficiente dos cards de contadores;
+- confirmações nativas substituídas por modal customizado e acessível.
+
 ### Alterado
 
 - documentação atualizada para quatro telas;
