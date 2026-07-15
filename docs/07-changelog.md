@@ -18,7 +18,12 @@ Todas as mudanças importantes do Test Quest serão registradas neste arquivo.
 - planejamento das marcações auxiliares;
 - planejamento dos filtros e cards expansíveis;
 - índice da documentação;
-- plano de implementação das telas.
+- plano de implementação das telas;
+- Tela Inicial oficial;
+- gerenciador central de telas;
+- serviço de histórico de sessões concluídas;
+- indicadores de questões respondidas, acertos, tempo e sessões;
+- botão temporário de retorno à Home na importação legada.
 
 ### Alterado
 
@@ -29,7 +34,18 @@ Todas as mudanças importantes do Test Quest serão registradas neste arquivo.
 - roteiro de testes ampliado;
 - identidade visual detalhada;
 - sessão salva movida conceitualmente para a Tela Inicial;
-- próxima etapa definida como implementação gradual na `dev`.
+- próxima etapa definida como implementação gradual na `dev`;
+- aplicação passa a abrir na Tela Inicial;
+- sessão salva deixa de ocupar a tela de importação;
+- retorno da Resolução direciona para a Tela Inicial;
+- retorno do Resultado preserva o histórico e encerra a sessão ativa;
+- botões de tema passam a compartilhar um único comportamento.
+
+### Corrigido
+
+- temporizador não continua ao voltar para a Tela Inicial;
+- uma sessão reaberta para revisão deixa temporariamente de contar no histórico;
+- substituição de sessão ativa exige apenas uma confirmação no fluxo normal.
 
 ### Preservado
 

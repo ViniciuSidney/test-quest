@@ -40,7 +40,7 @@ Incluído:
 
 ## v0.3-dev — Fluxo visual completo
 
-**Status:** próximo ciclo.
+**Status:** em andamento.
 
 ### Objetivo
 
@@ -48,12 +48,23 @@ Substituir as telas atuais pelas quatro telas aprovadas sem perder funcionalidad
 
 ### Etapas
 
-1. implementar Tela Inicial;
-2. implementar Importação e Validação;
+1. implementar Tela Inicial — **concluído**;
+2. implementar Importação e Validação — **próximo**;
 3. implementar Resolução;
 4. implementar Resultado Final;
-5. adaptar navegação;
+5. padronizar modais;
 6. preservar IDs ou atualizar HTML/JS em conjunto.
+
+### Entregue na primeira etapa
+
+- gerenciador central de telas;
+- Home responsiva;
+- continuação de sessão;
+- início de nova resolução;
+- histórico local de sessões concluídas;
+- indicadores históricos;
+- retorno seguro à Home;
+- interrupção do temporizador fora da Resolução.
 
 ### Funcionalidades novas
 
@@ -85,10 +96,10 @@ Reduzir concentração de código e preparar evolução segura.
 ### Planejado
 
 - separar features;
-- criar roteamento interno de telas;
+- ampliar o gerenciador interno de telas;
 - versionar esquema do estado;
 - migrar chaves legadas;
-- criar histórico de sessões;
+- evoluir o histórico de sessões e suas migrações;
 - centralizar formatação de tempo;
 - centralizar exportações;
 - organizar modais;

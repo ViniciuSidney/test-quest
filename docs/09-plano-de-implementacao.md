@@ -58,6 +58,8 @@ docs: atualiza planejamento da implementação visual
 
 # Etapa 1 — Tela Inicial
 
+**Status:** concluída nesta etapa de desenvolvimento.
+
 ## Implementar
 
 - marca;
@@ -92,6 +94,8 @@ feat: implementa tela inicial do Test Quest
 ---
 
 # Etapa 2 — Importação e Validação
+
+**Status:** próxima etapa.
 
 ## Implementar
 

@@ -18,7 +18,7 @@
 | RF05 | Resolver questões objetivas com alternativas A–E | Implementado |
 | RF06 | Resolver questões discursivas curtas | Implementado |
 | RF07 | Salvar respostas automaticamente no navegador | Implementado |
-| RF08 | Retomar uma sessão salva pela Tela Inicial | A adaptar |
+| RF08 | Retomar uma sessão salva pela Tela Inicial | Implementado |
 | RF09 | Registrar o tempo individual de cada questão | Implementado |
 | RF10 | Pausar e retomar o temporizador | Implementado |
 | RF11 | Interromper a contagem fora da Tela de Resolução | Implementado |
@@ -33,16 +33,16 @@
 | RF20 | Exportar a sessão completa em `.json` | Implementado |
 | RF21 | Alternar entre tema claro e escuro | Implementado |
 | RF22 | Exibir o modelo aceito em modal | Implementado |
-| RF23 | Exibir uma Tela Inicial com sessão ativa e indicadores | Planejado |
-| RF24 | Permitir iniciar nova resolução pela Tela Inicial | Planejado |
+| RF23 | Exibir uma Tela Inicial com sessão ativa e indicadores | Implementado |
+| RF24 | Permitir iniciar nova resolução pela Tela Inicial | Implementado |
 | RF25 | Permitir marcações auxiliares nas alternativas objetivas | Planejado |
 | RF26 | Separar marcação auxiliar da resposta oficial | Planejado |
 | RF27 | Filtrar questões no Resultado Final | Planejado |
 | RF28 | Expandir apenas um card de revisão por vez | Planejado |
 | RF29 | Exibir card objetivo expandido com resposta, gabarito e explicação | Planejado |
 | RF30 | Exibir card discursivo expandido com resposta esperada e critérios | Planejado |
-| RF31 | Exibir indicadores históricos de sessões concluídas | Planejado |
-| RF32 | Exibir desempenho histórico sem incluir a sessão em andamento | Planejado |
+| RF31 | Exibir indicadores históricos de sessões concluídas | Implementado |
+| RF32 | Exibir desempenho histórico sem incluir a sessão em andamento | Implementado |
 | RF33 | Exportar sem alterar o estado da sessão | Implementado |
 | RF34 | Confirmar finalização com questões pendentes | Implementado |
 | RF35 | Exibir estado vazio em filtros sem resultados | Planejado |

@@ -7,30 +7,126 @@
   <link rel="manifest" href="./public/manifest.json" />
   <link rel="stylesheet" href="./src/styles/main.css" />
 </head>
-<body data-theme="light">
+<body data-theme="light" data-screen="home">
   <main class="app">
-    <header class="topbar">
+    <header class="topbar legacy-topbar">
       <div>
         <p class="eyebrow">Aplicação de estudo ativo</p>
         <h1>Test Quest</h1>
         <p class="subtitle">Da dúvida à compreensão, uma questão de cada vez.</p>
       </div>
       <div class="top-actions">
-        <button id="btnTema" class="icon-button" type="button">🌙 Tema</button>
+        <button id="btnTemaLegado" class="icon-button" type="button" data-theme-toggle>🌙 Tema</button>
         <div id="statusResumo" class="stats-pill">Nenhuma lista importada</div>
       </div>
     </header>
 
-    <section id="telaImportacao" class="screen active">
-      <div id="cardSessaoSalva" class="saved-session hidden">
-        <div>
-          <strong>Sessão salva encontrada</strong>
-          <p id="infoSessaoSalva">Você pode continuar de onde parou.</p>
+
+    <section id="telaInicial" class="screen screen--home active" aria-labelledby="tituloMarcaTestQuest">
+      <header class="home-toolbar">
+        <button id="btnTema" class="icon-button home-theme-toggle" type="button" data-theme-toggle>
+          🌙 Tema
+        </button>
+      </header>
+
+      <div class="home-layout">
+        <div class="home-left-column">
+          <section class="home-panel brand-panel">
+            <div class="brand-panel__content">
+              <p class="brand-kicker">Aplicação de estudo ativo</p>
+              <h1 id="tituloMarcaTestQuest" class="brand-title">Test Quest</h1>
+              <p class="brand-slogan">Now I Know.</p>
+              <p class="brand-message">Resolver, compreender e avançar.</p>
+            </div>
+          </section>
+
+          <section class="home-panel home-actions-panel" aria-labelledby="tituloAcoesInicio">
+            <h2 id="tituloAcoesInicio" class="sr-only">Ações iniciais</h2>
+
+            <div id="blocoContinuarSessao" class="session-resume hidden">
+              <div class="session-resume__row">
+                <button id="btnContinuarSessao" class="primary home-main-action" type="button">
+                  Continuar resolução
+                </button>
+
+                <div class="session-resume__details">
+                  <strong id="nomeSessaoAtual">Lista em andamento</strong>
+                  <span id="resumoSessaoAtual">0/0 respondidas • 00:00</span>
+                </div>
+
+                <button id="btnApagarSessao" class="ghost danger-text session-delete-action" type="button">
+                  Apagar progresso
+                </button>
+              </div>
+
+              <div
+                id="progressoSessaoAtual"
+                class="session-progress"
+                role="progressbar"
+                aria-label="Progresso da sessão atual"
+                aria-valuemin="0"
+                aria-valuemax="100"
+                aria-valuenow="0"
+              >
+                <div id="barraProgressoSessao" class="session-progress__value"></div>
+              </div>
+            </div>
+
+            <div class="new-session-action">
+              <button id="btnNovaResolucao" class="primary home-main-action" type="button">
+                Iniciar nova resolução
+              </button>
+              <p>Importe uma nova lista de questões e configure a sessão.</p>
+            </div>
+
+            <p id="mensagemInicial" class="home-message hidden" aria-live="polite"></p>
+          </section>
         </div>
-        <div class="actions compact">
-          <button id="btnContinuarSessao" class="primary" type="button">Continuar sessão</button>
-          <button id="btnApagarSessao" class="ghost danger-text" type="button">Apagar progresso</button>
+
+        <div class="home-right-column">
+          <aside class="home-panel progress-panel" aria-labelledby="tituloProgressoHistorico">
+            <header class="progress-panel__header">
+              <h2 id="tituloProgressoHistorico">Seu progresso</h2>
+              <p>Resumo das sessões concluídas no Test Quest.</p>
+            </header>
+
+            <div class="metrics-list">
+              <article class="metric-card">
+                <strong id="totalRespondidas" class="metric-card__value">0</strong>
+                <span class="metric-card__label">Questões respondidas</span>
+              </article>
+
+              <article class="metric-card">
+                <strong id="taxaMediaAcertos" class="metric-card__value">0%</strong>
+                <span class="metric-card__label">Taxa média de acertos</span>
+              </article>
+
+              <article class="metric-card">
+                <strong id="tempoTotalEstudo" class="metric-card__value">0h 00min</strong>
+                <span class="metric-card__label">Tempo total de estudo</span>
+              </article>
+
+              <article class="metric-card">
+                <strong id="sessoesConcluidas" class="metric-card__value">0</strong>
+                <span class="metric-card__label">Sessões concluídas</span>
+              </article>
+            </div>
+
+            <p id="mensagemHistoricoVazio" class="empty-history-message">
+              Conclua sua primeira sessão para iniciar o histórico.
+            </p>
+          </aside>
+
+          <footer class="home-panel home-footer">
+            <small>Test Quest © 2026 — Vinícius Sidney</small>
+          </footer>
         </div>
+      </div>
+    </section>
+
+    <section id="telaImportacao" class="screen">
+      <div class="legacy-screen-toolbar">
+        <button id="btnVoltarInicioImportacao" class="ghost" type="button">Voltar ao início</button>
       </div>
 
       <div class="panel">
@@ -121,7 +217,7 @@
           <div id="listaNavegacao" class="question-map"></div>
 
           <div class="side-actions side-actions-bottom">
-            <button id="btnVoltarImportacao" class="ghost full" type="button">Voltar ao import</button>
+            <button id="btnVoltarImportacao" class="ghost full" type="button">Voltar ao início</button>
             <button id="btnLimparProgressoResolucao" class="ghost danger-text full" type="button">Limpar progresso salvo</button>
           </div>
         </aside>
@@ -178,7 +274,7 @@
 
         <div class="actions">
           <button id="btnRevisar" class="secondary" type="button">Revisar respostas</button>
-          <button id="btnNovaLista" class="ghost" type="button">Importar nova lista</button>
+          <button id="btnNovaLista" class="primary" type="button">Voltar ao início</button>
         </div>
       </div>
 

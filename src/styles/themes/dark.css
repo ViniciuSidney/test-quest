@@ -1,6 +1,7 @@
 [data-theme="dark"] {
   --tq-bg: #0d0e22;
   --tq-surface: #141330;
+  --tq-surface-soft: #1c1b3d;
   --tq-text: #f3f4ff;
   --tq-text-muted: #a6a8c7;
   --tq-border: #2b2d55;

@@ -1,5 +1,7 @@
 import { CONFIG_KEY, STORAGE_KEY } from "../../core/constants.js";
 import { createInitialState } from "../../core/state.js";
+import { createScreenManager } from "../../core/screens.js";
+import { calculateHistoryMetrics, readHistory, recordCompletedSession, removeCompletedSession } from "../home/home.service.js";
 
 export function initQuestionResolution() {
   const exemploQuestoes = `@questao
@@ -25,11 +27,13 @@ export function initQuestionResolution() {
 
   const $ = (seletor) => document.querySelector(seletor);
 
-  const telas = {
-    importacao: $("#telaImportacao"),
-    resolucao: $("#telaResolucao"),
-    resultado: $("#telaResultado")
-  };
+  const screenManager = createScreenManager({
+    home: "#telaInicial",
+    importacao: "#telaImportacao",
+    resolucao: "#telaResolucao",
+    resultado: "#telaResultado"
+  });
+
 
   const estadoInicial = createInitialState;
 
@@ -38,6 +42,7 @@ export function initQuestionResolution() {
   let timerRodando = true;
   let ultimoTick = Date.now();
   let saveTimeout = null;
+  let substituicaoAutorizada = false;
 
   const entradaQuestoes = $("#entradaQuestoes");
   const arquivoQuestoes = $("#arquivoQuestoes");
@@ -50,18 +55,25 @@ export function initQuestionResolution() {
 
   function inicializar() {
     carregarConfiguracoes();
-    verificarSessaoSalva();
     configurarEventos();
+    sincronizarSessaoFinalizadaComHistorico();
+    trocarTela("home");
+    atualizarHome();
     atualizarResumoTopo();
   }
 
   function configurarEventos() {
-    $("#btnTema").addEventListener("click", alternarTema);
+    document.querySelectorAll("[data-theme-toggle]").forEach((button) => {
+      button.addEventListener("click", alternarTema);
+    });
+
+    $("#btnNovaResolucao")?.addEventListener("click", abrirNovaResolucao);
+    $("#btnVoltarInicioImportacao")?.addEventListener("click", voltarAoInicioDaImportacao);
 
     $("#btnExemplo").addEventListener("click", () => {
       entradaQuestoes.value = exemploQuestoes;
       nomeLista.value = "Lista exemplo - Smart Home e IoT";
-      mostrarMensagem("Exemplo carregado. Agora clique em “Importar e começar”.", "ok");
+      mostrarMensagem("Exemplo carregado. Valide a importação antes de começar.", "ok");
     });
 
     $("#btnValidar").addEventListener("click", validarImportacao);
@@ -105,19 +117,15 @@ export function initQuestionResolution() {
     $("#btnPausarTempo").addEventListener("click", alternarCronometro);
     $("#btnMarcarRevisao").addEventListener("click", alternarMarcacaoRevisao);
 
-    $("#btnVoltarImportacao").addEventListener("click", () => {
-      registrarTempoAtual();
-      salvarEstadoImediato();
-      pararCronometro();
-      trocarTela("importacao");
-      verificarSessaoSalva();
-    });
+    $("#btnVoltarImportacao").addEventListener("click", voltarAoInicioComSessaoAtiva);
 
     $("#btnLimparProgressoResolucao").addEventListener("click", apagarSessaoSalva);
 
-    $("#btnNovaLista").addEventListener("click", reiniciarAplicacao);
+    $("#btnNovaLista").addEventListener("click", voltarAoInicioAposResultado);
     $("#btnRevisar").addEventListener("click", () => {
+      removeCompletedSession(estado.id);
       estado.finalizadoEm = null;
+      estado.status = "em_andamento";
       salvarEstadoImediato();
       trocarTela("resolucao");
       renderizarQuestao();
@@ -184,7 +192,13 @@ export function initQuestionResolution() {
 
   function aplicarTema(tema) {
     document.body.dataset.theme = tema;
-    $("#btnTema").textContent = tema === "dark" ? "☀️ Tema" : "🌙 Tema";
+    document.querySelectorAll("[data-theme-toggle]").forEach((button) => {
+      button.textContent = tema === "dark" ? "☀️ Tema" : "🌙 Tema";
+      button.setAttribute(
+        "aria-label",
+        tema === "dark" ? "Alternar para tema claro" : "Alternar para tema escuro"
+      );
+    });
   }
 
   function alternarTema() {
@@ -193,17 +207,7 @@ export function initQuestionResolution() {
   }
 
   function verificarSessaoSalva() {
-    const salva = obterSessaoSalva();
-
-    if (!salva || !salva.questoes || !salva.questoes.length) {
-      $("#cardSessaoSalva").classList.add("hidden");
-      return;
-    }
-
-    const r = calcularResultado(salva);
-    $("#cardSessaoSalva").classList.remove("hidden");
-    $("#infoSessaoSalva").textContent =
-      `${salva.listaNome || "Lista sem nome"} • ${r.respondidas}/${r.total} respondidas • ${formatarTempo(calcularTempoTotal(salva))}`;
+    atualizarHome();
   }
 
   function obterSessaoSalva() {
@@ -215,11 +219,11 @@ export function initQuestionResolution() {
   }
 
   function continuarSessao() {
-    const salva = obterSessaoSalva();
+    const salva = obterSessaoAtiva();
 
     if (!salva || !salva.questoes || !salva.questoes.length) {
-      mostrarMensagem("Não encontrei uma sessão válida para continuar.", "error");
-      verificarSessaoSalva();
+      mostrarMensagemInicial("Não encontrei uma sessão em andamento para continuar.");
+      atualizarHome();
       return;
     }
 
@@ -230,9 +234,12 @@ export function initQuestionResolution() {
       anotacoes: salva.anotacoes || {},
       temposMs: salva.temposMs || {},
       revisao: salva.revisao || {},
-      opcoes: { ...estadoInicial().opcoes, ...(salva.opcoes || {}) }
+      opcoes: { ...estadoInicial().opcoes, ...(salva.opcoes || {}) },
+      marcacoesAlternativas: salva.marcacoesAlternativas || {}
     };
 
+    garantirIdentidadeSessao();
+    estado.status = "em_andamento";
     timerRodando = true;
     atualizarBotaoCronometro();
     trocarTela("resolucao");
@@ -248,10 +255,10 @@ export function initQuestionResolution() {
     localStorage.removeItem(STORAGE_KEY);
     estado = estadoInicial();
     limparCamposImportacao();
-    verificarSessaoSalva();
     atualizarResumoTopo();
-    trocarTela("importacao");
-    mostrarMensagem("Progresso salvo apagado.", "ok");
+    trocarTela("home");
+    atualizarHome();
+    mostrarMensagemInicial("Progresso da sessão apagado.", "ok");
   }
 
   function validarImportacao() {
@@ -280,8 +287,12 @@ export function initQuestionResolution() {
       return;
     }
 
-    const sessaoExistente = obterSessaoSalva();
-    if (sessaoExistente?.questoes?.length && !confirm("Importar uma nova lista substituirá o progresso salvo. Deseja continuar?")) {
+    const sessaoExistente = obterSessaoAtiva();
+    if (
+      sessaoExistente?.questoes?.length &&
+      !substituicaoAutorizada &&
+      !confirm("Iniciar esta lista substituirá a resolução em andamento. Deseja continuar?")
+    ) {
       return;
     }
 
@@ -293,10 +304,13 @@ export function initQuestionResolution() {
       }
 
       estado = estadoInicial();
+      estado.id = gerarIdSessao();
+      estado.status = "em_andamento";
       estado.listaNome = nomeLista.value.trim() || "Lista sem nome";
       estado.questoes = questoes;
       estado.opcoes.mostrarGabaritoFinal = $("#opcaoMostrarGabaritoFinal").checked;
       estado.importadoEm = new Date().toISOString();
+      substituicaoAutorizada = false;
 
       timerRodando = true;
       atualizarBotaoCronometro();
@@ -542,11 +556,15 @@ export function initQuestionResolution() {
     }
 
     estado.finalizadoEm = new Date().toISOString();
+    estado.status = "finalizada";
+    garantirIdentidadeSessao();
     salvarEstadoImediato();
+    recordCompletedSession(estado, calcularResultado(estado));
     pararCronometro();
 
     trocarTela("resultado");
     renderizarResultado();
+    atualizarHome();
   }
 
   function iniciarCronometro() {
@@ -568,7 +586,7 @@ export function initQuestionResolution() {
   }
 
   function cronometroPodeContar() {
-    const telaResolucaoAtiva = Boolean(telas.resolucao?.classList.contains("active"));
+    const telaResolucaoAtiva = screenManager.isActive("resolucao");
 
     return (
       timerRodando &&
@@ -861,18 +879,51 @@ export function initQuestionResolution() {
   }
 
   function atualizarResumoTopo() {
-    if (!estado.questoes.length) {
+    if (!statusResumo) return;
+
+    const baseEstado = estado.questoes.length ? estado : obterSessaoAtiva();
+
+    if (!baseEstado?.questoes?.length) {
       statusResumo.textContent = "Nenhuma lista importada";
       return;
     }
 
-    const r = calcularResultado(estado);
-    statusResumo.textContent = `${estado.listaNome} • ${r.respondidas}/${r.total} respondidas • ${formatarTempo(r.tempoTotal)}`;
+    const r = calcularResultado(baseEstado);
+    statusResumo.textContent = `${baseEstado.listaNome || "Lista sem nome"} • ${r.respondidas}/${r.total} respondidas • ${formatarTempo(r.tempoTotal)}`;
   }
 
-  function reiniciarAplicacao() {
-    if (!confirm("Deseja importar uma nova lista? O progresso salvo atual será apagado.")) return;
+  function abrirNovaResolucao() {
+    const sessaoAtiva = obterSessaoAtiva();
 
+    if (
+      sessaoAtiva?.questoes?.length &&
+      !confirm(
+        "Você possui uma resolução em andamento. Ao começar uma nova lista, o progresso atual será substituído. Deseja preparar uma nova resolução?"
+      )
+    ) {
+      return;
+    }
+
+    substituicaoAutorizada = Boolean(sessaoAtiva?.questoes?.length);
+    esconderMensagemInicial();
+    trocarTela("importacao");
+  }
+
+  function voltarAoInicioDaImportacao() {
+    substituicaoAutorizada = false;
+    trocarTela("home");
+    atualizarHome();
+  }
+
+  function voltarAoInicioComSessaoAtiva() {
+    registrarTempoAtual();
+    salvarEstadoImediato();
+    pararCronometro();
+    trocarTela("home");
+    atualizarHome();
+  }
+
+  function voltarAoInicioAposResultado() {
     pararCronometro();
     localStorage.removeItem(STORAGE_KEY);
     estado = estadoInicial();
@@ -880,15 +931,118 @@ export function initQuestionResolution() {
     $("#detalhesResultado").innerHTML = "";
     $("#resumoResultado").innerHTML = "";
     $("#resultadoPorAssunto").innerHTML = "";
-    verificarSessaoSalva();
     atualizarResumoTopo();
-    trocarTela("importacao");
-    mostrarMensagem("Pronto. Importe uma nova lista para começar.", "ok");
+    trocarTela("home");
+    atualizarHome();
   }
 
   function trocarTela(nome) {
-    Object.values(telas).forEach((tela) => tela.classList.remove("active"));
-    telas[nome].classList.add("active");
+    if (nome !== "resolucao") {
+      pararCronometro();
+    }
+
+    screenManager.show(nome);
+  }
+
+  function atualizarHome() {
+    const sessaoAtiva = obterSessaoAtiva();
+    const blocoSessao = $("#blocoContinuarSessao");
+    const botaoNovaResolucao = $("#btnNovaResolucao");
+
+    if (sessaoAtiva?.questoes?.length) {
+      const resultado = calcularResultado(sessaoAtiva);
+      const progresso = resultado.total
+        ? Math.round((resultado.respondidas / resultado.total) * 100)
+        : 0;
+
+      blocoSessao?.classList.remove("hidden");
+      $("#nomeSessaoAtual").textContent = sessaoAtiva.listaNome || "Lista sem nome";
+      $("#nomeSessaoAtual").title = sessaoAtiva.listaNome || "Lista sem nome";
+      $("#resumoSessaoAtual").textContent =
+        `${resultado.respondidas}/${resultado.total} respondidas • ${formatarTempo(resultado.tempoTotal)}`;
+      $("#barraProgressoSessao").style.width = `${progresso}%`;
+      $("#progressoSessaoAtual").setAttribute("aria-valuenow", String(progresso));
+
+      botaoNovaResolucao?.classList.remove("primary");
+      botaoNovaResolucao?.classList.add("secondary");
+    } else {
+      blocoSessao?.classList.add("hidden");
+      $("#barraProgressoSessao").style.width = "0%";
+      $("#progressoSessaoAtual").setAttribute("aria-valuenow", "0");
+
+      botaoNovaResolucao?.classList.remove("secondary");
+      botaoNovaResolucao?.classList.add("primary");
+    }
+
+    const metrics = calculateHistoryMetrics(readHistory());
+    $("#totalRespondidas").textContent = String(metrics.answered);
+    $("#taxaMediaAcertos").textContent = `${metrics.averageAccuracy}%`;
+    $("#tempoTotalEstudo").textContent = formatarTempoHistorico(metrics.totalTimeMs);
+    $("#sessoesConcluidas").textContent = String(metrics.completedSessions);
+    $("#mensagemHistoricoVazio")?.classList.toggle("hidden", metrics.completedSessions > 0);
+  }
+
+  function obterSessaoAtiva() {
+    const salva = obterSessaoSalva();
+
+    if (
+      !salva?.questoes?.length ||
+      salva.finalizadoEm ||
+      salva.status === "finalizada"
+    ) {
+      return null;
+    }
+
+    return salva;
+  }
+
+  function sincronizarSessaoFinalizadaComHistorico() {
+    const salva = obterSessaoSalva();
+
+    if (!salva?.questoes?.length || !salva.finalizadoEm) {
+      return;
+    }
+
+    recordCompletedSession(salva, calcularResultado(salva));
+  }
+
+  function garantirIdentidadeSessao() {
+    if (!estado.id) {
+      estado.id = gerarIdSessao();
+    }
+  }
+
+  function gerarIdSessao() {
+    if (window.crypto && typeof window.crypto.randomUUID === "function") {
+      return window.crypto.randomUUID();
+    }
+
+    return `sessao-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+  }
+
+  function formatarTempoHistorico(ms) {
+    const totalMinutos = Math.floor(Number(ms || 0) / 60000);
+    const horas = Math.floor(totalMinutos / 60);
+    const minutos = totalMinutos % 60;
+    return `${horas}h ${String(minutos).padStart(2, "0")}min`;
+  }
+
+  function mostrarMensagemInicial(texto, tipo = "error") {
+    const mensagem = $("#mensagemInicial");
+    if (!mensagem) return;
+
+    mensagem.textContent = texto;
+    mensagem.classList.remove("hidden");
+    mensagem.dataset.type = tipo;
+  }
+
+  function esconderMensagemInicial() {
+    const mensagem = $("#mensagemInicial");
+    if (!mensagem) return;
+
+    mensagem.textContent = "";
+    mensagem.classList.add("hidden");
+    delete mensagem.dataset.type;
   }
 
   function mostrarMensagem(texto, tipo = "ok") {

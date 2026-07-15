@@ -222,6 +222,18 @@ Ao iniciar:
 
 Nunca apagar dados legados antes de confirmar a migração.
 
+## Implementação atual da navegação e da Home
+
+Já implementado:
+
+- `src/scripts/core/screens.js` para troca centralizada de telas;
+- `src/scripts/features/home/home.service.js` para histórico e indicadores;
+- `src/styles/pages/home.css` para o layout oficial da Tela Inicial;
+- chave `testQuest.history` para resumos de sessões concluídas;
+- compatibilidade com a chave legada da sessão ativa.
+
+A sessão em andamento não entra nos indicadores históricos. Se uma sessão concluída for reaberta para revisão, seu resumo é removido temporariamente do histórico e volta a ser registrado após nova finalização.
+
 ## Arquitetura atual
 
 ```text

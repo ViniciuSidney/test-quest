@@ -81,7 +81,9 @@ A Tela Inicial também permite continuar uma sessão salva diretamente na Tela d
 ## Estado atual
 
 **Base funcional:** `v0.2.5-dev`  
-**Fase do projeto:** preparação da implementação visual das quatro telas oficiais.
+**Ciclo em desenvolvimento:** `v0.3-dev`
+
+**Fase do projeto:** implementação gradual das quatro telas oficiais.
 
 Concluído:
 
@@ -91,13 +93,16 @@ Concluído:
 - branches `main` e `dev` configuradas;
 - identidade visual documentada;
 - layouts das quatro telas aprovados;
-- manuais estruturais concluídos.
+- manuais estruturais concluídos;
+- Tela Inicial oficial implementada;
+- navegação centralizada entre as quatro telas;
+- histórico local e indicadores de sessões concluídas implementados.
 
-Próximo ciclo:
+Próxima etapa:
 
-- substituir gradualmente as telas atuais;
+- implementar Importação e Validação;
 - preservar a lógica funcional existente;
-- modularizar CSS e JavaScript;
+- avançar depois para Resolução e Resultado Final;
 - executar testes após cada etapa.
 
 ## Critérios de sucesso da próxima etapa
@@ -115,6 +120,6 @@ Próximo ciclo:
 - as discursivas dependem de revisão manual;
 - os dados ficam no navegador por meio do `localStorage`;
 - a arquitetura JavaScript ainda mantém parte da lógica concentrada;
-- os indicadores históricos da Tela Inicial ainda precisam de estrutura de histórico;
-- os novos layouts estão aprovados, mas ainda não foram integralmente implementados;
+- o histórico atual registra resumos locais, mas ainda não possui visualização detalhada de sessões;
+- a Tela Inicial está implementada, enquanto as outras três telas ainda usam a estrutura legada;
 - modais e confirmações terão seus layouts refinados depois das telas principais.

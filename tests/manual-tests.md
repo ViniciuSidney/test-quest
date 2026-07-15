@@ -15,7 +15,20 @@
 - [ ] O console não mostra erro 404.
 - [ ] O console não mostra erro de JavaScript.
 
-## Bloco B — Importação
+## Bloco B — Tela Inicial
+
+- [ ] A aplicação abre na Tela Inicial.
+- [ ] Sem sessão ativa, o bloco de continuação permanece oculto.
+- [ ] Com sessão ativa, nome, progresso e tempo são exibidos.
+- [ ] **Continuar resolução** restaura respostas, anotações e tempos.
+- [ ] **Iniciar nova resolução** abre a importação.
+- [ ] Uma sessão ativa exige confirmação antes de preparar outra lista.
+- [ ] O retorno da importação abre a Tela Inicial sem apagar a sessão.
+- [ ] O histórico considera apenas sessões concluídas.
+- [ ] O temporizador não aumenta enquanto a Home está ativa.
+- [ ] O layout mobile usa rolagem interna sem rolagem no `body`.
+
+## Bloco C — Importação
 
 - [ ] O botão **Carregar exemplo** preenche os campos.
 - [ ] A validação reconhece duas questões no exemplo.
@@ -23,7 +36,7 @@
 - [ ] O arquivo em `public/examples` pode ser selecionado no input.
 - [ ] Uma lista inválida produz mensagem de erro.
 
-## Bloco C — Resolução
+## Bloco D — Resolução
 
 - [ ] A sessão inicia na primeira questão.
 - [ ] A resposta objetiva permanece após navegar.
@@ -34,15 +47,15 @@
 - [ ] O temporizador atualiza a questão correta.
 - [ ] Pausar e retomar funciona.
 
-## Bloco D — Persistência
+## Bloco E — Persistência
 
 - [ ] Recarregar a página mantém a sessão.
-- [ ] Voltar ao import interrompe o temporizador.
+- [ ] Voltar ao início interrompe o temporizador.
 - [ ] Continuar sessão recupera os dados.
 - [ ] Limpar progresso remove a sessão.
 - [ ] O tema permanece após recarregar.
 
-## Bloco E — Resultado
+## Bloco F — Resultado
 
 - [ ] As objetivas são corrigidas.
 - [ ] A discursiva exibe modelo e critérios.
@@ -52,7 +65,7 @@
 - [ ] Anotações TXT são baixadas.
 - [ ] Sessão JSON é baixada e pode ser aberta.
 
-## Bloco F — Layout
+## Bloco G — Layout
 
 - [ ] Não existe rolagem global no desktop.
 - [ ] O painel lateral não encobre as anotações.

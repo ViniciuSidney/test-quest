@@ -24,7 +24,9 @@ A proposta não é apenas registrar acertos, mas ajudar o usuário a:
 ## Estado atual
 
 **Base funcional:** `v0.2.5-dev`  
-**Fase atual:** preparação da implementação das quatro telas oficiais.
+**Ciclo em desenvolvimento:** `v0.3-dev`
+
+**Fase atual:** implementação gradual das quatro telas oficiais.
 
 ### Concluído
 
@@ -40,18 +42,23 @@ A proposta não é apenas registrar acertos, mas ajudar o usuário a:
 - repositório remoto publicado no GitHub;
 - branches `main` e `dev` configuradas;
 - layouts das quatro telas principais aprovados;
-- manuais estruturais concluídos.
+- manuais estruturais concluídos;
+- Tela Inicial oficial implementada;
+- navegação centralizada entre as quatro telas;
+- sessão em andamento movida para a Tela Inicial;
+- indicadores históricos de sessões concluídas;
+- temporizador interrompido ao sair da Resolução.
 
 ### Próxima etapa
 
-A branch `dev` receberá a substituição gradual das telas atuais por:
+A próxima adaptação será a **Tela de Importação e Validação**. Depois dela, o ciclo seguirá para:
 
-1. Tela Inicial;
-2. Importação e Validação;
-3. Resolução;
-4. Resultado Final.
+1. Resolução;
+2. Resultado Final;
+3. modais e confirmações;
+4. testes completos.
 
-A implementação será feita uma tela por vez, com testes e commits separados.
+A implementação continua sendo feita uma tela por vez, com testes e commits separados.
 
 ## Funcionalidades atuais
 
@@ -64,7 +71,8 @@ A implementação será feita uma tela por vez, com testes e commits separados.
 - anotações associadas a cada questão;
 - marcação de questões para revisão;
 - salvamento automático com `localStorage`;
-- retomada de sessão;
+- Tela Inicial com retomada de sessão;
+- indicadores históricos de sessões concluídas;
 - temas claro e escuro;
 - exportação de respostas em `.txt`;
 - exportação de anotações em `.txt`;
@@ -73,8 +81,6 @@ A implementação será feita uma tela por vez, com testes e commits separados.
 
 ## Funcionalidades planejadas para o próximo ciclo
 
-- Tela Inicial com sessão ativa;
-- indicadores históricos de estudo;
 - fluxo separado de Importação e Validação;
 - estados completos de validação;
 - marcações auxiliares nas alternativas objetivas;
@@ -163,7 +169,9 @@ test-quest/
 │   ├── assets/
 │   ├── scripts/
 │   │   ├── core/
+│   │   │   └── screens.js
 │   │   ├── features/
+│   │   │   └── home/
 │   │   ├── shared/
 │   │   ├── app.js
 │   │   └── main.js
@@ -193,9 +201,8 @@ src/scripts/features/question-resolution/question-resolution.controller.js
 
 Essa decisão preservou o funcionamento da aplicação durante a migração estrutural.
 
-A modularização será feita gradualmente, separando responsabilidades como:
+A modularização já começou com o gerenciador de telas e o serviço da Tela Inicial. Ela continuará separando responsabilidades como:
 
-- Tela Inicial;
 - importação e validação;
 - resolução;
 - temporizador;
@@ -212,7 +219,13 @@ O CSS funcional atual permanece principalmente em:
 src/styles/pages/test-quest.css
 ```
 
-Os novos estilos serão distribuídos progressivamente entre componentes, layouts e páginas.
+A Tela Inicial já possui estilos próprios em:
+
+```text
+src/styles/pages/home.css
+```
+
+Os demais estilos serão distribuídos progressivamente entre componentes, layouts e páginas.
 
 ## Formato das questões
 

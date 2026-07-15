@@ -10,7 +10,8 @@ Este diretório reúne a documentação oficial do **Test Quest — Now I Know.*
 - identidade visual oficial definida;
 - quatro telas principais planejadas e aprovadas;
 - manuais estruturais concluídos;
-- próxima etapa: implementação gradual das novas telas na branch `dev`.
+- Tela Inicial oficial implementada na branch `dev`;
+- próxima etapa: Importação e Validação.
 
 ## Documentos principais
 
