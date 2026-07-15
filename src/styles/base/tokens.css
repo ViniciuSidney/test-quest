@@ -1,0 +1,21 @@
+:root {
+  --tq-primary: #6265f6;
+  --tq-primary-light: #8184ff;
+  --tq-primary-dark: #4548d8;
+
+  --tq-success: #22c55e;
+  --tq-warning: #f59e0b;
+  --tq-danger: #ef4444;
+  --tq-info: #38bdf8;
+
+  --tq-radius-sm: 10px;
+  --tq-radius-md: 14px;
+  --tq-radius-lg: 18px;
+
+  --tq-space-1: 4px;
+  --tq-space-2: 8px;
+  --tq-space-3: 12px;
+  --tq-space-4: 16px;
+  --tq-space-5: 24px;
+  --tq-space-6: 32px;
+}

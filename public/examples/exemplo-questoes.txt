@@ -1,0 +1,20 @@
+@questao
+assunto: Fluxo de dados: percepção → transporte → decisão → execução
+tipo: objetiva
+enunciado: Um sensor de fumaça detecta sinal de incêndio, envia os dados para a central, o sistema interpreta risco e aciona uma sirene. Qual alternativa classifica corretamente as etapas desse processo?
+a: Sensor detecta fumaça: execução; envio à central: decisão; interpretação do risco: percepção; sirene: transporte.
+b: Sensor detecta fumaça: percepção; envio à central: transporte; interpretação do risco: decisão; sirene: execução.
+c: Sensor detecta fumaça: transporte; envio à central: percepção; interpretação do risco: execução; sirene: decisão.
+d: Sensor detecta fumaça: decisão; envio à central: execução; interpretação do risco: transporte; sirene: percepção.
+e: Sensor detecta fumaça: aplicação; envio à central: atuador; interpretação do risco: sensor; sirene: rede.
+correta: B
+explicacao: [Pilar: aplicação prática com sensor e atuador]; A alternativa B está correta porque o sensor percebe, a rede transporta, o sistema decide e o atuador executa a ação. A, C e D trocam as funções das etapas; E mistura termos de camadas e componentes sem respeitar o fluxo percepção-transporte-decisão-execução.
++++
+
+@discursiva
+assunto: Fluxo de dados: percepção → transporte → decisão → execução
+tipo: discursiva curta
+enunciado: Explique, em 4 a 8 linhas, o fluxo percepção → transporte → decisão → execução usando um exemplo com sensor e atuador em uma casa inteligente.
+resposta_esperada: Em uma casa inteligente, a percepção ocorre quando um sensor coleta uma informação, como um sensor de presença detectando movimento. O transporte acontece quando esse dado é enviado pela rede para uma central ou aplicativo. A decisão ocorre quando o sistema interpreta a informação e verifica uma regra, como “se houver presença e estiver escuro, ligar a luz”. A execução acontece quando o atuador realiza a ação, nesse caso, acendendo a lâmpada.
+criterios_de_correcao: Explicar percepção como coleta por sensor; explicar transporte como envio dos dados; explicar decisão como interpretação ou regra; explicar execução como ação por atuador; apresentar exemplo coerente de casa inteligente.
++++

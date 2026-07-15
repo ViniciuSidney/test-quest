@@ -1,0 +1,10 @@
+{
+  "name": "Test Quest",
+  "short_name": "Test Quest",
+  "description": "Aplicação de estudo ativo para resolução de questões objetivas e discursivas.",
+  "lang": "pt-BR",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#0D0E22",
+  "theme_color": "#6265F6"
+}

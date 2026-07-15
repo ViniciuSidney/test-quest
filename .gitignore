@@ -1,0 +1,21 @@
+# Sistema operacional
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor
+.vscode/settings.json
+.idea/
+
+# Logs e temporários
+*.log
+*.tmp
+*.bak
+
+# Dependências e builds futuros
+node_modules/
+dist/
+build/
+
+# Cobertura de testes
+coverage/

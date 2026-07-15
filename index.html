@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Test Quest — Now I Know.</title>
+  <link rel="manifest" href="./public/manifest.json" />
+  <link rel="stylesheet" href="./src/styles/main.css" />
+</head>
+<body data-theme="light">
+  <main class="app">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">Aplicação de estudo ativo</p>
+        <h1>Test Quest</h1>
+        <p class="subtitle">Da dúvida à compreensão, uma questão de cada vez.</p>
+      </div>
+      <div class="top-actions">
+        <button id="btnTema" class="icon-button" type="button">🌙 Tema</button>
+        <div id="statusResumo" class="stats-pill">Nenhuma lista importada</div>
+      </div>
+    </header>
+
+    <section id="telaImportacao" class="screen active">
+      <div id="cardSessaoSalva" class="saved-session hidden">
+        <div>
+          <strong>Sessão salva encontrada</strong>
+          <p id="infoSessaoSalva">Você pode continuar de onde parou.</p>
+        </div>
+        <div class="actions compact">
+          <button id="btnContinuarSessao" class="primary" type="button">Continuar sessão</button>
+          <button id="btnApagarSessao" class="ghost danger-text" type="button">Apagar progresso</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <div>
+            <h2>1. Importar questões</h2>
+            <p>Cole o bloco de questões no formato informado ou carregue um arquivo <strong>.txt</strong>.</p>
+          </div>
+          <span id="indicadorSalvo" class="save-indicator">Pronto</span>
+        </div>
+
+        <div class="import-grid">
+          <div class="field">
+            <label for="arquivoQuestoes">Importar arquivo TXT</label>
+            <input id="arquivoQuestoes" type="file" accept=".txt,text/plain" />
+          </div>
+
+          <div class="field">
+            <label for="nomeLista">Nome da lista</label>
+            <input id="nomeLista" type="text" placeholder="Ex.: Lista 2 - Smart Home e IoT" />
+          </div>
+        </div>
+
+        <div class="options-line">
+          <label class="check-option">
+            <input id="opcaoEmbaralhar" type="checkbox" />
+            <span>Embaralhar questões</span>
+          </label>
+          <label class="check-option">
+            <input id="opcaoMostrarGabaritoFinal" type="checkbox" checked />
+            <span>Mostrar gabarito ao finalizar</span>
+          </label>
+        </div>
+
+        <div class="field">
+          <label for="entradaQuestoes">Conteúdo das questões</label>
+          <textarea id="entradaQuestoes" placeholder="Cole aqui suas questões usando @questao, @discursiva e +++"></textarea>
+        </div>
+
+        <div class="actions import-actions">
+          <button id="btnExemplo" class="secondary" type="button">Carregar exemplo</button>
+          <button id="btnValidar" class="secondary" type="button">Validar importação</button>
+          <button id="btnAbrirModelo" class="ghost" type="button">Ver modelo aceito</button>
+          <button id="btnLimpar" class="ghost" type="button">Limpar campos</button>
+          <button id="btnImportar" class="primary" type="button">Importar e começar</button>
+        </div>
+
+        <div id="mensagemImportacao" class="message" aria-live="polite"></div>
+      </div>
+
+    </section>
+
+    <section id="telaResolucao" class="screen">
+      <div class="quiz-shell">
+        <aside class="side-panel">
+          <div class="side-header">
+            <h2>Progresso</h2>
+            <span id="statusCronometro" class="mini-tag">Rodando</span>
+          </div>
+
+          <div class="progress-box">
+            <div class="progress-text">
+              <span id="contadorQuestao">Questão 1 de 1</span>
+              <span id="percentualProgresso">0%</span>
+            </div>
+            <div class="progress-track">
+              <div id="barraProgresso" class="progress-bar"></div>
+            </div>
+          </div>
+
+          <div class="timer-grid">
+            <div class="timer-card">
+              <span>Questão atual</span>
+              <strong id="tempoAtual">00:00</strong>
+            </div>
+            <div class="timer-card">
+              <span>Total usado</span>
+              <strong id="tempoTotal">00:00</strong>
+            </div>
+          </div>
+
+          <div class="side-actions">
+            <button id="btnPausarTempo" class="secondary full" type="button">Pausar tempo</button>
+            <button id="btnMarcarRevisao" class="secondary full" type="button">☆ Marcar para revisão</button>
+          </div>
+
+          <h3 class="small-title">Mapa</h3>
+          <div id="listaNavegacao" class="question-map"></div>
+
+          <div class="side-actions side-actions-bottom">
+            <button id="btnVoltarImportacao" class="ghost full" type="button">Voltar ao import</button>
+            <button id="btnLimparProgressoResolucao" class="ghost danger-text full" type="button">Limpar progresso salvo</button>
+          </div>
+        </aside>
+
+        <section class="notes-panel" aria-labelledby="tituloAnotacoes">
+          <div class="notes-header">
+            <div>
+              <h2 id="tituloAnotacoes">Anotações</h2>
+              <p>Use este espaço para registrar raciocínio, dúvidas e pontos de revisão.</p>
+            </div>
+            <span class="mini-tag">Questão atual</span>
+          </div>
+          <label for="anotacaoQuestao">Anotações desta questão</label>
+          <textarea id="anotacaoQuestao" placeholder="Anote dúvidas, raciocínio, palavras-chave ou observações."></textarea>
+        </section>
+
+        <div class="resolution-workspace">
+          <article class="question-card">
+            <div class="question-meta">
+              <span id="tipoQuestao" class="tag">Objetiva</span>
+              <span id="assuntoQuestao" class="tag muted">Assunto</span>
+              <span id="revisaoQuestao" class="tag review hidden">Marcada para revisão</span>
+            </div>
+
+            <h2 id="enunciadoQuestao">Enunciado</h2>
+            <div id="areaResposta"></div>
+          </article>
+
+          <nav class="navigation resolution-actions" aria-label="Ações da questão atual">
+            <button id="btnAnterior" class="secondary" type="button">Anterior</button>
+            <button id="btnProxima" class="primary" type="button">Próxima</button>
+            <button id="btnFinalizar" class="success" type="button">Finalizar</button>
+          </nav>
+        </div>
+      </div>
+    </section>
+
+    <section id="telaResultado" class="screen">
+      <div class="panel">
+        <div class="panel-header">
+          <div>
+            <h2>Resultado final</h2>
+            <p>Confira desempenho, tempo usado e materiais de revisão.</p>
+          </div>
+          <div class="actions compact">
+            <button id="btnBaixarTxt" class="primary" type="button">Baixar respostas</button>
+            <button id="btnBaixarAnotacoes" class="secondary" type="button">Baixar anotações</button>
+            <button id="btnExportarJson" class="ghost" type="button">Exportar sessão JSON</button>
+          </div>
+        </div>
+
+        <div id="resumoResultado" class="result-grid"></div>
+        <div id="resultadoPorAssunto" class="subject-summary"></div>
+
+        <div class="actions">
+          <button id="btnRevisar" class="secondary" type="button">Revisar respostas</button>
+          <button id="btnNovaLista" class="ghost" type="button">Importar nova lista</button>
+        </div>
+      </div>
+
+      <div id="detalhesResultado" class="review-list"></div>
+    </section>
+  </main>
+
+  <div id="modalModelo" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="tituloModalModelo">
+    <button class="modal-backdrop" type="button" data-fechar-modelo aria-label="Fechar modal"></button>
+
+    <div class="modal-card" role="document">
+      <div class="modal-header">
+        <div>
+          <p class="eyebrow">Guia de importação</p>
+          <h2 id="tituloModalModelo">Modelo aceito pela aplicação</h2>
+          <p>Use estes formatos para importar questões objetivas e discursivas.</p>
+        </div>
+        <button id="btnFecharModelo" class="icon-button modal-close" type="button" aria-label="Fechar modelo">✕</button>
+      </div>
+
+      <div class="modal-content">
+        <pre><code>@questao
+assunto: Nome do assunto
+tipo: objetiva
+enunciado: Texto do enunciado
+a: Alternativa A
+b: Alternativa B
+c: Alternativa C
+d: Alternativa D
+e: Alternativa E
+correta: B
+explicacao: Explicação da alternativa correta
++++
+
+@discursiva
+assunto: Nome do assunto
+tipo: discursiva curta
+enunciado: Texto da pergunta
+resposta_esperada: Resposta modelo
+criterios_de_correcao: Critérios de correção
++++</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="./src/scripts/main.js"></script>
+</body>
+</html>

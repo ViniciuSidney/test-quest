@@ -1,0 +1,1803 @@
+:root {
+  --bg: #f4f7fb;
+  --surface: #ffffff;
+  --surface-2: #eef3f9;
+  --surface-3: #f9fbff;
+  --text: #1d2733;
+  --muted: #657487;
+  --line: #dbe4ef;
+  --primary: #2457d6;
+  --primary-dark: #1d45aa;
+  --success: #208756;
+  --success-dark: #176842;
+  --danger: #b83b3b;
+  --warning: #a06a00;
+  --review: #8a55d7;
+  --shadow: 0 18px 45px rgba(31, 50, 82, 0.12);
+  --radius: 22px;
+}
+
+body[data-theme="dark"] {
+  --bg: #0f1522;
+  --surface: #161f2f;
+  --surface-2: #202b3f;
+  --surface-3: #111827;
+  --text: #edf4ff;
+  --muted: #a9b7ca;
+  --line: #2d3a51;
+  --primary: #7aa2ff;
+  --primary-dark: #5e89ed;
+  --success: #5fd096;
+  --success-dark: #84e4b1;
+  --danger: #ff8a8a;
+  --warning: #ffd37a;
+  --review: #b993ff;
+  --shadow: 0 18px 45px rgba(0, 0, 0, 0.28);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: Arial, Helvetica, sans-serif;
+  background: radial-gradient(circle at top left, rgba(36, 87, 214, 0.14), transparent 34rem), var(--bg);
+  color: var(--text);
+}
+
+button, input, textarea { font: inherit; }
+
+button {
+  border: 0;
+  cursor: pointer;
+  border-radius: 14px;
+  padding: 0.85rem 1.1rem;
+  font-weight: 800;
+  transition: transform 0.15s ease, opacity 0.15s ease, background 0.15s ease;
+}
+
+button:hover { transform: translateY(-1px); }
+button:disabled { cursor: not-allowed; opacity: 0.45; transform: none; }
+
+.primary { background: var(--primary); color: #fff; }
+.primary:hover { background: var(--primary-dark); }
+.secondary { background: var(--surface-2); color: var(--text); }
+.ghost { background: transparent; color: var(--muted); border: 1px solid var(--line); }
+.success { background: var(--success); color: #fff; }
+.success:hover { background: var(--success-dark); }
+.danger-text { color: var(--danger); }
+.full { width: 100%; }
+.hidden { display: none !important; }
+
+.app {
+  width: min(1240px, calc(100% - 2rem));
+  margin: 0 auto;
+  padding: 2rem 0;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: flex-start;
+  margin-bottom: 1.4rem;
+}
+
+.eyebrow {
+  margin: 0 0 0.35rem;
+  color: var(--primary);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.78rem;
+}
+
+h1, h2, h3, p { margin-top: 0; }
+h1 { margin-bottom: 0.35rem; font-size: clamp(2rem, 4vw, 3.2rem); }
+
+.subtitle {
+  color: var(--muted);
+  max-width: 760px;
+  line-height: 1.55;
+}
+
+.top-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.icon-button, .stats-pill, .save-indicator {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+  border-radius: 999px;
+  padding: 0.8rem 1rem;
+  color: var(--muted);
+  white-space: nowrap;
+  font-weight: 800;
+}
+
+.icon-button { color: var(--text); }
+
+.screen { display: none; }
+.screen.active { display: block; }
+
+.panel, .question-card, .side-panel, .help, .review-item, .saved-session {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.panel { padding: 1.4rem; }
+
+.saved-session {
+  padding: 1.1rem 1.25rem;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.saved-session p { color: var(--muted); margin: 0.2rem 0 0; }
+
+.panel-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.panel-header p { color: var(--muted); margin-bottom: 0; }
+
+.import-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.field {
+  display: grid;
+  gap: 0.45rem;
+  margin-bottom: 1rem;
+}
+
+label { font-weight: 800; }
+
+input, textarea {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 0.85rem 1rem;
+  background: var(--surface-3);
+  color: var(--text);
+  outline: none;
+}
+
+input:focus, textarea:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px rgba(36, 87, 214, 0.14);
+}
+
+textarea {
+  min-height: 330px;
+  resize: vertical;
+  line-height: 1.55;
+}
+
+.options-line {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  margin-bottom: 1rem;
+}
+
+.check-option {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.7rem 0.9rem;
+  background: var(--surface-2);
+  border-radius: 999px;
+  color: var(--muted);
+  font-weight: 800;
+}
+
+.check-option input { width: auto; }
+
+.actions, .navigation {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.actions.compact { gap: 0.5rem; }
+
+.message {
+  margin-top: 1rem;
+  padding: 0.9rem 1rem;
+  border-radius: 14px;
+  display: none;
+}
+
+.message.show { display: block; }
+.message.ok { background: rgba(32, 135, 86, 0.13); color: var(--success-dark); }
+.message.error { background: rgba(184, 59, 59, 0.13); color: var(--danger); }
+
+.help {
+  margin-top: 1rem;
+  padding: 1rem 1.2rem;
+}
+
+.help summary {
+  cursor: pointer;
+  font-weight: 900;
+}
+
+pre {
+  overflow: auto;
+  background: #0b1020;
+  color: #edf4ff;
+  padding: 1rem;
+  border-radius: 16px;
+  line-height: 1.45;
+}
+
+.quiz-shell {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 1rem;
+  align-items: start;
+}
+
+.side-panel, .question-card { padding: 1.3rem; }
+
+.side-panel {
+  position: sticky;
+  top: 1rem;
+}
+
+.side-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+}
+
+.mini-tag {
+  background: var(--surface-2);
+  color: var(--muted);
+  border-radius: 999px;
+  padding: 0.35rem 0.65rem;
+  font-weight: 900;
+  font-size: 0.78rem;
+}
+
+.progress-box { margin-bottom: 1rem; }
+
+.progress-text {
+  display: flex;
+  justify-content: space-between;
+  color: var(--muted);
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+}
+
+.progress-track {
+  width: 100%;
+  height: 12px;
+  border-radius: 999px;
+  background: var(--surface-2);
+  overflow: hidden;
+}
+
+.progress-bar {
+  width: 0%;
+  height: 100%;
+  background: var(--primary);
+  transition: width 0.2s ease;
+}
+
+.timer-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.65rem;
+  margin-bottom: 0.9rem;
+}
+
+.timer-card {
+  background: var(--surface-2);
+  border-radius: 18px;
+  padding: 0.85rem;
+}
+
+.timer-card span {
+  display: block;
+  color: var(--muted);
+  font-weight: 800;
+  font-size: 0.78rem;
+  margin-bottom: 0.25rem;
+}
+
+.timer-card strong { font-size: 1.35rem; }
+
+.side-actions {
+  display: grid;
+  gap: 0.55rem;
+  margin-bottom: 1rem;
+}
+
+.small-title {
+  font-size: 0.95rem;
+  color: var(--muted);
+  margin-bottom: 0.55rem;
+}
+
+.question-map {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.45rem;
+  margin-bottom: 1rem;
+}
+
+.map-btn {
+  padding: 0.65rem 0;
+  border-radius: 12px;
+  background: var(--surface-2);
+  color: var(--muted);
+  position: relative;
+}
+
+.map-btn.current { background: var(--primary); color: #fff; }
+.map-btn.answered:not(.current) { background: rgba(32, 135, 86, 0.17); color: var(--success-dark); }
+
+.map-btn.review:not(.current)::after {
+  content: "★";
+  position: absolute;
+  top: -0.35rem;
+  right: -0.1rem;
+  color: var(--review);
+  font-size: 0.8rem;
+}
+
+.question-meta {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  background: rgba(36, 87, 214, 0.13);
+  color: var(--primary);
+  font-weight: 900;
+  padding: 0.45rem 0.75rem;
+  font-size: 0.85rem;
+}
+
+.tag.muted { background: var(--surface-2); color: var(--muted); }
+.tag.review { background: rgba(138, 85, 215, 0.14); color: var(--review); }
+
+#enunciadoQuestao {
+  line-height: 1.35;
+  margin-bottom: 1rem;
+}
+
+.option-list {
+  display: grid;
+  gap: 0.75rem;
+  margin-bottom: 1.2rem;
+}
+
+.option {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: start;
+  gap: 0.75rem;
+  padding: 1rem;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--surface-3);
+  cursor: pointer;
+}
+
+.option:hover { border-color: var(--primary); }
+.option input { width: auto; margin-top: 0.15rem; }
+
+.discursive-answer {
+  min-height: 220px;
+  margin-bottom: 1.2rem;
+}
+
+.notes-panel {
+  display: grid;
+  gap: 0.5rem;
+  margin: 1rem 0;
+  padding: 1rem;
+  border-radius: 18px;
+  background: var(--surface-2);
+}
+
+.notes-panel textarea {
+  min-height: 130px;
+  background: var(--surface);
+}
+
+.result-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.8rem;
+  margin: 1rem 0;
+}
+
+.result-card {
+  background: var(--surface-2);
+  border-radius: 18px;
+  padding: 1rem;
+}
+
+.result-card strong {
+  display: block;
+  font-size: 1.75rem;
+  margin-bottom: 0.15rem;
+}
+
+.result-card span {
+  color: var(--muted);
+  font-weight: 800;
+}
+
+.subject-summary {
+  margin: 1rem 0;
+  display: grid;
+  gap: 0.6rem;
+}
+
+.subject-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 1rem;
+  padding: 0.85rem 1rem;
+  border-radius: 16px;
+  background: var(--surface-2);
+}
+
+.subject-row span {
+  color: var(--muted);
+  font-weight: 800;
+}
+
+.review-list {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.review-item { padding: 1.2rem; }
+.review-item h3 { margin: 0 0 0.6rem; }
+
+.review-meta {
+  color: var(--muted);
+  font-weight: 800;
+  margin-bottom: 0.8rem;
+}
+
+.answer-line {
+  padding: 0.85rem;
+  border-radius: 14px;
+  background: var(--surface-2);
+  margin: 0.55rem 0;
+  line-height: 1.5;
+}
+
+.answer-line.correct { background: rgba(32, 135, 86, 0.13); color: var(--success-dark); }
+.answer-line.wrong { background: rgba(184, 59, 59, 0.13); color: var(--danger); }
+.answer-line.warning { background: rgba(160, 106, 0, 0.13); color: var(--warning); }
+.answer-line.review { background: rgba(138, 85, 215, 0.13); color: var(--review); }
+
+@media (max-width: 980px) {
+  .topbar, .panel-header, .saved-session { flex-direction: column; }
+  .top-actions { justify-content: flex-start; }
+  .stats-pill, .icon-button { white-space: normal; }
+  .import-grid, .quiz-shell, .result-grid { grid-template-columns: 1fr; }
+  .side-panel { position: static; }
+  .question-map { grid-template-columns: repeat(8, 1fr); }
+}
+
+@media (max-width: 560px) {
+  .app {
+    width: min(100% - 1rem, 1240px);
+    padding: 1rem 0;
+  }
+
+  .panel, .question-card, .side-panel { padding: 1rem; }
+  .question-map { grid-template-columns: repeat(5, 1fr); }
+  .actions button, .navigation button { width: 100%; }
+  .timer-grid { grid-template-columns: 1fr; }
+}
+
+
+/* =========================================================
+   AJUSTE v2.1 — VISUALIZAÇÃO FIXA SEM ROLAGEM DA PÁGINA
+   ---------------------------------------------------------
+   Objetivo:
+   - impedir rolagem vertical/horizontal do body;
+   - manter cada tela dentro de 100dvh;
+   - liberar rolagem apenas em áreas internas específicas;
+   - evitar compressão e transbordamento de conteúdo.
+   ========================================================= */
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  min-height: 100dvh;
+}
+
+* {
+  min-width: 0;
+}
+
+.app {
+  width: min(1440px, calc(100vw - 1.5rem));
+  height: 100dvh;
+  max-height: 100dvh;
+  padding: clamp(0.5rem, 1.2vw, 1rem) 0;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.5rem, 1vw, 0.85rem);
+  overflow: hidden;
+}
+
+.topbar {
+  flex: 0 0 auto;
+  align-items: center;
+  margin-bottom: 0;
+}
+
+.eyebrow {
+  margin-bottom: 0.2rem;
+  font-size: clamp(0.62rem, 0.8vw, 0.78rem);
+}
+
+h1 {
+  font-size: clamp(1.35rem, 2.35vw, 2.4rem);
+  margin-bottom: 0.15rem;
+}
+
+.subtitle {
+  max-width: 700px;
+  margin-bottom: 0;
+  font-size: clamp(0.82rem, 0.95vw, 0.98rem);
+  line-height: 1.35;
+}
+
+.icon-button,
+.stats-pill,
+.save-indicator {
+  padding: 0.58rem 0.85rem;
+  box-shadow: none;
+}
+.topbar > div:first-child {
+  min-width: 0;
+}
+
+.stats-pill {
+  max-width: min(42vw, 520px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+
+button {
+  padding: clamp(0.55rem, 0.8vw, 0.8rem) clamp(0.72rem, 1vw, 1rem);
+}
+
+.screen.active {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* ---------- Tela de importação ---------- */
+
+#telaImportacao.active {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: 0.75rem;
+}
+
+#telaImportacao .saved-session {
+  margin-bottom: 0;
+  padding: 0.85rem 1rem;
+}
+
+#telaImportacao .panel {
+  min-height: 0;
+  overflow: hidden;
+  display: grid;
+  grid-template-rows: auto auto auto minmax(0, 1fr) auto auto;
+  padding: clamp(0.85rem, 1.2vw, 1.15rem);
+}
+
+#telaImportacao .panel-header,
+#telaImportacao .field,
+#telaImportacao .options-line,
+#telaImportacao .actions {
+  margin-bottom: 0.65rem;
+}
+
+#telaImportacao .field:has(#entradaQuestoes) {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+#entradaQuestoes {
+  flex: 1 1 auto;
+  height: 100%;
+  min-height: 0;
+  max-height: 100%;
+  resize: none;
+  overflow: auto;
+}
+
+#telaImportacao .message.show {
+  margin-top: 0;
+  max-height: 88px;
+  overflow: auto;
+}
+
+#telaImportacao .help {
+  margin-top: 0;
+  max-height: clamp(44px, 10vh, 92px);
+  overflow: auto;
+  padding: 0.8rem 1rem;
+}
+
+#telaImportacao .help[open] {
+  max-height: min(24vh, 210px);
+}
+
+#telaImportacao pre {
+  max-height: 150px;
+  margin: 0.65rem 0 0;
+}
+
+/* ---------- Tela de resolução ---------- */
+
+#telaResolucao.active {
+  display: block;
+}
+
+.quiz-shell {
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: clamp(260px, 24vw, 330px) minmax(0, 1fr);
+  gap: 0.75rem;
+  align-items: stretch;
+}
+
+.side-panel,
+.question-card {
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  padding: clamp(0.85rem, 1.1vw, 1.15rem);
+}
+
+.side-panel {
+  position: static;
+  display: grid;
+  grid-template-rows: auto auto auto auto auto minmax(0, 1fr) auto;
+}
+
+.side-header h2 {
+  margin-bottom: 0;
+  font-size: clamp(1.05rem, 1.4vw, 1.35rem);
+}
+
+.progress-box,
+.timer-grid,
+.side-actions,
+.small-title,
+.question-map {
+  margin-bottom: 0.7rem;
+}
+
+.timer-card {
+  padding: 0.65rem;
+}
+
+.timer-card strong {
+  font-size: clamp(1rem, 1.6vw, 1.25rem);
+}
+
+.question-map {
+  min-height: 0;
+  overflow: auto;
+  align-content: start;
+  padding-right: 0.2rem;
+  grid-auto-rows: minmax(36px, auto);
+}
+
+.map-btn {
+  min-width: 0;
+  padding: 0.5rem 0;
+}
+
+.question-card {
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr) auto auto;
+}
+
+.question-meta {
+  margin-bottom: 0.6rem;
+}
+
+#enunciadoQuestao {
+  max-height: clamp(72px, 14vh, 155px);
+  overflow: auto;
+  padding-right: 0.35rem;
+  margin-bottom: 0.7rem;
+  font-size: clamp(1.05rem, 1.6vw, 1.45rem);
+}
+
+#areaResposta {
+  min-height: 0;
+  overflow: auto;
+  padding-right: 0.35rem;
+}
+
+#areaResposta .field {
+  height: 100%;
+  min-height: 0;
+  margin-bottom: 0;
+}
+
+.option-list {
+  gap: 0.55rem;
+  margin-bottom: 0;
+}
+
+.option {
+  padding: 0.72rem 0.85rem;
+  border-radius: 14px;
+  line-height: 1.35;
+}
+
+.discursive-answer {
+  height: 100%;
+  min-height: 0;
+  max-height: none;
+  margin-bottom: 0;
+  resize: none;
+  overflow: auto;
+}
+
+.notes-panel {
+  margin: 0.7rem 0;
+  padding: 0.75rem;
+  min-height: 0;
+}
+
+.notes-panel textarea {
+  height: clamp(72px, 13vh, 140px);
+  min-height: 0;
+  resize: none;
+  overflow: auto;
+}
+
+.navigation {
+  flex: 0 0 auto;
+}
+
+/* ---------- Tela de resultado ---------- */
+
+#telaResultado.active {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: 0.75rem;
+}
+
+#telaResultado > .panel {
+  min-height: 0;
+  overflow: hidden;
+  padding: clamp(0.85rem, 1.2vw, 1.15rem);
+}
+
+#telaResultado .panel-header {
+  margin-bottom: 0.7rem;
+}
+
+#telaResultado .result-grid {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0.6rem;
+  margin: 0.7rem 0;
+}
+
+.result-card {
+  padding: 0.75rem;
+  min-width: 0;
+}
+
+.result-card strong {
+  font-size: clamp(1.1rem, 1.8vw, 1.55rem);
+}
+
+.result-card span {
+  font-size: 0.78rem;
+}
+
+.subject-summary {
+  max-height: min(18vh, 150px);
+  overflow: auto;
+  margin: 0.7rem 0;
+}
+
+.subject-row {
+  padding: 0.7rem 0.85rem;
+}
+
+.review-list {
+  min-height: 0;
+  overflow: auto;
+  margin-top: 0;
+  padding-right: 0.35rem;
+}
+
+.review-item {
+  padding: 0.9rem;
+}
+
+.answer-line,
+.review-item h3,
+.subject-row,
+.option,
+#enunciadoQuestao {
+  overflow-wrap: anywhere;
+}
+
+/* Scroll interno mais estável: evita “pulos” de largura ao aparecer barra. */
+.app,
+.screen,
+.panel,
+.side-panel,
+.question-card,
+.review-list,
+#areaResposta,
+#enunciadoQuestao,
+#entradaQuestoes,
+#anotacaoQuestao,
+.question-map,
+.subject-summary {
+  scrollbar-gutter: stable;
+}
+
+/* ---------- Responsividade mantendo a tela fixa ---------- */
+
+@media (max-width: 980px) {
+  .app {
+    width: calc(100vw - 0.75rem);
+    padding: 0.5rem 0;
+  }
+
+  .topbar {
+    gap: 0.55rem;
+  }
+
+  .quiz-shell {
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(150px, 32%) minmax(0, 1fr);
+  }
+
+  .side-panel {
+    grid-template-rows: auto auto auto minmax(0, 1fr) auto;
+  }
+
+  .side-panel .side-actions:first-of-type {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .question-map {
+    grid-template-columns: repeat(auto-fill, minmax(38px, 1fr));
+  }
+
+  #enunciadoQuestao {
+    max-height: 11vh;
+  }
+
+  .notes-panel textarea {
+    height: clamp(62px, 10vh, 95px);
+  }
+
+  #telaResultado .result-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .app {
+    width: calc(100vw - 0.5rem);
+    padding: 0.35rem 0;
+    gap: 0.45rem;
+  }
+
+  .topbar {
+    align-items: stretch;
+  }
+
+  .subtitle {
+    display: none;
+  }
+
+  .top-actions {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    width: 100%;
+  }
+
+  .icon-button,
+  .stats-pill,
+  .save-indicator {
+    padding: 0.5rem 0.65rem;
+    font-size: 0.82rem;
+  }
+
+  h1 {
+    font-size: 1.35rem;
+  }
+
+  .eyebrow {
+    display: none;
+  }
+
+  .quiz-shell {
+    grid-template-rows: minmax(130px, 28%) minmax(0, 1fr);
+  }
+
+  .side-panel,
+  .question-card,
+  .panel {
+    padding: 0.7rem;
+  }
+
+  .timer-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.45rem;
+  }
+
+  .timer-card span {
+    font-size: 0.68rem;
+  }
+
+  .side-actions {
+    gap: 0.4rem;
+    margin-bottom: 0.45rem;
+  }
+
+  .side-actions button,
+  .navigation button,
+  .actions button {
+    width: 100%;
+    padding: 0.5rem 0.6rem;
+  }
+
+  #telaResultado .result-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  #telaResultado .panel-header .actions.compact {
+    width: 100%;
+  }
+}
+
+/* =========================================================
+   AJUSTE v2.2 — IMPORTAÇÃO E TEMPORIZADOR
+   ---------------------------------------------------------
+   - estiliza o input de arquivo;
+   - aumenta a área útil do textarea de importação;
+   - mantém o layout fixo sem criar rolagem no body.
+   ========================================================= */
+
+/* Botão nativo de arquivo com visual consistente com a aplicação */
+input[type="file"] {
+  min-height: 46px;
+  padding: 0.45rem 0.65rem;
+  cursor: pointer;
+  color: var(--muted);
+  background: var(--surface-3);
+}
+
+input[type="file"]::file-selector-button {
+  border: 0;
+  border-radius: 11px;
+  margin-right: 0.75rem;
+  padding: 0.62rem 0.9rem;
+  background: var(--surface-2);
+  color: var(--text);
+  font-weight: 900;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, transform 0.15s ease;
+}
+
+input[type="file"]::file-selector-button:hover {
+  background: var(--primary);
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+/* Compatibilidade extra para navegadores WebKit mais antigos */
+input[type="file"]::-webkit-file-upload-button {
+  border: 0;
+  border-radius: 11px;
+  margin-right: 0.75rem;
+  padding: 0.62rem 0.9rem;
+  background: var(--surface-2);
+  color: var(--text);
+  font-weight: 900;
+  cursor: pointer;
+}
+
+/* Dá mais respiro ao campo de importação sem quebrar a tela fixa */
+#telaImportacao .field:has(#entradaQuestoes) {
+  min-height: clamp(150px, 32dvh, 340px);
+}
+
+#entradaQuestoes {
+  min-height: clamp(150px, 32dvh, 340px);
+  line-height: 1.5;
+}
+
+/* O bloco de ajuda fechado fica discreto para sobrar mais altura ao import */
+#telaImportacao .help:not([open]) {
+  max-height: 48px;
+  padding-block: 0.72rem;
+}
+
+/* Em telas mais baixas, preserva a navegação e ainda mantém a textarea usável */
+@media (max-height: 720px) {
+  #telaImportacao .field:has(#entradaQuestoes),
+  #entradaQuestoes {
+    min-height: clamp(120px, 25dvh, 230px);
+  }
+
+  #telaImportacao .panel {
+    padding-block: 0.75rem;
+  }
+
+  #telaImportacao .panel-header,
+  #telaImportacao .field,
+  #telaImportacao .options-line,
+  #telaImportacao .actions {
+    margin-bottom: 0.5rem;
+  }
+}
+
+@media (max-height: 620px) {
+  #telaImportacao .field:has(#entradaQuestoes),
+  #entradaQuestoes {
+    min-height: 105px;
+  }
+
+  #telaImportacao .help:not([open]) {
+    max-height: 42px;
+    padding-block: 0.55rem;
+  }
+}
+
+
+
+/* =========================================================
+   AJUSTE v2.3 — SESSÃO SALVA E MODAL DO MODELO
+   ---------------------------------------------------------
+   - remove o painel "Modelo aceito" do fluxo da tela;
+   - abre o modelo em modal;
+   - impede que a sessão salva force sobreposição dos botões;
+   - mantém a textarea flexível dentro da visualização fixa.
+   ========================================================= */
+
+#telaImportacao.active {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr);
+  gap: 0.75rem;
+}
+
+#telaImportacao.active:has(.saved-session:not(.hidden)) {
+  grid-template-rows: auto minmax(0, 1fr);
+}
+
+#telaImportacao .saved-session {
+  min-height: 0;
+  padding: clamp(0.65rem, 1vw, 0.9rem) clamp(0.8rem, 1.2vw, 1.1rem);
+}
+
+#telaImportacao .saved-session .actions.compact {
+  flex: 0 0 auto;
+}
+
+#telaImportacao .panel {
+  height: 100%;
+  min-height: 0;
+  display: grid;
+  grid-template-rows: auto auto auto minmax(0, 1fr) auto auto;
+  overflow: hidden;
+}
+
+#telaImportacao .field:has(#entradaQuestoes) {
+  min-height: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+#entradaQuestoes {
+  height: 100%;
+  min-height: 0;
+  max-height: none;
+  resize: none;
+  overflow: auto;
+}
+
+.import-actions {
+  align-items: center;
+  flex: 0 0 auto;
+}
+
+#telaImportacao .help {
+  display: none;
+}
+
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  padding: clamp(0.75rem, 2vw, 1.5rem);
+}
+
+.modal-backdrop {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 0;
+  padding: 0;
+  background: rgba(4, 8, 18, 0.68);
+  cursor: default;
+}
+
+.modal-backdrop:hover {
+  transform: none;
+}
+
+.modal-card {
+  position: relative;
+  z-index: 1;
+  width: min(860px, 100%);
+  max-height: min(82dvh, 720px);
+  min-height: 0;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  overflow: hidden;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: clamp(1rem, 1.6vw, 1.25rem);
+  border-bottom: 1px solid var(--line);
+}
+
+.modal-header h2 {
+  margin-bottom: 0.25rem;
+}
+
+.modal-header p:not(.eyebrow) {
+  margin-bottom: 0;
+  color: var(--muted);
+}
+
+.modal-close {
+  flex: 0 0 auto;
+  min-width: 44px;
+  text-align: center;
+}
+
+.modal-content {
+  min-height: 0;
+  overflow: auto;
+  padding: clamp(1rem, 1.6vw, 1.25rem);
+}
+
+.modal-content pre {
+  margin: 0;
+  max-height: none;
+  overflow: auto;
+}
+
+body.modal-open {
+  overflow: hidden;
+}
+
+@media (max-height: 720px) {
+  #telaImportacao .saved-session {
+    padding-block: 0.55rem;
+  }
+
+  #telaImportacao .saved-session p {
+    display: none;
+  }
+
+  #telaImportacao .panel-header,
+  #telaImportacao .field,
+  #telaImportacao .options-line,
+  #telaImportacao .actions {
+    margin-bottom: 0.45rem;
+  }
+}
+
+@media (max-width: 720px) {
+  #telaImportacao .saved-session {
+    align-items: stretch;
+  }
+
+  #telaImportacao .saved-session .actions.compact {
+    width: 100%;
+  }
+
+  .modal-header {
+    flex-direction: column;
+  }
+
+  .modal-close {
+    width: 100%;
+  }
+}
+
+/* =========================================================
+   AJUSTE v2.4 — NOVA TELA DE RESOLUÇÃO
+   ---------------------------------------------------------
+   Estrutura visual:
+   - coluna esquerda superior: painel lateral/progresso;
+   - coluna esquerda inferior: anotações da questão;
+   - coluna direita superior: questão/resolução;
+   - coluna direita inferior: ações principais.
+   ========================================================= */
+
+#telaResolucao.active {
+  display: block;
+  min-height: 0;
+  overflow: hidden;
+}
+
+#telaResolucao .quiz-shell {
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: clamp(285px, 25vw, 380px) minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr) clamp(150px, 24dvh, 230px);
+  grid-template-areas:
+    "side workspace"
+    "notes workspace";
+  gap: clamp(0.65rem, 1vw, 0.9rem);
+  align-items: stretch;
+}
+
+#telaResolucao .side-panel {
+  grid-area: side;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  display: grid;
+  grid-template-rows: auto auto auto auto auto minmax(0, 1fr) auto;
+}
+
+#telaResolucao .side-actions-bottom {
+  margin-bottom: 0;
+}
+
+#telaResolucao .notes-panel {
+  grid-area: notes;
+  height: 100%;
+  min-height: 0;
+  margin: 0;
+  overflow: hidden;
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr);
+  gap: 0.55rem;
+  padding: clamp(0.85rem, 1.1vw, 1.1rem);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+#telaResolucao .notes-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  min-height: 0;
+}
+
+#telaResolucao .notes-header h2 {
+  margin-bottom: 0.15rem;
+  font-size: clamp(1rem, 1.35vw, 1.25rem);
+}
+
+#telaResolucao .notes-header p {
+  margin: 0;
+  color: var(--muted);
+  font-size: clamp(0.74rem, 0.85vw, 0.86rem);
+  line-height: 1.25;
+}
+
+#telaResolucao .notes-panel > label {
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+#telaResolucao .notes-panel textarea {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  max-height: none;
+  resize: none;
+  overflow: auto;
+  background: var(--surface-3);
+}
+
+#telaResolucao .resolution-workspace {
+  grid-area: workspace;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: clamp(0.65rem, 1vw, 0.9rem);
+}
+
+#telaResolucao .question-card {
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr);
+}
+
+#telaResolucao #enunciadoQuestao {
+  max-height: clamp(88px, 15dvh, 170px);
+}
+
+#telaResolucao #areaResposta {
+  min-height: 0;
+  overflow: auto;
+  padding-right: 0.35rem;
+}
+
+#telaResolucao .resolution-actions {
+  min-height: clamp(62px, 10dvh, 88px);
+  margin: 0;
+  padding: clamp(0.75rem, 1vw, 1rem);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+#telaResolucao .resolution-actions button {
+  min-width: clamp(110px, 11vw, 160px);
+}
+
+#telaResolucao .discursive-answer {
+  height: 100%;
+  min-height: 0;
+  resize: none;
+}
+
+/* Garante que barras internas não alterem a largura dos blocos ao aparecer. */
+#telaResolucao .resolution-workspace,
+#telaResolucao .notes-panel,
+#telaResolucao .resolution-actions {
+  scrollbar-gutter: stable;
+}
+
+@media (max-width: 980px) {
+  #telaResolucao .quiz-shell {
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(135px, 24dvh) minmax(0, 1fr) clamp(110px, 18dvh, 165px);
+    grid-template-areas:
+      "side"
+      "workspace"
+      "notes";
+  }
+
+  #telaResolucao .side-panel {
+    grid-template-rows: auto auto auto auto minmax(0, 1fr) auto;
+  }
+
+  #telaResolucao .side-panel .side-actions:first-of-type {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  #telaResolucao .small-title {
+    display: none;
+  }
+
+  #telaResolucao .question-map {
+    grid-template-columns: repeat(auto-fill, minmax(38px, 1fr));
+  }
+
+  #telaResolucao .resolution-actions {
+    min-height: 58px;
+  }
+
+  #telaResolucao .notes-header p {
+    display: none;
+  }
+}
+
+@media (max-width: 560px) {
+  #telaResolucao .quiz-shell {
+    gap: 0.45rem;
+    grid-template-rows: minmax(118px, 23dvh) minmax(0, 1fr) clamp(95px, 17dvh, 135px);
+  }
+
+  #telaResolucao .side-panel,
+  #telaResolucao .question-card,
+  #telaResolucao .notes-panel,
+  #telaResolucao .resolution-actions {
+    padding: 0.7rem;
+  }
+
+  #telaResolucao .notes-header .mini-tag {
+    display: none;
+  }
+
+  #telaResolucao #enunciadoQuestao {
+    max-height: 10dvh;
+  }
+
+  #telaResolucao .resolution-actions {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.45rem;
+    min-height: 0;
+  }
+
+  #telaResolucao .resolution-actions button {
+    min-width: 0;
+    width: 100%;
+    padding-inline: 0.45rem;
+  }
+}
+
+@media (max-width: 380px) {
+  #telaResolucao .resolution-actions {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+
+/* =========================================================
+   AJUSTE v2.5 — PROPORÇÃO DA RESOLUÇÃO E DISCURSIVAS
+   ---------------------------------------------------------
+   Objetivo:
+   - dar mais altura útil ao painel de anotações;
+   - compactar o painel lateral sem perder clareza;
+   - reduzir a altura da barra de ações;
+   - corrigir a disposição da textarea das questões discursivas;
+   - manter a visualização fixa sem rolagem geral.
+   ========================================================= */
+
+/* ---------- Proporção geral da tela de resolução ---------- */
+
+#telaResolucao .quiz-shell {
+  grid-template-columns: clamp(270px, 23vw, 360px) minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr) clamp(205px, 30dvh, 300px);
+  gap: clamp(0.5rem, 0.85vw, 0.75rem);
+}
+
+/* ---------- Painel lateral mais compacto ---------- */
+
+#telaResolucao .side-panel {
+  padding: clamp(0.65rem, 0.85vw, 0.9rem);
+  grid-template-rows: auto auto auto auto auto minmax(0, 1fr) auto;
+}
+
+#telaResolucao .side-header {
+  gap: 0.55rem;
+}
+
+#telaResolucao .side-header h2 {
+  font-size: clamp(1rem, 1.2vw, 1.18rem);
+}
+
+#telaResolucao .mini-tag {
+  padding: 0.28rem 0.55rem;
+  font-size: 0.72rem;
+}
+
+#telaResolucao .progress-box,
+#telaResolucao .timer-grid,
+#telaResolucao .side-actions,
+#telaResolucao .small-title,
+#telaResolucao .question-map {
+  margin-bottom: 0.48rem;
+}
+
+#telaResolucao .progress-text {
+  margin-bottom: 0.35rem;
+  font-size: 0.82rem;
+}
+
+#telaResolucao .progress-track {
+  height: 9px;
+}
+
+#telaResolucao .timer-grid {
+  gap: 0.45rem;
+}
+
+#telaResolucao .timer-card {
+  padding: 0.52rem 0.62rem;
+  border-radius: 14px;
+}
+
+#telaResolucao .timer-card span {
+  font-size: 0.68rem;
+  margin-bottom: 0.08rem;
+}
+
+#telaResolucao .timer-card strong {
+  font-size: clamp(0.95rem, 1.25vw, 1.12rem);
+}
+
+#telaResolucao .side-actions {
+  gap: 0.45rem;
+}
+
+#telaResolucao .side-actions button {
+  padding: 0.52rem 0.7rem;
+  border-radius: 12px;
+}
+
+#telaResolucao .small-title {
+  font-size: 0.82rem;
+}
+
+#telaResolucao .question-map {
+  gap: 0.38rem;
+  grid-auto-rows: minmax(32px, auto);
+}
+
+#telaResolucao .map-btn {
+  padding: 0.38rem 0;
+  border-radius: 10px;
+}
+
+/* ---------- Anotações com mais espaço útil ---------- */
+
+#telaResolucao .notes-panel {
+  padding: clamp(0.75rem, 0.95vw, 0.95rem);
+  grid-template-rows: auto auto minmax(0, 1fr);
+  gap: 0.42rem;
+}
+
+#telaResolucao .notes-header {
+  align-items: flex-start;
+}
+
+#telaResolucao .notes-header h2 {
+  font-size: clamp(1.05rem, 1.25vw, 1.25rem);
+  margin-bottom: 0.1rem;
+}
+
+#telaResolucao .notes-header p {
+  max-height: 2.45em;
+  overflow: hidden;
+  font-size: 0.76rem;
+  line-height: 1.22;
+}
+
+#telaResolucao .notes-panel > label {
+  font-size: 0.78rem;
+  line-height: 1.15;
+}
+
+#telaResolucao .notes-panel textarea {
+  padding: 0.72rem 0.85rem;
+  line-height: 1.4;
+}
+
+/* ---------- Painel principal de resolução ---------- */
+
+#telaResolucao .resolution-workspace {
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: clamp(0.5rem, 0.8vw, 0.7rem);
+}
+
+#telaResolucao .question-card {
+  padding: clamp(0.75rem, 0.95vw, 1rem);
+  grid-template-rows: auto auto minmax(0, 1fr);
+}
+
+#telaResolucao .question-meta {
+  margin-bottom: 0.5rem;
+}
+
+#telaResolucao .tag {
+  padding: 0.36rem 0.65rem;
+  font-size: 0.78rem;
+}
+
+#telaResolucao #enunciadoQuestao {
+  max-height: clamp(64px, 12dvh, 132px);
+  margin-bottom: 0.55rem;
+  font-size: clamp(1rem, 1.35vw, 1.32rem);
+  line-height: 1.28;
+}
+
+/* ---------- Correção específica da resposta discursiva ---------- */
+
+#telaResolucao #areaResposta {
+  min-height: 0;
+  overflow: hidden;
+  display: grid;
+}
+
+#telaResolucao #areaResposta .field:has(.discursive-answer) {
+  height: 100%;
+  min-height: 0;
+  margin: 0;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: 0.45rem;
+}
+
+#telaResolucao #areaResposta .field:has(.discursive-answer) > span {
+  line-height: 1.2;
+}
+
+#telaResolucao #areaResposta .discursive-answer {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  max-height: 100%;
+  margin: 0;
+  resize: none;
+  align-self: stretch;
+  overflow: auto;
+  padding: 0.9rem 1rem;
+  line-height: 1.45;
+}
+
+/* Mantém alternativas objetivas com rolagem interna quando necessário */
+#telaResolucao #areaResposta .option-list {
+  min-height: 0;
+  overflow: auto;
+  padding-right: 0.25rem;
+}
+
+/* ---------- Barra de ações mais enxuta ---------- */
+
+#telaResolucao .resolution-actions {
+  min-height: clamp(54px, 8dvh, 72px);
+  padding: clamp(0.52rem, 0.8vw, 0.72rem);
+  gap: 0.6rem;
+}
+
+#telaResolucao .resolution-actions button {
+  min-width: clamp(100px, 10vw, 150px);
+  padding: 0.58rem 0.85rem;
+  border-radius: 13px;
+}
+
+/* ---------- Ajustes para telas com pouca altura ---------- */
+
+@media (max-height: 780px) {
+  #telaResolucao .quiz-shell {
+    grid-template-rows: minmax(0, 1fr) clamp(190px, 29dvh, 260px);
+  }
+
+  #telaResolucao .notes-header p {
+    display: none;
+  }
+
+  #telaResolucao .notes-panel {
+    gap: 0.35rem;
+  }
+
+  #telaResolucao .side-actions button {
+    padding-block: 0.48rem;
+  }
+}
+
+@media (max-height: 680px) {
+  #telaResolucao .quiz-shell {
+    grid-template-rows: minmax(0, 1fr) clamp(165px, 27dvh, 220px);
+  }
+
+  #telaResolucao .timer-card {
+    padding: 0.42rem 0.55rem;
+  }
+
+  #telaResolucao .side-actions {
+    gap: 0.35rem;
+  }
+
+  #telaResolucao .side-actions button {
+    padding-block: 0.42rem;
+  }
+
+  #telaResolucao .question-map {
+    grid-auto-rows: minmax(28px, auto);
+  }
+
+  #telaResolucao .map-btn {
+    padding-block: 0.3rem;
+  }
+
+  #telaResolucao #enunciadoQuestao {
+    max-height: 10dvh;
+  }
+}
+
+/* ---------- Responsividade refinada ---------- */
+
+@media (max-width: 980px) {
+  #telaResolucao .quiz-shell {
+    grid-template-rows: minmax(120px, 22dvh) minmax(0, 1fr) clamp(145px, 22dvh, 215px);
+  }
+
+  #telaResolucao .notes-header p {
+    display: none;
+  }
+}
+
+@media (max-width: 560px) {
+  #telaResolucao .quiz-shell {
+    grid-template-rows: minmax(105px, 21dvh) minmax(0, 1fr) clamp(130px, 21dvh, 185px);
+  }
+
+  #telaResolucao .question-card {
+    padding: 0.65rem;
+  }
+
+  #telaResolucao #areaResposta .discursive-answer {
+    padding: 0.75rem;
+  }
+
+  #telaResolucao .resolution-actions {
+    padding: 0.55rem;
+  }
+}
