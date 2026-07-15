@@ -33,6 +33,8 @@ Todas as mudanças importantes do Test Quest serão registradas neste arquivo.
 
 ### Corrigido
 
+- barra de ações permanece contida no painel em larguras menores que `820px`;
+- cabeçalho fixo da Importação recebe fundo, borda e sombra próprios durante a rolagem;
 - envoltório visual desigual do seletor de arquivo;
 - largura insuficiente dos cards de contadores;
 - confirmações nativas substituídas por modal customizado e acessível.

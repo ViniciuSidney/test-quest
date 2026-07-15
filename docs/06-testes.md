@@ -82,6 +82,8 @@ Os testes manuais da tabela continuam necessários no computador do usuário ant
 | T20 | Botão Começar válido | Cria a sessão | Pendente |
 | T21 | Limpar | Restaura o estado inicial | Pendente |
 | T22 | Modal do modelo | Abre e fecha por todos os meios | Pendente |
+| T22.1 | Ações abaixo de 820px | Todos os botões permanecem dentro do painel | Pendente |
+| T22.2 | Cabeçalho fixo abaixo de 820px | Permanece destacado e legível durante a rolagem | Pendente |
 
 # Resolução comum
 
