@@ -6,30 +6,41 @@ Todas as mudanças importantes do Test Quest serão registradas neste arquivo.
 
 ### Adicionado
 
-- estrutura baseada no Modelo de Projeto;
-- entrada JavaScript por `main.js` e `app.js`;
-- feature `question-resolution`;
-- arquivos de documentação do projeto;
-- manifesto da aplicação;
-- pasta pública com lista de exemplo;
-- tokens iniciais da identidade visual;
-- roteiro de testes pós-migração;
-- guia de migração estrutural.
+- repositório Git local;
+- repositório remoto no GitHub;
+- branches `main` e `dev`;
+- manual separado da Tela Inicial;
+- manual separado da Importação e Validação;
+- manual da Resolução objetiva e discursiva;
+- manual do Resultado Final;
+- layouts oficiais das quatro telas;
+- fluxo oficial com Tela Inicial;
+- planejamento das marcações auxiliares;
+- planejamento dos filtros e cards expansíveis;
+- índice da documentação;
+- plano de implementação das telas.
 
 ### Alterado
 
-- arquivos principais movidos para `src`;
-- `index.html` atualizado para os novos caminhos;
-- nome apresentado na interface atualizado para Test Quest;
-- CSS funcional movido para `src/styles/pages/test-quest.css`;
-- lógica funcional movida para uma feature encapsulada.
+- documentação atualizada para quatro telas;
+- requisitos separados por estado;
+- arquitetura preparada para histórico e migração;
+- roadmap reorganizado;
+- roteiro de testes ampliado;
+- identidade visual detalhada;
+- sessão salva movida conceitualmente para a Tela Inicial;
+- próxima etapa definida como implementação gradual na `dev`.
 
 ### Preservado
 
-- chaves existentes do `localStorage`;
-- IDs usados pelo JavaScript;
-- fluxo de importação, resolução e resultado;
-- comportamento visual da versão v2.5.
+- base funcional `v0.2.5-dev`;
+- chaves legadas do `localStorage`;
+- respostas, anotações, tempos e revisão;
+- exportações TXT e JSON;
+- funcionamento estático;
+- histórico anterior do changelog.
+
+---
 
 ## [v0.2.5-dev] — 2026-07-13
 

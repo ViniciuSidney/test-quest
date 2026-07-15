@@ -2,11 +2,56 @@
 
 > **Now I Know.**
 
-Aplicação estática de estudo ativo para resolução de questões objetivas e discursivas, com temporizador por questão, anotações, salvamento local e análise de desempenho.
+Aplicação web estática de estudo ativo para resolução de questões objetivas e discursivas, com temporizador por questão, anotações, salvamento local, revisão e análise de desempenho.
 
-## Objetivo
+## Sobre o projeto
 
-O Test Quest acompanha o estudante no percurso entre dúvida, tentativa, correção e compreensão. A proposta não é apenas registrar acertos, mas ajudar a entender por que uma resposta faz sentido.
+O **Test Quest** acompanha o estudante no percurso entre dúvida, tentativa, correção e compreensão.
+
+A proposta não é apenas registrar acertos, mas ajudar o usuário a:
+
+- resolver questões com organização;
+- acompanhar o tempo utilizado;
+- registrar anotações;
+- identificar assuntos que precisam de revisão;
+- compreender por que uma resposta está correta;
+- preservar e exportar os dados da sessão.
+
+## Mensagem central
+
+> **Resolver, compreender e avançar.**
+
+## Estado atual
+
+**Base funcional:** `v0.2.5-dev`  
+**Fase atual:** preparação da implementação das quatro telas oficiais.
+
+### Concluído
+
+- base funcional com resolução objetiva e discursiva;
+- persistência local com `localStorage`;
+- temporizador por questão;
+- anotações;
+- marcação para revisão;
+- exportações em `.txt` e `.json`;
+- identidade visual oficial;
+- estrutura baseada no Modelo de Projeto;
+- repositório Git inicializado;
+- repositório remoto publicado no GitHub;
+- branches `main` e `dev` configuradas;
+- layouts das quatro telas principais aprovados;
+- manuais estruturais concluídos.
+
+### Próxima etapa
+
+A branch `dev` receberá a substituição gradual das telas atuais por:
+
+1. Tela Inicial;
+2. Importação e Validação;
+3. Resolução;
+4. Resultado Final.
+
+A implementação será feita uma tela por vez, com testes e commits separados.
 
 ## Funcionalidades atuais
 
@@ -21,24 +66,59 @@ O Test Quest acompanha o estudante no percurso entre dúvida, tentativa, correç
 - salvamento automático com `localStorage`;
 - retomada de sessão;
 - temas claro e escuro;
-- exportação de respostas e anotações em `.txt`;
+- exportação de respostas em `.txt`;
+- exportação de anotações em `.txt`;
 - exportação da sessão em `.json`;
 - resumo de desempenho geral e por assunto.
 
+## Funcionalidades planejadas para o próximo ciclo
+
+- Tela Inicial com sessão ativa;
+- indicadores históricos de estudo;
+- fluxo separado de Importação e Validação;
+- estados completos de validação;
+- marcações auxiliares nas alternativas objetivas;
+- nova Tela de Resolução;
+- filtros no Resultado Final;
+- cards de revisão expansíveis;
+- card objetivo expandido;
+- card discursivo expandido;
+- estados vazios e mensagens de erro aprimorados;
+- modularização gradual do JavaScript;
+- migração versionada dos dados locais.
+
+## Fluxo oficial
+
+```text
+Tela Inicial
+├── Iniciar nova resolução → Importação e Validação
+└── Continuar resolução → Resolução
+
+Importação e Validação
+└── Começar → Resolução
+
+Resolução
+└── Finalizar → Resultado Final
+
+Resultado Final
+└── Voltar ao início → Tela Inicial
+```
+
 ## Tecnologias
 
-- HTML5
-- CSS3
-- JavaScript com ES Modules
-- Web Storage API (`localStorage`)
+- HTML5;
+- CSS3;
+- JavaScript com ES Modules;
+- Web Storage API (`localStorage`);
+- Git e GitHub.
 
 ## Como executar
 
-Como a estrutura usa módulos JavaScript, execute a aplicação por um servidor local.
+Como o projeto utiliza módulos JavaScript, a aplicação deve ser executada por um servidor local.
 
 ### Com Live Server
 
-1. Abra a pasta no VS Code.
+1. Abra a pasta do projeto no VS Code.
 2. Instale a extensão **Live Server**, caso ainda não esteja instalada.
 3. Clique com o botão direito em `index.html`.
 4. Escolha **Open with Live Server**.
@@ -49,14 +129,23 @@ Como a estrutura usa módulos JavaScript, execute a aplicação por um servidor 
 python -m http.server 5501
 ```
 
-Depois, abra `http://localhost:5501`.
+Depois, abra:
+
+```text
+http://localhost:5501
+```
 
 ## Estrutura principal
 
 ```text
-test-quest
-├── docs
-│   ├── docs/manuais-de-telas/
+test-quest/
+├── docs/
+│   ├── manuais-de-telas/
+│   │   ├── test-quest-manual-estrutura-tela-inicial.md
+│   │   ├── test-quest-manual-estrutura-importacao-validacao.md
+│   │   ├── test-quest-manual-estrutura-resolucao.md
+│   │   └── test-quest-manual-estrutura-resultado-final.md
+│   ├── README.md
 │   ├── 01-visao-do-projeto.md
 │   ├── 02-requisitos-e-escopo.md
 │   ├── 03-fluxos-e-telas.md
@@ -64,29 +153,31 @@ test-quest
 │   ├── 05-roadmap.md
 │   ├── 06-testes.md
 │   ├── 07-changelog.md
-│   └── 08-identidade-visual.md
-├── public
-│   ├── examples
+│   ├── 08-identidade-visual.md
+│   ├── 09-plano-de-implementacao.md
+│   └── ALTERACOES-REALIZADAS.md
+├── public/
+│   ├── examples/
 │   └── manifest.json
-├── src
-│   ├── assets
-│   ├── scripts
-│   │   ├── core
-│   │   ├── features
-│   │   ├── shared
+├── src/
+│   ├── assets/
+│   ├── scripts/
+│   │   ├── core/
+│   │   ├── features/
+│   │   ├── shared/
 │   │   ├── app.js
 │   │   └── main.js
-│   ├── styles
-│   │   ├── base
-│   │   ├── base-layout
-│   │   ├── components
-│   │   ├── layouts
-│   │   ├── pages
-│   │   ├── themes
-│   │   ├── utilities
+│   ├── styles/
+│   │   ├── base/
+│   │   ├── base-layout/
+│   │   ├── components/
+│   │   ├── layouts/
+│   │   ├── pages/
+│   │   ├── themes/
+│   │   ├── utilities/
 │   │   └── main.css
-│   └── templates
-├── tests
+│   └── templates/
+├── tests/
 ├── index.html
 ├── .gitignore
 └── README.md
@@ -94,21 +185,34 @@ test-quest
 
 ## Arquitetura atual
 
-A lógica funcional foi movida para uma feature única:
+A maior parte da lógica funcional ainda está concentrada em:
 
 ```text
 src/scripts/features/question-resolution/question-resolution.controller.js
 ```
 
-Essa decisão preserva o comportamento da aplicação durante a migração estrutural. A divisão futura em módulos menores deve ser feita gradualmente e acompanhada por testes.
+Essa decisão preservou o funcionamento da aplicação durante a migração estrutural.
 
-O CSS atual foi preservado em:
+A modularização será feita gradualmente, separando responsabilidades como:
+
+- Tela Inicial;
+- importação e validação;
+- resolução;
+- temporizador;
+- resultados;
+- exportações;
+- tema;
+- armazenamento;
+- migração de dados;
+- modais.
+
+O CSS funcional atual permanece principalmente em:
 
 ```text
 src/styles/pages/test-quest.css
 ```
 
-Os tokens oficiais da identidade visual já foram adicionados à estrutura, mas a substituição completa dos tokens legados deve ocorrer em uma etapa visual própria para evitar regressões.
+Os novos estilos serão distribuídos progressivamente entre componentes, layouts e páginas.
 
 ## Formato das questões
 
@@ -118,18 +222,137 @@ Um exemplo completo está disponível em:
 public/examples/exemplo-questoes.txt
 ```
 
-## Documentação
-
-A visão, os requisitos, os fluxos, a arquitetura, o roadmap, os testes e o histórico de mudanças ficam na pasta `docs`.
-
-O guia oficial de identidade visual está em:
+### Questão objetiva
 
 ```text
-docs/identidade-visual/Test_Quest_Identidade_Visual.docx
+@questao
+assunto: Nome do assunto
+tipo: objetiva
+enunciado: Texto da questão
+a: Alternativa A
+b: Alternativa B
+c: Alternativa C
+d: Alternativa D
+e: Alternativa E
+correta: B
+explicacao: Explicação da resposta
++++
 ```
 
-## Status
+### Questão discursiva
 
-**Versão de desenvolvimento:** `v0.2.5-dev`
+```text
+@discursiva
+assunto: Nome do assunto
+tipo: discursiva curta
+enunciado: Texto da pergunta
+resposta_esperada: Resposta modelo
+criterios_de_correcao: Critérios de correção
++++
+```
 
-A estrutura já está preparada para inicialização do Git, mas o repositório ainda não foi criado.
+## Documentação
+
+A documentação oficial está em:
+
+```text
+docs/
+```
+
+O índice completo está em:
+
+```text
+docs/README.md
+```
+
+O guia de identidade visual está em:
+
+```text
+docs/08-identidade-visual.md
+```
+
+Os manuais das telas estão em:
+
+```text
+docs/manuais-de-telas/
+```
+
+O plano de implementação está em:
+
+```text
+docs/09-plano-de-implementacao.md
+```
+
+## Persistência e privacidade
+
+Os dados são armazenados localmente no navegador por meio do `localStorage`.
+
+A aplicação não depende de servidor próprio e não envia respostas, anotações ou resultados para serviços externos.
+
+Como os dados ficam vinculados ao navegador e ao dispositivo, limpar os dados do site pode apagar sessões salvas. A exportação em `.json` funciona como forma de preservação da sessão.
+
+## Fluxo de desenvolvimento
+
+```text
+main
+└── base estável
+
+dev
+└── desenvolvimento e testes
+```
+
+Fluxo recomendado:
+
+```bash
+git switch dev
+git pull
+git status
+```
+
+Após uma alteração concluída:
+
+```bash
+git add .
+git commit -m "feat: descreve a alteração"
+git push
+```
+
+Quando um ciclo estiver validado, as mudanças devem passar por revisão antes de serem integradas à `main`.
+
+## Roadmap resumido
+
+### Próximo ciclo
+
+- implementar as quatro telas oficiais;
+- preservar a lógica atual;
+- testar cada tela separadamente;
+- adaptar o estado da aplicação;
+- criar histórico de sessões;
+- padronizar modais;
+- revisar responsividade e acessibilidade.
+
+### Antes da versão estável
+
+- concluir modularização;
+- executar o roteiro completo de testes;
+- validar GitHub Pages;
+- atualizar documentação;
+- criar tag e release.
+
+## Limitações atuais
+
+- não há backend;
+- não há sincronização entre dispositivos;
+- discursivas dependem de revisão manual;
+- o histórico completo ainda não foi implementado;
+- as novas telas estão documentadas, mas ainda não foram aplicadas integralmente;
+- parte da lógica e do CSS permanece concentrada em arquivos legados.
+
+## Autoria
+
+Desenvolvido por **Vinícius Sidney**.
+
+---
+
+**Test Quest — Now I Know.**  
+*Resolver, compreender e avançar.*

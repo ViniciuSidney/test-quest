@@ -3,47 +3,156 @@
 ## Informações
 
 **Projeto:** Test Quest  
-**Versão:** v0.2.5-dev  
-**Fase:** validação pós-migração estrutural  
+**Base:** v0.2.5-dev  
+**Fase:** implementação das telas oficiais  
 **Status geral:** pendente
 
-## Testes essenciais
+## Legenda
+
+- `Pendente`
+- `OK`
+- `Falhou`
+- `Bloqueado`
+
+---
+
+# Carregamento e estrutura
 
 | Código | Teste | Resultado esperado | Status |
 |---|---|---|---|
-| T01 | Abrir por Live Server | A aplicação carrega sem erro de módulo | Pendente |
-| T02 | Carregar exemplo | O texto e o nome da lista são preenchidos | Pendente |
-| T03 | Validar lista correta | A quantidade de objetivas e discursivas é informada | Pendente |
-| T04 | Rejeitar lista inválida | Uma mensagem clara é exibida | Pendente |
-| T05 | Importar arquivo TXT | O conteúdo do arquivo aparece no campo | Pendente |
-| T06 | Iniciar sessão | A primeira questão é exibida | Pendente |
-| T07 | Responder objetiva | A resposta fica marcada e salva | Pendente |
-| T08 | Responder discursiva | O texto é salvo durante a digitação | Pendente |
-| T09 | Trocar de questão | Respostas e anotações permanecem | Pendente |
-| T10 | Temporizador por questão | O tempo é associado à questão correta | Pendente |
-| T11 | Voltar ao import | O temporizador para de contar | Pendente |
-| T12 | Continuar sessão | O estado salvo é restaurado | Pendente |
-| T13 | Pausar temporizador | O tempo deixa de aumentar | Pendente |
-| T14 | Marcar revisão | A marca aparece no mapa e no resultado | Pendente |
-| T15 | Finalizar com pendências | A aplicação pede confirmação | Pendente |
-| T16 | Resultado objetivo | Percentual e acertos são calculados corretamente | Pendente |
-| T17 | Revisão discursiva | Resposta esperada e critérios aparecem | Pendente |
-| T18 | Exportar respostas | Um TXT válido é baixado | Pendente |
-| T19 | Exportar anotações | Um TXT separado é baixado | Pendente |
-| T20 | Exportar sessão | Um JSON válido é baixado | Pendente |
-| T21 | Alternar tema | O tema muda e permanece após recarregar | Pendente |
-| T22 | Limpar progresso | O estado salvo é removido | Pendente |
-| T23 | Modal do modelo | Abre, fecha pelo botão, fundo e Escape | Pendente |
-| T24 | Layout fixo desktop | Não há rolagem geral nem sobreposição | Pendente |
-| T25 | Tela de pouca altura | As áreas internas permanecem utilizáveis | Pendente |
+| T01 | Abrir por Live Server | Aplicação carrega sem erro de módulo | Pendente |
+| T02 | Console inicial | Nenhum erro crítico | Pendente |
+| T03 | Recarregar página | Estado e tema são restaurados | Pendente |
+| T04 | Estrutura Git | `main` e `dev` sincronizadas com remotos | Pendente |
+
+# Tela Inicial
+
+| Código | Teste | Resultado esperado | Status |
+|---|---|---|---|
+| T05 | Primeiro acesso | Bloco de continuar fica oculto | Pendente |
+| T06 | Nova resolução | Abre Importação e Validação | Pendente |
+| T07 | Sessão ativa | Nome, progresso e tempo aparecem | Pendente |
+| T08 | Continuar resolução | Restaura a sessão | Pendente |
+| T09 | Nova sessão com ativa | Exibe confirmação | Pendente |
+| T10 | Indicadores históricos | Valores consideram sessões concluídas | Pendente |
+| T11 | Sessão ativa no histórico | Não é contabilizada | Pendente |
+| T12 | Nome longo | Não transborda | Pendente |
+
+# Importação e Validação
+
+| Código | Teste | Resultado esperado | Status |
+|---|---|---|---|
+| T13 | Carregar exemplo | Conteúdo e nome são preenchidos | Pendente |
+| T14 | Selecionar TXT | Conteúdo aparece na textarea | Pendente |
+| T15 | Nome do arquivo | Nome é exibido sem transbordar | Pendente |
+| T16 | Validar lista correta | Contadores e sucesso aparecem | Pendente |
+| T17 | Lista inválida | Erros indicam bloco e campo | Pendente |
+| T18 | Editar após validar | Estado volta a pendente | Pendente |
+| T19 | Botão Começar inválido | Permanece desabilitado | Pendente |
+| T20 | Botão Começar válido | Cria a sessão | Pendente |
+| T21 | Limpar | Restaura o estado inicial | Pendente |
+| T22 | Modal do modelo | Abre e fecha por todos os meios | Pendente |
+
+# Resolução comum
+
+| Código | Teste | Resultado esperado | Status |
+|---|---|---|---|
+| T23 | Primeira questão | Dados corretos aparecem | Pendente |
+| T24 | Navegar pelo mapa | Questão correta é aberta | Pendente |
+| T25 | Anterior na primeira | Botão desabilitado | Pendente |
+| T26 | Próxima na última | É substituída por Finalizar | Pendente |
+| T27 | Marcar revisão | Botão, selo e mapa atualizam | Pendente |
+| T28 | Anotações | Persistem por questão | Pendente |
+| T29 | Restaurar sessão | Estado completo é recuperado | Pendente |
+
+# Objetivas
+
+| Código | Teste | Resultado esperado | Status |
+|---|---|---|---|
+| T30 | Selecionar card | Define resposta oficial | Pendente |
+| T31 | Seleção única | Apenas uma resposta permanece | Pendente |
+| T32 | Marcador em análise | Não altera resposta oficial | Pendente |
+| T33 | Marcador eliminada | Estado é salvo | Pendente |
+| T34 | Ciclo do marcador | Alterna conforme regra | Pendente |
+| T35 | Restaurar marcações | Estados reaparecem | Pendente |
+| T36 | Texto longo | Cards não transbordam | Pendente |
+
+# Discursivas
+
+| Código | Teste | Resultado esperado | Status |
+|---|---|---|---|
+| T37 | Digitar resposta | Texto é salvo | Pendente |
+| T38 | Quebras de linha | São preservadas | Pendente |
+| T39 | Trocar questão | Resposta permanece | Pendente |
+| T40 | Campo longo | Rolagem interna funciona | Pendente |
+
+# Temporizador
+
+| Código | Teste | Resultado esperado | Status |
+|---|---|---|---|
+| T41 | Tempo por questão | Valor correto é associado | Pendente |
+| T42 | Tempo total | Soma corretamente | Pendente |
+| T43 | Pausar | Tempo deixa de aumentar | Pendente |
+| T44 | Retomar | Contagem continua | Pendente |
+| T45 | Voltar ao início | Tempo para | Pendente |
+| T46 | Aba oculta | Intervalo não é somado | Pendente |
+| T47 | Resultado aberto | Tempo não aumenta | Pendente |
+| T48 | Recarregar | Tempos são restaurados | Pendente |
+
+# Finalização e Resultado
+
+| Código | Teste | Resultado esperado | Status |
+|---|---|---|---|
+| T49 | Finalizar com pendências | Confirmação exibe resumo | Pendente |
+| T50 | Resultado geral | Indicadores corretos | Pendente |
+| T51 | Somente discursivas | Desempenho mostra indisponível | Pendente |
+| T52 | Por assunto | Acertos e tempos corretos | Pendente |
+| T53 | Assunto sem objetiva | Não mostra 0% | Pendente |
+| T54 | Filtro Todas | Exibe todos os cards | Pendente |
+| T55 | Filtro Erradas | Exibe somente incorretas | Pendente |
+| T56 | Filtro Discursivas | Exibe discursivas | Pendente |
+| T57 | Filtro Revisão | Exibe marcadas | Pendente |
+| T58 | Filtro Não respondidas | Exibe pendentes | Pendente |
+| T59 | Filtro vazio | Exibe estado vazio | Pendente |
+| T60 | Expandir card | Ocupa largura total | Pendente |
+| T61 | Expandir outro card | Fecha o anterior | Pendente |
+| T62 | Objetiva expandida | Mostra gabarito e explicação | Pendente |
+| T63 | Discursiva expandida | Mostra resposta e critérios | Pendente |
+| T64 | Não respondida | Não é chamada de incorreta | Pendente |
+
+# Exportações
+
+| Código | Teste | Resultado esperado | Status |
+|---|---|---|---|
+| T65 | Exportar respostas | TXT válido é baixado | Pendente |
+| T66 | Exportar anotações | TXT separado é baixado | Pendente |
+| T67 | Exportar sessão | JSON válido é baixado | Pendente |
+| T68 | Acentuação | Caracteres são preservados | Pendente |
+| T69 | Estado após exportar | Não é alterado | Pendente |
+
+# Visual e responsividade
+
+| Código | Teste | Resultado esperado | Status |
+|---|---|---|---|
+| T70 | Desktop | Sem rolagem global | Pendente |
+| T71 | Tela baixa | Áreas internas continuam utilizáveis | Pendente |
+| T72 | Tablet | Layout adapta sem compressão excessiva | Pendente |
+| T73 | Mobile | Tela ativa usa rolagem interna | Pendente |
+| T74 | Tema claro | Contraste adequado | Pendente |
+| T75 | Tema escuro | Contraste adequado | Pendente |
+| T76 | Foco de teclado | Visível em controles | Pendente |
+| T77 | Redução de movimento | Preferência é respeitada | Pendente |
+| T78 | Texto longo | Não causa transbordamento | Pendente |
 
 ## Regra para fechamento
 
-A versão não deve ser enviada para `main` como estável enquanto houver:
+A versão não pode ser enviada à `main` como estável enquanto houver:
 
-- bug crítico em importação;
-- perda de respostas ou anotações;
+- perda de respostas, anotações, tempos ou marcações;
 - temporizador contando fora da resolução;
+- importação inválida aceita;
+- filtros incorretos;
+- exportações inválidas;
 - sobreposição de controles;
-- exportação inválida;
-- erro de módulo no carregamento.
+- erro de módulo;
+- regressão grave de acessibilidade.

@@ -2,68 +2,227 @@
 
 ## Tipo de aplicação
 
-Aplicação web estática executada no navegador.
+Aplicação web estática executada no navegador, sem backend obrigatório.
 
-## Estado da sessão
+## Princípios arquiteturais
 
-A aplicação mantém um objeto principal com a seguinte estrutura:
+- estado central versionado;
+- persistência local;
+- funcionalidades separadas por domínio;
+- telas controladas como SPA simples;
+- migração gradual da lógica legada;
+- nenhuma quebra de dados durante alterações visuais;
+- exportações geradas no navegador.
+
+## Estado principal proposto
 
 ```js
 {
-  versao,
+  schemaVersion,
+  telaAtual,
+
+  sessao: {
+    id,
+    status,
+    listaNome,
+    questoes,
+    questaoAtual,
+    respostas,
+    anotacoes,
+    temposMs,
+    revisao,
+    marcacoesAlternativas,
+    opcoes,
+    importadoEm,
+    iniciadoEm,
+    finalizadoEm
+  },
+
+  historico: {
+    sessoes,
+    resumo
+  },
+
+  interface: {
+    tema,
+    filtroResultado,
+    cardResultadoExpandidoId,
+    temporizadorPausado
+  }
+}
+```
+
+## Status da sessão
+
+```text
+preparando
+em_andamento
+finalizada
+```
+
+## Entidade Sessão
+
+- `id`: identificador permanente;
+- `schemaVersion`: versão dos dados;
+- `status`: estado da sessão;
+- `listaNome`: nome da lista;
+- `questoes`: lista ordenada;
+- `questaoAtual`: índice atual;
+- `respostas`: respostas por ID;
+- `anotacoes`: anotações por ID;
+- `temposMs`: tempo por ID;
+- `revisao`: marcações de revisão;
+- `marcacoesAlternativas`: rascunhos da objetiva;
+- `opcoes`: configuração da sessão;
+- `importadoEm`: data da importação;
+- `iniciadoEm`: início da resolução;
+- `finalizadoEm`: conclusão.
+
+## Entidade Questão
+
+### Campos comuns
+
+- `id`;
+- `categoria`;
+- `assunto`;
+- `tipo`;
+- `enunciado`;
+- `ordemOriginal`.
+
+### Objetiva
+
+- `alternativas`;
+- `correta`;
+- `explicacao`.
+
+### Discursiva
+
+- `respostaEsperada`;
+- `criterios`.
+
+## Respostas por ID
+
+```js
+respostas[questaoId] = "C";
+respostas[questaoDiscursivaId] = "Texto...";
+```
+
+## Anotações por ID
+
+```js
+anotacoes[questaoId] = "Raciocínio auxiliar";
+```
+
+## Tempos por ID
+
+```js
+temposMs[questaoId] = 125000;
+```
+
+## Revisão por ID
+
+```js
+revisao[questaoId] = true;
+```
+
+## Marcações auxiliares
+
+```js
+marcacoesAlternativas[questaoId] = {
+  A: "neutro",
+  B: "analise",
+  C: "eliminada",
+  D: "neutro",
+  E: "neutro"
+};
+```
+
+Valores permitidos:
+
+```text
+neutro
+analise
+eliminada
+```
+
+## Histórico
+
+Cada sessão concluída deve armazenar um resumo suficiente para a Tela Inicial:
+
+```js
+{
+  id,
   listaNome,
-  questoes,
-  atual,
-  respostas,
-  anotacoes,
-  temposMs,
-  revisao,
-  opcoes,
-  importadoEm,
+  totalQuestoes,
+  respondidas,
+  totalObjetivas,
+  corretas,
+  desempenho,
+  tempoTotalMs,
   finalizadoEm
 }
 ```
 
-## Entidade: Questão
+Resumo histórico:
 
-### Campos comuns
+```js
+{
+  questoesRespondidas,
+  taxaMediaAcertos,
+  tempoTotalMs,
+  sessoesConcluidas
+}
+```
 
-- `id`: identificador único;
-- `categoria`: `objetiva` ou `discursiva`;
-- `assunto`: assunto associado;
-- `tipo`: tipo informado no arquivo;
-- `enunciado`: texto principal.
+A sessão em andamento não entra no resumo.
 
-### Campos da objetiva
+## Resultado por assunto
 
-- `alternativas`: objeto com A, B, C, D e E;
-- `correta`: letra da resposta correta;
-- `explicacao`: justificativa da correção.
+```js
+{
+  "Eventos": {
+    total: 3,
+    objetivas: 2,
+    corretas: 1,
+    tempoMs: 280000,
+    desempenho: 50
+  }
+}
+```
 
-### Campos da discursiva
-
-- `respostaEsperada`: resposta modelo;
-- `criterios`: pontos necessários para a correção.
-
-## Dados relacionados por ID da questão
-
-- `respostas[id]`;
-- `anotacoes[id]`;
-- `temposMs[id]`;
-- `revisao[id]`.
+Se `objetivas === 0`, `desempenho` deve ser `null`, não `0`.
 
 ## Persistência
 
-### Chaves atuais
+### Chaves legadas
 
 ```text
 resolvedorQuestoesV2.estado
 resolvedorQuestoesV2.config
 ```
 
-As chaves foram preservadas nesta migração para não invalidar sessões já existentes. Uma futura renomeação para o namespace `testQuest` deve incluir migração dos dados legados.
+### Namespace futuro recomendado
 
-## Arquitetura de arquivos
+```text
+testQuest.state
+testQuest.settings
+testQuest.history
+```
+
+## Migração de dados
+
+Ao iniciar:
+
+1. procurar dados no namespace novo;
+2. se ausente, procurar chaves legadas;
+3. transformar para o esquema atual;
+4. adicionar `schemaVersion`;
+5. salvar no namespace novo;
+6. manter backup temporário até os testes concluírem.
+
+Nunca apagar dados legados antes de confirmar a migração.
+
+## Arquitetura atual
 
 ```text
 src/scripts
@@ -81,43 +240,59 @@ src/scripts
 └── main.js
 ```
 
-## Inicialização
+## Arquitetura-alvo
+
+```text
+src/scripts
+├── core
+│   ├── app-state.js
+│   ├── constants.js
+│   ├── migrations.js
+│   └── router.js
+├── features
+│   ├── home
+│   ├── question-import
+│   ├── question-resolution
+│   ├── results
+│   ├── timer
+│   ├── export
+│   ├── theme
+│   └── modals
+├── shared
+│   ├── dom.js
+│   ├── formatters.js
+│   ├── storage.js
+│   └── validators.js
+├── app.js
+└── main.js
+```
+
+## Inicialização prevista
 
 1. `main.js` aguarda o DOM.
-2. `app.js` inicializa as features.
-3. `question-resolution.controller.js` inicializa a aplicação atual.
+2. `app.js` carrega configurações.
+3. migração de dados é executada.
+4. estado é restaurado.
+5. tela inicial é determinada.
+6. features são inicializadas.
+7. temporizador só é iniciado na Resolução.
 
-## Decisão de migração
-
-A lógica foi movida inicialmente como uma feature única. Isso reduz o risco de regressões durante a mudança de estrutura.
-
-A divisão recomendada para etapas futuras é:
-
-```text
-features
-├── import
-├── resolution
-├── timer
-├── notes
-├── results
-├── export
-└── theme
-```
-
-## CSS
-
-O CSS funcional permanece consolidado em:
+## Estrutura de CSS-alvo
 
 ```text
-src/styles/pages/test-quest.css
+src/styles
+├── base
+├── themes
+├── components
+├── layouts
+├── pages
+│   ├── home.css
+│   ├── import.css
+│   ├── resolution.css
+│   └── results.css
+└── main.css
 ```
 
-Os tokens oficiais já existem em:
+## Regra de migração
 
-```text
-src/styles/base/tokens.css
-src/styles/themes/light.css
-src/styles/themes/dark.css
-```
-
-A separação do CSS legado em componentes e layouts deve preservar a ordem da cascata e ser feita com testes visuais.
+A substituição das telas deve acontecer uma por vez. A lógica legada pode permanecer temporariamente enquanto os novos componentes são conectados e testados.

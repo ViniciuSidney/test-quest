@@ -1,77 +1,148 @@
 # Roadmap
 
-## Versão atual
+## Estado geral
 
-### v0.2.5-dev — Estrutura e estabilidade
+**Base funcional:** `v0.2.5-dev`  
+**Ciclo atual:** preparação e implementação da próxima evolução visual.
 
-**Status:** em desenvolvimento
+Concluído:
+
+- migração para o Modelo de Projeto;
+- Git e GitHub configurados;
+- branches `main` e `dev`;
+- identidade visual oficial;
+- layouts das quatro telas;
+- manuais estruturais.
+
+---
+
+# Marco 1 — Base funcional e organização
+
+## v0.2.5-dev — Estrutura e estabilidade
+
+**Status:** concluído como base de desenvolvimento.
+
+Incluído:
+
+- `localStorage`;
+- temporizador;
+- anotações;
+- tema;
+- revisão;
+- exportações;
+- layout fixo;
+- migração estrutural;
+- documentação inicial.
+
+---
+
+# Marco 2 — Implementação das telas oficiais
+
+## v0.3-dev — Fluxo visual completo
+
+**Status:** próximo ciclo.
 
 ### Objetivo
 
-Transformar o protótipo funcional em um projeto organizado, documentado e preparado para versionamento.
+Substituir as telas atuais pelas quatro telas aprovadas sem perder funcionalidades.
 
-### Incluído
+### Etapas
 
-- estrutura baseada no Modelo de Projeto;
-- documentação inicial;
-- reorganização da tela de resolução;
-- painel separado de anotações;
-- layout fixo com rolagens internas;
-- correções no temporizador;
-- modal do modelo de importação;
-- tokens iniciais da identidade visual;
-- preparação para Git.
+1. implementar Tela Inicial;
+2. implementar Importação e Validação;
+3. implementar Resolução;
+4. implementar Resultado Final;
+5. adaptar navegação;
+6. preservar IDs ou atualizar HTML/JS em conjunto.
 
-## Próxima versão
+### Funcionalidades novas
 
-### v0.3 — Identidade e modularização
+- indicadores históricos;
+- sessão ativa na Tela Inicial;
+- marcações auxiliares nas alternativas;
+- filtros no resultado;
+- cards expansíveis;
+- estados vazios;
+- melhor separação entre resposta e anotação.
+
+### Critérios
+
+- cada tela entra em commit separado;
+- testes executados após cada tela;
+- nenhum dado local perdido;
+- `main` permanece estável.
+
+---
+
+# Marco 3 — Modularização e migração de dados
+
+## v0.4-dev — Arquitetura e persistência
 
 ### Objetivo
 
-Aplicar oficialmente a identidade do Test Quest e reduzir a concentração de código.
+Reduzir concentração de código e preparar evolução segura.
 
 ### Planejado
 
-- aplicar a paleta violeta oficial;
-- adicionar ícone, favicon e metadados finais;
-- separar CSS em componentes, layouts e páginas;
-- dividir a feature principal em módulos menores;
-- padronizar mensagens e confirmações;
-- revisar acessibilidade e contraste;
-- testar responsividade em diferentes alturas e larguras.
+- separar features;
+- criar roteamento interno de telas;
+- versionar esquema do estado;
+- migrar chaves legadas;
+- criar histórico de sessões;
+- centralizar formatação de tempo;
+- centralizar exportações;
+- organizar modais;
+- revisar tratamento de erros.
 
-## Versão de validação
+---
 
-### v0.4 — Testes e polimento
+# Marco 4 — Testes e polimento
 
-- executar roteiro completo de testes;
-- corrigir bugs de importação e persistência;
-- validar sessões longas;
-- revisar exportações;
-- testar GitHub Pages;
-- revisar README e documentação.
+## v0.5 — Validação completa
 
-## Primeira versão estável
+### Planejado
 
-### v1.0 — Test Quest
+- executar roteiro completo;
+- testar sessões longas;
+- testar conteúdo extenso;
+- testar desktop, tablet e mobile;
+- revisar acessibilidade;
+- revisar contraste;
+- revisar tema escuro;
+- validar GitHub Pages;
+- corrigir regressões;
+- atualizar documentação.
+
+---
+
+# Primeira versão estável
+
+## v1.0 — Test Quest
 
 Critérios:
 
+- quatro telas implementadas;
 - fluxos principais sem bugs críticos;
+- migração de dados validada;
 - identidade visual aplicada;
-- documentação atualizada;
 - testes essenciais aprovados;
+- documentação atualizada;
 - funcionamento em desktop e mobile;
 - publicação por GitHub Pages;
-- release criada no GitHub.
+- tag e release no GitHub.
 
-## Ideias futuras
+---
 
+# Ideias futuras
+
+- refazer questões erradas;
+- modo prova;
+- modo estudo;
+- histórico detalhado;
+- gráficos por período;
 - banco local de listas;
-- histórico de sessões;
-- filtro por assunto;
-- modos prova e estudo;
-- estatísticas por período;
-- importação e exportação de pacotes;
+- importação/exportação de pacotes;
+- PWA;
 - autocorreção assistida de discursivas;
-- instalação como PWA.
+- sincronização opcional;
+- editor de questões.
