@@ -61,6 +61,9 @@ Todas as mudanças importantes do Test Quest serão registradas neste arquivo.
 - confirmações nativas substituídas por modal customizado e acessível.
 
 ### Alterado
+
+- fonte monoespaçada de aparência digital no percentual e no símbolo `%`;
+- indicação compacta da base do cálculo, como `10 acertos em 10 questões objetivas`;
 - Fade In na entrada e Fade Out na saída da Tela de Desempenho;
 - brilho circular giratório atrás da porcentagem principal.
 

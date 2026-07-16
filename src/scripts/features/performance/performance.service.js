@@ -84,3 +84,12 @@ export function getPerformanceState(value) {
 export function shouldShowPerformanceScreen(objectiveCount) {
   return Number.isFinite(Number(objectiveCount)) && Number(objectiveCount) > 0;
 }
+
+export function formatPerformanceBasis(correctCount, objectiveCount) {
+  const correct = Math.max(0, Math.trunc(Number(correctCount) || 0));
+  const objectives = Math.max(0, Math.trunc(Number(objectiveCount) || 0));
+  const hitLabel = correct === 1 ? "acerto" : "acertos";
+  const questionLabel = objectives === 1 ? "questão objetiva" : "questões objetivas";
+
+  return `${correct} ${hitLabel} em ${objectives} ${questionLabel}`;
+}

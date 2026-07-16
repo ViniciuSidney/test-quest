@@ -362,6 +362,23 @@ Desempenho Geral:
 
 ---
 
+### 9.2.1. Fonte do percentual
+
+- usar pilha monoespaçada de aparência digital;
+- priorizar `Cascadia Mono`, `Cascadia Code`, `Roboto Mono` e equivalentes do sistema;
+- usar numerais tabulares para impedir deslocamentos durante a animação da contagem;
+- aplicar a mesma fonte ao número e ao símbolo `%`.
+
+### 9.2.2. Base do cálculo
+
+Exibir abaixo da mensagem complementar uma indicação curta, por exemplo:
+
+```text
+10 acertos em 10 questões objetivas
+```
+
+Essa informação explica de onde veio o percentual sem competir com o resultado principal.
+
 ### 9.3. Mensagem principal
 
 #### Função

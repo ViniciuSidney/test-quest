@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import {
+  formatPerformanceBasis,
   getPerformanceState,
   normalizePerformancePercentage,
   shouldShowPerformanceScreen
@@ -30,5 +31,10 @@ assert.equal(normalizePerformancePercentage(Number.NaN), 0);
 assert.equal(shouldShowPerformanceScreen(1), true);
 assert.equal(shouldShowPerformanceScreen(0), false);
 assert.equal(shouldShowPerformanceScreen(undefined), false);
+
+assert.equal(formatPerformanceBasis(10, 10), "10 acertos em 10 questões objetivas");
+assert.equal(formatPerformanceBasis(1, 1), "1 acerto em 1 questão objetiva");
+assert.equal(formatPerformanceBasis(1, 2), "1 acerto em 2 questões objetivas");
+assert.equal(formatPerformanceBasis(undefined, undefined), "0 acertos em 0 questões objetivas");
 
 console.log("Performance state: todos os testes passaram.");

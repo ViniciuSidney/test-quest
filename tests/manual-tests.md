@@ -141,3 +141,11 @@
 - [ ] Um brilho circular giratório aparece atrás da porcentagem sem encobrir o número.
 - [ ] O foco é enviado ao título do Resultado Final após a saída.
 - [ ] Em movimento reduzido, a troca ocorre sem animações.
+
+
+## Tela de Desempenho — placar digital
+
+- [ ] Confirmar que o percentual e o símbolo usam fonte monoespaçada de aparência digital.
+- [ ] Observar se a contagem de 0 até o resultado não desloca o conjunto horizontalmente.
+- [ ] Confirmar a linha de contexto: `X acerto(s) em Y questão(ões) objetiva(s)`.
+- [ ] Conferir singular e plural com sessões de 1 e 2 questões objetivas.

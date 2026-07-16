@@ -18,6 +18,7 @@ const requiredIds = [
   "valorDesempenho",
   "tituloDesempenho",
   "subtituloDesempenho",
+  "detalheDesempenho",
   "btnVerResultadoFinal"
 ];
 
@@ -55,6 +56,11 @@ assert.match(performanceCss, /performance-overlay-fade-out/);
 assert.match(performanceCss, /performance-score-aura-rotate/);
 assert.match(performanceCss, /conic-gradient/);
 assert.match(controller, /animarPontuacaoDesempenho/);
+
+assert.match(performanceCss, /Cascadia Mono/);
+assert.match(performanceCss, /font-variant-numeric: tabular-nums slashed-zero/);
+assert.match(performanceCss, /\.performance-detail/);
+assert.match(controller, /formatPerformanceBasis/);
 assert.match(controller, /screenManager\.elements\.resultado\?\.setAttribute\("inert"/);
 
 console.log("Performance structure: todos os testes passaram.");

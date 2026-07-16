@@ -4,6 +4,7 @@ import { createScreenManager } from "../../core/screens.js";
 import { calculateHistoryMetrics, readHistory, recordCompletedSession, removeCompletedSession } from "../home/home.service.js";
 import { parseQuestions, QuestionImportError, summarizeQuestions } from "../question-import/question-import.parser.js";
 import {
+  formatPerformanceBasis,
   getPerformanceState,
   PERFORMANCE_STATE_CLASSES,
   shouldShowPerformanceScreen
@@ -1112,6 +1113,10 @@ export function initQuestionResolution() {
     $("#valorDesempenho").textContent = String(state.percentage);
     $("#tituloDesempenho").textContent = state.title;
     $("#subtituloDesempenho").textContent = state.subtitle;
+    $("#detalheDesempenho").textContent = formatPerformanceBasis(
+      resultado?.acertos,
+      resultado?.objetivas
+    );
     $("#btnVerResultadoFinal").textContent = state.buttonLabel;
     $("#blocoPontuacaoDesempenho").setAttribute(
       "aria-label",

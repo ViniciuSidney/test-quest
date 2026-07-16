@@ -248,3 +248,12 @@ A versão não pode ser enviada à `main` como estável enquanto houver:
 - sobreposição de controles;
 - erro de módulo;
 - regressão grave de acessibilidade.
+
+
+# Tela de Desempenho — legibilidade do placar
+
+| Código | Teste | Resultado esperado | Status |
+|---|---|---|---|
+| T79 | Fonte digital monoespaçada | Percentual e `%` usam a pilha monoespaçada sem oscilar de largura durante a contagem | Pendente |
+| T80 | Base do cálculo | A tela informa corretamente acertos e total de questões objetivas | Pendente |
+| T81 | Singular e plural | `1 acerto em 1 questão objetiva` e demais variações são exibidas corretamente | Pendente |
