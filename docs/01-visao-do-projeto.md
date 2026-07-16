@@ -100,6 +100,7 @@ Concluído:
 - Tela de Importação e Validação oficial implementada;
 - Tela de Resolução oficial implementada;
 - Tela de Desempenho oficial implementada com seis estados dinâmicos;
+- Tela de Resultado Final oficial implementada com filtros e revisão expansível;
 - estados completos de validação e contadores implementados;
 - parser de importação separado;
 - navegação centralizada entre as cinco telas;
@@ -107,14 +108,14 @@ Concluído:
 
 Próxima etapa:
 
-- implementar a nova Tela de Resultado Final após a Tela de Desempenho;
-- preservar exportações e cálculos existentes;
-- avançar depois para os modais e a modularização complementar;
-- executar testes após cada etapa.
+- executar o roteiro completo de testes das cinco telas;
+- refinar os modais e confirmações restantes;
+- modularizar responsabilidades ainda concentradas no controlador;
+- preparar a revisão final da branch `dev`.
 
 ## Critérios de sucesso da próxima etapa
 
-- cinco telas implementadas conforme os manuais;
+- cinco telas implementadas conforme os manuais — concluído;
 - nenhuma perda de respostas, anotações ou tempos;
 - temporizador ativo somente durante a resolução;
 - ausência de rolagem global e sobreposições;

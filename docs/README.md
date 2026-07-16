@@ -14,7 +14,8 @@ Este diretório reúne a documentação oficial do **Test Quest — Now I Know.*
 - Tela de Importação e Validação oficial implementada;
 - Tela de Resolução oficial implementada;
 - Tela de Desempenho oficial implementada;
-- próxima etapa: Tela de Resultado Final.
+- Tela de Resultado Final oficial implementada;
+- próxima etapa: testes completos, refinamentos e integração.
 
 ## Documentos principais
 

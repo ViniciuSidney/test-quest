@@ -37,15 +37,15 @@
 | RF24 | Permitir iniciar nova resolução pela Tela Inicial | Implementado |
 | RF25 | Permitir marcações auxiliares nas alternativas objetivas | Implementado |
 | RF26 | Separar marcação auxiliar da resposta oficial | Implementado |
-| RF27 | Filtrar questões no Resultado Final | Planejado |
-| RF28 | Expandir apenas um card de revisão por vez | Planejado |
-| RF29 | Exibir card objetivo expandido com resposta, gabarito e explicação | Planejado |
-| RF30 | Exibir card discursivo expandido com resposta esperada e critérios | Planejado |
+| RF27 | Filtrar questões no Resultado Final | Implementado |
+| RF28 | Expandir apenas um card de revisão por vez | Implementado |
+| RF29 | Exibir card objetivo expandido com resposta, gabarito e explicação | Implementado |
+| RF30 | Exibir card discursivo expandido com resposta esperada e critérios | Implementado |
 | RF31 | Exibir indicadores históricos de sessões concluídas | Implementado |
 | RF32 | Exibir desempenho histórico sem incluir a sessão em andamento | Implementado |
 | RF33 | Exportar sem alterar o estado da sessão | Implementado |
 | RF34 | Confirmar finalização com questões pendentes | Implementado |
-| RF35 | Exibir estado vazio em filtros sem resultados | Planejado |
+| RF35 | Exibir estado vazio em filtros sem resultados | Implementado |
 | RF36 | Exibir uma Tela de Desempenho entre a Resolução e o Resultado Final | Implementado |
 | RF37 | Selecionar um dos seis estados visuais pela porcentagem objetiva | Implementado |
 | RF38 | Usar uma única estrutura dinâmica para todos os estados de desempenho | Implementado |

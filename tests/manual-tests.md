@@ -98,15 +98,27 @@
 - [ ] O foco chega ao título ao abrir a tela.
 - [ ] A preferência de redução de movimento é respeitada.
 
-## Bloco G — Resultado
+## Bloco G — Resultado Final
 
-- [ ] As objetivas são corrigidas.
-- [ ] A discursiva exibe modelo e critérios.
-- [ ] O tempo total é coerente.
-- [ ] O resumo por assunto aparece.
+- [ ] Os seis indicadores gerais apresentam valores corretos.
+- [ ] Sessões sem objetivas mostram `—` no desempenho e nos acertos.
+- [ ] O aviso de revisão manual aparece apenas quando existem discursivas.
+- [ ] O resumo por assunto apresenta acertos, total de objetivas e tempo.
+- [ ] Assuntos sem objetivas não exibem barra enganosa de `0%`.
+- [ ] O filtro **Todas** exibe todas as questões.
+- [ ] O filtro **Erradas** exibe apenas objetivas respondidas incorretamente.
+- [ ] O filtro **Discursivas** exibe todas as discursivas.
+- [ ] O filtro **Revisão** exibe todas as marcadas, independentemente do status.
+- [ ] O filtro **Não respondidas** exibe apenas questões pendentes.
+- [ ] Filtros sem resultados mostram uma mensagem específica.
+- [ ] Apenas um card permanece expandido por vez.
+- [ ] Card objetivo expandido mostra enunciado, respostas, tempo, explicação e anotação.
+- [ ] Card discursivo expandido mostra enunciado, resposta, modelo, critérios, tempo e anotações.
+- [ ] Quando o gabarito estiver oculto, respostas esperadas e explicações não aparecem.
 - [ ] Respostas TXT são baixadas.
 - [ ] Anotações TXT são baixadas.
 - [ ] Sessão JSON é baixada e pode ser aberta.
+- [ ] Botões de Início no cabeçalho e no rodapé encerram a sessão ativa sem apagar o histórico.
 
 ## Bloco H — Layout
 

@@ -40,7 +40,7 @@ Incluído:
 
 ## v0.3-dev — Fluxo visual completo
 
-**Status:** em andamento.
+**Status:** implementação das telas concluída; testes gerais pendentes.
 
 ### Objetivo
 
@@ -52,7 +52,7 @@ Substituir as telas atuais pelas cinco telas aprovadas sem perder funcionalidade
 2. implementar Importação e Validação — **concluído**;
 3. implementar Resolução — **concluído**;
 4. implementar Tela de Desempenho — **concluído**;
-5. implementar Resultado Final — **próximo**;
+5. implementar Resultado Final — **concluído**;
 6. padronizar modais;
 7. preservar IDs ou atualizar HTML/JS em conjunto.
 
@@ -81,7 +81,12 @@ Substituir as telas atuais pelas cinco telas aprovadas sem perder funcionalidade
 - testes unitários das regras de marcação;
 - Tela de Desempenho com seis estados dinâmicos;
 - fluxo direto para o Resultado Final em sessões somente discursivas;
-- testes de fronteira das faixas de desempenho.
+- testes de fronteira das faixas de desempenho;
+- Resultado Final com indicadores gerais e por assunto;
+- filtros de revisão e estados vazios;
+- cards objetivos e discursivos expansíveis;
+- apenas um card expandido por vez;
+- exportações preservadas.
 
 ### Funcionalidades novas
 

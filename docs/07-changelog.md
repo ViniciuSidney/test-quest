@@ -45,7 +45,16 @@ Todas as mudanças importantes do Test Quest serão registradas neste arquivo.
 - testes `performance-state.test.mjs` e `performance-structure.test.mjs`;
 - overlay translúcido de desempenho sobre o Resultado Final;
 - animação de entrada com contagem progressiva do percentual;
-- transição suave para revelar o Resultado Final.
+- transição suave para revelar o Resultado Final;
+- Tela de Resultado Final oficial;
+- painel de indicadores gerais;
+- desempenho por assunto com percentuais, tempos e barras semânticas;
+- filtros Todas, Erradas, Discursivas, Revisão e Não respondidas;
+- cards resumidos com estados correta, incorreta, discursiva e não respondida;
+- expansão exclusiva de cards objetivos e discursivos;
+- estados vazios específicos para cada filtro;
+- módulo `results.service.js`;
+- testes `results-state.test.mjs` e `results-structure.test.mjs`.
 
 ### Corrigido
 
@@ -93,7 +102,12 @@ Todas as mudanças importantes do Test Quest serão registradas neste arquivo.
 - finalização com objetivas passa pela Tela de Desempenho antes do Resultado Final;
 - sessões somente discursivas seguem diretamente para o Resultado Final;
 - Tela de Desempenho deixa de usar painéis decorativos simulados;
-- Resultado Final passa a ser renderizado ao fundo antes da abertura do overlay de desempenho.
+- Resultado Final passa a ser renderizado ao fundo antes da abertura do overlay de desempenho;
+- resultado legado é substituído pelo layout oficial de resumo lateral e revisão principal;
+- apenas um card de revisão permanece expandido;
+- questões não respondidas deixam de ser classificadas como incorretas nos filtros;
+- sessões sem objetivas mostram desempenho indisponível em vez de `0%`;
+- exportações permanecem disponíveis na barra inferior oficial.
 
 ### Corrigido
 

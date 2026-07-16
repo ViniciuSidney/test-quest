@@ -492,30 +492,124 @@
       </article>
     </section>
 
-    <section id="telaResultado" class="screen">
-      <div class="panel">
-        <div class="panel-header">
-          <div>
-            <h2 id="tituloResultadoFinal" tabindex="-1">Resultado final</h2>
-            <p>Confira desempenho, tempo usado e materiais de revisão.</p>
-          </div>
-          <div class="actions compact">
-            <button id="btnBaixarTxt" class="primary" type="button">Baixar respostas</button>
-            <button id="btnBaixarAnotacoes" class="secondary" type="button">Baixar anotações</button>
-            <button id="btnExportarJson" class="ghost" type="button">Exportar sessão JSON</button>
-          </div>
+    <section id="telaResultado" class="screen results-screen" aria-labelledby="tituloResultadoFinal">
+      <header class="results-header">
+        <button id="btnInicioResultado" class="secondary results-header__home" type="button">
+          <span aria-hidden="true">←</span>
+          <span>Início</span>
+        </button>
+
+        <div class="results-header__identity">
+          <h1 id="tituloResultadoFinal" tabindex="-1">Resultado final</h1>
+          <span aria-hidden="true">:</span>
+          <span id="nomeListaResultado" class="results-header__list-name">Lista sem nome</span>
         </div>
 
-        <div id="resumoResultado" class="result-grid"></div>
-        <div id="resultadoPorAssunto" class="subject-summary"></div>
+        <button class="secondary results-header__theme" type="button" data-theme-toggle>
+          <span aria-hidden="true">◐</span>
+          <span>Tema</span>
+        </button>
+      </header>
 
-        <div class="actions">
-          <button id="btnRevisar" class="secondary" type="button">Revisar respostas</button>
-          <button id="btnNovaLista" class="primary" type="button">Voltar ao início</button>
-        </div>
+      <div class="results-layout">
+        <aside class="results-sidebar" aria-label="Resumo da sessão">
+          <section class="results-panel results-summary-panel" aria-labelledby="tituloResultadoGeral">
+            <h2 id="tituloResultadoGeral">Resultado geral</h2>
+
+            <div class="results-metrics-grid">
+              <article class="result-metric">
+                <strong id="resultadoRespondidas">0/0</strong>
+                <span>Questões respondidas</span>
+              </article>
+
+              <article class="result-metric">
+                <strong id="resultadoCorretas">—</strong>
+                <span>Respostas corretas</span>
+              </article>
+
+              <article class="result-metric">
+                <strong id="resultadoTempoTotal">00:00</strong>
+                <span>Tempo total</span>
+              </article>
+
+              <article class="result-metric">
+                <strong id="resultadoDesempenho">—</strong>
+                <span>Desempenho nas objetivas</span>
+              </article>
+
+              <article class="result-metric">
+                <strong id="resultadoRevisao">0</strong>
+                <span>Marcadas para revisão</span>
+              </article>
+
+              <article class="result-metric">
+                <strong id="resultadoTempoMedio">00:00</strong>
+                <span>Tempo médio</span>
+              </article>
+            </div>
+
+            <p id="avisoResultadoDiscursivas" class="results-discursive-notice hidden">
+              <span aria-hidden="true">✎</span>
+              As questões discursivas devem ser revisadas manualmente.
+            </p>
+          </section>
+
+          <section class="results-panel subject-performance-panel" aria-labelledby="tituloResultadoAssuntos">
+            <h2 id="tituloResultadoAssuntos">Por assunto</h2>
+            <div id="listaDesempenhoAssuntos" class="subject-performance-list"></div>
+          </section>
+        </aside>
+
+        <main class="results-panel review-panel" aria-labelledby="tituloRevisaoQuestoes">
+          <header class="review-panel__header">
+            <h2 id="tituloRevisaoQuestoes">Revisão das questões</h2>
+
+            <nav class="review-filters" aria-label="Filtros da revisão">
+              <button class="review-filter is-active" type="button" data-result-filter="all" aria-pressed="true">
+                Todas
+              </button>
+              <button class="review-filter" type="button" data-result-filter="incorrect" aria-pressed="false">
+                Erradas
+              </button>
+              <button class="review-filter" type="button" data-result-filter="discursive" aria-pressed="false">
+                Discursivas
+              </button>
+              <button class="review-filter" type="button" data-result-filter="review" aria-pressed="false">
+                Revisão
+              </button>
+              <button class="review-filter" type="button" data-result-filter="unanswered" aria-pressed="false">
+                Não respondidas
+              </button>
+            </nav>
+          </header>
+
+          <div id="listaRevisaoResultado" class="results-review-list" aria-live="polite"></div>
+        </main>
+
+        <footer class="results-panel results-actionbar" aria-label="Ações do resultado">
+          <div class="results-actions__exports">
+            <button id="btnBaixarTxt" class="secondary" type="button">
+              <span aria-hidden="true">↓</span>
+              Baixar respostas
+            </button>
+            <button id="btnBaixarAnotacoes" class="secondary" type="button">
+              <span aria-hidden="true">↓</span>
+              Baixar anotações
+            </button>
+            <button id="btnExportarJson" class="secondary" type="button">
+              <span aria-hidden="true">⇩</span>
+              Exportar sessão
+            </button>
+          </div>
+
+          <div class="results-actions__navigation">
+            <button id="btnNovaLista" class="primary" type="button">
+              <span aria-hidden="true">←</span>
+              Voltar ao início
+            </button>
+          </div>
+        </footer>
       </div>
-
-      <div id="detalhesResultado" class="review-list"></div>
     </section>
   </main>
 

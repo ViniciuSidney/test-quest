@@ -1,0 +1,64 @@
+import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
+
+const index = await readFile(new URL("../index.html", import.meta.url), "utf8");
+const mainCss = await readFile(new URL("../src/styles/main.css", import.meta.url), "utf8");
+const resultsCss = await readFile(
+  new URL("../src/styles/pages/results.css", import.meta.url),
+  "utf8"
+);
+const controller = await readFile(
+  new URL("../src/scripts/features/question-resolution/question-resolution.controller.js", import.meta.url),
+  "utf8"
+);
+
+const requiredIds = [
+  "telaResultado",
+  "btnInicioResultado",
+  "tituloResultadoFinal",
+  "nomeListaResultado",
+  "resultadoRespondidas",
+  "resultadoCorretas",
+  "resultadoTempoTotal",
+  "resultadoDesempenho",
+  "resultadoRevisao",
+  "resultadoTempoMedio",
+  "avisoResultadoDiscursivas",
+  "listaDesempenhoAssuntos",
+  "listaRevisaoResultado",
+  "btnBaixarTxt",
+  "btnBaixarAnotacoes",
+  "btnExportarJson",
+  "btnNovaLista"
+];
+
+for (const id of requiredIds) {
+  assert.match(index, new RegExp(`id=["']${id}["']`), `ID ausente: ${id}`);
+}
+
+for (const filter of ["all", "incorrect", "discursive", "review", "unanswered"]) {
+  assert.match(index, new RegExp(`data-result-filter=["']${filter}["']`));
+}
+
+assert.match(mainCss, /pages\/results\.css/);
+assert.match(resultsCss, /\.results-screen\.active/);
+assert.match(resultsCss, /\.results-layout/);
+assert.match(resultsCss, /\.results-review-list/);
+assert.match(resultsCss, /\.result-review-card\.is-expanded\s*\{[^}]*grid-column:\s*1\s*\/\s*-1/s);
+assert.match(resultsCss, /@media \(max-width: 720px\)/);
+assert.match(resultsCss, /prefers-reduced-motion/);
+
+assert.match(controller, /buildQuestionReviewItems/);
+assert.match(controller, /buildSubjectResultItems/);
+assert.match(controller, /filterQuestionReviewItems/);
+assert.match(controller, /function selecionarFiltroResultado/);
+assert.match(controller, /function alternarCardResultado/);
+assert.match(controller, /function renderizarDetalhesObjetivaResultado/);
+assert.match(controller, /function renderizarDetalhesDiscursivaResultado/);
+assert.match(controller, /questaoResultadoExpandidaId/);
+assert.match(controller, /filtroResultadoAtivo/);
+assert.doesNotMatch(controller, /resumoResultado/);
+assert.doesNotMatch(controller, /detalhesResultado/);
+assert.doesNotMatch(controller, /resultadoPorAssunto/);
+
+console.log("Results structure: todos os testes passaram.");

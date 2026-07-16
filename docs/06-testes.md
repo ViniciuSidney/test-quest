@@ -211,6 +211,11 @@ Os testes manuais da tabela continuam necessários no navegador antes do commit 
 | T62 | Objetiva expandida | Mostra gabarito e explicação | Pendente |
 | T63 | Discursiva expandida | Mostra resposta e critérios | Pendente |
 | T64 | Não respondida | Não é chamada de incorreta | Pendente |
+| T64.1 | Apenas um card expandido | Abrir outro fecha o anterior | Pendente |
+| T64.2 | Gabarito oculto | Explicações, modelos e critérios permanecem ocultos | Pendente |
+| T64.3 | Foco após expansão | Foco permanece no controle do card atualizado | Pendente |
+| T64.4 | Estado de revisão combinado | Marcada pode coexistir com correta, incorreta, discursiva ou pendente | Pendente |
+| T64.5 | Cabeçalho e rodapé | As duas ações de Início encerram o mesmo fluxo | Pendente |
 
 # Exportações
 

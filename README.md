@@ -47,6 +47,7 @@ A proposta não é apenas registrar acertos, mas ajudar o usuário a:
 - Tela de Importação e Validação oficial implementada;
 - Tela de Resolução objetiva e discursiva oficial implementada;
 - Tela de Desempenho com seis estados dinâmicos implementada;
+- Tela de Resultado Final oficial implementada com filtros e cards expansíveis;
 - estados inicial, pendente, validando, válido e inválido;
 - contadores definitivos de questões e assuntos;
 - parser de importação separado em módulo próprio;
@@ -60,14 +61,15 @@ A proposta não é apenas registrar acertos, mas ajudar o usuário a:
 
 ### Próxima etapa
 
-A próxima adaptação será a **Tela de Resultado Final**, que receberá os filtros e cards expansíveis aprovados. Depois dela, o ciclo seguirá para:
+As cinco telas oficiais já estão implementadas. O ciclo seguirá agora para:
 
-1. modais e confirmações restantes;
-2. modularização complementar;
-3. testes completos;
-4. revisão e integração da branch `dev` na `main`.
+1. testes funcionais e visuais completos;
+2. refinamento dos modais e confirmações restantes;
+3. modularização complementar do controlador;
+4. revisão da documentação;
+5. integração da branch `dev` na `main`.
 
-A implementação continua sendo feita uma tela por vez, com testes e commits separados.
+As correções continuarão sendo registradas em etapas pequenas, com testes e commits separados.
 
 ## Funcionalidades atuais
 
@@ -95,17 +97,19 @@ A implementação continua sendo feita uma tela por vez, com testes e commits se
 - marcadores auxiliares com estados neutro, em análise e eliminada;
 - confirmação customizada antes da finalização;
 - Tela de Desempenho intermediária com estados de 100%, 90–99%, 75–89%, 60–74%, 50–59% e 0–49%;
-- transição da Resolução para o Desempenho e, depois, para o Resultado Final.
+- transição da Resolução para o Desempenho e, depois, para o Resultado Final;
+- Resultado Final com resumo geral, desempenho por assunto e filtros;
+- cards objetivos e discursivos expansíveis;
+- estado vazio para filtros sem resultados;
+- apenas um card de revisão expandido por vez.
 
-## Funcionalidades planejadas para o próximo ciclo
+## Funcionalidades planejadas para os próximos ciclos
 
-- filtros no Resultado Final;
-- cards de revisão expansíveis;
-- card objetivo expandido;
-- card discursivo expandido;
-- estados vazios e mensagens de erro aprimorados;
+- refinamento dos modais restantes;
 - modularização gradual do JavaScript;
-- migração versionada dos dados locais.
+- migração versionada dos dados locais;
+- histórico detalhado de sessões;
+- testes completos para fechamento da versão.
 
 ## Fluxo oficial
 
@@ -189,7 +193,11 @@ test-quest/
 │   │   ├── core/
 │   │   │   └── screens.js
 │   │   ├── features/
-│   │   │   └── home/
+│   │   │   ├── home/
+│   │   │   ├── performance/
+│   │   │   ├── question-import/
+│   │   │   ├── question-resolution/
+│   │   │   └── results/
 │   │   ├── shared/
 │   │   ├── app.js
 │   │   └── main.js
@@ -219,7 +227,7 @@ src/scripts/features/question-resolution/question-resolution.controller.js
 
 Essa decisão preservou o funcionamento da aplicação durante a migração estrutural.
 
-A modularização já começou com o gerenciador de telas, o serviço da Tela Inicial e o parser de importação. Ela continuará separando responsabilidades como:
+A modularização já começou com o gerenciador de telas, o serviço da Tela Inicial, o parser de importação, os auxiliares da Resolução, o serviço de Desempenho e o serviço de Resultado. Ela continuará separando responsabilidades como:
 
 - controle visual da importação e validação;
 - resolução;
@@ -237,19 +245,23 @@ O CSS funcional atual permanece principalmente em:
 src/styles/pages/test-quest.css
 ```
 
-A Tela Inicial, a Importação e a Resolução possuem estilos próprios em:
+As cinco telas oficiais possuem estilos próprios em:
 
 ```text
 src/styles/pages/home.css
 src/styles/pages/import.css
 src/styles/pages/resolution.css
+src/styles/pages/performance.css
+src/styles/pages/results.css
 ```
 
-O parser da importação e os auxiliares puros da Resolução estão em:
+Os módulos funcionais extraídos do controlador estão em:
 
 ```text
 src/scripts/features/question-import/question-import.parser.js
 src/scripts/features/question-resolution/question-resolution.helpers.js
+src/scripts/features/performance/performance.service.js
+src/scripts/features/results/results.service.js
 ```
 
 Os demais estilos e responsabilidades serão distribuídos progressivamente entre componentes, layouts e páginas.
@@ -363,14 +375,12 @@ Quando um ciclo estiver validado, as mudanças devem passar por revisão antes d
 
 ### Próximo ciclo
 
-- implementar a Tela de Resultado Final;
-- integrar a revisão detalhada após a Tela de Desempenho;
-- preservar a lógica atual;
-- testar cada tela separadamente;
-- adaptar o estado da aplicação;
-- criar histórico de sessões;
-- padronizar modais;
-- revisar responsividade e acessibilidade.
+- executar os testes completos das cinco telas;
+- corrigir regressões visuais e funcionais;
+- padronizar os modais restantes;
+- modularizar o controlador gradualmente;
+- revisar responsividade e acessibilidade;
+- preparar a integração em `main`.
 
 ### Antes da versão estável
 
@@ -386,7 +396,7 @@ Quando um ciclo estiver validado, as mudanças devem passar por revisão antes d
 - não há sincronização entre dispositivos;
 - discursivas dependem de revisão manual;
 - o histórico detalhado de sessões ainda não foi implementado;
-- a Tela Inicial, a Importação, a Resolução e a Tela de Desempenho já foram aplicadas; o Resultado Final ainda usa a base visual legada;
+- as cinco telas oficiais já foram aplicadas; ainda faltam testes completos e refinamentos de fechamento;
 - parte da lógica e do CSS permanece concentrada em arquivos legados.
 
 ## Autoria

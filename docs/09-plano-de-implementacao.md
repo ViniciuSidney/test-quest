@@ -206,16 +206,18 @@ feat: implementa tela de desempenho
 
 # Etapa 5 — Resultado Final
 
-**Status:** próxima etapa.
+**Status:** concluída.
 
-## Implementar
+## Implementado
 
 - resultado geral;
-- por assunto;
+- desempenho por assunto;
 - filtros;
 - cards resumidos;
-- expansões;
-- exportações.
+- expansões objetiva e discursiva;
+- exportações;
+- estados vazios;
+- responsividade e acessibilidade.
 
 ## Integração
 
