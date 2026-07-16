@@ -71,6 +71,8 @@ Importação e Validação
     ↓
 Resolução
     ↓
+Tela de Desempenho
+    ↓
 Resultado Final
     ↓
 Tela Inicial
@@ -83,7 +85,7 @@ A Tela Inicial também permite continuar uma sessão salva diretamente na Tela d
 **Base funcional:** `v0.2.5-dev`  
 **Ciclo em desenvolvimento:** `v0.3-dev`
 
-**Fase do projeto:** implementação gradual das quatro telas oficiais.
+**Fase do projeto:** implementação gradual das cinco telas oficiais.
 
 Concluído:
 
@@ -92,26 +94,27 @@ Concluído:
 - repositório remoto publicado;
 - branches `main` e `dev` configuradas;
 - identidade visual documentada;
-- layouts das quatro telas aprovados;
+- layouts das cinco telas aprovados;
 - manuais estruturais concluídos;
 - Tela Inicial oficial implementada;
 - Tela de Importação e Validação oficial implementada;
 - Tela de Resolução oficial implementada;
+- Tela de Desempenho oficial implementada com seis estados dinâmicos;
 - estados completos de validação e contadores implementados;
 - parser de importação separado;
-- navegação centralizada entre as quatro telas;
+- navegação centralizada entre as cinco telas;
 - histórico local e indicadores de sessões concluídas implementados.
 
 Próxima etapa:
 
-- implementar a nova Tela de Resultado Final;
+- implementar a nova Tela de Resultado Final após a Tela de Desempenho;
 - preservar exportações e cálculos existentes;
 - avançar depois para os modais e a modularização complementar;
 - executar testes após cada etapa.
 
 ## Critérios de sucesso da próxima etapa
 
-- quatro telas implementadas conforme os manuais;
+- cinco telas implementadas conforme os manuais;
 - nenhuma perda de respostas, anotações ou tempos;
 - temporizador ativo somente durante a resolução;
 - ausência de rolagem global e sobreposições;

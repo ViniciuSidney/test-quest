@@ -273,6 +273,7 @@ src/scripts
 │   ├── home
 │   ├── question-import
 │   ├── question-resolution
+│   ├── performance
 │   ├── results
 │   ├── timer
 │   ├── export
@@ -316,3 +317,10 @@ src/styles
 ## Regra de migração
 
 A substituição das telas deve acontecer uma por vez. A lógica legada pode permanecer temporariamente enquanto os novos componentes são conectados e testados.
+
+
+## Tela de Desempenho
+
+A Tela de Desempenho não cria um segundo cálculo independente. Ela recebe o percentual já produzido pelo cálculo final da sessão e seleciona um estado visual por faixa.
+
+Quando não existem questões objetivas, a aplicação não apresenta porcentagem artificial de `0%`: o fluxo segue diretamente para o Resultado Final, onde a revisão manual das discursivas é apresentada.

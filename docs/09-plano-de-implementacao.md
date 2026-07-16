@@ -2,7 +2,7 @@
 
 ## Objetivo
 
-Substituir as telas atuais pelas quatro telas aprovadas sem perder funcionalidades e sem criar um grande lote de alterações difícil de revisar.
+Substituir as telas atuais pelas cinco telas aprovadas sem perder funcionalidades e sem criar um grande lote de alterações difícil de revisar.
 
 ## Estratégia de branches
 
@@ -34,7 +34,7 @@ Implementar uma tela por vez:
 5. documentação;
 6. commit.
 
-Não substituir as quatro telas em um único commit.
+Não substituir as cinco telas em um único commit.
 
 ---
 
@@ -171,7 +171,40 @@ feat: implementa nova tela de resolução
 
 ---
 
-# Etapa 4 — Resultado Final
+# Etapa 4 — Tela de Desempenho
+
+**Status:** concluído.
+
+## Implementar
+
+- estrutura única;
+- seis faixas dinâmicas;
+- cores semânticas;
+- CTA para o Resultado Final;
+- responsividade e acessibilidade.
+
+## Integração
+
+- reutilizar o percentual final das objetivas;
+- pular a tela em sessões somente discursivas;
+- não iniciar novamente o temporizador.
+
+## Testar
+
+- limites de todas as faixas;
+- textos e cores;
+- desktop, tablet e mobile;
+- fluxo para o Resultado Final.
+
+Commit sugerido:
+
+```text
+feat: implementa tela de desempenho
+```
+
+---
+
+# Etapa 5 — Resultado Final
 
 **Status:** próxima etapa.
 
@@ -208,7 +241,7 @@ feat: implementa tela de resultado final
 
 ---
 
-# Etapa 5 — Modais
+# Etapa 6 — Modais
 
 Planejar e implementar:
 
@@ -227,7 +260,7 @@ feat: padroniza modais e confirmações
 
 ---
 
-# Etapa 6 — Modularização
+# Etapa 7 — Modularização
 
 - separar controllers;
 - centralizar storage;
@@ -244,7 +277,7 @@ refactor: modulariza telas e persistência
 
 ---
 
-# Etapa 7 — Validação final
+# Etapa 8 — Validação final
 
 - executar `06-testes.md`;
 - corrigir regressões;

@@ -13,7 +13,8 @@ Todas as mudanças importantes do Test Quest serão registradas neste arquivo.
 - manual separado da Importação e Validação;
 - manual da Resolução objetiva e discursiva;
 - manual do Resultado Final;
-- layouts oficiais das quatro telas;
+- manual da Tela de Desempenho;
+- layouts oficiais das cinco telas;
 - fluxo oficial com Tela Inicial;
 - planejamento das marcações auxiliares;
 - planejamento dos filtros e cards expansíveis;
@@ -37,7 +38,11 @@ Todas as mudanças importantes do Test Quest serão registradas neste arquivo.
 - módulo `question-resolution.helpers.js`;
 - testes `resolution-state.test.mjs` e `resolution-structure.test.mjs`;
 - cabeçalho próprio da Resolução;
-- barra de ações dividida entre sessão e navegação.
+- barra de ações dividida entre sessão e navegação;
+- Tela de Desempenho intermediária;
+- seis estados visuais dinâmicos por faixa de acerto;
+- módulo `performance.service.js`;
+- testes `performance-state.test.mjs` e `performance-structure.test.mjs`.
 
 ### Corrigido
 
@@ -54,7 +59,7 @@ Todas as mudanças importantes do Test Quest serão registradas neste arquivo.
 
 ### Alterado
 
-- documentação atualizada para quatro telas;
+- documentação atualizada para cinco telas;
 - requisitos separados por estado;
 - arquitetura preparada para histórico e migração;
 - roadmap reorganizado;
@@ -76,7 +81,9 @@ Todas as mudanças importantes do Test Quest serão registradas neste arquivo.
 - mapa de questões recebe rótulos acessíveis e estado atual;
 - navegação registra o tempo antes de trocar a questão;
 - estado pausado do temporizador passa a ser persistido;
-- finalização passa a exigir confirmação mesmo com todas as questões respondidas.
+- finalização passa a exigir confirmação mesmo com todas as questões respondidas;
+- finalização com objetivas passa pela Tela de Desempenho antes do Resultado Final;
+- sessões somente discursivas seguem diretamente para o Resultado Final.
 
 ### Corrigido
 

@@ -26,7 +26,7 @@ A proposta não é apenas registrar acertos, mas ajudar o usuário a:
 **Base funcional:** `v0.2.5-dev`  
 **Ciclo em desenvolvimento:** `v0.3-dev`
 
-**Fase atual:** implementação gradual das quatro telas oficiais.
+**Fase atual:** implementação gradual das cinco telas oficiais.
 
 ### Concluído
 
@@ -41,15 +41,16 @@ A proposta não é apenas registrar acertos, mas ajudar o usuário a:
 - repositório Git inicializado;
 - repositório remoto publicado no GitHub;
 - branches `main` e `dev` configuradas;
-- layouts das quatro telas principais aprovados;
+- layouts das cinco telas principais aprovados;
 - manuais estruturais concluídos;
 - Tela Inicial oficial implementada;
 - Tela de Importação e Validação oficial implementada;
 - Tela de Resolução objetiva e discursiva oficial implementada;
+- Tela de Desempenho com seis estados dinâmicos implementada;
 - estados inicial, pendente, validando, válido e inválido;
 - contadores definitivos de questões e assuntos;
 - parser de importação separado em módulo próprio;
-- navegação centralizada entre as quatro telas;
+- navegação centralizada entre as cinco telas;
 - sessão em andamento movida para a Tela Inicial;
 - indicadores históricos de sessões concluídas;
 - temporizador interrompido ao sair da Resolução;
@@ -59,7 +60,7 @@ A proposta não é apenas registrar acertos, mas ajudar o usuário a:
 
 ### Próxima etapa
 
-A próxima adaptação será a **Tela de Resultado Final**. Depois dela, o ciclo seguirá para:
+A próxima adaptação será a **Tela de Resultado Final**, que receberá os filtros e cards expansíveis aprovados. Depois dela, o ciclo seguirá para:
 
 1. modais e confirmações restantes;
 2. modularização complementar;
@@ -92,7 +93,9 @@ A implementação continua sendo feita uma tela por vez, com testes e commits se
 - Tela de Resolução oficial com objetiva e discursiva;
 - mapa acessível de questões;
 - marcadores auxiliares com estados neutro, em análise e eliminada;
-- confirmação customizada antes da finalização.
+- confirmação customizada antes da finalização;
+- Tela de Desempenho intermediária com estados de 100%, 90–99%, 75–89%, 60–74%, 50–59% e 0–49%;
+- transição da Resolução para o Desempenho e, depois, para o Resultado Final.
 
 ## Funcionalidades planejadas para o próximo ciclo
 
@@ -115,7 +118,10 @@ Importação e Validação
 └── Começar → Resolução
 
 Resolução
-└── Finalizar → Resultado Final
+└── Finalizar → Tela de Desempenho
+
+Tela de Desempenho
+└── Continuar → Resultado Final
 
 Resultado Final
 └── Voltar ao início → Tela Inicial
@@ -161,6 +167,7 @@ test-quest/
 │   │   ├── test-quest-manual-estrutura-tela-inicial.md
 │   │   ├── test-quest-manual-estrutura-importacao-validacao.md
 │   │   ├── test-quest-manual-estrutura-resolucao.md
+│   │   ├── test-quest-manual-estrutura-desempenho.md
 │   │   └── test-quest-manual-estrutura-resultado-final.md
 │   ├── README.md
 │   ├── 01-visao-do-projeto.md
@@ -357,6 +364,7 @@ Quando um ciclo estiver validado, as mudanças devem passar por revisão antes d
 ### Próximo ciclo
 
 - implementar a Tela de Resultado Final;
+- integrar a revisão detalhada após a Tela de Desempenho;
 - preservar a lógica atual;
 - testar cada tela separadamente;
 - adaptar o estado da aplicação;
@@ -378,7 +386,7 @@ Quando um ciclo estiver validado, as mudanças devem passar por revisão antes d
 - não há sincronização entre dispositivos;
 - discursivas dependem de revisão manual;
 - o histórico detalhado de sessões ainda não foi implementado;
-- a Tela Inicial, a Importação e a Resolução já foram aplicadas; o Resultado ainda usa a base visual legada;
+- a Tela Inicial, a Importação, a Resolução e a Tela de Desempenho já foram aplicadas; o Resultado Final ainda usa a base visual legada;
 - parte da lógica e do CSS permanece concentrada em arquivos legados.
 
 ## Autoria

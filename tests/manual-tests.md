@@ -82,7 +82,23 @@
 - [ ] Limpar progresso remove a sessão.
 - [ ] O tema permanece após recarregar.
 
-## Bloco F — Resultado
+## Bloco F — Tela de Desempenho
+
+- [ ] Finalizar uma sessão com objetivas abre a Tela de Desempenho.
+- [ ] O percentual coincide com o Resultado Final.
+- [ ] 100% mostra **Perfeito!** e **Ótimo!**.
+- [ ] 90% a 99% mostra **Excelente!**.
+- [ ] 75% a 89% mostra **Muito bom!**.
+- [ ] 60% a 74% mostra **Bom resultado!**, **Você já construiu uma boa base.** e **Tudo bem!**.
+- [ ] 50% a 59% mostra **Pode melhorar.**.
+- [ ] 0% a 49% mostra **Hora de revisar!**.
+- [ ] O botão principal abre o Resultado Final.
+- [ ] Sessões somente discursivas pulam esta tela.
+- [ ] Desktop, tablet e mobile não apresentam transbordamentos.
+- [ ] O foco chega ao título ao abrir a tela.
+- [ ] A preferência de redução de movimento é respeitada.
+
+## Bloco G — Resultado
 
 - [ ] As objetivas são corrigidas.
 - [ ] A discursiva exibe modelo e critérios.
@@ -92,7 +108,7 @@
 - [ ] Anotações TXT são baixadas.
 - [ ] Sessão JSON é baixada e pode ser aberta.
 
-## Bloco G — Layout
+## Bloco H — Layout
 
 - [ ] Não existe rolagem global no desktop.
 - [ ] O painel lateral não encobre as anotações.

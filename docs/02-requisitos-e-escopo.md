@@ -46,6 +46,11 @@
 | RF33 | Exportar sem alterar o estado da sessão | Implementado |
 | RF34 | Confirmar finalização com questões pendentes | Implementado |
 | RF35 | Exibir estado vazio em filtros sem resultados | Planejado |
+| RF36 | Exibir uma Tela de Desempenho entre a Resolução e o Resultado Final | Implementado |
+| RF37 | Selecionar um dos seis estados visuais pela porcentagem objetiva | Implementado |
+| RF38 | Usar uma única estrutura dinâmica para todos os estados de desempenho | Implementado |
+| RF39 | Avançar da Tela de Desempenho para o Resultado Final pelo CTA principal | Implementado |
+| RF40 | Pular a Tela de Desempenho quando a sessão não possuir objetivas | Implementado |
 
 ## Requisitos não funcionais
 
@@ -76,10 +81,11 @@
 
 ### Incluído
 
-- documentação das quatro telas;
+- documentação das cinco telas;
 - implementação da Tela Inicial;
 - implementação da Importação e Validação;
 - implementação da Resolução objetiva e discursiva;
+- implementação da Tela de Desempenho;
 - implementação do Resultado Final;
 - aplicação integral da identidade visual;
 - adaptação do fluxo de sessão salva;

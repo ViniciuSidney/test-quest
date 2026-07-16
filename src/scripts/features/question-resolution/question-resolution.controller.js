@@ -4,6 +4,11 @@ import { createScreenManager } from "../../core/screens.js";
 import { calculateHistoryMetrics, readHistory, recordCompletedSession, removeCompletedSession } from "../home/home.service.js";
 import { parseQuestions, QuestionImportError, summarizeQuestions } from "../question-import/question-import.parser.js";
 import {
+  getPerformanceState,
+  PERFORMANCE_STATE_CLASSES,
+  shouldShowPerformanceScreen
+} from "../performance/performance.service.js";
+import {
   buildQuestionMapLabel,
   calculateDisplayedTotalMs,
   getMarkerInfo,
@@ -41,6 +46,7 @@ export function initQuestionResolution() {
     home: "#telaInicial",
     importacao: "#telaImportacao",
     resolucao: "#telaResolucao",
+    desempenho: "#telaDesempenho",
     resultado: "#telaResultado"
   });
 
@@ -201,6 +207,7 @@ export function initQuestionResolution() {
 
     $("#btnLimparProgressoResolucao")?.addEventListener("click", apagarSessaoSalva);
 
+    $("#btnVerResultadoFinal")?.addEventListener("click", abrirResultadoFinal);
     $("#btnNovaLista").addEventListener("click", voltarAoInicioAposResultado);
     $("#btnRevisar").addEventListener("click", () => {
       removeCompletedSession(estado.id);
@@ -939,12 +946,20 @@ export function initQuestionResolution() {
     estado.finalizadoEm = new Date().toISOString();
     estado.status = "finalizada";
     garantirIdentidadeSessao();
+
+    const resultadoFinal = calcularResultado(estado);
+
     salvarEstadoImediato();
-    recordCompletedSession(estado, calcularResultado(estado));
+    recordCompletedSession(estado, resultadoFinal);
     pararCronometro();
 
-    trocarTela("resultado");
-    renderizarResultado();
+    if (shouldShowPerformanceScreen(resultadoFinal.objetivas)) {
+      renderizarDesempenho(resultadoFinal);
+      trocarTela("desempenho");
+    } else {
+      abrirResultadoFinal();
+    }
+
     atualizarHome();
   }
 
@@ -1067,12 +1082,47 @@ export function initQuestionResolution() {
     };
   }
 
+  function renderizarDesempenho(resultado) {
+    const tela = $("#telaDesempenho");
+    const state = getPerformanceState(resultado?.percentual);
+
+    if (!tela) {
+      return;
+    }
+
+    tela.classList.remove(...PERFORMANCE_STATE_CLASSES);
+    tela.classList.add(state.className);
+    tela.dataset.performanceState = state.key;
+    document.body.dataset.performanceState = state.key;
+
+    $("#valorDesempenho").textContent = String(state.percentage);
+    $("#tituloDesempenho").textContent = state.title;
+    $("#subtituloDesempenho").textContent = state.subtitle;
+    $("#btnVerResultadoFinal").textContent = state.buttonLabel;
+    $("#blocoPontuacaoDesempenho").setAttribute(
+      "aria-label",
+      `Desempenho geral de ${state.percentage} por cento`
+    );
+
+    requestAnimationFrame(() => {
+      $("#tituloDesempenho")?.focus();
+    });
+  }
+
+  function abrirResultadoFinal() {
+    trocarTela("resultado");
+    renderizarResultado();
+  }
+
   function renderizarResultado() {
     const r = calcularResultado(estado);
 
+    const percentualObjetivas = r.objetivas > 0 ? `${r.percentual}%` : "—";
+    const acertosObjetivas = r.objetivas > 0 ? `${r.acertos}/${r.objetivas}` : "—";
+
     $("#resumoResultado").innerHTML = `
-      <div class="result-card"><strong>${r.percentual}%</strong><span>desempenho nas objetivas</span></div>
-      <div class="result-card"><strong>${r.acertos}/${r.objetivas}</strong><span>objetivas corretas</span></div>
+      <div class="result-card"><strong>${percentualObjetivas}</strong><span>desempenho nas objetivas</span></div>
+      <div class="result-card"><strong>${acertosObjetivas}</strong><span>objetivas corretas</span></div>
       <div class="result-card"><strong>${r.respondidas}/${r.total}</strong><span>questões respondidas</span></div>
       <div class="result-card"><strong>${formatarTempo(r.tempoTotal)}</strong><span>tempo total</span></div>
       <div class="result-card"><strong>${formatarTempo(r.tempoMedio)}</strong><span>tempo médio</span></div>
@@ -1339,6 +1389,10 @@ export function initQuestionResolution() {
   function trocarTela(nome) {
     if (nome !== "resolucao") {
       pararCronometro();
+    }
+
+    if (nome !== "desempenho") {
+      delete document.body.dataset.performanceState;
     }
 
     screenManager.show(nome);

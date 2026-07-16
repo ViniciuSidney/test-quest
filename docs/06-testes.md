@@ -162,12 +162,32 @@ Os testes manuais da tabela continuam necessários no navegador antes do commit 
 | T47 | Resultado aberto | Tempo não aumenta | Pendente |
 | T48 | Recarregar | Tempos são restaurados | Pendente |
 
-# Finalização e Resultado
+# Finalização
 
 | Código | Teste | Resultado esperado | Status |
 |---|---|---|---|
 | T49 | Finalizar com pendências | Confirmação exibe resumo em lista | Pendente |
 | T49.1 | Finalizar sem pendências | Lista exibe respondidas, zero pendentes e revisão | Pendente |
+
+# Tela de Desempenho
+
+| Código | Teste | Resultado esperado | Status |
+|---|---|---|---|
+| T49.2 | Finalizar com objetivas | Abre a Tela de Desempenho antes do Resultado Final | Pendente |
+| T49.3 | Estado 100% | Exibe Perfeito, texto e botão corretos | Pendente |
+| T49.4 | Estado 90–99% | Exibe Excelente | Pendente |
+| T49.5 | Estado 75–89% | Exibe Muito bom | Pendente |
+| T49.6 | Estado 60–74% | Exibe Bom resultado e Tudo bem | Pendente |
+| T49.7 | Estado 50–59% | Exibe Pode melhorar | Pendente |
+| T49.8 | Estado 0–49% | Exibe Hora de revisar | Pendente |
+| T49.9 | CTA de desempenho | Abre o Resultado Final | Pendente |
+| T49.10 | Somente discursivas | Pula a Tela de Desempenho | Pendente |
+| T49.11 | Responsividade | Percentual e textos não transbordam | Pendente |
+
+# Resultado Final
+
+| Código | Teste | Resultado esperado | Status |
+|---|---|---|---|
 | T50 | Resultado geral | Indicadores corretos | Pendente |
 | T51 | Somente discursivas | Desempenho mostra indisponível | Pendente |
 | T52 | Por assunto | Acertos e tempos corretos | Pendente |

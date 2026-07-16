@@ -8,11 +8,13 @@ Este diretório reúne a documentação oficial do **Test Quest — Now I Know.*
 - repositório Git criado e publicado;
 - branches `main` e `dev` configuradas;
 - identidade visual oficial definida;
-- quatro telas principais planejadas e aprovadas;
+- cinco telas principais planejadas e aprovadas;
 - manuais estruturais concluídos;
 - Tela Inicial oficial implementada na branch `dev`;
 - Tela de Importação e Validação oficial implementada;
-- próxima etapa: Tela de Resolução.
+- Tela de Resolução oficial implementada;
+- Tela de Desempenho oficial implementada;
+- próxima etapa: Tela de Resultado Final.
 
 ## Documentos principais
 
@@ -20,7 +22,7 @@ Este diretório reúne a documentação oficial do **Test Quest — Now I Know.*
 |---|---|
 | `01-visao-do-projeto.md` | Propósito, público, diferenciais e estado atual |
 | `02-requisitos-e-escopo.md` | Requisitos funcionais, não funcionais e limites |
-| `03-fluxos-e-telas.md` | Fluxo oficial das quatro telas |
+| `03-fluxos-e-telas.md` | Fluxo oficial das cinco telas |
 | `04-dados-e-arquitetura.md` | Estrutura dos dados e arquitetura atual/alvo |
 | `05-roadmap.md` | Etapas de desenvolvimento até a versão estável |
 | `06-testes.md` | Roteiro de validação funcional, visual e de persistência |
@@ -35,6 +37,7 @@ manuais-de-telas/
 ├── test-quest-manual-estrutura-tela-inicial.md
 ├── test-quest-manual-estrutura-importacao-validacao.md
 ├── test-quest-manual-estrutura-resolucao.md
+├── test-quest-manual-estrutura-desempenho.md
 └── test-quest-manual-estrutura-resultado-final.md
 ```
 

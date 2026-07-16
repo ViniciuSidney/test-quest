@@ -15,7 +15,10 @@ Importação e Validação
 Resolução
 ├── Voltar ao início → Tela Inicial
 ├── Navegar entre questões
-└── Finalizar → Resultado Final
+└── Finalizar → Tela de Desempenho
+
+Tela de Desempenho
+└── Continuar → Resultado Final
 
 Resultado Final
 ├── Revisar e exportar
@@ -162,7 +165,40 @@ O tempo conta somente quando:
 
 ---
 
-# Tela 4 — Resultado Final
+# Tela 4 — Desempenho
+
+## Objetivo
+
+Entregar uma leitura rápida e emocional do desempenho antes da análise detalhada.
+
+## Elementos
+
+- rótulo “Desempenho Geral”;
+- percentual objetivo;
+- mensagem principal;
+- mensagem complementar;
+- botão para abrir o Resultado Final;
+- painéis decorativos laterais e inferior.
+
+## Estados
+
+- 100% — Perfeito;
+- 90% a 99% — Excelente;
+- 75% a 89% — Muito bom;
+- 60% a 74% — Bom resultado;
+- 50% a 59% — Pode melhorar;
+- 0% a 49% — Hora de revisar.
+
+## Regras
+
+- uma única estrutura recebe conteúdo e cores dinâmicas;
+- o percentual é o mesmo calculado para o Resultado Final;
+- o botão sempre avança para o Resultado Final;
+- sessões sem questões objetivas pulam diretamente para o Resultado Final.
+
+---
+
+# Tela 5 — Resultado Final
 
 ## Objetivo
 
@@ -270,7 +306,9 @@ Apresentar o desempenho, apoiar a revisão e permitir exportações.
 5. Temporizador é encerrado.
 6. Resultado é calculado.
 7. Sessão concluída é adicionada ao histórico.
-8. Tela de Resultado Final é aberta.
+8. A Tela de Desempenho é aberta quando existem objetivas.
+9. O usuário avança para a Tela de Resultado Final.
+10. Sessões somente discursivas abrem diretamente o Resultado Final.
 
 # Fluxo — Revisão do resultado
 

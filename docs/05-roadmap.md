@@ -11,7 +11,7 @@ Concluído:
 - Git e GitHub configurados;
 - branches `main` e `dev`;
 - identidade visual oficial;
-- layouts das quatro telas;
+- layouts das cinco telas;
 - manuais estruturais.
 
 ---
@@ -44,16 +44,17 @@ Incluído:
 
 ### Objetivo
 
-Substituir as telas atuais pelas quatro telas aprovadas sem perder funcionalidades.
+Substituir as telas atuais pelas cinco telas aprovadas sem perder funcionalidades.
 
 ### Etapas
 
 1. implementar Tela Inicial — **concluído**;
 2. implementar Importação e Validação — **concluído**;
 3. implementar Resolução — **concluído**;
-4. implementar Resultado Final — **próximo**;
-5. padronizar modais;
-6. preservar IDs ou atualizar HTML/JS em conjunto.
+4. implementar Tela de Desempenho — **concluído**;
+5. implementar Resultado Final — **próximo**;
+6. padronizar modais;
+7. preservar IDs ou atualizar HTML/JS em conjunto.
 
 ### Entregue até esta etapa
 
@@ -77,7 +78,10 @@ Substituir as telas atuais pelas quatro telas aprovadas sem perder funcionalidad
 - mapa com estados acessíveis;
 - pausa do temporizador persistida;
 - finalização sempre confirmada por modal customizado;
-- testes unitários das regras de marcação.
+- testes unitários das regras de marcação;
+- Tela de Desempenho com seis estados dinâmicos;
+- fluxo direto para o Resultado Final em sessões somente discursivas;
+- testes de fronteira das faixas de desempenho.
 
 ### Funcionalidades novas
 
@@ -145,7 +149,7 @@ Reduzir concentração de código e preparar evolução segura.
 
 Critérios:
 
-- quatro telas implementadas;
+- cinco telas implementadas;
 - fluxos principais sem bugs críticos;
 - migração de dados validada;
 - identidade visual aplicada;
