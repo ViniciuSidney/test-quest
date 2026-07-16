@@ -3,6 +3,14 @@ import { createInitialState } from "../../core/state.js";
 import { createScreenManager } from "../../core/screens.js";
 import { calculateHistoryMetrics, readHistory, recordCompletedSession, removeCompletedSession } from "../home/home.service.js";
 import { parseQuestions, QuestionImportError, summarizeQuestions } from "../question-import/question-import.parser.js";
+import {
+  buildQuestionMapLabel,
+  getMarkerInfo,
+  getNextMarkerState,
+  isQuestionAnswered,
+  MARKER_STATES,
+  normalizeMarkerState
+} from "./question-resolution.helpers.js";
 
 export function initQuestionResolution() {
   const exemploQuestoes = `@questao
@@ -184,12 +192,13 @@ export function initQuestionResolution() {
     $("#btnAnterior").addEventListener("click", irAnterior);
     $("#btnProxima").addEventListener("click", irProxima);
     $("#btnFinalizar").addEventListener("click", finalizar);
+    $("#btnFinalizarSessao")?.addEventListener("click", finalizar);
     $("#btnPausarTempo").addEventListener("click", alternarCronometro);
     $("#btnMarcarRevisao").addEventListener("click", alternarMarcacaoRevisao);
 
     $("#btnVoltarImportacao").addEventListener("click", voltarAoInicioComSessaoAtiva);
 
-    $("#btnLimparProgressoResolucao").addEventListener("click", apagarSessaoSalva);
+    $("#btnLimparProgressoResolucao")?.addEventListener("click", apagarSessaoSalva);
 
     $("#btnNovaLista").addEventListener("click", voltarAoInicioAposResultado);
     $("#btnRevisar").addEventListener("click", () => {
@@ -271,6 +280,8 @@ export function initQuestionResolution() {
       fecharModalConfirmacao(false);
     }
 
+    registrarTempoAtual();
+    ultimoTick = Date.now();
     confirmationPreviousFocus = document.activeElement;
     $("#rotuloModalConfirmacao").textContent = label;
     $("#tituloModalConfirmacao").textContent = title;
@@ -326,6 +337,7 @@ export function initQuestionResolution() {
         : null;
 
     confirmationPreviousFocus = null;
+    ultimoTick = Date.now();
     focusTarget?.focus();
     resolver?.(Boolean(confirmado));
   }
@@ -443,7 +455,7 @@ export function initQuestionResolution() {
 
     garantirIdentidadeSessao();
     estado.status = "em_andamento";
-    timerRodando = true;
+    timerRodando = !Boolean(estado.temporizadorPausado);
     atualizarBotaoCronometro();
     trocarTela("resolucao");
     renderizarQuestao();
@@ -561,6 +573,7 @@ export function initQuestionResolution() {
       estado.questoes = questoes;
       estado.opcoes.mostrarGabaritoFinal = $("#opcaoMostrarGabaritoFinal").checked;
       estado.importadoEm = new Date().toISOString();
+      estado.temporizadorPausado = false;
       substituicaoAutorizada = false;
 
       timerRodando = true;
@@ -579,8 +592,11 @@ export function initQuestionResolution() {
     }
   }
 
-  function renderizarQuestao() {
-    registrarTempoAtual();
+  function renderizarQuestao({ registrarTempo = true, focarTitulo = false } = {}) {
+    if (registrarTempo) {
+      registrarTempoAtual();
+    }
+
     ultimoTick = Date.now();
 
     const questao = estado.questoes[estado.atual];
@@ -588,21 +604,32 @@ export function initQuestionResolution() {
 
     const total = estado.questoes.length;
     const numero = estado.atual + 1;
-    const progresso = Math.round((numero / total) * 100);
+    const progresso = total ? Math.round((numero / total) * 100) : 0;
+    const marcadaParaRevisao = Boolean(estado.revisao[questao.id]);
 
+    $("#nomeListaResolucao").textContent = estado.listaNome || "Lista sem nome";
+    $("#nomeListaResolucao").title = estado.listaNome || "Lista sem nome";
     $("#contadorQuestao").textContent = `Questão ${numero} de ${total}`;
     $("#percentualProgresso").textContent = `${progresso}%`;
     $("#barraProgresso").style.width = `${progresso}%`;
+    $("#progressoResolucao")?.setAttribute("aria-valuenow", String(progresso));
 
-    $("#tipoQuestao").textContent = questao.categoria === "objetiva" ? "Objetiva" : "Discursiva curta";
-    $("#assuntoQuestao").textContent = questao.assunto;
+    $("#numeroQuestao").textContent = `Questão ${numero}`;
+    $("#tipoQuestao").textContent = questao.categoria === "objetiva" ? "Objetiva" : "Discursiva";
+    $("#assuntoQuestao").textContent = questao.assunto || "Sem assunto";
+    $("#assuntoQuestao").title = questao.assunto || "Sem assunto";
     $("#enunciadoQuestao").textContent = questao.enunciado;
 
-    $("#revisaoQuestao").classList.toggle("hidden", !estado.revisao[questao.id]);
-    $("#btnMarcarRevisao").textContent = estado.revisao[questao.id] ? "★ Remover revisão" : "☆ Marcar para revisão";
+    $("#revisaoQuestao").classList.toggle("hidden", !marcadaParaRevisao);
+    $("#btnMarcarRevisao").textContent = marcadaParaRevisao ? "Desmarcar revisão" : "Marcar revisão";
+    $("#btnMarcarRevisao").classList.toggle("is-active", marcadaParaRevisao);
+    $("#btnMarcarRevisao").setAttribute("aria-pressed", String(marcadaParaRevisao));
 
-    if (questao.categoria === "objetiva") renderizarObjetiva(questao);
-    else renderizarDiscursiva(questao);
+    if (questao.categoria === "objetiva") {
+      renderizarObjetiva(questao);
+    } else {
+      renderizarDiscursiva(questao);
+    }
 
     $("#anotacaoQuestao").value = estado.anotacoes[questao.id] || "";
     $("#anotacaoQuestao").oninput = (evento) => {
@@ -610,36 +637,95 @@ export function initQuestionResolution() {
       salvarEstadoDebounced();
     };
 
+    const ultimaQuestao = estado.atual === total - 1;
     $("#btnAnterior").disabled = estado.atual === 0;
-    $("#btnProxima").style.display = estado.atual === total - 1 ? "none" : "inline-flex";
-    $("#btnFinalizar").style.display = estado.atual === total - 1 ? "inline-flex" : "none";
+    $("#btnProxima").classList.toggle("hidden", ultimaQuestao);
+    $("#btnFinalizar").classList.toggle("hidden", !ultimaQuestao);
+    $("#btnFinalizarSessao")?.classList.toggle("hidden", ultimaQuestao);
 
     renderizarMapa();
     atualizarTemposNaTela();
+    atualizarBotaoCronometro();
     atualizarResumoTopo();
     salvarEstadoDebounced();
+
+    if (focarTitulo) {
+      requestAnimationFrame(() => $("#tituloResolverQuestao")?.focus({ preventScroll: true }));
+    }
   }
 
   function renderizarObjetiva(questao) {
-    const respostaAtual = estado.respostas[questao.id] || "";
+    const respostaAtual = (estado.respostas[questao.id] || "").toUpperCase();
+    const marcacoes = estado.marcacoesAlternativas[questao.id] || {};
 
     $("#areaResposta").innerHTML = `
-      <div class="option-list">
-        ${Object.entries(questao.alternativas).map(([letra, texto]) => `
-          <label class="option">
-            <input type="radio" name="respostaObjetiva" value="${letra}" ${respostaAtual === letra ? "checked" : ""}>
-            <span><strong>${letra})</strong> ${escapeHtml(texto)}</span>
-          </label>
-        `).join("")}
-      </div>
+      <fieldset class="resolution-objective-options">
+        <legend class="sr-only">Selecione uma alternativa como resposta oficial</legend>
+        ${Object.entries(questao.alternativas).map(([letraOriginal, textoAlternativa]) => {
+          const letra = letraOriginal.toUpperCase();
+          const selected = respostaAtual === letra;
+          const markerState = normalizeMarkerState(marcacoes[letra]);
+          const markerInfo = getMarkerInfo(markerState, letra);
+          const inputId = `resposta-${questao.id}-${letra}`;
+
+          return `
+            <div class="resolution-option-card ${selected ? "is-selected" : ""} ${markerState === MARKER_STATES.ANALYSIS ? "is-analysis" : ""} ${markerState === MARKER_STATES.ELIMINATED ? "is-eliminated" : ""}">
+              <input
+                id="${escapeHtml(inputId)}"
+                class="resolution-option-radio"
+                type="radio"
+                name="respostaObjetiva"
+                value="${escapeHtml(letra)}"
+                ${selected ? "checked" : ""}
+              >
+              <label class="resolution-option-answer" for="${escapeHtml(inputId)}">
+                <span class="resolution-option-letter">${escapeHtml(letra)})</span>
+                <span class="resolution-option-text">${escapeHtml(textoAlternativa)}</span>
+              </label>
+              <button
+                class="resolution-option-marker"
+                type="button"
+                data-letra="${escapeHtml(letra)}"
+                data-marker-state="${markerState}"
+                title="${escapeHtml(markerInfo.title)}"
+                aria-label="${escapeHtml(markerInfo.label)}"
+              >
+                <span aria-hidden="true">${markerInfo.icon}</span>
+              </button>
+            </div>
+          `;
+        }).join("")}
+        <p class="resolution-marker-legend">
+          O card define a resposta oficial. O botão lateral alterna entre sem marcação, em análise e eliminada.
+        </p>
+      </fieldset>
     `;
 
     document.querySelectorAll("input[name='respostaObjetiva']").forEach((input) => {
       input.addEventListener("change", (evento) => {
-        estado.respostas[questao.id] = evento.target.value;
+        const letra = evento.target.value.toUpperCase();
+        estado.respostas[questao.id] = letra;
+
+        if (estado.marcacoesAlternativas[questao.id]?.[letra]) {
+          delete estado.marcacoesAlternativas[questao.id][letra];
+          limparMarcacoesVazias(questao.id);
+        }
+
+        renderizarObjetiva(questao);
         renderizarMapa();
         atualizarResumoTopo();
-        salvarEstadoDebounced();
+        salvarEstadoImediato();
+
+        requestAnimationFrame(() => {
+          document.querySelector(`input[name="respostaObjetiva"][value="${letra}"]`)?.focus();
+        });
+      });
+    });
+
+    document.querySelectorAll(".resolution-option-marker").forEach((button) => {
+      button.addEventListener("click", () => {
+        const letra = button.dataset.letra;
+        alternarMarcadorAlternativa(questao, letra);
       });
     });
   }
@@ -648,55 +734,113 @@ export function initQuestionResolution() {
     const respostaAtual = estado.respostas[questao.id] || "";
 
     $("#areaResposta").innerHTML = `
-      <label class="field">
+      <label class="resolution-discursive-field" for="respostaDiscursiva">
         <span>Sua resposta</span>
-        <textarea class="discursive-answer" id="respostaDiscursiva" placeholder="Digite sua resposta discursiva aqui...">${escapeHtml(respostaAtual)}</textarea>
+        <textarea
+          class="resolution-discursive-textarea"
+          id="respostaDiscursiva"
+          placeholder="Responda aqui..."
+          spellcheck="true"
+        >${escapeHtml(respostaAtual)}</textarea>
       </label>
     `;
 
     $("#respostaDiscursiva").addEventListener("input", (evento) => {
+      const estavaRespondida = isQuestionAnswered(estado.respostas[questao.id]);
       estado.respostas[questao.id] = evento.target.value;
-      renderizarMapa();
+      const estaRespondida = isQuestionAnswered(estado.respostas[questao.id]);
+
+      if (estavaRespondida !== estaRespondida) {
+        renderizarMapa();
+      }
+
       atualizarResumoTopo();
       salvarEstadoDebounced();
     });
   }
 
   function renderizarMapa() {
-    $("#listaNavegacao").innerHTML = estado.questoes.map((questao, indice) => {
-      const respondida = Boolean((estado.respostas[questao.id] || "").trim());
+    const mapa = $("#listaNavegacao");
+
+    mapa.innerHTML = estado.questoes.map((questao, indice) => {
+      const respondida = isQuestionAnswered(estado.respostas[questao.id]);
       const atual = indice === estado.atual;
       const revisao = Boolean(estado.revisao[questao.id]);
+      const ariaLabel = buildQuestionMapLabel({ number: indice + 1, current: atual, answered: respondida, review: revisao });
 
       return `
-        <button class="map-btn ${respondida ? "answered" : ""} ${atual ? "current" : ""} ${revisao ? "review" : ""}" 
-                type="button" 
-                data-indice="${indice}" 
-                title="Ir para questão ${indice + 1}">
+        <button
+          class="resolution-map-button ${respondida ? "is-answered" : ""} ${atual ? "is-current" : ""} ${revisao ? "is-review" : ""}"
+          type="button"
+          data-indice="${indice}"
+          aria-label="${escapeHtml(ariaLabel)}"
+          ${atual ? 'aria-current="step"' : ""}
+          title="Ir para a questão ${indice + 1}"
+        >
           ${indice + 1}
         </button>
       `;
     }).join("");
 
-    document.querySelectorAll(".map-btn").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        estado.atual = Number(btn.dataset.indice);
-        renderizarQuestao();
+    mapa.querySelectorAll(".resolution-map-button").forEach((button) => {
+      button.addEventListener("click", () => {
+        irParaQuestao(Number(button.dataset.indice), { focarTitulo: true });
+      });
+    });
+
+    requestAnimationFrame(() => {
+      mapa.querySelector(".resolution-map-button.is-current")?.scrollIntoView({
+        block: "nearest",
+        inline: "nearest"
       });
     });
   }
 
   function irAnterior() {
     if (estado.atual > 0) {
-      estado.atual--;
-      renderizarQuestao();
+      irParaQuestao(estado.atual - 1, { focarTitulo: true });
     }
   }
 
   function irProxima() {
     if (estado.atual < estado.questoes.length - 1) {
-      estado.atual++;
-      renderizarQuestao();
+      irParaQuestao(estado.atual + 1, { focarTitulo: true });
+    }
+  }
+
+  function irParaQuestao(indice, { focarTitulo = false } = {}) {
+    if (!Number.isInteger(indice) || indice < 0 || indice >= estado.questoes.length) {
+      return;
+    }
+
+    registrarTempoAtual();
+    estado.atual = indice;
+    renderizarQuestao({ registrarTempo: false, focarTitulo });
+  }
+
+  function alternarMarcadorAlternativa(questao, letra) {
+    const proximo = getNextMarkerState(estado.marcacoesAlternativas[questao.id]?.[letra]);
+
+    estado.marcacoesAlternativas[questao.id] ||= {};
+
+    if (proximo === MARKER_STATES.NEUTRAL) {
+      delete estado.marcacoesAlternativas[questao.id][letra];
+      limparMarcacoesVazias(questao.id);
+    } else {
+      estado.marcacoesAlternativas[questao.id][letra] = proximo;
+    }
+
+    renderizarObjetiva(questao);
+    salvarEstadoImediato();
+
+    requestAnimationFrame(() => {
+      document.querySelector(`.resolution-option-marker[data-letra="${letra}"]`)?.focus();
+    });
+  }
+
+  function limparMarcacoesVazias(questaoId) {
+    if (Object.keys(estado.marcacoesAlternativas[questaoId] || {}).length === 0) {
+      delete estado.marcacoesAlternativas[questaoId];
     }
   }
 
@@ -720,19 +864,21 @@ export function initQuestionResolution() {
 
     const r = calcularResultado(estado);
     const naoRespondidas = r.total - r.respondidas;
+    const marcadas = Object.values(estado.revisao || {}).filter(Boolean).length;
+    const message = naoRespondidas > 0
+      ? `Questões respondidas: ${r.respondidas} de ${r.total}. Sem resposta: ${naoRespondidas}. Marcadas para revisão: ${marcadas}. A sessão pode ser finalizada mesmo assim.`
+      : `Todas as ${r.total} questões foram respondidas. Marcadas para revisão: ${marcadas}. Deseja finalizar e ver o resultado?`;
 
-    if (naoRespondidas > 0) {
-      const confirmado = await solicitarConfirmacao({
-        label: "Finalizar sessão",
-        title: "Existem questões não respondidas",
-        message: `Você ainda tem ${naoRespondidas} questão(ões) sem resposta. A sessão pode ser finalizada mesmo assim.`,
-        confirmText: "Finalizar mesmo assim",
-        variant: "warning"
-      });
+    const confirmado = await solicitarConfirmacao({
+      label: "Finalizar sessão",
+      title: naoRespondidas > 0 ? "Existem questões não respondidas" : "Finalizar esta resolução?",
+      message,
+      confirmText: "Finalizar resolução",
+      variant: "warning"
+    });
 
-      if (!confirmado) {
-        return;
-      }
+    if (!confirmado) {
+      return;
     }
 
     estado.finalizadoEm = new Date().toISOString();
@@ -774,7 +920,8 @@ export function initQuestionResolution() {
       telaResolucaoAtiva &&
       estado.questoes.length > 0 &&
       !estado.finalizadoEm &&
-      !document.hidden
+      !document.hidden &&
+      !document.body.classList.contains("modal-open")
     );
   }
 
@@ -803,14 +950,23 @@ export function initQuestionResolution() {
   function alternarCronometro() {
     registrarTempoAtual();
     timerRodando = !timerRodando;
+    estado.temporizadorPausado = !timerRodando;
     ultimoTick = Date.now();
     atualizarBotaoCronometro();
     salvarEstadoImediato();
   }
 
   function atualizarBotaoCronometro() {
-    $("#btnPausarTempo").textContent = timerRodando ? "Pausar tempo" : "Retomar tempo";
-    $("#statusCronometro").textContent = timerRodando ? "Rodando" : "Pausado";
+    const pausado = !timerRodando;
+    const button = $("#btnPausarTempo");
+    const status = $("#statusCronometro");
+
+    button.textContent = pausado ? "Retomar tempo" : "Pausar tempo";
+    button.classList.toggle("is-paused", pausado);
+    button.setAttribute("aria-pressed", String(pausado));
+
+    status.textContent = pausado ? "Pausado" : "Rodando";
+    status.classList.toggle("is-paused", pausado);
   }
 
   function atualizarTemposNaTela() {
@@ -1054,6 +1210,7 @@ export function initQuestionResolution() {
 
   function salvarEstadoImediato() {
     if (!estado.questoes.length) return;
+    estado.temporizadorPausado = !timerRodando;
     localStorage.setItem(STORAGE_KEY, JSON.stringify(estado));
     if (indicadorSalvo) indicadorSalvo.textContent = "Salvo localmente";
   }

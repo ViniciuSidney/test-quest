@@ -295,79 +295,152 @@
       </div>
     </section>
 
-    <section id="telaResolucao" class="screen">
-      <div class="quiz-shell">
-        <aside class="side-panel">
-          <div class="side-header">
-            <h2>Progresso</h2>
-            <span id="statusCronometro" class="mini-tag">Rodando</span>
-          </div>
+    <section
+      id="telaResolucao"
+      class="screen screen--resolution"
+      aria-labelledby="tituloSessaoResolucao"
+    >
+      <header class="resolution-header">
+        <button id="btnVoltarImportacao" class="ghost resolution-header__action" type="button">
+          ← Voltar
+        </button>
 
-          <div class="progress-box">
-            <div class="progress-text">
-              <span id="contadorQuestao">Questão 1 de 1</span>
-              <span id="percentualProgresso">0%</span>
+        <div class="resolution-header__text">
+          <h1 id="tituloSessaoResolucao">Resolver questões</h1>
+          <span aria-hidden="true">:</span>
+          <p id="nomeListaResolucao" title="Lista sem nome">Lista sem nome</p>
+        </div>
+
+        <button
+          id="btnTemaResolucao"
+          class="icon-button resolution-theme-toggle"
+          type="button"
+          data-theme-toggle
+        >
+          🌙 Tema
+        </button>
+      </header>
+
+      <div class="resolution-layout">
+        <aside class="resolution-sidebar" aria-label="Progresso e anotações da resolução">
+          <section class="resolution-panel resolution-progress-panel" aria-labelledby="tituloProgressoResolucao">
+            <header class="resolution-panel__header">
+              <div>
+                <p class="resolution-section-kicker">Sessão atual</p>
+                <h2 id="tituloProgressoResolucao">Progresso geral</h2>
+              </div>
+              <span id="statusCronometro" class="resolution-status-tag">Rodando</span>
+            </header>
+
+            <div class="resolution-progress-summary">
+              <div class="resolution-progress-copy">
+                <strong id="contadorQuestao">Questão 1 de 1</strong>
+                <span id="percentualProgresso">0%</span>
+              </div>
+
+              <div
+                id="progressoResolucao"
+                class="resolution-progress-track"
+                role="progressbar"
+                aria-label="Progresso na lista"
+                aria-valuemin="0"
+                aria-valuemax="100"
+                aria-valuenow="0"
+              >
+                <div id="barraProgresso" class="resolution-progress-value"></div>
+              </div>
             </div>
-            <div class="progress-track">
-              <div id="barraProgresso" class="progress-bar"></div>
+
+            <div class="resolution-timer-grid" aria-label="Tempos da resolução">
+              <article class="resolution-timer-card">
+                <span>Questão atual</span>
+                <strong id="tempoAtual">00:00</strong>
+              </article>
+
+              <article class="resolution-timer-card">
+                <span>Tempo total</span>
+                <strong id="tempoTotal">00:00</strong>
+              </article>
             </div>
-          </div>
 
-          <div class="timer-grid">
-            <div class="timer-card">
-              <span>Questão atual</span>
-              <strong id="tempoAtual">00:00</strong>
+            <button id="btnPausarTempo" class="secondary resolution-pause-action" type="button">
+              Pausar tempo
+            </button>
+
+            <div class="resolution-map-block">
+              <div class="resolution-map-heading">
+                <h3>Mapa das questões</h3>
+                <span>Selecione um número para navegar.</span>
+              </div>
+              <div id="listaNavegacao" class="resolution-question-map"></div>
             </div>
-            <div class="timer-card">
-              <span>Total usado</span>
-              <strong id="tempoTotal">00:00</strong>
-            </div>
-          </div>
+          </section>
 
-          <div class="side-actions">
-            <button id="btnPausarTempo" class="secondary full" type="button">Pausar tempo</button>
-            <button id="btnMarcarRevisao" class="secondary full" type="button">☆ Marcar para revisão</button>
-          </div>
+          <section class="resolution-panel resolution-notes-panel" aria-labelledby="tituloAnotacoes">
+            <header class="resolution-panel__header resolution-panel__header--notes">
+              <div>
+                <p class="resolution-section-kicker">Raciocínio auxiliar</p>
+                <h2 id="tituloAnotacoes">Anotações</h2>
+              </div>
+            </header>
 
-          <h3 class="small-title">Mapa</h3>
-          <div id="listaNavegacao" class="question-map"></div>
+            <p class="resolution-notes-help">
+              Registre dúvidas, raciocínio e pontos que deseja revisar. Este texto não é a resposta oficial.
+            </p>
 
-          <div class="side-actions side-actions-bottom">
-            <button id="btnVoltarImportacao" class="ghost full" type="button">Voltar ao início</button>
-            <button id="btnLimparProgressoResolucao" class="ghost danger-text full" type="button">Limpar progresso salvo</button>
-          </div>
+            <label class="resolution-notes-field" for="anotacaoQuestao">
+              <span class="sr-only">Anotações da questão atual</span>
+              <textarea
+                id="anotacaoQuestao"
+                placeholder="Anote aqui..."
+                spellcheck="true"
+              ></textarea>
+            </label>
+          </section>
         </aside>
 
-        <section class="notes-panel" aria-labelledby="tituloAnotacoes">
-          <div class="notes-header">
-            <div>
-              <h2 id="tituloAnotacoes">Anotações</h2>
-              <p>Use este espaço para registrar raciocínio, dúvidas e pontos de revisão.</p>
-            </div>
-            <span class="mini-tag">Questão atual</span>
-          </div>
-          <label for="anotacaoQuestao">Anotações desta questão</label>
-          <textarea id="anotacaoQuestao" placeholder="Anote dúvidas, raciocínio, palavras-chave ou observações."></textarea>
-        </section>
+        <main class="resolution-workspace">
+          <article class="resolution-panel resolution-question-panel">
+            <header class="resolution-question-header">
+              <h2 id="tituloResolverQuestao" tabindex="-1">Resolver questão</h2>
 
-        <div class="resolution-workspace">
-          <article class="question-card">
-            <div class="question-meta">
-              <span id="tipoQuestao" class="tag">Objetiva</span>
-              <span id="assuntoQuestao" class="tag muted">Assunto</span>
-              <span id="revisaoQuestao" class="tag review hidden">Marcada para revisão</span>
-            </div>
+              <div class="resolution-question-meta" aria-label="Informações da questão atual">
+                <span id="numeroQuestao" class="resolution-tag">Questão 1</span>
+                <span id="tipoQuestao" class="resolution-tag">Objetiva</span>
+                <span id="assuntoQuestao" class="resolution-tag resolution-tag--subject" title="Assunto">
+                  Assunto
+                </span>
+                <span id="revisaoQuestao" class="resolution-tag resolution-tag--review hidden">
+                  ★ Marcada para revisão
+                </span>
+              </div>
+            </header>
 
-            <h2 id="enunciadoQuestao">Enunciado</h2>
-            <div id="areaResposta"></div>
+            <section class="resolution-statement" aria-labelledby="tituloEnunciadoQuestao">
+              <h3 id="tituloEnunciadoQuestao">Enunciado</h3>
+              <p id="enunciadoQuestao"></p>
+            </section>
+
+            <section id="areaResposta" class="resolution-answer-area" aria-live="polite"></section>
           </article>
 
-          <nav class="navigation resolution-actions" aria-label="Ações da questão atual">
-            <button id="btnAnterior" class="secondary" type="button">Anterior</button>
-            <button id="btnProxima" class="primary" type="button">Próxima</button>
-            <button id="btnFinalizar" class="success" type="button">Finalizar</button>
-          </nav>
-        </div>
+          <footer class="resolution-panel resolution-actionbar" aria-label="Ações da questão atual">
+            <div class="resolution-actions__session">
+              <button id="btnMarcarRevisao" class="secondary resolution-review-action" type="button">
+                Marcar revisão
+              </button>
+              <button id="btnFinalizarSessao" class="secondary resolution-finish-action" type="button">
+                Finalizar sessão
+              </button>
+            </div>
+
+            <div class="resolution-actions__navigation">
+              <button id="btnAnterior" class="secondary" type="button">Anterior</button>
+              <button id="btnProxima" class="primary" type="button">Próxima</button>
+              <button id="btnFinalizar" class="primary hidden" type="button">Finalizar</button>
+            </div>
+          </footer>
+        </main>
       </div>
     </section>
 

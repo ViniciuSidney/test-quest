@@ -45,22 +45,26 @@ A proposta não é apenas registrar acertos, mas ajudar o usuário a:
 - manuais estruturais concluídos;
 - Tela Inicial oficial implementada;
 - Tela de Importação e Validação oficial implementada;
+- Tela de Resolução objetiva e discursiva oficial implementada;
 - estados inicial, pendente, validando, válido e inválido;
 - contadores definitivos de questões e assuntos;
 - parser de importação separado em módulo próprio;
 - navegação centralizada entre as quatro telas;
 - sessão em andamento movida para a Tela Inicial;
 - indicadores históricos de sessões concluídas;
-- temporizador interrompido ao sair da Resolução.
+- temporizador interrompido ao sair da Resolução;
+- marcações auxiliares independentes da resposta oficial;
+- pausa do temporizador preservada no estado da sessão;
+- navegação entre questões sem atribuição incorreta de tempo.
 
 ### Próxima etapa
 
-A próxima adaptação será a **Tela de Resolução**. Depois dela, o ciclo seguirá para:
+A próxima adaptação será a **Tela de Resultado Final**. Depois dela, o ciclo seguirá para:
 
-1. Resultado Final;
-2. modais e confirmações restantes;
-3. modularização complementar;
-4. testes completos.
+1. modais e confirmações restantes;
+2. modularização complementar;
+3. testes completos;
+4. revisão e integração da branch `dev` na `main`.
 
 A implementação continua sendo feita uma tela por vez, com testes e commits separados.
 
@@ -84,12 +88,14 @@ A implementação continua sendo feita uma tela por vez, com testes e commits se
 - exportação de respostas em `.txt`;
 - exportação de anotações em `.txt`;
 - exportação da sessão em `.json`;
-- resumo de desempenho geral e por assunto.
+- resumo de desempenho geral e por assunto;
+- Tela de Resolução oficial com objetiva e discursiva;
+- mapa acessível de questões;
+- marcadores auxiliares com estados neutro, em análise e eliminada;
+- confirmação customizada antes da finalização.
 
 ## Funcionalidades planejadas para o próximo ciclo
 
-- marcações auxiliares nas alternativas objetivas;
-- nova Tela de Resolução;
 - filtros no Resultado Final;
 - cards de revisão expansíveis;
 - card objetivo expandido;
@@ -224,17 +230,19 @@ O CSS funcional atual permanece principalmente em:
 src/styles/pages/test-quest.css
 ```
 
-A Tela Inicial e a Importação já possuem estilos próprios em:
+A Tela Inicial, a Importação e a Resolução possuem estilos próprios em:
 
 ```text
 src/styles/pages/home.css
 src/styles/pages/import.css
+src/styles/pages/resolution.css
 ```
 
-O parser da importação está em:
+O parser da importação e os auxiliares puros da Resolução estão em:
 
 ```text
 src/scripts/features/question-import/question-import.parser.js
+src/scripts/features/question-resolution/question-resolution.helpers.js
 ```
 
 Os demais estilos e responsabilidades serão distribuídos progressivamente entre componentes, layouts e páginas.
@@ -348,7 +356,7 @@ Quando um ciclo estiver validado, as mudanças devem passar por revisão antes d
 
 ### Próximo ciclo
 
-- implementar a Tela de Resolução e o Resultado Final;
+- implementar a Tela de Resultado Final;
 - preservar a lógica atual;
 - testar cada tela separadamente;
 - adaptar o estado da aplicação;
@@ -369,8 +377,8 @@ Quando um ciclo estiver validado, as mudanças devem passar por revisão antes d
 - não há backend;
 - não há sincronização entre dispositivos;
 - discursivas dependem de revisão manual;
-- o histórico completo ainda não foi implementado;
-- a Tela Inicial e a Importação já foram aplicadas; Resolução e Resultado ainda usam a base visual legada;
+- o histórico detalhado de sessões ainda não foi implementado;
+- a Tela Inicial, a Importação e a Resolução já foram aplicadas; o Resultado ainda usa a base visual legada;
 - parte da lógica e do CSS permanece concentrada em arquivos legados.
 
 ## Autoria

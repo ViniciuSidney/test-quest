@@ -11,6 +11,7 @@ export function createInitialState() {
     temposMs: {},
     revisao: {},
     marcacoesAlternativas: {},
+    temporizadorPausado: false,
     opcoes: {
       mostrarGabaritoFinal: true
     },

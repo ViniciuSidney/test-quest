@@ -96,6 +96,7 @@ Concluído:
 - manuais estruturais concluídos;
 - Tela Inicial oficial implementada;
 - Tela de Importação e Validação oficial implementada;
+- Tela de Resolução oficial implementada;
 - estados completos de validação e contadores implementados;
 - parser de importação separado;
 - navegação centralizada entre as quatro telas;
@@ -103,9 +104,9 @@ Concluído:
 
 Próxima etapa:
 
-- implementar a nova Tela de Resolução;
-- preservar a lógica funcional existente;
-- avançar depois para o Resultado Final;
+- implementar a nova Tela de Resultado Final;
+- preservar exportações e cálculos existentes;
+- avançar depois para os modais e a modularização complementar;
 - executar testes após cada etapa.
 
 ## Critérios de sucesso da próxima etapa
@@ -124,5 +125,5 @@ Próxima etapa:
 - os dados ficam no navegador por meio do `localStorage`;
 - a arquitetura JavaScript ainda mantém parte da lógica concentrada;
 - o histórico atual registra resumos locais, mas ainda não possui visualização detalhada de sessões;
-- a Tela Inicial e a Importação estão implementadas, enquanto Resolução e Resultado ainda usam a estrutura legada;
+- a Tela Inicial, a Importação e a Resolução estão implementadas, enquanto o Resultado ainda usa a estrutura legada;
 - modais e confirmações terão seus layouts refinados depois das telas principais.

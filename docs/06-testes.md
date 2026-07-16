@@ -46,6 +46,35 @@ Os testes manuais da tabela continuam necessários no computador do usuário ant
 
 ---
 
+
+## Pré-validação técnica da Resolução — 2026-07-15
+
+Foram executadas verificações automatizadas antes da entrega do pacote:
+
+- sintaxe de todos os módulos JavaScript;
+- IDs obrigatórios e ausência de IDs duplicados;
+- importação do novo CSS da Resolução;
+- ciclo dos marcadores `neutro → analise → eliminada → neutro`;
+- normalização de estados legados em inglês;
+- separação entre resposta oficial e marcação auxiliar;
+- rótulos acessíveis do mapa;
+- estado respondido de objetivas e discursivas;
+- persistência do estado pausado do temporizador;
+- confirmação de finalização com resumo da sessão;
+- composição visual estática em desktop, tablet e mobile;
+- versões objetiva e discursiva sem sobreposição estrutural.
+
+Testes disponíveis:
+
+```bash
+node tests/resolution-state.test.mjs
+node tests/resolution-structure.test.mjs
+```
+
+Os testes manuais da tabela continuam necessários no navegador antes do commit definitivo.
+
+---
+
 # Carregamento e estrutura
 
 | Código | Teste | Resultado esperado | Status |

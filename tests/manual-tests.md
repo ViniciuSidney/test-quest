@@ -52,13 +52,25 @@
 ## Bloco D — Resolução
 
 - [ ] A sessão inicia na primeira questão.
+- [ ] O cabeçalho mostra o nome correto da lista.
+- [ ] A resposta objetiva é selecionada ao clicar no card.
+- [ ] Somente uma resposta oficial permanece selecionada.
+- [ ] O marcador lateral não seleciona a resposta oficial.
+- [ ] O marcador alterna entre neutro, em análise e eliminada.
+- [ ] Selecionar uma alternativa limpa sua marcação auxiliar anterior.
 - [ ] A resposta objetiva permanece após navegar.
 - [ ] A resposta discursiva permanece após navegar.
 - [ ] As anotações permanecem vinculadas à questão.
-- [ ] O mapa muda o estado da questão respondida.
-- [ ] A marcação para revisão funciona.
-- [ ] O temporizador atualiza a questão correta.
+- [ ] O mapa distingue atual, respondida e revisão.
+- [ ] O mapa possui rótulos compreensíveis pelo leitor de tela.
+- [ ] A marcação para revisão atualiza botão, selo e mapa.
+- [ ] O botão Anterior fica desabilitado na primeira questão.
+- [ ] Próxima é substituída por Finalizar na última questão.
+- [ ] O temporizador atribui o tempo à questão que estava aberta antes da navegação.
 - [ ] Pausar e retomar funciona.
+- [ ] O estado pausado permanece após voltar à Home e continuar a sessão.
+- [ ] O modal de finalização mostra respondidas, pendentes e marcadas.
+- [ ] Apenas a tela ativa possui rolagem em tablet e mobile.
 
 ## Bloco E — Persistência
 

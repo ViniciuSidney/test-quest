@@ -30,6 +30,14 @@ Todas as mudanças importantes do Test Quest serão registradas neste arquivo.
 - módulo `question-import.parser.js`;
 - coleta de múltiplos problemas de importação;
 - teste unitário do parser.
+- Tela de Resolução oficial;
+- layout comum para objetivas e discursivas;
+- cards objetivos com seleção oficial;
+- marcadores auxiliares em três estados;
+- módulo `question-resolution.helpers.js`;
+- testes `resolution-state.test.mjs` e `resolution-structure.test.mjs`;
+- cabeçalho próprio da Resolução;
+- barra de ações dividida entre sessão e navegação.
 
 ### Corrigido
 
@@ -59,6 +67,11 @@ Todas as mudanças importantes do Test Quest serão registradas neste arquivo.
 - contadores aparecem somente após validação;
 - seletor de arquivo e configurações seguem o layout oficial;
 - parser deixa de permanecer concentrado no controlador da Resolução.
+- resposta oficial passa a ser independente das marcações auxiliares;
+- mapa de questões recebe rótulos acessíveis e estado atual;
+- navegação registra o tempo antes de trocar a questão;
+- estado pausado do temporizador passa a ser persistido;
+- finalização passa a exigir confirmação mesmo com todas as questões respondidas.
 
 ### Corrigido
 
@@ -69,6 +82,9 @@ Todas as mudanças importantes do Test Quest serão registradas neste arquivo.
 - ID duplicado do tipo da questão foi removido;
 - troca de tema na Importação não produz contraste intermediário incorreto;
 - modal do modelo restaura o foco ao ser fechado.
+- regras legadas de grid da Resolução deixam de deslocar o workspace;
+- layouts tablet e mobile deixam de sobrepor progresso, questão e anotações;
+- seleção e marcadores restauram o foco após atualização dinâmica.
 
 ### Preservado
 

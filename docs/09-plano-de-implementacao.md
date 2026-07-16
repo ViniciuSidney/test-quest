@@ -133,7 +133,7 @@ feat: implementa tela de importação e validação
 
 # Etapa 3 — Resolução
 
-**Status:** próxima etapa.
+**Status:** concluída; aguardando testes manuais.
 
 ## Implementar
 
@@ -172,6 +172,8 @@ feat: implementa nova tela de resolução
 ---
 
 # Etapa 4 — Resultado Final
+
+**Status:** próxima etapa.
 
 ## Implementar
 

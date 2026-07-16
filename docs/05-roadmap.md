@@ -50,8 +50,8 @@ Substituir as telas atuais pelas quatro telas aprovadas sem perder funcionalidad
 
 1. implementar Tela Inicial — **concluído**;
 2. implementar Importação e Validação — **concluído**;
-3. implementar Resolução — **próximo**;
-4. implementar Resultado Final;
+3. implementar Resolução — **concluído**;
+4. implementar Resultado Final — **próximo**;
 5. padronizar modais;
 6. preservar IDs ou atualizar HTML/JS em conjunto.
 
@@ -72,6 +72,12 @@ Substituir as telas atuais pelas quatro telas aprovadas sem perder funcionalidad
 - parser isolado em módulo próprio;
 - relatório de múltiplos problemas de importação;
 - modal do modelo com foco restaurado.
+- Tela de Resolução objetiva e discursiva responsiva;
+- resposta oficial separada das marcações auxiliares;
+- mapa com estados acessíveis;
+- pausa do temporizador persistida;
+- finalização sempre confirmada por modal customizado;
+- testes unitários das regras de marcação.
 
 ### Funcionalidades novas
 

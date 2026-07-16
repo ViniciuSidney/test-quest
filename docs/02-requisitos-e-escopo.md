@@ -35,8 +35,8 @@
 | RF22 | Exibir o modelo aceito em modal | Implementado |
 | RF23 | Exibir uma Tela Inicial com sessão ativa e indicadores | Implementado |
 | RF24 | Permitir iniciar nova resolução pela Tela Inicial | Implementado |
-| RF25 | Permitir marcações auxiliares nas alternativas objetivas | Planejado |
-| RF26 | Separar marcação auxiliar da resposta oficial | Planejado |
+| RF25 | Permitir marcações auxiliares nas alternativas objetivas | Implementado |
+| RF26 | Separar marcação auxiliar da resposta oficial | Implementado |
 | RF27 | Filtrar questões no Resultado Final | Planejado |
 | RF28 | Expandir apenas um card de revisão por vez | Planejado |
 | RF29 | Exibir card objetivo expandido com resposta, gabarito e explicação | Planejado |

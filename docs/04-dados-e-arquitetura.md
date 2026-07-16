@@ -249,7 +249,8 @@ src/scripts
 │   ├── question-import
 │   │   └── question-import.parser.js
 │   └── question-resolution
-│       └── question-resolution.controller.js
+│       ├── question-resolution.controller.js
+│       └── question-resolution.helpers.js
 ├── shared
 │   ├── dom.js
 │   └── storage.js
@@ -257,7 +258,7 @@ src/scripts
 └── main.js
 ```
 
-A navegação, o histórico da Home e o parser de importação já foram separados. O controlador principal ainda coordena eventos e transições entre as funcionalidades durante a migração gradual.
+A navegação, o histórico da Home, o parser de importação e as regras puras dos marcadores da Resolução já foram separados. O controlador principal ainda coordena eventos e transições entre as funcionalidades durante a migração gradual.
 
 ## Arquitetura-alvo
 
