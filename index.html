@@ -517,7 +517,7 @@ criterios_de_correcao: Critérios de correção
     aria-modal="true"
     aria-hidden="true"
     aria-labelledby="tituloModalConfirmacao"
-    aria-describedby="descricaoModalConfirmacao"
+    aria-describedby="descricaoModalConfirmacao listaModalConfirmacao notaModalConfirmacao"
   >
     <button
       class="modal-backdrop"
@@ -539,6 +539,17 @@ criterios_de_correcao: Critérios de correção
       <p id="descricaoModalConfirmacao" class="confirmation-modal__description">
         Confirme para continuar com esta ação.
       </p>
+
+      <ul
+        id="listaModalConfirmacao"
+        class="confirmation-modal__summary hidden"
+        aria-label="Resumo da ação"
+      ></ul>
+
+      <p
+        id="notaModalConfirmacao"
+        class="confirmation-modal__note hidden"
+      ></p>
 
       <div class="confirmation-modal__actions">
         <button id="btnCancelarConfirmacao" class="secondary" type="button">

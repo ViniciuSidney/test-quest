@@ -442,7 +442,9 @@ body[data-screen="resolucao"] .legacy-topbar {
 }
 
 .resolution-tag--subject {
-  max-width: min(46%, 420px);
+  max-width: min(58%, 560px);
+  padding-inline: 0.95rem;
+  line-height: 1.25;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -867,6 +869,7 @@ body[data-screen="resolucao"] .legacy-topbar {
 
   .resolution-tag--subject {
     max-width: 100%;
+    padding-inline: 0.8rem;
   }
 
   .resolution-tag--review {

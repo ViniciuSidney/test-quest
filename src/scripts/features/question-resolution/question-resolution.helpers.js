@@ -73,3 +73,17 @@ export function buildQuestionMapLabel({ number, current, answered, review }) {
 
   return `Questão ${number}, ${states.join(", ")}`;
 }
+
+export function calculateDisplayedTotalMs(questions = [], timesById = {}) {
+  return questions.reduce((total, question) => {
+    const rawTime = Number(timesById?.[question?.id] ?? 0);
+
+    if (!Number.isFinite(rawTime) || rawTime <= 0) {
+      return total;
+    }
+
+    // Cada tempo individual é exibido sem milissegundos. Somar os mesmos
+    // segundos inteiros evita que o total visual difira da soma visível.
+    return total + Math.floor(rawTime / 1000) * 1000;
+  }, 0);
+}

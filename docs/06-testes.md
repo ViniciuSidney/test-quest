@@ -152,7 +152,9 @@ Os testes manuais da tabela continuam necessários no navegador antes do commit 
 | Código | Teste | Resultado esperado | Status |
 |---|---|---|---|
 | T41 | Tempo por questão | Valor correto é associado | Pendente |
-| T42 | Tempo total | Soma corretamente | Pendente |
+| T42 | Tempo total | Soma os mesmos segundos inteiros exibidos por questão | Pendente |
+| T42.1 | Frações de segundo | Não produzem diferença entre a soma visível e o total | Pendente |
+| T42.2 | Tempos órfãos | IDs fora da sessão atual não entram no total | Pendente |
 | T43 | Pausar | Tempo deixa de aumentar | Pendente |
 | T44 | Retomar | Contagem continua | Pendente |
 | T45 | Voltar ao início | Tempo para | Pendente |
@@ -164,7 +166,8 @@ Os testes manuais da tabela continuam necessários no navegador antes do commit 
 
 | Código | Teste | Resultado esperado | Status |
 |---|---|---|---|
-| T49 | Finalizar com pendências | Confirmação exibe resumo | Pendente |
+| T49 | Finalizar com pendências | Confirmação exibe resumo em lista | Pendente |
+| T49.1 | Finalizar sem pendências | Lista exibe respondidas, zero pendentes e revisão | Pendente |
 | T50 | Resultado geral | Indicadores corretos | Pendente |
 | T51 | Somente discursivas | Desempenho mostra indisponível | Pendente |
 | T52 | Por assunto | Acertos e tempos corretos | Pendente |

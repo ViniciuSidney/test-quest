@@ -41,6 +41,11 @@ Todas as mudanças importantes do Test Quest serão registradas neste arquivo.
 
 ### Corrigido
 
+- total visível do temporizador passa a somar os mesmos segundos inteiros exibidos em cada questão;
+- tempos associados a IDs fora da sessão atual deixam de entrar no total;
+- espaçamento horizontal do assunto da questão foi ampliado;
+- modal de finalização organiza respondidas, pendentes e revisão em uma lista semântica;
+
 - barra de ações permanece contida no painel em larguras menores que `820px`;
 - cabeçalho fixo da Importação recebe fundo, borda e sombra próprios durante a rolagem;
 - envoltório visual desigual do seletor de arquivo;

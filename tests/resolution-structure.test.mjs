@@ -4,6 +4,10 @@ import { readFile } from "node:fs/promises";
 const index = await readFile(new URL("../index.html", import.meta.url), "utf8");
 const mainCss = await readFile(new URL("../src/styles/main.css", import.meta.url), "utf8");
 const resolutionCss = await readFile(new URL("../src/styles/pages/resolution.css", import.meta.url), "utf8");
+const confirmationCss = await readFile(
+  new URL("../src/styles/components/confirmation-modal.css", import.meta.url),
+  "utf8"
+);
 const controller = await readFile(
   new URL("../src/scripts/features/question-resolution/question-resolution.controller.js", import.meta.url),
   "utf8"
@@ -31,7 +35,9 @@ const requiredIds = [
   "btnFinalizarSessao",
   "btnAnterior",
   "btnProxima",
-  "btnFinalizar"
+  "btnFinalizar",
+  "listaModalConfirmacao",
+  "notaModalConfirmacao"
 ];
 
 for (const id of requiredIds) {
@@ -50,5 +56,11 @@ assert.match(controller, /getNextMarkerState/);
 assert.match(controller, /btnFinalizarSessao/);
 assert.match(controller, /temporizadorPausado/);
 assert.doesNotMatch(controller, /querySelectorAll\("\.map-btn"\)/);
+
+assert.match(resolutionCss, /\.resolution-tag--subject\s*\{[^}]*padding-inline:\s*0\.95rem/s);
+assert.match(confirmationCss, /\.confirmation-modal__summary-item/);
+assert.match(controller, /calculateDisplayedTotalMs/);
+assert.match(controller, /items:\s*\[/);
+assert.match(controller, /Questões respondidas/);
 
 console.log("Resolution structure: todos os testes passaram.");

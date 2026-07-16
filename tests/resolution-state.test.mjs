@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import {
   buildQuestionMapLabel,
+  calculateDisplayedTotalMs,
   getMarkerInfo,
   getNextMarkerState,
   isQuestionAnswered,
@@ -35,6 +36,33 @@ assert.equal(
 assert.equal(
   buildQuestionMapLabel({ number: 4, current: false, answered: false, review: false }),
   "Questão 4, pendente"
+);
+
+assert.equal(
+  calculateDisplayedTotalMs(
+    [{ id: "q1" }, { id: "q2" }],
+    { q1: 84999, q2: 34999 }
+  ),
+  118000,
+  "O total deve somar os mesmos segundos inteiros exibidos em cada questão."
+);
+
+assert.equal(
+  calculateDisplayedTotalMs(
+    [{ id: "q1" }, { id: "q2" }],
+    { q1: 84999, q2: 34999, orphan: 60000 }
+  ),
+  118000,
+  "Tempos de IDs que não pertencem à sessão atual não devem entrar no total."
+);
+
+assert.equal(
+  calculateDisplayedTotalMs(
+    [{ id: "q1" }, { id: "q2" }],
+    { q1: Number.NaN, q2: -1000 }
+  ),
+  0,
+  "Tempos inválidos ou negativos devem ser ignorados."
 );
 
 console.log("Resolution state: todos os testes passaram.");

@@ -5,6 +5,7 @@ import { calculateHistoryMetrics, readHistory, recordCompletedSession, removeCom
 import { parseQuestions, QuestionImportError, summarizeQuestions } from "../question-import/question-import.parser.js";
 import {
   buildQuestionMapLabel,
+  calculateDisplayedTotalMs,
   getMarkerInfo,
   getNextMarkerState,
   isQuestionAnswered,
@@ -267,6 +268,8 @@ export function initQuestionResolution() {
     label = "Confirmar ação",
     title = "Deseja continuar?",
     message = "Confirme para continuar com esta ação.",
+    items = [],
+    note = "",
     confirmText = "Confirmar",
     variant = "primary"
   } = {}) {
@@ -286,6 +289,42 @@ export function initQuestionResolution() {
     $("#rotuloModalConfirmacao").textContent = label;
     $("#tituloModalConfirmacao").textContent = title;
     $("#descricaoModalConfirmacao").textContent = message;
+
+    const summaryList = $("#listaModalConfirmacao");
+    const noteElement = $("#notaModalConfirmacao");
+    const normalizedItems = Array.isArray(items) ? items : [];
+
+    summaryList.replaceChildren();
+
+    normalizedItems.forEach((item) => {
+      const normalizedItem =
+        typeof item === "string"
+          ? { label: item, value: "", tone: "neutral" }
+          : item || {};
+
+      const listItem = document.createElement("li");
+      const itemTone = ["success", "warning", "review", "neutral"].includes(normalizedItem.tone)
+        ? normalizedItem.tone
+        : "neutral";
+
+      listItem.className =
+        `confirmation-modal__summary-item confirmation-modal__summary-item--${itemTone}`;
+
+      const itemLabel = document.createElement("span");
+      itemLabel.className = "confirmation-modal__summary-label";
+      itemLabel.textContent = String(normalizedItem.label || "");
+
+      const itemValue = document.createElement("strong");
+      itemValue.className = "confirmation-modal__summary-value";
+      itemValue.textContent = String(normalizedItem.value ?? "");
+
+      listItem.append(itemLabel, itemValue);
+      summaryList.append(listItem);
+    });
+
+    summaryList.classList.toggle("hidden", normalizedItems.length === 0);
+    noteElement.textContent = note;
+    noteElement.classList.toggle("hidden", !note);
 
     const confirmButton = $("#btnConfirmarAcao");
     confirmButton.textContent = confirmText;
@@ -865,14 +904,30 @@ export function initQuestionResolution() {
     const r = calcularResultado(estado);
     const naoRespondidas = r.total - r.respondidas;
     const marcadas = Object.values(estado.revisao || {}).filter(Boolean).length;
-    const message = naoRespondidas > 0
-      ? `Questões respondidas: ${r.respondidas} de ${r.total}. Sem resposta: ${naoRespondidas}. Marcadas para revisão: ${marcadas}. A sessão pode ser finalizada mesmo assim.`
-      : `Todas as ${r.total} questões foram respondidas. Marcadas para revisão: ${marcadas}. Deseja finalizar e ver o resultado?`;
-
     const confirmado = await solicitarConfirmacao({
       label: "Finalizar sessão",
       title: naoRespondidas > 0 ? "Existem questões não respondidas" : "Finalizar esta resolução?",
-      message,
+      message: "Confira o resumo da sessão antes de finalizar.",
+      items: [
+        {
+          label: "Questões respondidas",
+          value: `${r.respondidas} de ${r.total}`,
+          tone: r.respondidas === r.total ? "success" : "neutral"
+        },
+        {
+          label: "Sem resposta",
+          value: String(naoRespondidas),
+          tone: naoRespondidas > 0 ? "warning" : "success"
+        },
+        {
+          label: "Marcadas para revisão",
+          value: String(marcadas),
+          tone: marcadas > 0 ? "review" : "neutral"
+        }
+      ],
+      note: naoRespondidas > 0
+        ? "A sessão pode ser finalizada mesmo com questões pendentes."
+        : "Todas as questões foram respondidas. O resultado será exibido após a confirmação.",
       confirmText: "Finalizar resolução",
       variant: "warning"
     });
@@ -979,7 +1034,10 @@ export function initQuestionResolution() {
   }
 
   function calcularTempoTotal(baseEstado = estado) {
-    return Object.values(baseEstado.temposMs || {}).reduce((soma, ms) => soma + Number(ms || 0), 0);
+    return calculateDisplayedTotalMs(
+      baseEstado.questoes || [],
+      baseEstado.temposMs || {}
+    );
   }
 
   function calcularResultado(baseEstado = estado) {

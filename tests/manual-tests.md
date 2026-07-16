@@ -69,7 +69,9 @@
 - [ ] O temporizador atribui o tempo à questão que estava aberta antes da navegação.
 - [ ] Pausar e retomar funciona.
 - [ ] O estado pausado permanece após voltar à Home e continuar a sessão.
-- [ ] O modal de finalização mostra respondidas, pendentes e marcadas.
+- [ ] O modal de finalização mostra respondidas, pendentes e marcadas em uma lista organizada.
+- [ ] O assunto da questão possui espaçamento horizontal confortável, inclusive quando é longo.
+- [ ] A soma dos tempos visíveis por questão coincide com o tempo total visível.
 - [ ] Apenas a tela ativa possui rolagem em tablet e mobile.
 
 ## Bloco E — Persistência
