@@ -61,6 +61,8 @@ Todas as mudanças importantes do Test Quest serão registradas neste arquivo.
 - confirmações nativas substituídas por modal customizado e acessível.
 
 ### Alterado
+- Fade In na entrada e Fade Out na saída da Tela de Desempenho;
+- brilho circular giratório atrás da porcentagem principal.
 
 - documentação atualizada para cinco telas;
 - requisitos separados por estado;

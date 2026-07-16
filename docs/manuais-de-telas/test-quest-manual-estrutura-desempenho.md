@@ -728,3 +728,11 @@ Ela deve:
 - conduzir o usuário naturalmente até a Tela de Resultado Final.
 
 Se bem implementada, essa tela ajuda o Test Quest a ter mais identidade, mais clareza e uma experiência mais envolvente.
+## Animações oficiais complementares
+
+- Ao confirmar **Finalizar resolução**, o overlay deve entrar com **Fade In**.
+- Ao acionar o botão principal da Tela de Desempenho, o overlay deve sair com **Fade Out** antes de revelar o Resultado Final.
+- Atrás da porcentagem principal deve existir um **brilho circular giratório**, baseado na cor da faixa atual.
+- O brilho é decorativo, permanece atrás do número e não pode reduzir o contraste.
+- Com `prefers-reduced-motion: reduce`, a rotação e as animações de transição devem ser removidas.
+

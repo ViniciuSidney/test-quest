@@ -136,5 +136,8 @@
 - [ ] O card central preserva rótulo, percentual, mensagem e botão.
 - [ ] A pontuação conta suavemente de zero até o percentual final.
 - [ ] O CTA fecha o overlay com animação e revela o Resultado Final.
+- [ ] O overlay entra com Fade In após confirmar a finalização.
+- [ ] O overlay sai com Fade Out ao avançar para o Resultado Final.
+- [ ] Um brilho circular giratório aparece atrás da porcentagem sem encobrir o número.
 - [ ] O foco é enviado ao título do Resultado Final após a saída.
 - [ ] Em movimento reduzido, a troca ocorre sem animações.

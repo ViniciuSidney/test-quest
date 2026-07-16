@@ -49,6 +49,11 @@ assert.match(index, /class="performance-backdrop"/);
 assert.match(index, /role="dialog"/);
 assert.match(performanceCss, /backdrop-filter: blur\(7px\)/);
 assert.match(performanceCss, /performance-score-in/);
+assert.match(index, /class="performance-score-aura"/);
+assert.match(performanceCss, /performance-overlay-fade-in/);
+assert.match(performanceCss, /performance-overlay-fade-out/);
+assert.match(performanceCss, /performance-score-aura-rotate/);
+assert.match(performanceCss, /conic-gradient/);
 assert.match(controller, /animarPontuacaoDesempenho/);
 assert.match(controller, /screenManager\.elements\.resultado\?\.setAttribute\("inert"/);
 

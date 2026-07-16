@@ -63,6 +63,8 @@ export function initQuestionResolution() {
   let modalPreviousFocus = null;
   let confirmationPreviousFocus = null;
   let confirmationResolver = null;
+  const PERFORMANCE_FADE_OUT_MS = 440;
+
   let performanceScoreAnimationFrame = null;
   let performanceCloseTimeout = null;
 
@@ -1220,7 +1222,7 @@ export function initQuestionResolution() {
       return;
     }
 
-    performanceCloseTimeout = window.setTimeout(finalizarFechamento, 420);
+    performanceCloseTimeout = window.setTimeout(finalizarFechamento, PERFORMANCE_FADE_OUT_MS);
   }
 
   function ocultarDesempenhoImediato() {

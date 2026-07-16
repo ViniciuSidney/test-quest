@@ -71,18 +71,29 @@ body.performance-open {
   padding: clamp(1rem, 4vw, 3rem);
   color: #ffffff;
   isolation: isolate;
+  opacity: 0;
+  will-change: opacity;
+}
+
+.performance-overlay.is-visible {
+  animation: performance-overlay-fade-in 460ms ease-out both;
+}
+
+.performance-overlay.is-leaving {
+  pointer-events: none;
+  animation: performance-overlay-fade-out 420ms ease-in both;
 }
 
 .performance-backdrop {
   position: absolute;
   inset: 0;
   z-index: -2;
-  background:
-    radial-gradient(circle at 50% 42%, rgba(255, 255, 255, 0.1), transparent 32%),
-    var(--performance-overlay);
+  background: radial-gradient(circle at 50% 42%, rgba(255, 255, 255, 0.1), transparent 32%), var(--performance-overlay);
   opacity: 0;
   backdrop-filter: blur(2px) saturate(0.72);
-  transition: opacity 360ms ease, backdrop-filter 420ms ease;
+  transition:
+    opacity 360ms ease,
+    backdrop-filter 420ms ease;
 }
 
 .performance-overlay::before,
@@ -123,9 +134,7 @@ body.performance-open {
   align-items: center;
   gap: clamp(0.65rem, 1.5vh, 1.15rem);
   padding: clamp(1.4rem, 4vw, 3.2rem);
-  background:
-    linear-gradient(145deg, rgba(255, 255, 255, 0.08), transparent 38%),
-    var(--performance-card);
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.08), transparent 38%), var(--performance-card);
   border: 1px solid var(--performance-card-edge);
   border-radius: clamp(22px, 3vw, 34px);
   box-shadow:
@@ -147,9 +156,7 @@ body.performance-open {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background:
-    linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.12), transparent)
-    -140% 0 / 70% 100% no-repeat;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.12), transparent) -140% 0 / 70% 100% no-repeat;
   opacity: 0;
 }
 
@@ -168,6 +175,8 @@ body.performance-open {
 }
 
 .performance-score-block {
+  position: relative;
+  z-index: 1;
   min-height: 0;
   display: flex;
   align-items: flex-end;
@@ -176,7 +185,60 @@ body.performance-open {
   color: #ffffff;
   line-height: 0.78;
   user-select: none;
+  isolation: isolate;
   text-shadow: 0 12px 35px rgba(0, 0, 0, 0.28);
+}
+
+.performance-score-aura {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: -1;
+  width: clamp(245px, min(42vw, 50vh), 520px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.72);
+  transition:
+    opacity 620ms ease,
+    transform 720ms cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+}
+
+.performance-score-aura::before,
+.performance-score-aura::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+
+.performance-score-aura::before {
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg 45deg,
+    rgba(255, 255, 255, 0.4) 70deg,
+    transparent 110deg 210deg,
+    rgba(255, 255, 255, 0.18) 250deg,
+    transparent 300deg 360deg
+  );
+  filter: blur(16px);
+  -webkit-mask: radial-gradient(circle, transparent 0 42%, #000 54% 69%, transparent 80%);
+  mask: radial-gradient(circle, transparent 0 42%, #000 58%, transparent 76%);
+  animation: performance-score-aura-rotate 8.5s linear infinite;
+}
+
+.performance-score-aura::after {
+  inset: 15%;
+  background: radial-gradient(circle, var(--performance-glow), transparent 68%);
+  filter: blur(20px);
+  opacity: 0.72;
+}
+
+.performance-score-value,
+.performance-score-symbol {
+  position: relative;
+  z-index: 1;
 }
 
 .performance-score-value {
@@ -241,9 +303,7 @@ body.performance-open {
   overflow: hidden;
   padding: 0.9rem 1.4rem;
   color: #ffffff;
-  background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.12), transparent 50%),
-    var(--performance-accent);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.12), transparent 50%), var(--performance-accent);
   border: 1px solid rgba(255, 255, 255, 0.22);
   border-radius: 16px;
   box-shadow:
@@ -314,6 +374,17 @@ body.performance-open {
   animation: performance-score-in 720ms 180ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
+.performance-overlay.is-visible .performance-score-aura {
+  opacity: 0.82;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.performance-overlay.is-leaving .performance-score-aura {
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(1.08);
+  transition-duration: 280ms;
+}
+
 .performance-overlay.is-visible .performance-copy-block {
   animation: performance-copy-in 520ms 420ms ease-out both;
 }
@@ -340,30 +411,91 @@ body.performance-open {
   transition: opacity 260ms ease;
 }
 
+@keyframes performance-overlay-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes performance-overlay-fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes performance-score-aura-rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 @keyframes performance-glow-in {
-  from { opacity: 0; transform: scale(0.62); }
-  to { opacity: 0.8; transform: scale(1); }
+  from {
+    opacity: 0;
+    transform: scale(0.62);
+  }
+  to {
+    opacity: 0.8;
+    transform: scale(1);
+  }
 }
 
 @keyframes performance-rings-in {
-  from { opacity: 0; transform: scale(0.72); }
-  to { opacity: 0.58; transform: scale(1); }
+  from {
+    opacity: 0;
+    transform: scale(0.72);
+  }
+  to {
+    opacity: 0.58;
+    transform: scale(1);
+  }
 }
 
 @keyframes performance-score-in {
-  from { opacity: 0; transform: translateY(28px) scale(0.86); filter: blur(7px); }
-  to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+  from {
+    opacity: 0;
+    transform: translateY(28px) scale(0.86);
+    filter: blur(7px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
 }
 
 @keyframes performance-copy-in {
-  from { opacity: 0; transform: translateY(18px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes performance-shine {
-  0% { opacity: 0; background-position: -140% 0; }
-  25% { opacity: 1; }
-  100% { opacity: 0; background-position: 240% 0; }
+  0% {
+    opacity: 0;
+    background-position: -140% 0;
+  }
+  25% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    background-position: 240% 0;
+  }
 }
 
 @media (max-height: 720px) and (min-width: 721px) {
@@ -439,7 +571,9 @@ body.performance-open {
   .performance-overlay::before,
   .performance-overlay::after,
   .performance-card::before,
-  .performance-score-block {
+  .performance-score-block,
+  .performance-score-aura,
+  .performance-score-aura::before {
     animation: none !important;
     transition: none !important;
   }
@@ -447,9 +581,15 @@ body.performance-open {
   .performance-overlay.is-visible .performance-backdrop,
   .performance-overlay.is-visible .performance-card,
   .performance-overlay.is-visible .performance-copy-block,
-  .performance-overlay.is-visible .performance-action-block {
+  .performance-overlay.is-visible .performance-action-block,
+  .performance-overlay.is-visible {
     opacity: 1;
     transform: none;
     filter: none;
+  }
+
+  .performance-overlay.is-visible .performance-score-aura {
+    opacity: 0.5;
+    transform: translate(-50%, -50%) scale(1);
   }
 }

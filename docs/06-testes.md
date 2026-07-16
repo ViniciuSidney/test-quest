@@ -188,6 +188,9 @@ Os testes manuais da tabela continuam necessários no navegador antes do commit 
 | T49.14 | Saída animada | CTA remove o overlay e revela o Resultado Final | Pendente |
 | T49.15 | Movimento reduzido | Animações são removidas quando solicitado pelo sistema | Pendente |
 | T49.16 | Foco do overlay | Navegação por Tab permanece no CTA enquanto a tela está aberta | Pendente |
+| T49.17 | Fade In do desempenho | Overlay surge suavemente após confirmar a finalização | Pendente |
+| T49.18 | Fade Out do desempenho | CTA remove o overlay suavemente antes de revelar o resultado | Pendente |
+| T49.19 | Aura giratória | Brilho circular gira atrás da porcentagem sem prejudicar a leitura | Pendente |
 
 # Resultado Final
 
