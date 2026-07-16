@@ -43,8 +43,10 @@ for (const filter of ["all", "incorrect", "discursive", "review", "unanswered"])
 assert.match(mainCss, /pages\/results\.css/);
 assert.match(resultsCss, /\.results-screen\.active/);
 assert.match(resultsCss, /\.results-layout/);
-assert.match(resultsCss, /\.results-review-list/);
-assert.match(resultsCss, /\.result-review-card\.is-expanded\s*\{[^}]*grid-column:\s*1\s*\/\s*-1/s);
+assert.match(resultsCss, /body\[data-screen=["']resultado["']\]\s+\.legacy-topbar\s*\{[^}]*display:\s*none/s);
+assert.match(resultsCss, /\.results-review-list\s*\{[^}]*display:\s*flex[^}]*flex-wrap:\s*wrap/s);
+assert.match(resultsCss, /\.result-review-card\.is-expanded\s*\{[^}]*flex-basis:\s*100%[^}]*width:\s*100%/s);
+assert.match(resultsCss, /@media \(max-width: 900px\)[\s\S]*?\.results-actionbar\s*\{[^}]*display:\s*grid/s);
 assert.match(resultsCss, /@media \(max-width: 720px\)/);
 assert.match(resultsCss, /prefers-reduced-motion/);
 

@@ -216,6 +216,10 @@ Os testes manuais da tabela continuam necessários no navegador antes do commit 
 | T64.3 | Foco após expansão | Foco permanece no controle do card atualizado | Pendente |
 | T64.4 | Estado de revisão combinado | Marcada pode coexistir com correta, incorreta, discursiva ou pendente | Pendente |
 | T64.5 | Cabeçalho e rodapé | As duas ações de Início encerram o mesmo fluxo | Pendente |
+| T64.6 | Cabeçalho legado | A identidade antiga não aparece na Tela de Resultado Final | Pendente |
+| T64.7 | Fluxo do card expandido | Cards seguintes permanecem abaixo do card aberto, sem sobreposição | Pendente |
+| T64.8 | Conteúdo em janela baixa | Indicadores e textos permanecem contidos ou usam rolagem interna | Pendente |
+| T64.9 | Barra de ações mobile | Todos os quatro botões permanecem dentro do painel visual | Pendente |
 
 # Exportações
 

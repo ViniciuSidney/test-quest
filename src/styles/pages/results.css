@@ -2,6 +2,18 @@
    TELA DE RESULTADO FINAL
    ========================================================= */
 
+body[data-screen="resultado"] {
+  background:
+    radial-gradient(circle at 12% 8%, rgba(98, 101, 246, 0.14), transparent 30rem),
+    var(--tq-bg);
+  color: var(--tq-text);
+}
+
+/* O cabeçalho legado pertence apenas à implementação antiga. */
+body[data-screen="resultado"] .legacy-topbar {
+  display: none;
+}
+
 .results-screen {
   --results-correct: var(--tq-success);
   --results-incorrect: var(--tq-danger);
@@ -12,6 +24,9 @@
 }
 
 .results-screen.active {
+  flex: 1 1 auto;
+  width: 100%;
+  max-width: 100%;
   min-height: 0;
   overflow: hidden;
   display: grid;
@@ -79,7 +94,7 @@
   min-height: 0;
   overflow: hidden;
   display: grid;
-  grid-template-columns: clamp(300px, 29vw, 410px) minmax(0, 1fr);
+  grid-template-columns: clamp(270px, 27vw, 390px) minmax(0, 1fr);
   grid-template-rows: minmax(0, 1fr) auto;
   grid-template-areas:
     "sidebar review"
@@ -117,22 +132,27 @@
 }
 
 .results-summary-panel {
-  overflow: hidden;
-  display: grid;
-  grid-template-rows: auto minmax(0, 1fr) auto;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
   gap: var(--tq-space-4);
+  scrollbar-gutter: stable;
 }
 
 .results-metrics-grid {
+  flex: 0 0 auto;
   min-height: 0;
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  align-content: center;
+  grid-template-columns: repeat(auto-fit, minmax(min(96px, 100%), 1fr));
+  grid-auto-rows: minmax(76px, auto);
+  align-content: start;
   gap: var(--tq-space-3);
 }
 
 .result-metric {
   min-width: 0;
+  min-height: 76px;
   padding: var(--tq-space-3);
   background: var(--tq-surface-soft);
   border: 1px solid var(--tq-border);
@@ -156,6 +176,8 @@
   font-size: clamp(0.68rem, 0.82vw, 0.82rem);
   font-weight: 800;
   line-height: 1.18;
+  overflow-wrap: anywhere;
+  hyphens: auto;
 }
 
 .results-discursive-notice {
@@ -276,7 +298,7 @@
 .review-filters {
   min-width: 0;
   display: grid;
-  grid-template-columns: repeat(5, minmax(112px, 1fr));
+  grid-template-columns: repeat(5, minmax(96px, 1fr));
   gap: var(--tq-space-2);
   padding: var(--tq-space-2);
   overflow-x: auto;
@@ -295,6 +317,7 @@
   border-radius: var(--tq-radius-sm);
   box-shadow: none;
   white-space: nowrap;
+  font-size: clamp(0.74rem, 0.92vw, 0.9rem);
 }
 
 .review-filter:hover {
@@ -312,9 +335,10 @@
 .results-review-list {
   min-height: 0;
   overflow: auto;
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  align-content: start;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  align-items: flex-start;
   gap: var(--tq-space-3);
   padding: var(--tq-space-4);
   background: var(--tq-surface-soft);
@@ -326,9 +350,15 @@
 .result-review-card {
   --review-card-accent: var(--results-unanswered);
   --review-card-soft: color-mix(in srgb, var(--review-card-accent) 12%, var(--tq-surface));
+  position: relative;
+  z-index: 0;
+  flex: 0 0 calc((100% - var(--tq-space-3)) / 2);
+  width: calc((100% - var(--tq-space-3)) / 2);
   min-width: 0;
   overflow: hidden;
-  align-self: start;
+  align-self: flex-start;
+  display: flex;
+  flex-direction: column;
   background: var(--review-card-soft);
   border: 1px solid color-mix(in srgb, var(--review-card-accent) 30%, var(--tq-border));
   border-radius: var(--tq-radius-md);
@@ -356,7 +386,9 @@
 }
 
 .result-review-card.is-expanded {
-  grid-column: 1 / -1;
+  z-index: 1;
+  flex-basis: 100%;
+  width: 100%;
 }
 
 .result-review-card__summary {
@@ -427,6 +459,9 @@
 }
 
 .result-review-card__details {
+  position: static;
+  flex: 0 0 auto;
+  width: 100%;
   display: grid;
   gap: var(--tq-space-3);
   padding: 0 var(--tq-space-4) var(--tq-space-4);
@@ -518,7 +553,8 @@
 }
 
 .results-empty-state {
-  grid-column: 1 / -1;
+  flex: 1 0 100%;
+  width: 100%;
   min-height: 220px;
   display: grid;
   place-items: center;
@@ -553,16 +589,25 @@
 
 .results-actions__exports,
 .results-actions__navigation {
+  min-width: 0;
   display: flex;
   align-items: center;
   gap: var(--tq-space-3);
 }
 
+.results-actions__exports {
+  flex-wrap: wrap;
+}
+
 .results-actionbar button {
+  min-width: 0;
+  max-width: 100%;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: var(--tq-space-2);
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
 
 .results-actions__navigation button {
@@ -576,9 +621,9 @@
   box-shadow: 0 14px 34px rgba(0, 0, 0, 0.28);
 }
 
-@media (max-width: 1120px) {
+@media (max-width: 1240px) {
   .results-layout {
-    grid-template-columns: minmax(280px, 0.82fr) minmax(0, 1.7fr);
+    grid-template-columns: minmax(265px, 0.78fr) minmax(0, 1.7fr);
     gap: var(--tq-space-3);
   }
 
@@ -586,9 +631,6 @@
     gap: var(--tq-space-3);
   }
 
-  .results-metrics-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
 
   .result-discursive-details {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -616,7 +658,7 @@
   .results-layout {
     overflow: visible;
     grid-template-columns: 1fr;
-    grid-template-rows: max-content minmax(560px, 72dvh) auto;
+    grid-template-rows: max-content minmax(480px, 68dvh) max-content;
     grid-template-areas:
       "sidebar"
       "review"
@@ -632,22 +674,34 @@
 
   .results-summary-panel,
   .subject-performance-panel {
-    min-height: 330px;
+    min-height: 0;
+    height: auto;
   }
 
   .results-actionbar {
+    min-height: 0;
+    height: auto;
+    overflow: visible;
+    align-self: start;
+    display: grid;
+    grid-template-columns: 1fr;
     align-items: stretch;
-    flex-direction: column;
   }
 
   .results-actions__exports,
   .results-actions__navigation {
     width: 100%;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .results-actions__navigation {
+    grid-template-columns: 1fr;
   }
 
   .results-actions__exports button,
   .results-actions__navigation button {
-    flex: 1 1 0;
+    width: 100%;
     min-width: 0;
   }
 }
@@ -709,8 +763,13 @@
   }
 
   .results-review-list {
-    grid-template-columns: 1fr;
     padding: var(--tq-space-3);
+  }
+
+  .result-review-card,
+  .result-review-card.is-expanded {
+    flex-basis: 100%;
+    width: 100%;
   }
 
   .result-objective-details,
@@ -742,15 +801,35 @@
   .results-summary-panel,
   .subject-performance-panel,
   .review-panel {
-    padding: 0.85rem;
+    padding: 0.75rem;
+  }
+
+  .results-summary-panel {
+    gap: 5px;
+  }
+
+  .subject-performance-panel {
+    gap: var(--tq-space-2);
   }
 
   .results-metrics-grid {
+    grid-auto-rows: minmax(55px, auto);
     gap: var(--tq-space-2);
   }
 
   .result-metric {
-    padding: 0.65rem;
+    min-height: 55px;
+    padding: 0.44rem;
+  }
+
+  .result-metric span {
+    font-size: 0.66rem;
+  }
+
+  .results-discursive-notice {
+    padding: 0.32rem 0.5rem;
+    font-size: 0.66rem;
+    line-height: 1.2;
   }
 
   .results-actionbar {

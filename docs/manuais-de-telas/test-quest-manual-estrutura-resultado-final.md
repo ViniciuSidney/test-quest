@@ -315,7 +315,8 @@ Regras:
 - nome da lista truncado quando necessário;
 - conteúdo completo em `title`;
 - botão superior e inferior executam o mesmo fluxo;
-- temporizador não aparece.
+- temporizador não aparece;
+- o cabeçalho legado da aplicação deve permanecer oculto enquanto `data-screen="resultado"` estiver ativo.
 
 ```css
 .results-header {
@@ -651,15 +652,19 @@ Lista de cards
 .review-list {
   min-height: 0;
   overflow: auto;
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  align-content: start;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
   gap: 12px;
   padding: 16px;
   background: var(--tq-surface-soft);
   border: 1px solid var(--tq-border);
   border-radius: var(--tq-radius-md);
   scrollbar-gutter: stable;
+}
+
+.review-card {
+  flex: 0 0 calc((100% - 12px) / 2);
 }
 ```
 
@@ -753,7 +758,8 @@ O card expandido ocupa toda a largura:
 
 ```css
 .review-card.expanded {
-  grid-column: 1 / -1;
+  flex-basis: 100%;
+  width: 100%;
 }
 ```
 
@@ -1054,6 +1060,8 @@ Voltar ao início
 }
 ```
 
+Em telas menores, a barra deve calcular a altura pelo próprio conteúdo. Os grupos de exportação e navegação passam a usar uma grade de uma coluna quando necessário, e todos os botões devem permanecer com `width: 100%` e `min-width: 0`.
+
 ---
 
 # 26. Exportações
@@ -1256,8 +1264,10 @@ Voltar ao início
     grid-template-rows: auto;
   }
 
-  .review-list {
-    grid-template-columns: 1fr;
+  .review-card,
+  .review-card.expanded {
+    flex-basis: 100%;
+    width: 100%;
   }
 
   .review-objective-details,

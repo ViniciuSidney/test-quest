@@ -119,6 +119,10 @@
 - [ ] Anotações TXT são baixadas.
 - [ ] Sessão JSON é baixada e pode ser aberta.
 - [ ] Botões de Início no cabeçalho e no rodapé encerram a sessão ativa sem apagar o histórico.
+- [ ] O cabeçalho antigo da aplicação permanece oculto no Resultado Final.
+- [ ] Em 1140 × 612 e dimensões próximas, os indicadores não se sobrepõem ao aviso discursivo.
+- [ ] Ao expandir um card, os cards posteriores seguem abaixo dele no fluxo normal.
+- [ ] Em telas menores, os botões de exportação e retorno permanecem dentro da barra inferior.
 
 ## Bloco H — Layout
 

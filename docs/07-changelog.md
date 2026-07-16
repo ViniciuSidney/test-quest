@@ -62,6 +62,10 @@ Todas as mudanças importantes do Test Quest serão registradas neste arquivo.
 - tempos associados a IDs fora da sessão atual deixam de entrar no total;
 - espaçamento horizontal do assunto da questão foi ampliado;
 - modal de finalização organiza respondidas, pendentes e revisão em uma lista semântica;
+- cabeçalho legado deixa de aparecer na Tela de Resultado Final;
+- indicadores e textos do Resultado Final deixam de se sobrepor em janelas baixas e larguras intermediárias;
+- card expandido passa a ocupar uma linha própria, mantendo os demais cards abaixo no fluxo;
+- botões de exportação e retorno permanecem contidos na barra de ações em telas menores;
 
 - barra de ações permanece contida no painel em larguras menores que `820px`;
 - cabeçalho fixo da Importação recebe fundo, borda e sombra próprios durante a rolagem;
