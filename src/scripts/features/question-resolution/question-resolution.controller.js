@@ -46,7 +46,6 @@ export function initQuestionResolution() {
     home: "#telaInicial",
     importacao: "#telaImportacao",
     resolucao: "#telaResolucao",
-    desempenho: "#telaDesempenho",
     resultado: "#telaResultado"
   });
 
@@ -64,6 +63,8 @@ export function initQuestionResolution() {
   let modalPreviousFocus = null;
   let confirmationPreviousFocus = null;
   let confirmationResolver = null;
+  let performanceScoreAnimationFrame = null;
+  let performanceCloseTimeout = null;
 
   const entradaQuestoes = $("#entradaQuestoes");
   const arquivoQuestoes = $("#arquivoQuestoes");
@@ -140,6 +141,17 @@ export function initQuestionResolution() {
         return;
       }
 
+      const desempenho = $("#telaDesempenho");
+
+      if (desempenho && !desempenho.classList.contains("hidden")) {
+        if (evento.key === "Tab") {
+          evento.preventDefault();
+          $("#btnVerResultadoFinal")?.focus();
+        }
+
+        return;
+      }
+
       const modal = $("#modalModelo");
 
       if (!modal || modal.classList.contains("hidden")) {
@@ -207,7 +219,7 @@ export function initQuestionResolution() {
 
     $("#btnLimparProgressoResolucao")?.addEventListener("click", apagarSessaoSalva);
 
-    $("#btnVerResultadoFinal")?.addEventListener("click", abrirResultadoFinal);
+    $("#btnVerResultadoFinal")?.addEventListener("click", fecharDesempenho);
     $("#btnNovaLista").addEventListener("click", voltarAoInicioAposResultado);
     $("#btnRevisar").addEventListener("click", () => {
       removeCompletedSession(estado.id);
@@ -954,8 +966,8 @@ export function initQuestionResolution() {
     pararCronometro();
 
     if (shouldShowPerformanceScreen(resultadoFinal.objetivas)) {
-      renderizarDesempenho(resultadoFinal);
-      trocarTela("desempenho");
+      abrirResultadoFinal({ focar: false });
+      mostrarDesempenho(resultadoFinal);
     } else {
       abrirResultadoFinal();
     }
@@ -1087,7 +1099,7 @@ export function initQuestionResolution() {
     const state = getPerformanceState(resultado?.percentual);
 
     if (!tela) {
-      return;
+      return state;
     }
 
     tela.classList.remove(...PERFORMANCE_STATE_CLASSES);
@@ -1104,14 +1116,139 @@ export function initQuestionResolution() {
       `Desempenho geral de ${state.percentage} por cento`
     );
 
+    return state;
+  }
+
+  function mostrarDesempenho(resultado) {
+    const tela = $("#telaDesempenho");
+    const state = renderizarDesempenho(resultado);
+
+    if (!tela || !state) {
+      return;
+    }
+
+    if (performanceCloseTimeout) {
+      clearTimeout(performanceCloseTimeout);
+      performanceCloseTimeout = null;
+    }
+
+    cancelAnimationFrame(performanceScoreAnimationFrame);
+
+    tela.classList.remove("hidden", "is-visible", "is-leaving");
+    tela.setAttribute("aria-hidden", "false");
+    document.body.classList.add("performance-open", "performance-transitioning");
+    screenManager.elements.resultado?.setAttribute("inert", "");
+
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const scoreElement = $("#valorDesempenho");
+
+    if (scoreElement) {
+      scoreElement.textContent = prefersReducedMotion ? String(state.percentage) : "0";
+    }
+
     requestAnimationFrame(() => {
-      $("#tituloDesempenho")?.focus();
+      requestAnimationFrame(() => {
+        tela.classList.add("is-visible");
+        document.body.classList.remove("performance-transitioning");
+
+        if (!prefersReducedMotion) {
+          animarPontuacaoDesempenho(state.percentage);
+        }
+
+        window.setTimeout(() => {
+          $("#tituloDesempenho")?.focus();
+        }, prefersReducedMotion ? 0 : 460);
+      });
     });
   }
 
-  function abrirResultadoFinal() {
+  function animarPontuacaoDesempenho(percentualFinal) {
+    const elemento = $("#valorDesempenho");
+
+    if (!elemento) {
+      return;
+    }
+
+    cancelAnimationFrame(performanceScoreAnimationFrame);
+
+    const inicio = performance.now();
+    const duracao = 820;
+
+    function atualizar(agora) {
+      const progresso = Math.min(1, (agora - inicio) / duracao);
+      const suavizado = 1 - Math.pow(1 - progresso, 3);
+      elemento.textContent = String(Math.round(percentualFinal * suavizado));
+
+      if (progresso < 1) {
+        performanceScoreAnimationFrame = requestAnimationFrame(atualizar);
+      } else {
+        elemento.textContent = String(percentualFinal);
+      }
+    }
+
+    performanceScoreAnimationFrame = requestAnimationFrame(atualizar);
+  }
+
+  function fecharDesempenho() {
+    const tela = $("#telaDesempenho");
+    const botao = $("#btnVerResultadoFinal");
+
+    if (!tela || tela.classList.contains("hidden") || tela.classList.contains("is-leaving")) {
+      return;
+    }
+
+    cancelAnimationFrame(performanceScoreAnimationFrame);
+    botao?.setAttribute("disabled", "");
+    tela.classList.add("is-leaving");
+    tela.classList.remove("is-visible");
+
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const finalizarFechamento = () => {
+      tela.classList.add("hidden");
+      tela.classList.remove("is-leaving");
+      tela.setAttribute("aria-hidden", "true");
+      botao?.removeAttribute("disabled");
+      document.body.classList.remove("performance-open", "performance-transitioning");
+      delete document.body.dataset.performanceState;
+      screenManager.elements.resultado?.removeAttribute("inert");
+      $("#tituloResultadoFinal")?.focus();
+      performanceCloseTimeout = null;
+    };
+
+    if (prefersReducedMotion) {
+      finalizarFechamento();
+      return;
+    }
+
+    performanceCloseTimeout = window.setTimeout(finalizarFechamento, 420);
+  }
+
+  function ocultarDesempenhoImediato() {
+    const tela = $("#telaDesempenho");
+
+    cancelAnimationFrame(performanceScoreAnimationFrame);
+
+    if (performanceCloseTimeout) {
+      clearTimeout(performanceCloseTimeout);
+      performanceCloseTimeout = null;
+    }
+
+    tela?.classList.add("hidden");
+    tela?.classList.remove("is-visible", "is-leaving");
+    tela?.setAttribute("aria-hidden", "true");
+    $("#btnVerResultadoFinal")?.removeAttribute("disabled");
+    document.body.classList.remove("performance-open", "performance-transitioning");
+    delete document.body.dataset.performanceState;
+    screenManager.elements.resultado?.removeAttribute("inert");
+  }
+
+  function abrirResultadoFinal({ focar = true } = {}) {
     trocarTela("resultado");
     renderizarResultado();
+
+    if (focar) {
+      requestAnimationFrame(() => $("#tituloResultadoFinal")?.focus());
+    }
   }
 
   function renderizarResultado() {
@@ -1374,6 +1511,7 @@ export function initQuestionResolution() {
   }
 
   function voltarAoInicioAposResultado() {
+    ocultarDesempenhoImediato();
     pararCronometro();
     localStorage.removeItem(STORAGE_KEY);
     estado = estadoInicial();
@@ -1389,10 +1527,6 @@ export function initQuestionResolution() {
   function trocarTela(nome) {
     if (nome !== "resolucao") {
       pararCronometro();
-    }
-
-    if (nome !== "desempenho") {
-      delete document.body.dataset.performanceState;
     }
 
     screenManager.show(nome);

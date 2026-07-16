@@ -42,7 +42,10 @@ Todas as mudanças importantes do Test Quest serão registradas neste arquivo.
 - Tela de Desempenho intermediária;
 - seis estados visuais dinâmicos por faixa de acerto;
 - módulo `performance.service.js`;
-- testes `performance-state.test.mjs` e `performance-structure.test.mjs`.
+- testes `performance-state.test.mjs` e `performance-structure.test.mjs`;
+- overlay translúcido de desempenho sobre o Resultado Final;
+- animação de entrada com contagem progressiva do percentual;
+- transição suave para revelar o Resultado Final.
 
 ### Corrigido
 
@@ -83,7 +86,9 @@ Todas as mudanças importantes do Test Quest serão registradas neste arquivo.
 - estado pausado do temporizador passa a ser persistido;
 - finalização passa a exigir confirmação mesmo com todas as questões respondidas;
 - finalização com objetivas passa pela Tela de Desempenho antes do Resultado Final;
-- sessões somente discursivas seguem diretamente para o Resultado Final.
+- sessões somente discursivas seguem diretamente para o Resultado Final;
+- Tela de Desempenho deixa de usar painéis decorativos simulados;
+- Resultado Final passa a ser renderizado ao fundo antes da abertura do overlay de desempenho.
 
 ### Corrigido
 

@@ -126,3 +126,15 @@
 - Testador:
 - Resultado geral:
 - Bugs encontrados:
+
+
+## Tela de Desempenho — overlay refinado
+
+- [ ] Ao confirmar a finalização, o Resultado Final é preparado ao fundo.
+- [ ] O overlay utiliza a cor da faixa com transparência e desfoque.
+- [ ] Não existem painéis laterais, superiores ou inferiores simulados.
+- [ ] O card central preserva rótulo, percentual, mensagem e botão.
+- [ ] A pontuação conta suavemente de zero até o percentual final.
+- [ ] O CTA fecha o overlay com animação e revela o Resultado Final.
+- [ ] O foco é enviado ao título do Resultado Final após a saída.
+- [ ] Em movimento reduzido, a troca ocorre sem animações.

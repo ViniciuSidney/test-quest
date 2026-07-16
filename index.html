@@ -446,59 +446,53 @@
 
     <section
       id="telaDesempenho"
-      class="screen screen--performance performance-screen--excellent-100"
+      class="performance-overlay performance-screen--excellent-100 hidden"
+      role="dialog"
+      aria-modal="true"
+      aria-hidden="true"
       aria-labelledby="tituloDesempenho"
+      aria-describedby="subtituloDesempenho"
       data-performance-state="excellent-100"
     >
-      <div class="performance-shell">
-        <aside class="performance-side-panel performance-side-panel--left" aria-hidden="true"></aside>
+      <div class="performance-backdrop" aria-hidden="true"></div>
 
-        <div class="performance-main-column">
-          <header class="performance-topbar">
-            <p class="performance-topbar-label">Desempenho Geral:</p>
-          </header>
+      <article class="performance-card" role="document">
+        <p class="performance-eyebrow">Desempenho Geral</p>
 
-          <article class="performance-hero-panel">
-            <div
-              id="blocoPontuacaoDesempenho"
-              class="performance-score-block"
-              role="img"
-              aria-label="Desempenho geral de 100 por cento"
-            >
-              <span id="valorDesempenho" class="performance-score-value">100</span>
-              <span class="performance-score-symbol" aria-hidden="true">%</span>
-            </div>
-
-            <div class="performance-copy-block">
-              <h1 id="tituloDesempenho" class="performance-title" tabindex="-1">Perfeito!</h1>
-              <p id="subtituloDesempenho" class="performance-subtitle">
-                Você acertou tudo nesta sessão!
-              </p>
-            </div>
-
-            <div class="performance-action-block">
-              <button
-                id="btnVerResultadoFinal"
-                class="performance-continue-button"
-                type="button"
-              >
-                Ótimo!
-              </button>
-            </div>
-          </article>
-
-          <footer class="performance-footer-bar" aria-hidden="true"></footer>
+        <div
+          id="blocoPontuacaoDesempenho"
+          class="performance-score-block"
+          role="img"
+          aria-label="Desempenho geral de 100 por cento"
+        >
+          <span id="valorDesempenho" class="performance-score-value">100</span>
+          <span class="performance-score-symbol" aria-hidden="true">%</span>
         </div>
 
-        <aside class="performance-side-panel performance-side-panel--right" aria-hidden="true"></aside>
-      </div>
+        <div class="performance-copy-block">
+          <h1 id="tituloDesempenho" class="performance-title" tabindex="-1">Perfeito!</h1>
+          <p id="subtituloDesempenho" class="performance-subtitle">
+            Você acertou tudo nesta sessão!
+          </p>
+        </div>
+
+        <div class="performance-action-block">
+          <button
+            id="btnVerResultadoFinal"
+            class="performance-continue-button"
+            type="button"
+          >
+            Ótimo!
+          </button>
+        </div>
+      </article>
     </section>
 
     <section id="telaResultado" class="screen">
       <div class="panel">
         <div class="panel-header">
           <div>
-            <h2>Resultado final</h2>
+            <h2 id="tituloResultadoFinal" tabindex="-1">Resultado final</h2>
             <p>Confira desempenho, tempo usado e materiais de revisão.</p>
           </div>
           <div class="actions compact">

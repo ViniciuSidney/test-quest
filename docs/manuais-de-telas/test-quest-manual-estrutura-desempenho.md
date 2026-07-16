@@ -36,26 +36,26 @@ Tela de Resolução
 
 ## 3. Estrutura geral da tela
 
-A tela possui **uma única estrutura base**, variando apenas o conteúdo e as cores conforme a faixa de desempenho.
+A tela possui **uma única estrutura central**, exibida como um **overlay translúcido** sobre a Tela de Resultado Final já renderizada ao fundo.
 
 ### Blocos visuais principais
 
-1. **Faixa superior / cabeçalho de destaque**
-   - mostra o rótulo “Desempenho Geral:”.
+1. **Backdrop translúcido**
+   - cobre a interface que está ao fundo;
+   - aplica a cor dominante da faixa de desempenho;
+   - escurece, dessatura e desfoca suavemente o Resultado Final;
+   - não utiliza painéis falsos ou decorativos para simular outra tela.
 
-2. **Painel central de desempenho**
-   - mostra o percentual em destaque;
-   - mostra a mensagem principal;
-   - mostra a mensagem complementar;
-   - mostra o botão principal de continuação.
+2. **Card central de desempenho**
+   - mostra o rótulo “Desempenho Geral”;
+   - apresenta o percentual em destaque;
+   - apresenta mensagem principal e complementar;
+   - contém o botão que revela o Resultado Final.
 
-3. **Bloco inferior decorativo / base visual**
-   - ajuda a manter coerência com o restante do layout do app;
-   - não precisa ter função ativa obrigatória.
-
-4. **Painéis laterais decorativos**
-   - reforçam a composição visual;
-   - ajudam a manter o mesmo “idioma estrutural” das outras telas.
+3. **Elementos luminosos sutis**
+   - brilhos e anéis abstratos podem reforçar a entrada;
+   - devem permanecer decorativos e discretos;
+   - não alteram a disposição base do conteúdo.
 
 ---
 
@@ -82,41 +82,44 @@ Esta tela deve transmitir:
 ## 5. Estrutura HTML sugerida
 
 ```html
-<section class="performance-screen performance-screen--excellent-100">
-  <div class="performance-shell">
-    <aside class="performance-side performance-side--left" aria-hidden="true"></aside>
+<section
+  id="telaDesempenho"
+  class="performance-overlay performance-screen--excellent-100 hidden"
+  role="dialog"
+  aria-modal="true"
+  aria-hidden="true"
+  aria-labelledby="tituloDesempenho"
+  aria-describedby="subtituloDesempenho"
+>
+  <div class="performance-backdrop" aria-hidden="true"></div>
 
-    <div class="performance-main-column">
-      <header class="performance-topbar">
-        <p class="performance-topbar-label">Desempenho Geral:</p>
-      </header>
+  <article class="performance-card" role="document">
+    <p class="performance-eyebrow">Desempenho Geral</p>
 
-      <main class="performance-hero-panel">
-        <div class="performance-score-block">
-          <span class="performance-score-value">100</span>
-          <span class="performance-score-symbol">%</span>
-        </div>
-
-        <div class="performance-copy-block">
-          <h1 class="performance-title">Perfeito!</h1>
-          <p class="performance-subtitle">Você acertou tudo nesta sessão!</p>
-        </div>
-
-        <div class="performance-action-block">
-          <button class="btn btn-primary performance-continue-button" type="button">
-            Ótimo!
-          </button>
-        </div>
-      </main>
-
-      <footer class="performance-footer-bar" aria-hidden="true"></footer>
+    <div
+      class="performance-score-block"
+      role="img"
+      aria-label="Desempenho geral de 100 por cento"
+    >
+      <span class="performance-score-value">100</span>
+      <span class="performance-score-symbol" aria-hidden="true">%</span>
     </div>
 
-    <aside class="performance-side-group performance-side-group--right" aria-hidden="true">
-      <div class="performance-side performance-side--right-top"></div>
-      <div class="performance-side performance-side--right-bottom"></div>
-    </aside>
-  </div>
+    <div class="performance-copy-block">
+      <h1 id="tituloDesempenho" class="performance-title" tabindex="-1">
+        Perfeito!
+      </h1>
+      <p id="subtituloDesempenho" class="performance-subtitle">
+        Você acertou tudo nesta sessão!
+      </p>
+    </div>
+
+    <div class="performance-action-block">
+      <button class="performance-continue-button" type="button">
+        Ótimo!
+      </button>
+    </div>
+  </article>
 </section>
 ```
 
@@ -146,7 +149,8 @@ Esta tela deve transmitir:
 - rótulo superior “Desempenho Geral:”.
 
 #### Baixa / estrutural
-- painéis laterais e base inferior.
+- backdrop colorido;
+- brilhos e anéis decorativos.
 
 ---
 
@@ -399,55 +403,51 @@ Desempenho Geral:
 
 ## 10. Funções dos blocos visuais
 
-### 10.1. `.performance-shell`
-Contêiner principal da tela.
+### 10.1. `.performance-overlay`
+Contêiner fixo que cobre a janela.
 
 #### Função
-- alinhar todos os blocos estruturais;
-- definir a largura máxima e a distribuição visual.
+- apresentar a etapa de desempenho como diálogo intermediário;
+- manter o Resultado Final renderizado ao fundo;
+- controlar entrada, saída, foco e bloqueio da interface inferior.
 
 ---
 
-### 10.2. `.performance-topbar`
-Faixa superior central.
+### 10.2. `.performance-backdrop`
+Camada translúcida colorida.
 
 #### Função
-- receber o rótulo “Desempenho Geral:”.
+- aplicar a cor dominante do estado;
+- escurecer e desfocar suavemente a interface ao fundo;
+- criar profundidade sem inserir painéis decorativos falsos.
 
 ---
 
-### 10.3. `.performance-hero-panel`
-Painel central principal.
+### 10.3. `.performance-card`
+Card central principal.
 
 #### Função
-- concentrar toda a comunicação do desempenho.
-
-#### Conteúdo interno
-- percentual;
-- título;
-- subtítulo;
-- botão.
+- concentrar rótulo, percentual, mensagens e ação;
+- preservar a disposição visual aprovada;
+- receber borda, transparência, brilho e sombra coerentes com o estado.
 
 ---
 
-### 10.4. `.performance-side`
-Blocos laterais decorativos.
+### 10.4. `.performance-score-block`
+Bloco do percentual.
 
 #### Função
-- reforçar a composição visual;
-- manter identidade com o restante das telas.
-
-#### Observação
-- podem ser ocultados ou simplificados em telas menores.
+- apresentar o valor de forma dominante;
+- receber animação de entrada e contagem progressiva.
 
 ---
 
-### 10.5. `.performance-footer-bar`
-Faixa inferior decorativa.
+### 10.5. `.performance-action-block`
+Área do CTA.
 
 #### Função
-- dar sustentação visual à composição;
-- manter repetição estrutural semelhante às outras telas.
+- conduzir ao Resultado Final;
+- manter o único botão principal da tela.
 
 ---
 
@@ -459,13 +459,11 @@ A tela deve usar **cor semântica por faixa**.
 
 Cada estado deve afetar:
 
-- fundo geral da tela (opcional);
-- topo;
-- painel central;
-- painéis laterais;
-- base inferior;
-- botão principal;
-- sombras coloridas suaves.
+- tonalidade do backdrop translúcido;
+- fundo e borda do card central;
+- cor do botão principal;
+- brilhos e sombras suaves;
+- mantendo a interface real do Resultado Final visível ao fundo.
 
 ### Recomendação de organização no CSS
 
@@ -589,14 +587,20 @@ A Tela de Desempenho deve se adaptar bem, mantendo impacto e clareza.
 ## 16. Comportamentos e interações
 
 ### Ao carregar a tela
-Pode haver:
-- transição suave de entrada;
-- leve animação no número;
-- fade no painel central.
+Deve ocorrer uma transição suave após a confirmação de finalização:
+
+- o Resultado Final é renderizado ao fundo;
+- o backdrop colorido surge gradualmente;
+- o card entra com leve deslocamento, escala e desfoque;
+- o percentual realiza contagem progressiva até o valor final;
+- título, subtítulo e botão entram em sequência;
+- brilhos decorativos aparecem de forma breve e discreta.
 
 ### Ao clicar no botão principal
-- prosseguir para a Tela de Resultado Final;
-- sem abrir modal intermediário, salvo se houver regra específica no app.
+- executar uma saída suave do card e do backdrop;
+- revelar a Tela de Resultado Final que já está renderizada ao fundo;
+- mover o foco para o título do Resultado Final;
+- não abrir outro modal intermediário.
 
 ### O que evitar
 - múltiplos botões concorrentes;
@@ -614,7 +618,7 @@ Implementar **uma única tela/componente** com **6 estados dinâmicos**, e não 
 O conteúdo textual e a classe visual devem ser definidos a partir do percentual final.
 
 ### Regra 3
-O botão sempre leva à Tela de Resultado Final.
+O botão sempre remove o overlay e revela a Tela de Resultado Final já renderizada.
 
 ### Regra 4
 A tela não deve recalcular o desempenho de forma independente da etapa anterior.
@@ -702,6 +706,10 @@ Antes de considerar a tela pronta, confirmar:
 - [ ] as mensagens correspondem à faixa correta;
 - [ ] o botão leva para a Tela de Resultado Final;
 - [ ] o layout não quebra em telas menores;
+- [ ] não existem painéis decorativos simulando a tela ao fundo;
+- [ ] o backdrop deixa o Resultado Final perceptível;
+- [ ] a animação de entrada e saída é suave;
+- [ ] `prefers-reduced-motion` é respeitado;
 - [ ] as cores respeitam a semântica de desempenho;
 - [ ] a tela mantém coerência com o estilo geral do Test Quest.
 

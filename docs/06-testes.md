@@ -183,6 +183,11 @@ Os testes manuais da tabela continuam necessários no navegador antes do commit 
 | T49.9 | CTA de desempenho | Abre o Resultado Final | Pendente |
 | T49.10 | Somente discursivas | Pula a Tela de Desempenho | Pendente |
 | T49.11 | Responsividade | Percentual e textos não transbordam | Pendente |
+| T49.12 | Backdrop translúcido | Resultado Final permanece perceptível ao fundo, sem painéis falsos | Pendente |
+| T49.13 | Entrada animada | Backdrop, card, percentual e textos entram suavemente | Pendente |
+| T49.14 | Saída animada | CTA remove o overlay e revela o Resultado Final | Pendente |
+| T49.15 | Movimento reduzido | Animações são removidas quando solicitado pelo sistema | Pendente |
+| T49.16 | Foco do overlay | Navegação por Tab permanece no CTA enquanto a tela está aberta | Pendente |
 
 # Resultado Final
 

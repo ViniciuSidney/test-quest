@@ -26,7 +26,7 @@ for (const id of requiredIds) {
 }
 
 assert.match(mainCss, /pages\/performance\.css/);
-assert.match(performanceCss, /\.screen--performance\.active/);
+assert.match(performanceCss, /\.performance-overlay/);
 assert.match(performanceCss, /body\[data-performance-state="excellent-100"\]/);
 assert.match(performanceCss, /body\[data-performance-state="excellent-90"\]/);
 assert.match(performanceCss, /body\[data-performance-state="very-good"\]/);
@@ -36,11 +36,20 @@ assert.match(performanceCss, /body\[data-performance-state="review-needed"\]/);
 assert.match(performanceCss, /@media \(max-width: 720px\)/);
 assert.match(performanceCss, /prefers-reduced-motion/);
 
-assert.match(controller, /desempenho: "#telaDesempenho"/);
-assert.match(controller, /renderizarDesempenho\(resultadoFinal\)/);
+assert.match(controller, /mostrarDesempenho\(resultadoFinal\)/);
 assert.match(controller, /shouldShowPerformanceScreen\(resultadoFinal\.objetivas\)/);
-assert.match(controller, /trocarTela\("desempenho"\)/);
+assert.match(controller, /abrirResultadoFinal\(\{ focar: false \}\)/);
 assert.match(controller, /btnVerResultadoFinal/);
-assert.match(controller, /function abrirResultadoFinal\(\)/);
+assert.match(controller, /function fecharDesempenho\(\)/);
+assert.match(controller, /function abrirResultadoFinal\(\{ focar = true \} = \{\}\)/);
+
+assert.doesNotMatch(index, /performance-side-panel/);
+assert.doesNotMatch(index, /performance-footer-bar/);
+assert.match(index, /class="performance-backdrop"/);
+assert.match(index, /role="dialog"/);
+assert.match(performanceCss, /backdrop-filter: blur\(7px\)/);
+assert.match(performanceCss, /performance-score-in/);
+assert.match(controller, /animarPontuacaoDesempenho/);
+assert.match(controller, /screenManager\.elements\.resultado\?\.setAttribute\("inert"/);
 
 console.log("Performance structure: todos os testes passaram.");
