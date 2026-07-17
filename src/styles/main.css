@@ -8,4 +8,14 @@
 @import url("./utilities/scrollbar.css");
 @import url("./utilities/states.css");
 
+
 @import url("./pages/test-quest.css");
+@import url("./layouts/app-shell.css");
+
+@import url("./pages/home.css");
+@import url("./pages/import.css");
+@import url("./pages/resolution.css");
+@import url("./pages/performance.css");
+@import url("./pages/results.css");
+
+@import url("./components/confirmation-modal.css");

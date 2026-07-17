@@ -1,20 +1,20 @@
 @questao
-assunto: Fluxo de dados: percepção → transporte → decisão → execução
+assunto: Gramática: uso de mas e mais
 tipo: objetiva
-enunciado: Um sensor de fumaça detecta sinal de incêndio, envia os dados para a central, o sistema interpreta risco e aciona uma sirene. Qual alternativa classifica corretamente as etapas desse processo?
-a: Sensor detecta fumaça: execução; envio à central: decisão; interpretação do risco: percepção; sirene: transporte.
-b: Sensor detecta fumaça: percepção; envio à central: transporte; interpretação do risco: decisão; sirene: execução.
-c: Sensor detecta fumaça: transporte; envio à central: percepção; interpretação do risco: execução; sirene: decisão.
-d: Sensor detecta fumaça: decisão; envio à central: execução; interpretação do risco: transporte; sirene: percepção.
-e: Sensor detecta fumaça: aplicação; envio à central: atuador; interpretação do risco: sensor; sirene: rede.
+enunciado: Em qual alternativa o uso de "mas" e "mais" está correto?
+a: Estudei mais não consegui terminar o exercício.
+b: Quero mais atenção na leitura, mas ainda preciso treinar interpretação.
+c: Ela falou mas alto para ser ouvida.
+d: O professor explicou o conteúdo, mais ninguém anotou.
+e: Preciso de mas exemplos para entender a regra.
 correta: B
-explicacao: [Pilar: aplicação prática com sensor e atuador]; A alternativa B está correta porque o sensor percebe, a rede transporta, o sistema decide e o atuador executa a ação. A, C e D trocam as funções das etapas; E mistura termos de camadas e componentes sem respeitar o fluxo percepção-transporte-decisão-execução.
+explicacao: A alternativa B está correta porque "mais" indica intensidade ou quantidade, enquanto "mas" expressa oposição. Nas demais alternativas, as duas palavras foram trocadas de forma inadequada.
 +++
 
 @discursiva
-assunto: Fluxo de dados: percepção → transporte → decisão → execução
+assunto: Gramática: uso de mas e mais
 tipo: discursiva curta
-enunciado: Explique, em 4 a 8 linhas, o fluxo percepção → transporte → decisão → execução usando um exemplo com sensor e atuador em uma casa inteligente.
-resposta_esperada: Em uma casa inteligente, a percepção ocorre quando um sensor coleta uma informação, como um sensor de presença detectando movimento. O transporte acontece quando esse dado é enviado pela rede para uma central ou aplicativo. A decisão ocorre quando o sistema interpreta a informação e verifica uma regra, como “se houver presença e estiver escuro, ligar a luz”. A execução acontece quando o atuador realiza a ação, nesse caso, acendendo a lâmpada.
-criterios_de_correcao: Explicar percepção como coleta por sensor; explicar transporte como envio dos dados; explicar decisão como interpretação ou regra; explicar execução como ação por atuador; apresentar exemplo coerente de casa inteligente.
+enunciado: Explique a diferença entre "mas" e "mais" e escreva um exemplo com cada uma das palavras.
+resposta_esperada: "Mas" é uma conjunção adversativa e indica oposição, como em "Estudei, mas fiquei com dúvida". "Mais" indica quantidade, intensidade ou comparação, como em "Preciso de mais exercícios para treinar". Portanto, embora tenham som parecido, as duas palavras exercem funções diferentes na frase.
+criterios_de_correcao: Explicar que "mas" indica oposição; explicar que "mais" indica quantidade, intensidade ou comparação; apresentar um exemplo adequado com "mas"; apresentar um exemplo adequado com "mais".
 +++

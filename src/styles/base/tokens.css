@@ -8,6 +8,12 @@
   --tq-danger: #ef4444;
   --tq-info: #38bdf8;
 
+  --tq-primary-soft: rgba(98, 101, 246, 0.12);
+  --tq-success-soft: rgba(34, 197, 94, 0.12);
+  --tq-warning-soft: rgba(245, 158, 11, 0.12);
+  --tq-danger-soft: rgba(239, 68, 68, 0.12);
+  --tq-info-soft: rgba(56, 189, 248, 0.12);
+
   --tq-radius-sm: 10px;
   --tq-radius-md: 14px;
   --tq-radius-lg: 18px;

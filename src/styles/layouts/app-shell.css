@@ -1,0 +1,59 @@
+/* =========================================================
+   APP SHELL GLOBAL — TEST QUEST
+   ---------------------------------------------------------
+   Centraliza a largura útil de todas as telas e permite que a
+   aplicação ocupe quase toda a viewport em monitores comuns,
+   sem espalhar excessivamente o conteúdo em telas ultrawide.
+   ========================================================= */
+
+:root {
+  --tq-app-max-width: 1880px;
+  --tq-app-gutter: clamp(0.75rem, 1.65vw, 2rem);
+}
+
+.app {
+  width: min(
+    var(--tq-app-max-width),
+    calc(100vw - var(--tq-app-gutter) - var(--tq-app-gutter))
+  );
+  margin-inline: auto;
+}
+
+.screen.active {
+  width: 100%;
+  max-width: none;
+}
+
+@media (min-width: 1440px) {
+  .home-layout {
+    grid-template-columns: minmax(0, 1.82fr) minmax(380px, 1fr);
+  }
+
+  .brand-panel__content {
+    width: min(100%, 1040px);
+  }
+
+  .import-layout {
+    grid-template-columns: minmax(0, 2.2fr) minmax(420px, 0.9fr);
+  }
+
+  .resolution-layout {
+    grid-template-columns: clamp(340px, 28vw, 520px) minmax(0, 1fr);
+  }
+
+  .results-layout {
+    grid-template-columns: clamp(350px, 28vw, 510px) minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 980px) {
+  :root {
+    --tq-app-gutter: 0.375rem;
+  }
+}
+
+@media (max-width: 560px) {
+  :root {
+    --tq-app-gutter: 0.25rem;
+  }
+}

@@ -7,186 +7,640 @@
   <link rel="manifest" href="./public/manifest.json" />
   <link rel="stylesheet" href="./src/styles/main.css" />
 </head>
-<body data-theme="light">
+<body data-theme="light" data-screen="home">
   <main class="app">
-    <header class="topbar">
+    <header class="topbar legacy-topbar">
       <div>
         <p class="eyebrow">Aplicação de estudo ativo</p>
         <h1>Test Quest</h1>
         <p class="subtitle">Da dúvida à compreensão, uma questão de cada vez.</p>
       </div>
       <div class="top-actions">
-        <button id="btnTema" class="icon-button" type="button">🌙 Tema</button>
+        <button id="btnTemaLegado" class="icon-button" type="button" data-theme-toggle>🌙 Tema</button>
         <div id="statusResumo" class="stats-pill">Nenhuma lista importada</div>
       </div>
     </header>
 
-    <section id="telaImportacao" class="screen active">
-      <div id="cardSessaoSalva" class="saved-session hidden">
-        <div>
-          <strong>Sessão salva encontrada</strong>
-          <p id="infoSessaoSalva">Você pode continuar de onde parou.</p>
+
+    <section id="telaInicial" class="screen screen--home active" aria-labelledby="tituloMarcaTestQuest">
+      <header class="home-toolbar">
+        <button id="btnTema" class="icon-button home-theme-toggle" type="button" data-theme-toggle>
+          🌙 Tema
+        </button>
+      </header>
+
+      <div class="home-layout">
+        <div class="home-left-column">
+          <section class="home-panel brand-panel">
+            <div class="brand-panel__content">
+              <p class="brand-kicker">Aplicação de estudo ativo</p>
+              <h1 id="tituloMarcaTestQuest" class="brand-title">Test Quest</h1>
+              <p class="brand-slogan">Now I Know.</p>
+              <p class="brand-message">Resolver, compreender e avançar.</p>
+            </div>
+          </section>
+
+          <section class="home-panel home-actions-panel" aria-labelledby="tituloAcoesInicio">
+            <h2 id="tituloAcoesInicio" class="sr-only">Ações iniciais</h2>
+
+            <div id="blocoContinuarSessao" class="session-resume hidden">
+              <div class="session-resume__row">
+                <button id="btnContinuarSessao" class="primary home-main-action" type="button">
+                  Continuar resolução
+                </button>
+
+                <div class="session-resume__details">
+                  <strong id="nomeSessaoAtual">Lista em andamento</strong>
+                  <span id="resumoSessaoAtual">0/0 respondidas • 00:00</span>
+                </div>
+
+                <button id="btnApagarSessao" class="ghost danger-text session-delete-action" type="button">
+                  Apagar progresso
+                </button>
+              </div>
+
+              <div
+                id="progressoSessaoAtual"
+                class="session-progress"
+                role="progressbar"
+                aria-label="Progresso da sessão atual"
+                aria-valuemin="0"
+                aria-valuemax="100"
+                aria-valuenow="0"
+              >
+                <div id="barraProgressoSessao" class="session-progress__value"></div>
+              </div>
+            </div>
+
+            <div class="new-session-action">
+              <button id="btnNovaResolucao" class="primary home-main-action" type="button">
+                Iniciar nova resolução
+              </button>
+              <p>Importe uma nova lista de questões e configure a sessão.</p>
+            </div>
+
+            <p id="mensagemInicial" class="home-message hidden" aria-live="polite"></p>
+          </section>
         </div>
-        <div class="actions compact">
-          <button id="btnContinuarSessao" class="primary" type="button">Continuar sessão</button>
-          <button id="btnApagarSessao" class="ghost danger-text" type="button">Apagar progresso</button>
+
+        <div class="home-right-column">
+          <aside class="home-panel progress-panel" aria-labelledby="tituloProgressoHistorico">
+            <header class="progress-panel__header">
+              <h2 id="tituloProgressoHistorico">Seu progresso</h2>
+              <p>Resumo das sessões concluídas no Test Quest.</p>
+            </header>
+
+            <div class="metrics-list">
+              <article class="metric-card">
+                <strong id="totalRespondidas" class="metric-card__value">0</strong>
+                <span class="metric-card__label">Questões respondidas</span>
+              </article>
+
+              <article class="metric-card">
+                <strong id="taxaMediaAcertos" class="metric-card__value">0%</strong>
+                <span class="metric-card__label">Taxa média de acertos</span>
+              </article>
+
+              <article class="metric-card">
+                <strong id="tempoTotalEstudo" class="metric-card__value">0h 00min</strong>
+                <span class="metric-card__label">Tempo total de estudo</span>
+              </article>
+
+              <article class="metric-card">
+                <strong id="sessoesConcluidas" class="metric-card__value">0</strong>
+                <span class="metric-card__label">Sessões concluídas</span>
+              </article>
+            </div>
+
+            <p id="mensagemHistoricoVazio" class="empty-history-message">
+              Conclua sua primeira sessão para iniciar o histórico.
+            </p>
+          </aside>
+
+          <footer class="home-panel home-footer">
+            <small>Test Quest © 2026 — Vinícius Sidney</small>
+          </footer>
         </div>
       </div>
-
-      <div class="panel">
-        <div class="panel-header">
-          <div>
-            <h2>1. Importar questões</h2>
-            <p>Cole o bloco de questões no formato informado ou carregue um arquivo <strong>.txt</strong>.</p>
-          </div>
-          <span id="indicadorSalvo" class="save-indicator">Pronto</span>
-        </div>
-
-        <div class="import-grid">
-          <div class="field">
-            <label for="arquivoQuestoes">Importar arquivo TXT</label>
-            <input id="arquivoQuestoes" type="file" accept=".txt,text/plain" />
-          </div>
-
-          <div class="field">
-            <label for="nomeLista">Nome da lista</label>
-            <input id="nomeLista" type="text" placeholder="Ex.: Lista 2 - Smart Home e IoT" />
-          </div>
-        </div>
-
-        <div class="options-line">
-          <label class="check-option">
-            <input id="opcaoEmbaralhar" type="checkbox" />
-            <span>Embaralhar questões</span>
-          </label>
-          <label class="check-option">
-            <input id="opcaoMostrarGabaritoFinal" type="checkbox" checked />
-            <span>Mostrar gabarito ao finalizar</span>
-          </label>
-        </div>
-
-        <div class="field">
-          <label for="entradaQuestoes">Conteúdo das questões</label>
-          <textarea id="entradaQuestoes" placeholder="Cole aqui suas questões usando @questao, @discursiva e +++"></textarea>
-        </div>
-
-        <div class="actions import-actions">
-          <button id="btnExemplo" class="secondary" type="button">Carregar exemplo</button>
-          <button id="btnValidar" class="secondary" type="button">Validar importação</button>
-          <button id="btnAbrirModelo" class="ghost" type="button">Ver modelo aceito</button>
-          <button id="btnLimpar" class="ghost" type="button">Limpar campos</button>
-          <button id="btnImportar" class="primary" type="button">Importar e começar</button>
-        </div>
-
-        <div id="mensagemImportacao" class="message" aria-live="polite"></div>
-      </div>
-
     </section>
 
-    <section id="telaResolucao" class="screen">
-      <div class="quiz-shell">
-        <aside class="side-panel">
-          <div class="side-header">
-            <h2>Progresso</h2>
-            <span id="statusCronometro" class="mini-tag">Rodando</span>
-          </div>
+    <section id="telaImportacao" class="screen screen--import" aria-labelledby="tituloPrepararResolucao">
+      <header class="import-header">
+        <button id="btnVoltarInicioImportacao" class="ghost import-header__action" type="button">
+          ← Voltar
+        </button>
 
-          <div class="progress-box">
-            <div class="progress-text">
-              <span id="contadorQuestao">Questão 1 de 1</span>
-              <span id="percentualProgresso">0%</span>
-            </div>
-            <div class="progress-track">
-              <div id="barraProgresso" class="progress-bar"></div>
-            </div>
-          </div>
+        <div class="import-header__text">
+          <h1 id="tituloPrepararResolucao">Preparar resolução</h1>
+          <p>Importe as questões e configure sua sessão.</p>
+        </div>
 
-          <div class="timer-grid">
-            <div class="timer-card">
-              <span>Questão atual</span>
-              <strong id="tempoAtual">00:00</strong>
-            </div>
-            <div class="timer-card">
-              <span>Total usado</span>
-              <strong id="tempoTotal">00:00</strong>
-            </div>
-          </div>
+        <button id="btnTemaImportacao" class="icon-button import-theme-toggle" type="button" data-theme-toggle>
+          🌙 Tema
+        </button>
+      </header>
 
-          <div class="side-actions">
-            <button id="btnPausarTempo" class="secondary full" type="button">Pausar tempo</button>
-            <button id="btnMarcarRevisao" class="secondary full" type="button">☆ Marcar para revisão</button>
-          </div>
-
-          <h3 class="small-title">Mapa</h3>
-          <div id="listaNavegacao" class="question-map"></div>
-
-          <div class="side-actions side-actions-bottom">
-            <button id="btnVoltarImportacao" class="ghost full" type="button">Voltar ao import</button>
-            <button id="btnLimparProgressoResolucao" class="ghost danger-text full" type="button">Limpar progresso salvo</button>
-          </div>
-        </aside>
-
-        <section class="notes-panel" aria-labelledby="tituloAnotacoes">
-          <div class="notes-header">
+      <div class="import-layout">
+        <section class="import-panel import-content-panel" aria-labelledby="tituloImportarQuestoes">
+          <header class="import-panel__header">
             <div>
-              <h2 id="tituloAnotacoes">Anotações</h2>
-              <p>Use este espaço para registrar raciocínio, dúvidas e pontos de revisão.</p>
+              <p class="import-section-kicker">Conteúdo da lista</p>
+              <h2 id="tituloImportarQuestoes">Importar questões</h2>
+              <p>Selecione um arquivo TXT ou cole o conteúdo no campo abaixo.</p>
             </div>
-            <span class="mini-tag">Questão atual</span>
+          </header>
+
+          <div class="file-import-block">
+            <p class="file-import-label">Arquivo de questões</p>
+
+            <div class="file-import-row">
+              <div class="file-picker-control">
+                <input
+                  id="arquivoQuestoes"
+                  class="file-input"
+                  type="file"
+                  accept=".txt,text/plain"
+                />
+                <label class="file-picker-button" for="arquivoQuestoes">
+                  Escolher arquivo
+                </label>
+              </div>
+
+              <span id="nomeArquivoSelecionado" class="file-name" title="Nenhum arquivo selecionado">
+                Nenhum arquivo selecionado
+              </span>
+            </div>
           </div>
-          <label for="anotacaoQuestao">Anotações desta questão</label>
-          <textarea id="anotacaoQuestao" placeholder="Anote dúvidas, raciocínio, palavras-chave ou observações."></textarea>
+
+          <div class="import-content-grid">
+            <label class="import-textarea-field" for="entradaQuestoes">
+              <span>Conteúdo das questões</span>
+              <textarea
+                id="entradaQuestoes"
+                class="import-textarea"
+                placeholder="Cole aqui suas questões usando @questao, @discursiva e +++"
+                spellcheck="false"
+              ></textarea>
+            </label>
+
+            <aside class="counter-panel" aria-labelledby="tituloContadoresImportacao">
+              <h3 id="tituloContadoresImportacao">Resumo</h3>
+
+              <dl class="counter-list">
+                <div>
+                  <dt>Questões</dt>
+                  <dd id="contadorTotalImportacao">0</dd>
+                </div>
+                <div>
+                  <dt>Objetivas</dt>
+                  <dd id="contadorObjetivasImportacao">0</dd>
+                </div>
+                <div>
+                  <dt>Discursivas</dt>
+                  <dd id="contadorDiscursivasImportacao">0</dd>
+                </div>
+                <div>
+                  <dt>Assuntos</dt>
+                  <dd id="contadorAssuntosImportacao">0</dd>
+                </div>
+              </dl>
+
+              <p class="counter-panel__note">Os valores definitivos aparecem após a validação.</p>
+            </aside>
+          </div>
         </section>
 
-        <div class="resolution-workspace">
-          <article class="question-card">
-            <div class="question-meta">
-              <span id="tipoQuestao" class="tag">Objetiva</span>
-              <span id="assuntoQuestao" class="tag muted">Assunto</span>
-              <span id="revisaoQuestao" class="tag review hidden">Marcada para revisão</span>
+        <div class="import-side-column">
+          <section class="import-panel import-settings-panel" aria-labelledby="tituloConfiguracoesImportacao">
+            <header class="import-panel__header import-panel__header--compact">
+              <div>
+                <p class="import-section-kicker">Sessão</p>
+                <h2 id="tituloConfiguracoesImportacao">Configurações</h2>
+              </div>
+            </header>
+
+            <label class="import-field" for="nomeLista">
+              <span>Nome da lista</span>
+              <input id="nomeLista" type="text" maxlength="80" placeholder="Ex.: Lista de Estatística" />
+            </label>
+
+            <fieldset class="session-options">
+              <legend>Opções</legend>
+
+              <label class="import-check-option">
+                <input id="opcaoEmbaralhar" type="checkbox" />
+                <span>
+                  <strong>Embaralhar questões</strong>
+                  <small>Altera a ordem da lista ao iniciar.</small>
+                </span>
+              </label>
+
+              <label class="import-check-option">
+                <input id="opcaoMostrarGabaritoFinal" type="checkbox" checked />
+                <span>
+                  <strong>Mostrar gabarito</strong>
+                  <small>Exibe respostas e explicações no resultado.</small>
+                </span>
+              </label>
+            </fieldset>
+          </section>
+
+          <section class="import-panel validation-panel" aria-labelledby="tituloValidacaoImportacao">
+            <header class="import-panel__header import-panel__header--compact">
+              <div>
+                <p class="import-section-kicker">Análise</p>
+                <h2 id="tituloValidacaoImportacao">Validação</h2>
+              </div>
+            </header>
+
+            <div
+              id="statusValidacao"
+              class="validation-status validation-status--idle"
+              data-status="idle"
+              aria-live="polite"
+              aria-atomic="true"
+            >
+              <span id="iconeStatusValidacao" class="validation-status__icon" aria-hidden="true">—</span>
+              <span class="validation-status__text">
+                <strong id="tituloStatusValidacao">Nenhuma validação realizada.</strong>
+                <span id="descricaoStatusValidacao">Aguardando conteúdo para análise.</span>
+              </span>
             </div>
 
-            <h2 id="enunciadoQuestao">Enunciado</h2>
-            <div id="areaResposta"></div>
-          </article>
+            <div id="mensagensValidacao" class="validation-messages" aria-live="polite">
+              <ul class="validation-message-list">
+                <li>Cole ou carregue uma lista e selecione “Validar”.</li>
+              </ul>
+            </div>
 
-          <nav class="navigation resolution-actions" aria-label="Ações da questão atual">
-            <button id="btnAnterior" class="secondary" type="button">Anterior</button>
-            <button id="btnProxima" class="primary" type="button">Próxima</button>
-            <button id="btnFinalizar" class="success" type="button">Finalizar</button>
-          </nav>
+            <p id="mensagemImportacao" class="sr-only" aria-live="polite">
+              Cole ou carregue uma lista e selecione “Validar”.
+            </p>
+            <span id="indicadorSalvo" class="sr-only" aria-live="polite">Pronto</span>
+          </section>
         </div>
+
+        <footer class="import-panel import-actionbar">
+          <div class="import-actions__support">
+            <button id="btnExemplo" class="secondary" type="button">Carregar exemplo</button>
+            <button id="btnAbrirModelo" class="ghost" type="button">Ver modelo</button>
+            <button id="btnLimpar" class="ghost import-clear-action" type="button">Limpar</button>
+          </div>
+
+          <div class="import-actions__flow">
+            <button id="btnValidar" class="secondary import-validate-action" type="button">Validar</button>
+            <button id="btnImportar" class="primary import-start-action" type="button" disabled>Começar</button>
+          </div>
+        </footer>
       </div>
     </section>
 
-    <section id="telaResultado" class="screen">
-      <div class="panel">
-        <div class="panel-header">
-          <div>
-            <h2>Resultado final</h2>
-            <p>Confira desempenho, tempo usado e materiais de revisão.</p>
-          </div>
-          <div class="actions compact">
-            <button id="btnBaixarTxt" class="primary" type="button">Baixar respostas</button>
-            <button id="btnBaixarAnotacoes" class="secondary" type="button">Baixar anotações</button>
-            <button id="btnExportarJson" class="ghost" type="button">Exportar sessão JSON</button>
-          </div>
+    <section
+      id="telaResolucao"
+      class="screen screen--resolution"
+      aria-labelledby="tituloSessaoResolucao"
+    >
+      <header class="resolution-header">
+        <button id="btnVoltarImportacao" class="ghost resolution-header__action" type="button">
+          ← Voltar
+        </button>
+
+        <div class="resolution-header__text">
+          <h1 id="tituloSessaoResolucao">Resolver questões</h1>
+          <span aria-hidden="true">:</span>
+          <p id="nomeListaResolucao" title="Lista sem nome">Lista sem nome</p>
         </div>
 
-        <div id="resumoResultado" class="result-grid"></div>
-        <div id="resultadoPorAssunto" class="subject-summary"></div>
+        <button
+          id="btnTemaResolucao"
+          class="icon-button resolution-theme-toggle"
+          type="button"
+          data-theme-toggle
+        >
+          🌙 Tema
+        </button>
+      </header>
 
-        <div class="actions">
-          <button id="btnRevisar" class="secondary" type="button">Revisar respostas</button>
-          <button id="btnNovaLista" class="ghost" type="button">Importar nova lista</button>
-        </div>
+      <div class="resolution-layout">
+        <aside class="resolution-sidebar" aria-label="Progresso e anotações da resolução">
+          <section class="resolution-panel resolution-progress-panel" aria-labelledby="tituloProgressoResolucao">
+            <header class="resolution-panel__header">
+              <div>
+                <p class="resolution-section-kicker">Sessão atual</p>
+                <h2 id="tituloProgressoResolucao">Progresso geral</h2>
+              </div>
+              <span id="statusCronometro" class="resolution-status-tag">Rodando</span>
+            </header>
+
+            <div class="resolution-progress-summary">
+              <div class="resolution-progress-copy">
+                <strong id="contadorQuestao">Questão 1 de 1</strong>
+                <span id="percentualProgresso">0%</span>
+              </div>
+
+              <div
+                id="progressoResolucao"
+                class="resolution-progress-track"
+                role="progressbar"
+                aria-label="Progresso na lista"
+                aria-valuemin="0"
+                aria-valuemax="100"
+                aria-valuenow="0"
+              >
+                <div id="barraProgresso" class="resolution-progress-value"></div>
+              </div>
+            </div>
+
+            <div class="resolution-timer-grid" aria-label="Tempos da resolução">
+              <article class="resolution-timer-card">
+                <span>Questão atual</span>
+                <strong id="tempoAtual">00:00</strong>
+              </article>
+
+              <article class="resolution-timer-card">
+                <span>Tempo total</span>
+                <strong id="tempoTotal">00:00</strong>
+              </article>
+            </div>
+
+            <button id="btnPausarTempo" class="secondary resolution-pause-action" type="button">
+              Pausar tempo
+            </button>
+
+            <div class="resolution-map-block">
+              <div class="resolution-map-heading">
+                <h3>Mapa das questões</h3>
+                <span>Selecione um número para navegar.</span>
+              </div>
+              <div id="listaNavegacao" class="resolution-question-map"></div>
+            </div>
+          </section>
+
+          <section class="resolution-panel resolution-notes-panel" aria-labelledby="tituloAnotacoes">
+            <header class="resolution-panel__header resolution-panel__header--notes">
+              <div>
+                <p class="resolution-section-kicker">Raciocínio auxiliar</p>
+                <h2 id="tituloAnotacoes">Anotações</h2>
+              </div>
+            </header>
+
+            <p class="resolution-notes-help">
+              Registre dúvidas, raciocínio e pontos que deseja revisar. Este texto não é a resposta oficial.
+            </p>
+
+            <label class="resolution-notes-field" for="anotacaoQuestao">
+              <span class="sr-only">Anotações da questão atual</span>
+              <textarea
+                id="anotacaoQuestao"
+                placeholder="Anote aqui..."
+                spellcheck="true"
+              ></textarea>
+            </label>
+          </section>
+        </aside>
+
+        <main class="resolution-workspace">
+          <article class="resolution-panel resolution-question-panel">
+            <header class="resolution-question-header">
+              <h2 id="tituloResolverQuestao" tabindex="-1">Resolver questão</h2>
+
+              <div class="resolution-question-meta" aria-label="Informações da questão atual">
+                <span id="numeroQuestao" class="resolution-tag">Questão 1</span>
+                <span id="tipoQuestao" class="resolution-tag">Objetiva</span>
+                <span id="assuntoQuestao" class="resolution-tag resolution-tag--subject" title="Assunto">
+                  Assunto
+                </span>
+                <span id="revisaoQuestao" class="resolution-tag resolution-tag--review hidden">
+                  ★ Marcada para revisão
+                </span>
+              </div>
+            </header>
+
+            <section class="resolution-statement" aria-labelledby="tituloEnunciadoQuestao">
+              <h3 id="tituloEnunciadoQuestao">Enunciado</h3>
+              <p id="enunciadoQuestao"></p>
+            </section>
+
+            <section id="areaResposta" class="resolution-answer-area" aria-live="polite"></section>
+          </article>
+
+          <footer class="resolution-panel resolution-actionbar" aria-label="Ações da questão atual">
+            <div class="resolution-actions__session">
+              <button id="btnMarcarRevisao" class="secondary resolution-review-action" type="button">
+                Marcar revisão
+              </button>
+              <button id="btnFinalizarSessao" class="secondary resolution-finish-action" type="button">
+                Finalizar sessão
+              </button>
+            </div>
+
+            <div class="resolution-actions__navigation">
+              <button id="btnAnterior" class="secondary" type="button">Anterior</button>
+              <button id="btnProxima" class="primary" type="button">Próxima</button>
+              <button id="btnFinalizar" class="primary hidden" type="button">Finalizar</button>
+            </div>
+          </footer>
+        </main>
       </div>
+    </section>
 
-      <div id="detalhesResultado" class="review-list"></div>
+    <section
+      id="telaDesempenho"
+      class="performance-overlay performance-screen--excellent-100 hidden"
+      role="dialog"
+      aria-modal="true"
+      aria-hidden="true"
+      aria-labelledby="tituloDesempenho"
+      aria-describedby="subtituloDesempenho detalheDesempenho"
+      data-performance-state="excellent-100"
+    >
+      <div class="performance-backdrop" aria-hidden="true"></div>
+
+      <article class="performance-card" role="document">
+        <p class="performance-eyebrow">Desempenho Geral</p>
+
+        <div
+          id="blocoPontuacaoDesempenho"
+          class="performance-score-block"
+          role="img"
+          aria-label="Desempenho geral de 100 por cento"
+        >
+          <span class="performance-score-aura" aria-hidden="true"></span>
+          <span id="valorDesempenho" class="performance-score-value">100</span>
+          <span class="performance-score-symbol" aria-hidden="true">%</span>
+        </div>
+
+        <div class="performance-copy-block">
+          <h1 id="tituloDesempenho" class="performance-title" tabindex="-1">Perfeito!</h1>
+          <p id="subtituloDesempenho" class="performance-subtitle">
+            Você acertou tudo nesta sessão!
+          </p>
+          <p id="detalheDesempenho" class="performance-detail">
+            10 acertos em 10 questões objetivas
+          </p>
+        </div>
+
+        <div class="performance-action-block">
+          <button
+            id="btnVerResultadoFinal"
+            class="performance-continue-button"
+            type="button"
+          >
+            Ótimo!
+          </button>
+        </div>
+      </article>
+    </section>
+
+    <section id="telaResultado" class="screen results-screen" aria-labelledby="tituloResultadoFinal">
+      <header class="results-header">
+        <button id="btnInicioResultado" class="secondary results-header__home" type="button">
+          <span aria-hidden="true">←</span>
+          <span>Início</span>
+        </button>
+
+        <div class="results-header__identity">
+          <h1 id="tituloResultadoFinal" tabindex="-1">Resultado final</h1>
+          <span aria-hidden="true">:</span>
+          <span id="nomeListaResultado" class="results-header__list-name">Lista sem nome</span>
+        </div>
+
+        <button class="secondary results-header__theme" type="button" data-theme-toggle>
+          <span aria-hidden="true">◐</span>
+          <span>Tema</span>
+        </button>
+      </header>
+
+      <div class="results-layout">
+        <aside class="results-sidebar" aria-label="Resumo da sessão">
+          <section class="results-panel results-summary-panel" aria-labelledby="tituloResultadoGeral">
+            <h2 id="tituloResultadoGeral">Resultado geral</h2>
+
+            <div class="results-metrics-grid">
+              <article class="result-metric">
+                <strong id="resultadoRespondidas">0/0</strong>
+                <span>Questões respondidas</span>
+              </article>
+
+              <article class="result-metric">
+                <strong id="resultadoCorretas">—</strong>
+                <span>Respostas corretas</span>
+              </article>
+
+              <article class="result-metric">
+                <strong id="resultadoTempoTotal">00:00</strong>
+                <span>Tempo total</span>
+              </article>
+
+              <article class="result-metric">
+                <strong id="resultadoDesempenho">—</strong>
+                <span>Desempenho nas objetivas</span>
+              </article>
+
+              <article class="result-metric">
+                <strong id="resultadoRevisao">0</strong>
+                <span>Marcadas para revisão</span>
+              </article>
+
+              <article class="result-metric">
+                <strong id="resultadoTempoMedio">00:00</strong>
+                <span>Tempo médio</span>
+              </article>
+            </div>
+
+            <p id="avisoResultadoDiscursivas" class="results-discursive-notice hidden">
+              <span aria-hidden="true">✎</span>
+              As questões discursivas devem ser revisadas manualmente.
+            </p>
+          </section>
+
+          <section class="results-panel subject-performance-panel" aria-labelledby="tituloResultadoAssuntos">
+            <h2 id="tituloResultadoAssuntos">Por assunto</h2>
+            <div id="listaDesempenhoAssuntos" class="subject-performance-list"></div>
+          </section>
+        </aside>
+
+        <main class="results-panel review-panel" aria-labelledby="tituloRevisaoQuestoes">
+          <header class="review-panel__header">
+            <h2 id="tituloRevisaoQuestoes">Revisão das questões</h2>
+
+            <button
+              id="btnAlternarFiltrosResultado"
+              class="secondary review-filters-toggle"
+              type="button"
+              aria-expanded="false"
+              aria-controls="filtrosResultado"
+              data-compact-open="false"
+              hidden
+            >
+              <span aria-hidden="true">⌄</span>
+              <span id="textoFiltroResultadoAtual">Filtros: Todas</span>
+            </button>
+
+            <nav id="filtrosResultado" class="review-filters" aria-label="Filtros da revisão">
+              <button class="review-filter is-active" type="button" data-result-filter="all" aria-pressed="true">
+                Todas
+              </button>
+              <button class="review-filter" type="button" data-result-filter="incorrect" aria-pressed="false">
+                Erradas
+              </button>
+              <button class="review-filter" type="button" data-result-filter="discursive" aria-pressed="false">
+                Discursivas
+              </button>
+              <button class="review-filter" type="button" data-result-filter="review" aria-pressed="false">
+                Revisão
+              </button>
+              <button class="review-filter" type="button" data-result-filter="unanswered" aria-pressed="false">
+                Não respondidas
+              </button>
+            </nav>
+          </header>
+
+          <div id="listaRevisaoResultado" class="results-review-list" aria-live="polite"></div>
+        </main>
+
+        <footer class="results-panel results-actionbar" aria-label="Ações do resultado">
+          <button
+            id="btnAlternarAcoesResultado"
+            class="secondary results-actions-toggle"
+            type="button"
+            aria-expanded="false"
+            aria-controls="acoesExportacaoResultado"
+            data-mobile-open="false"
+            hidden
+          >
+            <span aria-hidden="true">•••</span>
+            <span>Ações da sessão</span>
+            <span class="results-actions-toggle__icon" aria-hidden="true">⌄</span>
+          </button>
+
+          <div id="acoesExportacaoResultado" class="results-actions__exports">
+            <button id="btnBaixarTxt" class="secondary" type="button">
+              <span aria-hidden="true">↓</span>
+              Baixar respostas
+            </button>
+            <button id="btnBaixarAnotacoes" class="secondary" type="button">
+              <span aria-hidden="true">↓</span>
+              Baixar anotações
+            </button>
+            <button id="btnExportarJson" class="secondary" type="button">
+              <span aria-hidden="true">⇩</span>
+              Exportar sessão
+            </button>
+          </div>
+
+          <div class="results-actions__navigation">
+            <button id="btnNovaLista" class="primary" type="button">
+              <span aria-hidden="true">←</span>
+              Voltar ao início
+            </button>
+          </div>
+        </footer>
+      </div>
     </section>
   </main>
 
-  <div id="modalModelo" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="tituloModalModelo">
+  <div id="modalModelo" class="modal hidden" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="tituloModalModelo">
     <button class="modal-backdrop" type="button" data-fechar-modelo aria-label="Fechar modal"></button>
 
     <div class="modal-card" role="document">
@@ -220,6 +674,59 @@ enunciado: Texto da pergunta
 resposta_esperada: Resposta modelo
 criterios_de_correcao: Critérios de correção
 +++</code></pre>
+      </div>
+    </div>
+  </div>
+
+
+  <div
+    id="modalConfirmacao"
+    class="modal confirmation-modal hidden"
+    role="dialog"
+    aria-modal="true"
+    aria-hidden="true"
+    aria-labelledby="tituloModalConfirmacao"
+    aria-describedby="descricaoModalConfirmacao listaModalConfirmacao notaModalConfirmacao"
+  >
+    <button
+      class="modal-backdrop"
+      type="button"
+      data-cancelar-confirmacao
+      aria-label="Cancelar e fechar confirmação"
+    ></button>
+
+    <div class="modal-card confirmation-modal__card" role="document">
+      <div class="confirmation-modal__header">
+        <span class="confirmation-modal__icon" aria-hidden="true">!</span>
+
+        <div>
+          <p id="rotuloModalConfirmacao" class="eyebrow">Confirmar ação</p>
+          <h2 id="tituloModalConfirmacao">Deseja continuar?</h2>
+        </div>
+      </div>
+
+      <p id="descricaoModalConfirmacao" class="confirmation-modal__description">
+        Confirme para continuar com esta ação.
+      </p>
+
+      <ul
+        id="listaModalConfirmacao"
+        class="confirmation-modal__summary hidden"
+        aria-label="Resumo da ação"
+      ></ul>
+
+      <p
+        id="notaModalConfirmacao"
+        class="confirmation-modal__note hidden"
+      ></p>
+
+      <div class="confirmation-modal__actions">
+        <button id="btnCancelarConfirmacao" class="secondary" type="button">
+          Cancelar
+        </button>
+        <button id="btnConfirmarAcao" class="primary" type="button">
+          Confirmar
+        </button>
       </div>
     </div>
   </div>

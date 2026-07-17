@@ -315,7 +315,8 @@ Regras:
 - nome da lista truncado quando necessário;
 - conteúdo completo em `title`;
 - botão superior e inferior executam o mesmo fluxo;
-- temporizador não aparece.
+- temporizador não aparece;
+- o cabeçalho legado da aplicação deve permanecer oculto enquanto `data-screen="resultado"` estiver ativo.
 
 ```css
 .results-header {
@@ -651,15 +652,19 @@ Lista de cards
 .review-list {
   min-height: 0;
   overflow: auto;
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  align-content: start;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
   gap: 12px;
   padding: 16px;
   background: var(--tq-surface-soft);
   border: 1px solid var(--tq-border);
   border-radius: var(--tq-radius-md);
   scrollbar-gutter: stable;
+}
+
+.review-card {
+  flex: 0 0 calc((100% - 12px) / 2);
 }
 ```
 
@@ -753,7 +758,8 @@ O card expandido ocupa toda a largura:
 
 ```css
 .review-card.expanded {
-  grid-column: 1 / -1;
+  flex-basis: 100%;
+  width: 100%;
 }
 ```
 
@@ -1054,6 +1060,8 @@ Voltar ao início
 }
 ```
 
+Em telas menores, a barra deve calcular a altura pelo próprio conteúdo. Os grupos de exportação e navegação passam a usar uma grade de uma coluna quando necessário, e todos os botões devem permanecer com `width: 100%` e `min-width: 0`.
+
 ---
 
 # 26. Exportações
@@ -1256,8 +1264,10 @@ Voltar ao início
     grid-template-rows: auto;
   }
 
-  .review-list {
-    grid-template-columns: 1fr;
+  .review-card,
+  .review-card.expanded {
+    flex-basis: 100%;
+    width: 100%;
   }
 
   .review-objective-details,
@@ -1601,3 +1611,34 @@ Após este manual:
 7. substituir Resultado Final;
 8. testar o fluxo completo;
 9. planejar e implementar os modais.
+
+---
+
+# Adendo — controles compactos responsivos
+
+## Toggle de filtros
+
+Em telas de até `900px`, os filtros podem ser recolhidos dentro de um controle compacto.
+
+Regras:
+
+- o botão informa o filtro ativo;
+- o painel começa recolhido;
+- selecionar um filtro recolhe novamente o painel;
+- enquanto recolhidos, os botões recebem `inert` e `aria-hidden`;
+- acima de `900px`, o toggle é ocultado e os filtros permanecem visíveis.
+
+## Toggle de ações
+
+O controle `Ações da sessão` pertence exclusivamente a telas de até `720px`.
+
+Regras:
+
+- acima de `720px`, o toggle não participa do layout;
+- as exportações permanecem visíveis diretamente;
+- até `720px`, o toggle controla apenas as exportações;
+- `Voltar ao início` permanece sempre visível.
+
+## Alinhamento do card discursivo
+
+O bloco `Tempo utilizado` deve usar alinhamento superior, acompanhando o início do bloco `Enunciado`.
