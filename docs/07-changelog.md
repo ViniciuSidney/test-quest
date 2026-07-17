@@ -4,6 +4,10 @@ Todas as mudanças importantes do Test Quest serão registradas neste arquivo.
 
 ## [Não lançado]
 
+Ainda não há alterações registradas para o próximo ciclo.
+
+## [v0.3.0] — 2026-07-17
+
 ### Adicionado
 
 - repositório Git local;

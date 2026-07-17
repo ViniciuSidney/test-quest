@@ -23,10 +23,10 @@ A proposta não é apenas registrar acertos, mas ajudar o usuário a:
 
 ## Estado atual
 
-**Base funcional:** `v0.2.5-dev`  
-**Ciclo em desenvolvimento:** `v0.3-dev`
+**Versão atual:** `v0.3.0`  
+**Estado:** `versão concluída`
 
-**Fase atual:** implementação gradual das cinco telas oficiais.
+**Fase atual:** As cinco telas oficiais foram implementadas e o ciclo v0.3.0 foi concluído.
 
 ### Concluído
 
@@ -60,6 +60,8 @@ A proposta não é apenas registrar acertos, mas ajudar o usuário a:
 - navegação entre questões sem atribuição incorreta de tempo.
 
 ### Próxima etapa
+
+**v0.4-dev — arquitetura, modularização e persistência**
 
 As cinco telas oficiais já estão implementadas. O ciclo seguirá agora para:
 

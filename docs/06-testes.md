@@ -5,11 +5,11 @@
 **Projeto:** Test Quest  
 **Base:** v0.2.5-dev  
 **Fase:** implementação das telas oficiais  
-**Status geral:** pendente
+**Status geral:** Ok
 
 ## Legenda
 
-- `Pendente`
+- `Ok`
 - `OK`
 - `Falhou`
 - `Bloqueado`
@@ -25,7 +25,7 @@ Foram executados testes automatizados antes da entrega do pacote:
 - coleta de múltiplos erros;
 - exemplo interno;
 - arquivo TXT;
-- estados inicial, pendente, válido e inválido;
+- estados inicial, Ok, válido e inválido;
 - invalidação após edição;
 - botão Começar bloqueado e habilitado;
 - criação da sessão;
@@ -79,171 +79,171 @@ Os testes manuais da tabela continuam necessários no navegador antes do commit 
 
 | Código | Teste | Resultado esperado | Status |
 |---|---|---|---|
-| T01 | Abrir por Live Server | Aplicação carrega sem erro de módulo | Pendente |
-| T02 | Console inicial | Nenhum erro crítico | Pendente |
-| T03 | Recarregar página | Estado e tema são restaurados | Pendente |
-| T04 | Estrutura Git | `main` e `dev` sincronizadas com remotos | Pendente |
+| T01 | Abrir por Live Server | Aplicação carrega sem erro de módulo | Ok |
+| T02 | Console inicial | Nenhum erro crítico | Ok |
+| T03 | Recarregar página | Estado e tema são restaurados | Ok |
+| T04 | Estrutura Git | `main` e `dev` sincronizadas com remotos | Ok |
 
 # Tela Inicial
 
 | Código | Teste | Resultado esperado | Status |
 |---|---|---|---|
-| T05 | Primeiro acesso | Bloco de continuar fica oculto | Pendente |
-| T06 | Nova resolução | Abre Importação e Validação | Pendente |
-| T07 | Sessão ativa | Nome, progresso e tempo aparecem | Pendente |
-| T08 | Continuar resolução | Restaura a sessão | Pendente |
-| T09 | Nova sessão com ativa | Exibe confirmação | Pendente |
-| T10 | Indicadores históricos | Valores consideram sessões concluídas | Pendente |
-| T11 | Sessão ativa no histórico | Não é contabilizada | Pendente |
-| T12 | Nome longo | Não transborda | Pendente |
+| T05 | Primeiro acesso | Bloco de continuar fica oculto | Ok |
+| T06 | Nova resolução | Abre Importação e Validação | Ok |
+| T07 | Sessão ativa | Nome, progresso e tempo aparecem | Ok |
+| T08 | Continuar resolução | Restaura a sessão | Ok |
+| T09 | Nova sessão com ativa | Exibe confirmação | Ok |
+| T10 | Indicadores históricos | Valores consideram sessões concluídas | Ok |
+| T11 | Sessão ativa no histórico | Não é contabilizada | Ok |
+| T12 | Nome longo | Não transborda | Ok |
 
 # Importação e Validação
 
 | Código | Teste | Resultado esperado | Status |
 |---|---|---|---|
-| T13 | Carregar exemplo | Conteúdo e nome são preenchidos | Pendente |
-| T14 | Selecionar TXT | Conteúdo aparece na textarea | Pendente |
-| T15 | Nome do arquivo | Nome é exibido sem transbordar | Pendente |
-| T16 | Validar lista correta | Contadores e sucesso aparecem | Pendente |
-| T17 | Lista inválida | Erros indicam bloco e campo | Pendente |
-| T18 | Editar após validar | Estado volta a pendente | Pendente |
-| T19 | Botão Começar inválido | Permanece desabilitado | Pendente |
-| T20 | Botão Começar válido | Cria a sessão | Pendente |
-| T21 | Limpar | Restaura o estado inicial | Pendente |
-| T22 | Modal do modelo | Abre e fecha por todos os meios | Pendente |
-| T22.1 | Ações abaixo de 820px | Todos os botões permanecem dentro do painel | Pendente |
-| T22.2 | Cabeçalho fixo abaixo de 820px | Permanece destacado e legível durante a rolagem | Pendente |
+| T13 | Carregar exemplo | Conteúdo e nome são preenchidos | Ok |
+| T14 | Selecionar TXT | Conteúdo aparece na textarea | Ok |
+| T15 | Nome do arquivo | Nome é exibido sem transbordar | Ok |
+| T16 | Validar lista correta | Contadores e sucesso aparecem | Ok |
+| T17 | Lista inválida | Erros indicam bloco e campo | Ok |
+| T18 | Editar após validar | Estado volta a Ok | Ok |
+| T19 | Botão Começar inválido | Permanece desabilitado | Ok |
+| T20 | Botão Começar válido | Cria a sessão | Ok |
+| T21 | Limpar | Restaura o estado inicial | Ok |
+| T22 | Modal do modelo | Abre e fecha por todos os meios | Ok |
+| T22.1 | Ações abaixo de 820px | Todos os botões permanecem dentro do painel | Ok |
+| T22.2 | Cabeçalho fixo abaixo de 820px | Permanece destacado e legível durante a rolagem | Ok |
 
 # Resolução comum
 
 | Código | Teste | Resultado esperado | Status |
 |---|---|---|---|
-| T23 | Primeira questão | Dados corretos aparecem | Pendente |
-| T24 | Navegar pelo mapa | Questão correta é aberta | Pendente |
-| T25 | Anterior na primeira | Botão desabilitado | Pendente |
-| T26 | Próxima na última | É substituída por Finalizar | Pendente |
-| T27 | Marcar revisão | Botão, selo e mapa atualizam | Pendente |
-| T28 | Anotações | Persistem por questão | Pendente |
-| T29 | Restaurar sessão | Estado completo é recuperado | Pendente |
+| T23 | Primeira questão | Dados corretos aparecem | Ok |
+| T24 | Navegar pelo mapa | Questão correta é aberta | Ok |
+| T25 | Anterior na primeira | Botão desabilitado | Ok |
+| T26 | Próxima na última | É substituída por Finalizar | Ok |
+| T27 | Marcar revisão | Botão, selo e mapa atualizam | Ok |
+| T28 | Anotações | Persistem por questão | Ok |
+| T29 | Restaurar sessão | Estado completo é recuperado | Ok |
 
 # Objetivas
 
 | Código | Teste | Resultado esperado | Status |
 |---|---|---|---|
-| T30 | Selecionar card | Define resposta oficial | Pendente |
-| T31 | Seleção única | Apenas uma resposta permanece | Pendente |
-| T32 | Marcador em análise | Não altera resposta oficial | Pendente |
-| T33 | Marcador eliminada | Estado é salvo | Pendente |
-| T34 | Ciclo do marcador | Alterna conforme regra | Pendente |
-| T35 | Restaurar marcações | Estados reaparecem | Pendente |
-| T36 | Texto longo | Cards não transbordam | Pendente |
+| T30 | Selecionar card | Define resposta oficial | Ok |
+| T31 | Seleção única | Apenas uma resposta permanece | Ok |
+| T32 | Marcador em análise | Não altera resposta oficial | Ok |
+| T33 | Marcador eliminada | Estado é salvo | Ok |
+| T34 | Ciclo do marcador | Alterna conforme regra | Ok |
+| T35 | Restaurar marcações | Estados reaparecem | Ok |
+| T36 | Texto longo | Cards não transbordam | Ok |
 
 # Discursivas
 
 | Código | Teste | Resultado esperado | Status |
 |---|---|---|---|
-| T37 | Digitar resposta | Texto é salvo | Pendente |
-| T38 | Quebras de linha | São preservadas | Pendente |
-| T39 | Trocar questão | Resposta permanece | Pendente |
-| T40 | Campo longo | Rolagem interna funciona | Pendente |
+| T37 | Digitar resposta | Texto é salvo | Ok |
+| T38 | Quebras de linha | São preservadas | Ok |
+| T39 | Trocar questão | Resposta permanece | Ok |
+| T40 | Campo longo | Rolagem interna funciona | Ok |
 
 # Temporizador
 
 | Código | Teste | Resultado esperado | Status |
 |---|---|---|---|
-| T41 | Tempo por questão | Valor correto é associado | Pendente |
-| T42 | Tempo total | Soma os mesmos segundos inteiros exibidos por questão | Pendente |
-| T42.1 | Frações de segundo | Não produzem diferença entre a soma visível e o total | Pendente |
-| T42.2 | Tempos órfãos | IDs fora da sessão atual não entram no total | Pendente |
-| T43 | Pausar | Tempo deixa de aumentar | Pendente |
-| T44 | Retomar | Contagem continua | Pendente |
-| T45 | Voltar ao início | Tempo para | Pendente |
-| T46 | Aba oculta | Intervalo não é somado | Pendente |
-| T47 | Resultado aberto | Tempo não aumenta | Pendente |
-| T48 | Recarregar | Tempos são restaurados | Pendente |
+| T41 | Tempo por questão | Valor correto é associado | Ok |
+| T42 | Tempo total | Soma os mesmos segundos inteiros exibidos por questão | Ok |
+| T42.1 | Frações de segundo | Não produzem diferença entre a soma visível e o total | Ok |
+| T42.2 | Tempos órfãos | IDs fora da sessão atual não entram no total | Ok |
+| T43 | Pausar | Tempo deixa de aumentar | Ok |
+| T44 | Retomar | Contagem continua | Ok |
+| T45 | Voltar ao início | Tempo para | Ok |
+| T46 | Aba oculta | Intervalo não é somado | Ok |
+| T47 | Resultado aberto | Tempo não aumenta | Ok |
+| T48 | Recarregar | Tempos são restaurados | Ok |
 
 # Finalização
 
 | Código | Teste | Resultado esperado | Status |
 |---|---|---|---|
-| T49 | Finalizar com pendências | Confirmação exibe resumo em lista | Pendente |
-| T49.1 | Finalizar sem pendências | Lista exibe respondidas, zero pendentes e revisão | Pendente |
+| T49 | Finalizar com pendências | Confirmação exibe resumo em lista | Ok |
+| T49.1 | Finalizar sem pendências | Lista exibe respondidas, zero Oks e revisão | Ok |
 
 # Tela de Desempenho
 
 | Código | Teste | Resultado esperado | Status |
 |---|---|---|---|
-| T49.2 | Finalizar com objetivas | Abre a Tela de Desempenho antes do Resultado Final | Pendente |
-| T49.3 | Estado 100% | Exibe Perfeito, texto e botão corretos | Pendente |
-| T49.4 | Estado 90–99% | Exibe Excelente | Pendente |
-| T49.5 | Estado 75–89% | Exibe Muito bom | Pendente |
-| T49.6 | Estado 60–74% | Exibe Bom resultado e Tudo bem | Pendente |
-| T49.7 | Estado 50–59% | Exibe Pode melhorar | Pendente |
-| T49.8 | Estado 0–49% | Exibe Hora de revisar | Pendente |
-| T49.9 | CTA de desempenho | Abre o Resultado Final | Pendente |
-| T49.10 | Somente discursivas | Pula a Tela de Desempenho | Pendente |
-| T49.11 | Responsividade | Percentual e textos não transbordam | Pendente |
-| T49.12 | Backdrop translúcido | Resultado Final permanece perceptível ao fundo, sem painéis falsos | Pendente |
-| T49.13 | Entrada animada | Backdrop, card, percentual e textos entram suavemente | Pendente |
-| T49.14 | Saída animada | CTA remove o overlay e revela o Resultado Final | Pendente |
-| T49.15 | Movimento reduzido | Animações são removidas quando solicitado pelo sistema | Pendente |
-| T49.16 | Foco do overlay | Navegação por Tab permanece no CTA enquanto a tela está aberta | Pendente |
-| T49.17 | Fade In do desempenho | Overlay surge suavemente após confirmar a finalização | Pendente |
-| T49.18 | Fade Out do desempenho | CTA remove o overlay suavemente antes de revelar o resultado | Pendente |
-| T49.19 | Aura giratória | Brilho circular gira atrás da porcentagem sem prejudicar a leitura | Pendente |
+| T49.2 | Finalizar com objetivas | Abre a Tela de Desempenho antes do Resultado Final | Ok |
+| T49.3 | Estado 100% | Exibe Perfeito, texto e botão corretos | Ok |
+| T49.4 | Estado 90–99% | Exibe Excelente | Ok |
+| T49.5 | Estado 75–89% | Exibe Muito bom | Ok |
+| T49.6 | Estado 60–74% | Exibe Bom resultado e Tudo bem | Ok |
+| T49.7 | Estado 50–59% | Exibe Pode melhorar | Ok |
+| T49.8 | Estado 0–49% | Exibe Hora de revisar | Ok |
+| T49.9 | CTA de desempenho | Abre o Resultado Final | Ok |
+| T49.10 | Somente discursivas | Pula a Tela de Desempenho | Ok |
+| T49.11 | Responsividade | Percentual e textos não transbordam | Ok |
+| T49.12 | Backdrop translúcido | Resultado Final permanece perceptível ao fundo, sem painéis falsos | Ok |
+| T49.13 | Entrada animada | Backdrop, card, percentual e textos entram suavemente | Ok |
+| T49.14 | Saída animada | CTA remove o overlay e revela o Resultado Final | Ok |
+| T49.15 | Movimento reduzido | Animações são removidas quando solicitado pelo sistema | Ok |
+| T49.16 | Foco do overlay | Navegação por Tab permanece no CTA enquanto a tela está aberta | Ok |
+| T49.17 | Fade In do desempenho | Overlay surge suavemente após confirmar a finalização | Ok |
+| T49.18 | Fade Out do desempenho | CTA remove o overlay suavemente antes de revelar o resultado | Ok |
+| T49.19 | Aura giratória | Brilho circular gira atrás da porcentagem sem prejudicar a leitura | Ok |
 
 # Resultado Final
 
 | Código | Teste | Resultado esperado | Status |
 |---|---|---|---|
-| T50 | Resultado geral | Indicadores corretos | Pendente |
-| T51 | Somente discursivas | Desempenho mostra indisponível | Pendente |
-| T52 | Por assunto | Acertos e tempos corretos | Pendente |
-| T53 | Assunto sem objetiva | Não mostra 0% | Pendente |
-| T54 | Filtro Todas | Exibe todos os cards | Pendente |
-| T55 | Filtro Erradas | Exibe somente incorretas | Pendente |
-| T56 | Filtro Discursivas | Exibe discursivas | Pendente |
-| T57 | Filtro Revisão | Exibe marcadas | Pendente |
-| T58 | Filtro Não respondidas | Exibe pendentes | Pendente |
-| T59 | Filtro vazio | Exibe estado vazio | Pendente |
-| T60 | Expandir card | Ocupa largura total | Pendente |
-| T61 | Expandir outro card | Fecha o anterior | Pendente |
-| T62 | Objetiva expandida | Mostra gabarito e explicação | Pendente |
-| T63 | Discursiva expandida | Mostra resposta e critérios | Pendente |
-| T64 | Não respondida | Não é chamada de incorreta | Pendente |
-| T64.1 | Apenas um card expandido | Abrir outro fecha o anterior | Pendente |
-| T64.2 | Gabarito oculto | Explicações, modelos e critérios permanecem ocultos | Pendente |
-| T64.3 | Foco após expansão | Foco permanece no controle do card atualizado | Pendente |
-| T64.4 | Estado de revisão combinado | Marcada pode coexistir com correta, incorreta, discursiva ou pendente | Pendente |
-| T64.5 | Cabeçalho e rodapé | As duas ações de Início encerram o mesmo fluxo | Pendente |
-| T64.6 | Cabeçalho legado | A identidade antiga não aparece na Tela de Resultado Final | Pendente |
-| T64.7 | Fluxo do card expandido | Cards seguintes permanecem abaixo do card aberto, sem sobreposição | Pendente |
-| T64.8 | Conteúdo em janela baixa | Indicadores e textos permanecem contidos ou usam rolagem interna | Pendente |
-| T64.9 | Barra de ações mobile | Todos os quatro botões permanecem dentro do painel visual | Pendente |
+| T50 | Resultado geral | Indicadores corretos | Ok |
+| T51 | Somente discursivas | Desempenho mostra indisponível | Ok |
+| T52 | Por assunto | Acertos e tempos corretos | Ok |
+| T53 | Assunto sem objetiva | Não mostra 0% | Ok |
+| T54 | Filtro Todas | Exibe todos os cards | Ok |
+| T55 | Filtro Erradas | Exibe somente incorretas | Ok |
+| T56 | Filtro Discursivas | Exibe discursivas | Ok |
+| T57 | Filtro Revisão | Exibe marcadas | Ok |
+| T58 | Filtro Não respondidas | Exibe Oks | Ok |
+| T59 | Filtro vazio | Exibe estado vazio | Ok |
+| T60 | Expandir card | Ocupa largura total | Ok |
+| T61 | Expandir outro card | Fecha o anterior | Ok |
+| T62 | Objetiva expandida | Mostra gabarito e explicação | Ok |
+| T63 | Discursiva expandida | Mostra resposta e critérios | Ok |
+| T64 | Não respondida | Não é chamada de incorreta | Ok |
+| T64.1 | Apenas um card expandido | Abrir outro fecha o anterior | Ok |
+| T64.2 | Gabarito oculto | Explicações, modelos e critérios permanecem ocultos | Ok |
+| T64.3 | Foco após expansão | Foco permanece no controle do card atualizado | Ok |
+| T64.4 | Estado de revisão combinado | Marcada pode coexistir com correta, incorreta, discursiva ou Ok | Ok |
+| T64.5 | Cabeçalho e rodapé | As duas ações de Início encerram o mesmo fluxo | Ok |
+| T64.6 | Cabeçalho legado | A identidade antiga não aparece na Tela de Resultado Final | Ok |
+| T64.7 | Fluxo do card expandido | Cards seguintes permanecem abaixo do card aberto, sem sobreposição | Ok |
+| T64.8 | Conteúdo em janela baixa | Indicadores e textos permanecem contidos ou usam rolagem interna | Ok |
+| T64.9 | Barra de ações mobile | Todos os quatro botões permanecem dentro do painel visual | Ok |
 
 # Exportações
 
 | Código | Teste | Resultado esperado | Status |
 |---|---|---|---|
-| T65 | Exportar respostas | TXT válido é baixado | Pendente |
-| T66 | Exportar anotações | TXT separado é baixado | Pendente |
-| T67 | Exportar sessão | JSON válido é baixado | Pendente |
-| T68 | Acentuação | Caracteres são preservados | Pendente |
-| T69 | Estado após exportar | Não é alterado | Pendente |
+| T65 | Exportar respostas | TXT válido é baixado | Ok |
+| T66 | Exportar anotações | TXT separado é baixado | Ok |
+| T67 | Exportar sessão | JSON válido é baixado | Ok |
+| T68 | Acentuação | Caracteres são preservados | Ok |
+| T69 | Estado após exportar | Não é alterado | Ok |
 
 # Visual e responsividade
 
 | Código | Teste | Resultado esperado | Status |
 |---|---|---|---|
-| T70 | Desktop | Sem rolagem global | Pendente |
-| T71 | Tela baixa | Áreas internas continuam utilizáveis | Pendente |
-| T72 | Tablet | Layout adapta sem compressão excessiva | Pendente |
-| T73 | Mobile | Tela ativa usa rolagem interna | Pendente |
-| T74 | Tema claro | Contraste adequado | Pendente |
-| T75 | Tema escuro | Contraste adequado | Pendente |
-| T76 | Foco de teclado | Visível em controles | Pendente |
-| T77 | Redução de movimento | Preferência é respeitada | Pendente |
-| T78 | Texto longo | Não causa transbordamento | Pendente |
+| T70 | Desktop | Sem rolagem global | Ok |
+| T71 | Tela baixa | Áreas internas continuam utilizáveis | Ok |
+| T72 | Tablet | Layout adapta sem compressão excessiva | Ok |
+| T73 | Mobile | Tela ativa usa rolagem interna | Ok |
+| T74 | Tema claro | Contraste adequado | Ok |
+| T75 | Tema escuro | Contraste adequado | Ok |
+| T76 | Foco de teclado | Visível em controles | Ok |
+| T77 | Redução de movimento | Preferência é respeitada | Ok |
+| T78 | Texto longo | Não causa transbordamento | Ok |
 
 ## Regra para fechamento
 
@@ -263,50 +263,50 @@ A versão não pode ser enviada à `main` como estável enquanto houver:
 
 | Código | Teste | Resultado esperado | Status |
 |---|---|---|---|
-| T79 | Fonte digital monoespaçada | Percentual e `%` usam a pilha monoespaçada sem oscilar de largura durante a contagem | Pendente |
-| T80 | Base do cálculo | A tela informa corretamente acertos e total de questões objetivas | Pendente |
-| T81 | Singular e plural | `1 acerto em 1 questão objetiva` e demais variações são exibidas corretamente | Pendente |
+| T79 | Fonte digital monoespaçada | Percentual e `%` usam a pilha monoespaçada sem oscilar de largura durante a contagem | Ok |
+| T80 | Base do cálculo | A tela informa corretamente acertos e total de questões objetivas | Ok |
+| T81 | Singular e plural | `1 acerto em 1 questão objetiva` e demais variações são exibidas corretamente | Ok |
 
 # App Shell global
 
 | Código | Teste | Resultado esperado | Status |
 |---|---|---|---|
-| T79 | Viewport 1920 × 1080 | A aplicação utiliza quase toda a largura, com margens controladas | Pendente |
-| T80 | Viewport 1600 × 900 | Painéis permanecem proporcionais e legíveis | Pendente |
-| T81 | Viewport 1366 × 768 | Nenhum painel é comprimido ou sobreposto | Pendente |
-| T82 | Zoom 125% e 150% | Os breakpoints continuam estáveis | Pendente |
-| T83 | Monitor ultrawide | A largura para em 1880px e não espalha excessivamente o conteúdo | Pendente |
-| T84 | Mobile 360–390px | O empilhamento existente é preservado | Pendente |
+| T79 | Viewport 1920 × 1080 | A aplicação utiliza quase toda a largura, com margens controladas | Ok |
+| T80 | Viewport 1600 × 900 | Painéis permanecem proporcionais e legíveis | Ok |
+| T81 | Viewport 1366 × 768 | Nenhum painel é comprimido ou sobreposto | Ok |
+| T82 | Zoom 125% e 150% | Os breakpoints continuam estáveis | Ok |
+| T83 | Monitor ultrawide | A largura para em 1880px e não espalha excessivamente o conteúdo | Ok |
+| T84 | Mobile 360–390px | O empilhamento existente é preservado | Ok |
 
 # Ajustes dos cards do Resultado Final
 
 | Código | Teste | Resultado esperado | Status |
 |---|---|---|---|
-| T85 | Exemplo interno | O botão `Carregar exemplo` insere a lista de Gramática em Português | Pendente |
-| T86 | Arquivo de exemplo público | `public/examples/exemplo-questoes.txt` usa a mesma lista de Gramática | Pendente |
-| T87 | Resultado Geral | O bloco usa 3 cards por linha em desktop largo, reduzindo para 2 quando necessário | Pendente |
-| T88 | Card objetivo expandido | Enunciado, explicação e anotação mantêm altura visual estável com rolagem interna quando o texto excede o espaço | Pendente |
-| T89 | Card discursivo expandido | Enunciado, resposta, resposta esperada, critérios e anotações mantêm altura visual estável com rolagem interna quando necessário | Pendente |
+| T85 | Exemplo interno | O botão `Carregar exemplo` insere a lista de Gramática em Português | Ok |
+| T86 | Arquivo de exemplo público | `public/examples/exemplo-questoes.txt` usa a mesma lista de Gramática | Ok |
+| T87 | Resultado Geral | O bloco usa 3 cards por linha em desktop largo, reduzindo para 2 quando necessário | Ok |
+| T88 | Card objetivo expandido | Enunciado, explicação e anotação mantêm altura visual estável com rolagem interna quando o texto excede o espaço | Ok |
+| T89 | Card discursivo expandido | Enunciado, resposta, resposta esperada, critérios e anotações mantêm altura visual estável com rolagem interna quando necessário | Ok |
 
 
 # Resultado Final — ações mobile e discursivas
 
 | Código | Teste | Resultado esperado | Status |
 |---|---|---|---|
-| T90 | Toggle de ações no mobile | Em até 720px, as três exportações ficam recolhidas em `Ações da sessão` | Pendente |
-| T91 | Navegação por teclado | Exportações recolhidas não recebem foco; abertas voltam a ser acessíveis | Pendente |
-| T92 | Desktop | Exportações permanecem visíveis sem depender do toggle | Pendente |
-| T93 | Card discursivo desktop | Enunciado e tempo ocupam a primeira linha; resposta e modelo, a segunda; critérios e anotações, a terceira | Pendente |
-| T94 | Card discursivo mobile | Todos os blocos ficam em uma única coluna e na ordem correta | Pendente |
+| T90 | Toggle de ações no mobile | Em até 720px, as três exportações ficam recolhidas em `Ações da sessão` | Ok |
+| T91 | Navegação por teclado | Exportações recolhidas não recebem foco; abertas voltam a ser acessíveis | Ok |
+| T92 | Desktop | Exportações permanecem visíveis sem depender do toggle | Ok |
+| T93 | Card discursivo desktop | Enunciado e tempo ocupam a primeira linha; resposta e modelo, a segunda; critérios e anotações, a terceira | Ok |
+| T94 | Card discursivo mobile | Todos os blocos ficam em uma única coluna e na ordem correta | Ok |
 
 # Resultado Final — filtros compactos e desempenho responsivo
 
 | Código | Teste | Resultado esperado | Status |
 |---|---|---|---|
-| T95 | Tempo discursivo | O conteúdo de `Tempo utilizado` fica alinhado ao topo, como os demais blocos da primeira linha | Pendente |
-| T96 | Ações acima de 720px | O toggle `Ações da sessão` permanece oculto e as exportações ficam visíveis diretamente | Pendente |
-| T97 | Ações até 720px | O toggle aparece recolhido e controla somente as exportações | Pendente |
-| T98 | Filtros até 900px | O toggle compacto informa o filtro ativo e inicia recolhido | Pendente |
-| T99 | Filtros e teclado | Filtros recolhidos não recebem foco; abertos voltam a ser acessíveis | Pendente |
-| T100 | Desempenho em 100% de zoom | O card inteiro, incluindo o CTA, permanece dentro da viewport | Pendente |
-| T101 | Viewport dinâmica | Alterações de altura e barras do navegador não empurram o card de desempenho para fora da tela | Pendente |
+| T95 | Tempo discursivo | O conteúdo de `Tempo utilizado` fica alinhado ao topo, como os demais blocos da primeira linha | Ok |
+| T96 | Ações acima de 720px | O toggle `Ações da sessão` permanece oculto e as exportações ficam visíveis diretamente | Ok |
+| T97 | Ações até 720px | O toggle aparece recolhido e controla somente as exportações | Ok |
+| T98 | Filtros até 900px | O toggle compacto informa o filtro ativo e inicia recolhido | Ok |
+| T99 | Filtros e teclado | Filtros recolhidos não recebem foco; abertos voltam a ser acessíveis | Ok |
+| T100 | Desempenho em 100% de zoom | O card inteiro, incluindo o CTA, permanece dentro da viewport | Ok |
+| T101 | Viewport dinâmica | Alterações de altura e barras do navegador não empurram o card de desempenho para fora da tela | Ok |

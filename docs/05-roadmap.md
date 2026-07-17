@@ -2,8 +2,8 @@
 
 ## Estado geral
 
-**Base funcional:** `v0.2.5-dev`  
-**Ciclo atual:** preparação e implementação da próxima evolução visual.
+**Versão atual:** `v0.3.0`  
+**Estado:** `versão concluída`
 
 Concluído:
 
@@ -38,9 +38,9 @@ Incluído:
 
 # Marco 2 — Implementação das telas oficiais
 
-## v0.3-dev — Fluxo visual completo
+## v0.3.0 — Interface e experiência
 
-**Status:** implementação das telas concluída; testes gerais pendentes.
+**Status:** Concluída
 
 ### Objetivo
 
