@@ -51,6 +51,11 @@
 | RF38 | Usar uma única estrutura dinâmica para todos os estados de desempenho | Implementado |
 | RF39 | Avançar da Tela de Desempenho para o Resultado Final pelo CTA principal | Implementado |
 | RF40 | Pular a Tela de Desempenho quando a sessão não possuir objetivas | Implementado |
+| RF41 | Migrar automaticamente sessões salvas pela v0.3 | Implementado |
+| RF42 | Preservar backup da carga anterior antes da migração | Implementado |
+| RF43 | Isolar dados locais incompatíveis sem interromper a aplicação | Implementado |
+| RF44 | Migrar configurações legadas para o namespace atual | Implementado |
+| RF45 | Deduplicar registros históricos pelo ID da sessão | Implementado |
 
 ## Requisitos não funcionais
 
@@ -76,24 +81,26 @@
 | RNF18 | Alterações de tela devem ser implementadas e testadas separadamente |
 | RNF19 | O esquema do `localStorage` deve possuir versão |
 | RNF20 | Dados legados devem ser migrados ou preservados |
+| RNF21 | O controlador principal não deve acessar `localStorage` diretamente |
+| RNF22 | Sessões salvas devem ser validadas antes da restauração |
+| RNF23 | Backups automáticos devem possuir limite de crescimento |
+| RNF24 | Falhas críticas de inicialização devem apresentar uma recuperação visível |
+| RNF25 | Novos esquemas devem possuir testes de migração e compatibilidade |
 
-## Escopo do ciclo atual
+## Escopo do ciclo atual — v0.4
 
 ### Incluído
 
-- documentação das cinco telas;
-- implementação da Tela Inicial;
-- implementação da Importação e Validação;
-- implementação da Resolução objetiva e discursiva;
-- implementação da Tela de Desempenho;
-- implementação do Resultado Final;
-- aplicação integral da identidade visual;
-- adaptação do fluxo de sessão salva;
-- marcações auxiliares das alternativas;
-- filtros e expansão dos cards de resultado;
-- preservação das exportações;
-- revisão de acessibilidade;
-- testes em desktop, tablet e mobile.
+- versionamento do estado da sessão;
+- migração automática das chaves antigas;
+- backup de dados migrados e incompatíveis;
+- validação e normalização antes da restauração;
+- repositórios de sessão e configurações;
+- evolução e deduplicação do histórico;
+- remoção gradual de responsabilidades do controlador principal;
+- centralização futura de resultados, formatadores e exportações;
+- testes automatizados de persistência;
+- regressão funcional das cinco telas.
 
 ### Fora do ciclo atual
 
@@ -109,9 +116,11 @@
 
 ## Critérios de conclusão do ciclo
 
-- telas equivalentes aos layouts aprovados;
+- sessões da v0.3 migradas e restauradas corretamente;
+- dados corrompidos não impedem o carregamento da aplicação;
+- nenhum acesso direto ao `localStorage` fora dos serviços de persistência;
 - fluxo completo sem erros críticos;
 - dados locais preservados;
-- testes essenciais aprovados;
+- testes automatizados e manuais essenciais aprovados;
 - documentação atualizada;
 - Pull Request de `dev` para `main` revisado.

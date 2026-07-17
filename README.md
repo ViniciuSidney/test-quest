@@ -23,10 +23,11 @@ A proposta não é apenas registrar acertos, mas ajudar o usuário a:
 
 ## Estado atual
 
-**Versão atual:** `v0.3.0`  
-**Estado:** `versão concluída`
+**Versão estável:** `v0.3.0`  
+**Versão em desenvolvimento:** `v0.4-dev`  
+**Estado:** `consolidação técnica em andamento`
 
-**Fase atual:** As cinco telas oficiais foram implementadas e o ciclo v0.3.0 foi concluído.
+**Fase atual:** fortalecimento da arquitetura, persistência e recuperação segura dos dados locais.
 
 ### Concluído
 
@@ -59,19 +60,20 @@ A proposta não é apenas registrar acertos, mas ajudar o usuário a:
 - pausa do temporizador preservada no estado da sessão;
 - navegação entre questões sem atribuição incorreta de tempo.
 
-### Próxima etapa
+### Ciclo atual — v0.4-dev
 
-**v0.4-dev — arquitetura, modularização e persistência**
+A primeira etapa da consolidação técnica já inclui:
 
-As cinco telas oficiais já estão implementadas. O ciclo seguirá agora para:
+1. esquema versionado para sessões salvas;
+2. migração automática das chaves legadas;
+3. backup dos dados anteriores antes da migração;
+4. isolamento de dados corrompidos;
+5. repositórios próprios para sessão e configurações;
+6. normalização e deduplicação do histórico;
+7. remoção do acesso direto ao `localStorage` pelo controlador principal;
+8. novos testes automatizados de persistência e migração.
 
-1. testes funcionais e visuais completos;
-2. refinamento dos modais e confirmações restantes;
-3. modularização complementar do controlador;
-4. revisão da documentação;
-5. integração da branch `dev` na `main`.
-
-As correções continuarão sendo registradas em etapas pequenas, com testes e commits separados.
+As próximas etapas da v0.4 serão a modularização complementar do controlador, centralização de formatadores e exportações e reforço dos testes de fluxo completo.
 
 ## Funcionalidades atuais
 
@@ -107,11 +109,20 @@ As correções continuarão sendo registradas em etapas pequenas, com testes e c
 
 ## Funcionalidades planejadas para os próximos ciclos
 
-- refinamento dos modais restantes;
-- modularização gradual do JavaScript;
-- migração versionada dos dados locais;
-- histórico detalhado de sessões;
-- testes completos para fechamento da versão.
+### v0.4
+
+- modularização gradual do controlador principal;
+- centralização de formatadores e exportações;
+- reforço do tratamento de erros;
+- testes de fluxo e regressão da persistência.
+
+### v0.5
+
+- gabarito após cada questão;
+- embaralhamento de alternativas;
+- questões de verdadeiro ou falso;
+- controle manual dos efeitos visuais;
+- opção de refazer questões erradas.
 
 ## Fluxo oficial
 
@@ -164,6 +175,16 @@ Depois, abra:
 http://localhost:5501
 ```
 
+## Testes automatizados
+
+Execute toda a suíte da aplicação com:
+
+```bash
+node tests/run-all-tests.mjs
+```
+
+O runner executa os testes de interface estrutural, regras de resolução, desempenho, resultado, App Shell, esquema da sessão, migrações, configurações, histórico e inicialização.
+
 ## Estrutura principal
 
 ```text
@@ -185,6 +206,7 @@ test-quest/
 │   ├── 07-changelog.md
 │   ├── 08-identidade-visual.md
 │   ├── 09-plano-de-implementacao.md
+│   ├── 10-v0.4-consolidacao-tecnica.md
 │   └── ALTERACOES-REALIZADAS.md
 ├── public/
 │   ├── examples/
@@ -193,7 +215,10 @@ test-quest/
 │   ├── assets/
 │   ├── scripts/
 │   │   ├── core/
-│   │   │   └── screens.js
+│   │   │   ├── constants.js
+│   │   │   ├── screens.js
+│   │   │   ├── session-schema.js
+│   │   │   └── state.js
 │   │   ├── features/
 │   │   │   ├── home/
 │   │   │   ├── performance/

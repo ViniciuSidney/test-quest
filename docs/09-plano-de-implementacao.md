@@ -1,3 +1,5 @@
+> **Documento histórico da v0.3.** A implementação visual das cinco telas foi concluída. O plano técnico atual da v0.4 está em `10-v0.4-consolidacao-tecnica.md`.
+
 # Plano de Implementação das Telas
 
 ## Objetivo

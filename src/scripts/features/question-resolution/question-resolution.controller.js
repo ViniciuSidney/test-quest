@@ -1,8 +1,9 @@
-import { CONFIG_KEY, STORAGE_KEY } from "../../core/constants.js";
 import { createInitialState } from "../../core/state.js";
 import { createScreenManager } from "../../core/screens.js";
 import { calculateHistoryMetrics, readHistory, recordCompletedSession } from "../home/home.service.js";
 import { parseQuestions, QuestionImportError, summarizeQuestions } from "../question-import/question-import.parser.js";
+import { clearSession, loadSession, saveSession } from "../session/session.repository.js";
+import { loadSettings, saveSettings } from "../settings/settings.repository.js";
 import {
   formatPerformanceBasis,
   getPerformanceState,
@@ -95,6 +96,7 @@ export function initQuestionResolution() {
   inicializar();
 
   function inicializar() {
+    const persistenceReport = loadSession();
     carregarConfiguracoes();
     configurarEventos();
     sincronizarAcoesResultadoResponsivas();
@@ -103,6 +105,7 @@ export function initQuestionResolution() {
     trocarTela("home");
     atualizarHome();
     atualizarResumoTopo();
+    comunicarResultadoPersistencia(persistenceReport);
   }
 
   function configurarEventos() {
@@ -478,16 +481,16 @@ export function initQuestionResolution() {
 
 
   function carregarConfiguracoes() {
-    try {
-      const config = JSON.parse(localStorage.getItem(CONFIG_KEY)) || {};
-      aplicarTema(config.tema || "light");
-    } catch {
-      aplicarTema("light");
-    }
+    const config = loadSettings();
+    aplicarTema(config.tema || "light");
   }
 
   function salvarConfiguracoes() {
-    localStorage.setItem(CONFIG_KEY, JSON.stringify({ tema: document.body.dataset.theme || "light" }));
+    const configAtual = loadSettings();
+    saveSettings({
+      ...configAtual,
+      tema: document.body.dataset.theme || "light"
+    });
   }
 
   function aplicarTema(tema) {
@@ -511,11 +514,7 @@ export function initQuestionResolution() {
   }
 
   function obterSessaoSalva() {
-    try {
-      return JSON.parse(localStorage.getItem(STORAGE_KEY));
-    } catch {
-      return null;
-    }
+    return loadSession().session;
   }
 
   function continuarSessao() {
@@ -560,7 +559,7 @@ export function initQuestionResolution() {
     if (!confirmado) return;
 
     pararCronometro();
-    localStorage.removeItem(STORAGE_KEY);
+    clearSession();
     estado = estadoInicial();
     limparCamposImportacao();
     atualizarResumoTopo();
@@ -658,6 +657,7 @@ export function initQuestionResolution() {
       estado.questoes = questoes;
       estado.opcoes.mostrarGabaritoFinal = $("#opcaoMostrarGabaritoFinal").checked;
       estado.importadoEm = new Date().toISOString();
+      estado.iniciadoEm = estado.importadoEm;
       estado.temporizadorPausado = false;
       substituicaoAutorizada = false;
 
@@ -1928,8 +1928,17 @@ export function initQuestionResolution() {
   function salvarEstadoImediato() {
     if (!estado.questoes.length) return;
     estado.temporizadorPausado = !timerRodando;
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(estado));
-    if (indicadorSalvo) indicadorSalvo.textContent = "Salvo localmente";
+
+    const result = saveSession(estado);
+
+    if (result.ok) {
+      estado = result.session;
+      if (indicadorSalvo) indicadorSalvo.textContent = "Salvo localmente";
+      return;
+    }
+
+    if (indicadorSalvo) indicadorSalvo.textContent = "Falha ao salvar";
+    console.error("Não foi possível salvar a sessão localmente.", result.error);
   }
 
   function atualizarResumoTopo() {
@@ -1985,7 +1994,7 @@ export function initQuestionResolution() {
   function voltarAoInicioAposResultado() {
     ocultarDesempenhoImediato();
     pararCronometro();
-    localStorage.removeItem(STORAGE_KEY);
+    clearSession();
     estado = estadoInicial();
     limparCamposImportacao();
     $("#listaRevisaoResultado")?.replaceChildren();
@@ -2087,6 +2096,35 @@ export function initQuestionResolution() {
     const horas = Math.floor(totalMinutos / 60);
     const minutos = totalMinutos % 60;
     return `${horas}h ${String(minutos).padStart(2, "0")}min`;
+  }
+
+  function comunicarResultadoPersistencia(report) {
+    if (!report) {
+      return;
+    }
+
+    if (report.migrated && report.session) {
+      mostrarMensagemInicial(
+        "Sua sessão salva foi atualizada com segurança para o formato da v0.4.",
+        "ok"
+      );
+      return;
+    }
+
+    if (report.recovered && report.session) {
+      mostrarMensagemInicial(
+        "A sessão salva precisou de pequenos reparos e foi recuperada.",
+        "ok"
+      );
+      return;
+    }
+
+    if (report.recovered && !report.session) {
+      mostrarMensagemInicial(
+        "Os dados salvos estavam incompatíveis e foram isolados para evitar falhas. Você pode iniciar uma nova resolução.",
+        "error"
+      );
+    }
   }
 
   function mostrarMensagemInicial(texto, tipo = "error") {

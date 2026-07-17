@@ -201,7 +201,7 @@ resolvedorQuestoesV2.estado
 resolvedorQuestoesV2.config
 ```
 
-### Namespace futuro recomendado
+### Namespace atual da v0.4
 
 ```text
 testQuest.state
@@ -209,18 +209,22 @@ testQuest.settings
 testQuest.history
 ```
 
-## Migração de dados
+As chaves antigas são reconhecidas somente pelo processo de migração.
+
+## Migração de dados — implementação da v0.4
 
 Ao iniciar:
 
-1. procurar dados no namespace novo;
-2. se ausente, procurar chaves legadas;
-3. transformar para o esquema atual;
-4. adicionar `schemaVersion`;
-5. salvar no namespace novo;
-6. manter backup temporário até os testes concluírem.
+1. procurar dados em `testQuest.state`;
+2. validar e normalizar a sessão atual;
+3. se ausente, procurar `resolvedorQuestoesV2.estado`;
+4. salvar o conteúdo legado no backup de migração;
+5. transformar para `schemaVersion: 3`;
+6. salvar na chave atual;
+7. remover a chave legada somente após a nova gravação;
+8. isolar cargas incompatíveis em um backup separado.
 
-Nunca apagar dados legados antes de confirmar a migração.
+O controlador principal não acessa mais o `localStorage` diretamente.
 
 ## Implementação atual da navegação e da Home
 
@@ -324,3 +328,26 @@ A substituição das telas deve acontecer uma por vez. A lógica legada pode per
 A Tela de Desempenho não cria um segundo cálculo independente. Ela recebe o percentual já produzido pelo cálculo final da sessão e seleciona um estado visual por faixa.
 
 Quando não existem questões objetivas, a aplicação não apresenta porcentagem artificial de `0%`: o fluxo segue diretamente para o Resultado Final, onde a revisão manual das discursivas é apresentada.
+
+
+## Implementação da primeira etapa da v0.4
+
+```text
+src/scripts
+├── core
+│   └── session-schema.js
+├── features
+│   ├── session
+│   │   └── session.repository.js
+│   └── settings
+│       └── settings.repository.js
+└── shared
+    └── storage.js
+```
+
+Responsabilidades:
+
+- `session-schema.js`: validação, normalização e evolução do estado;
+- `session.repository.js`: leitura, gravação, migração, backup e limpeza;
+- `settings.repository.js`: tema e preferências globais versionadas;
+- `storage.js`: operações seguras e injetáveis para testes.

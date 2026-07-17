@@ -310,3 +310,20 @@ A versão não pode ser enviada à `main` como estável enquanto houver:
 | T99 | Filtros e teclado | Filtros recolhidos não recebem foco; abertos voltam a ser acessíveis | Ok |
 | T100 | Desempenho em 100% de zoom | O card inteiro, incluindo o CTA, permanece dentro da viewport | Ok |
 | T101 | Viewport dinâmica | Alterações de altura e barras do navegador não empurram o card de desempenho para fora da tela | Ok |
+
+
+# v0.4 — Persistência e migração
+
+| Código | Teste | Resultado esperado | Status |
+|---|---|---|---|
+| V04-T01 | Normalização de sessão legada | Estado recebe esquema 3 e preserva dados compatíveis | OK |
+| V04-T02 | IDs duplicados ou ausentes | Questões recebem identificadores válidos sem interromper a sessão | OK |
+| V04-T03 | Mapas órfãos | Respostas, notas, tempos e revisão fora da lista são descartados | OK |
+| V04-T04 | Migração da chave legada | Sessão é salva em `testQuest.state` e a carga anterior recebe backup | OK |
+| V04-T05 | JSON atual corrompido | Carga é isolada e uma sessão legada válida pode ser recuperada | OK |
+| V04-T06 | Configurações legadas | Tema é migrado para `testQuest.settings` | OK |
+| V04-T07 | Histórico duplicado | Apenas a entrada concluída mais recente por ID permanece | OK |
+| V04-T08 | Acesso do controlador | Controlador principal não usa `localStorage` diretamente | OK |
+| V04-T09 | Migração real pelo navegador | Sessão criada na v0.3 continua disponível após atualizar para a v0.4 | Pendente |
+| V04-T10 | Recarregamento após migração | A sessão utiliza somente a chave atual sem duplicação | Pendente |
+| V04-T11 | Apagar sessão migrada | Chaves atual e legada são removidas e a sessão não reaparece | Pendente |

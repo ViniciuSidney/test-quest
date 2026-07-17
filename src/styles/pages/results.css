@@ -613,7 +613,7 @@ body[data-screen="resultado"] .legacy-topbar {
 .result-answer-stat strong,
 .result-time-block strong {
   font-family: "Cascadia Mono", "Cascadia Code", Consolas, monospace;
-  font-size: clamp(1rem, 1.35vw, 1.3rem);
+  font-size: clamp(1rem, 2vw, 2rem);
   font-variant-numeric: tabular-nums;
   overflow-wrap: anywhere;
 }

@@ -82,10 +82,10 @@ A Tela Inicial também permite continuar uma sessão salva diretamente na Tela d
 
 ## Estado atual
 
-**Base funcional:** `v0.2.5-dev`  
-**Ciclo em desenvolvimento:** `v0.3-dev`
+**Versão estável:** `v0.3.0`  
+**Ciclo em desenvolvimento:** `v0.4-dev`
 
-**Fase do projeto:** implementação gradual das cinco telas oficiais.
+**Fase do projeto:** consolidação da arquitetura, persistência e confiabilidade.
 
 Concluído:
 
@@ -106,21 +106,23 @@ Concluído:
 - navegação centralizada entre as cinco telas;
 - histórico local e indicadores de sessões concluídas implementados.
 
-Próxima etapa:
+Ciclo atual:
 
-- executar o roteiro completo de testes das cinco telas;
-- refinar os modais e confirmações restantes;
-- modularizar responsabilidades ainda concentradas no controlador;
-- preparar a revisão final da branch `dev`.
+- versionar e validar o estado salvo — concluído na primeira etapa;
+- migrar as chaves legadas com backup — concluído na primeira etapa;
+- separar persistência e configurações do controlador — concluído na primeira etapa;
+- normalizar e deduplicar o histórico — concluído na primeira etapa;
+- modularizar ciclo de vida, resultados, formatadores e exportações — próxima etapa;
+- executar a regressão completa da v0.4 antes do fechamento.
 
-## Critérios de sucesso da próxima etapa
+## Critérios de sucesso da v0.4
 
-- cinco telas implementadas conforme os manuais — concluído;
-- nenhuma perda de respostas, anotações ou tempos;
-- temporizador ativo somente durante a resolução;
-- ausência de rolagem global e sobreposições;
-- tema claro e escuro consistentes;
-- fluxo completo validado na branch `dev`.
+- sessões da v0.3 migradas sem perda de dados;
+- dados inválidos não impedem a inicialização;
+- controlador principal reduzido gradualmente;
+- nenhuma regressão nas cinco telas;
+- persistência e histórico cobertos por testes automatizados;
+- documentação atualizada para o novo esquema.
 
 ## Limites atuais
 

@@ -2,8 +2,9 @@
 
 ## Estado geral
 
-**Versão atual:** `v0.3.0`  
-**Estado:** `versão concluída`
+**Versão estável:** `v0.3.0`  
+**Versão em desenvolvimento:** `v0.4-dev`  
+**Estado:** `consolidação técnica em andamento`
 
 Concluído:
 
@@ -109,42 +110,64 @@ Substituir as telas atuais pelas cinco telas aprovadas sem perder funcionalidade
 
 # Marco 3 — Modularização e migração de dados
 
-## v0.4-dev — Arquitetura e persistência
+## v0.4-dev — Arquitetura, persistência e confiabilidade
+
+**Status:** Em desenvolvimento
 
 ### Objetivo
 
-Reduzir concentração de código e preparar evolução segura.
+Reduzir a concentração de responsabilidades, proteger os dados locais e preparar a aplicação para receber novos modos de resolução sem regressões.
 
-### Planejado
+### Etapa 1 — Persistência versionada — concluída
 
-- separar features;
-- ampliar o gerenciador interno de telas;
-- versionar esquema do estado;
-- migrar chaves legadas;
-- evoluir o histórico de sessões e suas migrações;
-- centralizar formatação de tempo;
-- centralizar exportações;
-- organizar modais;
-- revisar tratamento de erros.
+- esquema de sessão `schemaVersion: 3`;
+- chave atual `testQuest.state`;
+- configurações em `testQuest.settings`;
+- migração automática das chaves `resolvedorQuestoesV2.*`;
+- backup limitado das cargas migradas;
+- isolamento de JSON inválido ou sessão incompatível;
+- validação e normalização de questões, respostas, tempos, revisão e marcadores;
+- histórico atualizado para o esquema 2;
+- deduplicação de sessões concluídas;
+- controlador sem acesso direto ao `localStorage`;
+- testes de esquema, repositórios, configurações e histórico.
+
+### Etapa 2 — Modularização complementar — próxima
+
+- separar ciclo de vida da sessão do controlador visual;
+- centralizar cálculo de resultado;
+- centralizar formatação de tempo e datas;
+- separar geração de arquivos e downloads;
+- organizar mensagens e confirmações;
+- reduzir o tamanho do controlador principal sem alterar o comportamento.
+
+### Etapa 3 — Confiabilidade e fechamento
+
+- testes de restauração após recarregamento;
+- testes de migração com dados reais da v0.3;
+- teste de armazenamento indisponível ou cheio;
+- regressão dos cinco fluxos de tela;
+- atualização final da documentação;
+- release v0.4.0.
 
 ---
 
-# Marco 4 — Testes e polimento
+# Marco 4 — Modos de resolução e revisão
 
-## v0.5 — Validação completa
+## v0.5-dev — Flexibilidade de estudo
+
+### Objetivo
+
+Ampliar as formas de responder, corrigir e refazer questões.
 
 ### Planejado
 
-- executar roteiro completo;
-- testar sessões longas;
-- testar conteúdo extenso;
-- testar desktop, tablet e mobile;
-- revisar acessibilidade;
-- revisar contraste;
-- revisar tema escuro;
-- validar GitHub Pages;
-- corrigir regressões;
-- atualizar documentação.
+- gabarito após cada questão;
+- embaralhamento de alternativas com IDs estáveis;
+- questões de verdadeiro ou falso;
+- opção manual para reduzir efeitos visuais;
+- criar nova sessão somente com questões erradas;
+- integração dos novos modos com histórico, exportações e Resultado Final.
 
 ---
 
@@ -154,9 +177,10 @@ Reduzir concentração de código e preparar evolução segura.
 
 Critérios:
 
-- cinco telas implementadas;
+- arquitetura consolidada;
+- modos essenciais de resolução implementados;
 - fluxos principais sem bugs críticos;
-- migração de dados validada;
+- migrações de dados validadas;
 - identidade visual aplicada;
 - testes essenciais aprovados;
 - documentação atualizada;
@@ -168,9 +192,8 @@ Critérios:
 
 # Ideias futuras
 
-- refazer questões erradas;
 - modo prova;
-- modo estudo;
+- modo estudo guiado;
 - histórico detalhado;
 - gráficos por período;
 - banco local de listas;

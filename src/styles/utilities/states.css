@@ -2,3 +2,37 @@
 .is-hidden {
   display: none !important;
 }
+
+/* Falha crítica de inicialização — fallback independente das telas. */
+.startup-error {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  color: var(--tq-text, #17182f);
+  background: color-mix(in srgb, var(--tq-bg, #f7f7fc) 92%, transparent);
+  backdrop-filter: blur(10px);
+}
+
+.startup-error__content {
+  width: min(100%, 520px);
+  display: grid;
+  gap: 1rem;
+  padding: 1.4rem;
+  background: var(--tq-surface, #fff);
+  border: 1px solid var(--tq-border, #e3e4f0);
+  border-radius: var(--tq-radius-lg, 18px);
+  box-shadow: 0 20px 50px rgba(23, 24, 47, 0.18);
+}
+
+.startup-error__content strong {
+  font-size: 1.2rem;
+}
+
+.startup-error__content p {
+  margin: 0;
+  color: var(--tq-text-muted, #666a85);
+  line-height: 1.5;
+}

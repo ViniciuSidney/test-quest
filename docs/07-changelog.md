@@ -2,9 +2,33 @@
 
 Todas as mudanças importantes do Test Quest serão registradas neste arquivo.
 
-## [Não lançado]
+## [Não lançado] — v0.4-dev
 
-Ainda não há alterações registradas para o próximo ciclo.
+### Adicionado
+
+- esquema versionado de sessão em `core/session-schema.js`;
+- repositório de sessão com migração, validação e recuperação;
+- repositório de configurações com migração da preferência de tema;
+- backups locais limitados para dados migrados e cargas inválidas;
+- testes automatizados de esquema, persistência, configurações e histórico;
+- runner único `tests/run-all-tests.mjs` para executar toda a suíte;
+- documento técnico da v0.4.
+- fallback visual para falhas críticas durante a inicialização.
+
+### Alterado
+
+- chave da sessão ativa passa a ser `testQuest.state`;
+- chave de configurações passa a ser `testQuest.settings`;
+- histórico passa ao esquema 2, com normalização e deduplicação;
+- estado da sessão passa ao esquema 3 e recebe `iniciadoEm`;
+- controlador principal deixa de acessar `localStorage` diretamente;
+- versão de desenvolvimento passa a `0.4-dev`.
+
+### Preservado
+
+- migração automática das chaves `resolvedorQuestoesV2.estado` e `resolvedorQuestoesV2.config`;
+- respostas, anotações, tempos, marcações e opções das sessões antigas;
+- fluxo e interface completos da v0.3.0.
 
 ## [v0.3.0] — 2026-07-17
 

@@ -200,3 +200,14 @@
 - [ ] Conferir alturas de 900px, 720px, 640px e 600px.
 - [ ] Confirmar que o botão principal permanece integralmente visível.
 - [ ] Confirmar que o Fade In, Fade Out e a aura continuam funcionando.
+
+
+## V0.4 — Migração e recuperação
+
+- [ ] Criar uma sessão na v0.3, atualizar os arquivos e confirmar a continuação na v0.4.
+- [ ] Verificar no DevTools que `testQuest.state` foi criada.
+- [ ] Confirmar que a antiga `resolvedorQuestoesV2.estado` não permanece ativa após a migração.
+- [ ] Recarregar a página e confirmar respostas, anotações, tempo, revisão e questão atual.
+- [ ] Apagar o progresso e confirmar que a sessão não reaparece.
+- [ ] Alternar o tema antes e depois da migração e confirmar persistência.
+- [ ] Finalizar uma sessão migrada e confirmar apenas um registro no histórico.
