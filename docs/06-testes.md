@@ -287,3 +287,26 @@ A versão não pode ser enviada à `main` como estável enquanto houver:
 | T87 | Resultado Geral | O bloco usa 3 cards por linha em desktop largo, reduzindo para 2 quando necessário | Pendente |
 | T88 | Card objetivo expandido | Enunciado, explicação e anotação mantêm altura visual estável com rolagem interna quando o texto excede o espaço | Pendente |
 | T89 | Card discursivo expandido | Enunciado, resposta, resposta esperada, critérios e anotações mantêm altura visual estável com rolagem interna quando necessário | Pendente |
+
+
+# Resultado Final — ações mobile e discursivas
+
+| Código | Teste | Resultado esperado | Status |
+|---|---|---|---|
+| T90 | Toggle de ações no mobile | Em até 720px, as três exportações ficam recolhidas em `Ações da sessão` | Pendente |
+| T91 | Navegação por teclado | Exportações recolhidas não recebem foco; abertas voltam a ser acessíveis | Pendente |
+| T92 | Desktop | Exportações permanecem visíveis sem depender do toggle | Pendente |
+| T93 | Card discursivo desktop | Enunciado e tempo ocupam a primeira linha; resposta e modelo, a segunda; critérios e anotações, a terceira | Pendente |
+| T94 | Card discursivo mobile | Todos os blocos ficam em uma única coluna e na ordem correta | Pendente |
+
+# Resultado Final — filtros compactos e desempenho responsivo
+
+| Código | Teste | Resultado esperado | Status |
+|---|---|---|---|
+| T95 | Tempo discursivo | O conteúdo de `Tempo utilizado` fica alinhado ao topo, como os demais blocos da primeira linha | Pendente |
+| T96 | Ações acima de 720px | O toggle `Ações da sessão` permanece oculto e as exportações ficam visíveis diretamente | Pendente |
+| T97 | Ações até 720px | O toggle aparece recolhido e controla somente as exportações | Pendente |
+| T98 | Filtros até 900px | O toggle compacto informa o filtro ativo e inicia recolhido | Pendente |
+| T99 | Filtros e teclado | Filtros recolhidos não recebem foco; abertos voltam a ser acessíveis | Pendente |
+| T100 | Desempenho em 100% de zoom | O card inteiro, incluindo o CTA, permanece dentro da viewport | Pendente |
+| T101 | Viewport dinâmica | Alterações de altura e barras do navegador não empurram o card de desempenho para fora da tela | Pendente |

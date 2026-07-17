@@ -35,6 +35,9 @@ assert.match(performanceCss, /body\[data-performance-state="good-result"\]/);
 assert.match(performanceCss, /body\[data-performance-state="attention-50"\]/);
 assert.match(performanceCss, /body\[data-performance-state="review-needed"\]/);
 assert.match(performanceCss, /@media \(max-width: 720px\)/);
+assert.match(performanceCss, /100dvh/);
+assert.match(performanceCss, /height:\s*min\(690px,\s*calc\(100dvh\s*-\s*2rem\)\)/);
+assert.match(performanceCss, /max-height:\s*calc\(100dvh\s*-\s*2rem\)/);
 assert.match(performanceCss, /prefers-reduced-motion/);
 
 assert.match(controller, /mostrarDesempenho\(resultadoFinal\)/);

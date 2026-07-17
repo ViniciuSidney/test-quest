@@ -753,3 +753,18 @@ Se bem implementada, essa tela ajuda o Test Quest a ter mais identidade, mais cl
 - O brilho é decorativo, permanece atrás do número e não pode reduzir o contraste.
 - Com `prefers-reduced-motion: reduce`, a rotação e as animações de transição devem ser removidas.
 
+
+---
+
+# Adendo — encaixe na viewport dinâmica
+
+A Tela de Desempenho deve usar a unidade `dvh` como referência principal de altura, preservando `vh` como fallback.
+
+Regras:
+
+- overlay com `position: fixed` e `inset: 0`;
+- card com altura e altura máxima limitadas à viewport disponível;
+- paddings externos incluídos no cálculo;
+- ajustes adicionais para alturas de `720px` e `640px`;
+- percentual, textos e CTA permanecem integralmente visíveis em zoom de 100%;
+- nenhuma rolagem global deve ser criada pelo overlay.

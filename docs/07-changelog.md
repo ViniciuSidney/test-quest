@@ -208,3 +208,29 @@ Todas as mudanças importantes do Test Quest serão registradas neste arquivo.
 - os cards expandidos da revisão receberam blocos internos com alturas mais padronizadas;
 - blocos textuais longos agora usam rolagem interna individual para preservar a altura visual dos cards;
 - a leitura dos detalhes de questões objetivas e discursivas ficou mais consistente entre diferentes tamanhos de conteúdo.
+
+
+## [v0.3-dev] — ações mobile e card discursivo
+
+### Melhorado
+
+- as exportações do Resultado Final passaram a ficar dentro do toggle `Ações da sessão` em telas de até 720px;
+- o botão `Voltar ao início` permanece visível fora do toggle;
+- o painel de exportações é removido da navegação por teclado enquanto estiver recolhido;
+- o card discursivo expandido foi reorganizado em três linhas: enunciado e tempo, resposta e resposta esperada, critérios e anotações;
+- a organização discursiva retorna para uma coluna no mobile.
+
+## [v0.3-dev] — filtros compactos e encaixe da Tela de Desempenho
+
+### Corrigido
+
+- o bloco `Tempo utilizado` do card discursivo passou a alinhar seu conteúdo pelo topo;
+- o toggle `Ações da sessão` deixou de aparecer fora do breakpoint mobile;
+- a Tela de Desempenho passou a respeitar a altura dinâmica da viewport, sem extrapolar em 100% de zoom.
+
+### Melhorado
+
+- os filtros da revisão passaram a usar um toggle compacto em telas de até 900px;
+- o filtro ativo é informado no próprio toggle;
+- ao selecionar um filtro em tela compacta, o painel é recolhido automaticamente para devolver espaço à listagem;
+- filtros e exportações recolhidos são removidos da navegação por teclado.

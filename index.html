@@ -564,7 +564,20 @@
           <header class="review-panel__header">
             <h2 id="tituloRevisaoQuestoes">Revisão das questões</h2>
 
-            <nav class="review-filters" aria-label="Filtros da revisão">
+            <button
+              id="btnAlternarFiltrosResultado"
+              class="secondary review-filters-toggle"
+              type="button"
+              aria-expanded="false"
+              aria-controls="filtrosResultado"
+              data-compact-open="false"
+              hidden
+            >
+              <span aria-hidden="true">⌄</span>
+              <span id="textoFiltroResultadoAtual">Filtros: Todas</span>
+            </button>
+
+            <nav id="filtrosResultado" class="review-filters" aria-label="Filtros da revisão">
               <button class="review-filter is-active" type="button" data-result-filter="all" aria-pressed="true">
                 Todas
               </button>
@@ -587,7 +600,21 @@
         </main>
 
         <footer class="results-panel results-actionbar" aria-label="Ações do resultado">
-          <div class="results-actions__exports">
+          <button
+            id="btnAlternarAcoesResultado"
+            class="secondary results-actions-toggle"
+            type="button"
+            aria-expanded="false"
+            aria-controls="acoesExportacaoResultado"
+            data-mobile-open="false"
+            hidden
+          >
+            <span aria-hidden="true">•••</span>
+            <span>Ações da sessão</span>
+            <span class="results-actions-toggle__icon" aria-hidden="true">⌄</span>
+          </button>
+
+          <div id="acoesExportacaoResultado" class="results-actions__exports">
             <button id="btnBaixarTxt" class="secondary" type="button">
               <span aria-hidden="true">↓</span>
               Baixar respostas

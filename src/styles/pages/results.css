@@ -295,6 +295,29 @@ body[data-screen="resultado"] .legacy-topbar {
   gap: var(--tq-space-3);
 }
 
+.review-filters-toggle {
+  display: none;
+  min-height: 40px;
+  align-items: center;
+  justify-content: flex-start;
+  gap: var(--tq-space-2);
+  padding: 0.48rem 0.75rem;
+  color: var(--tq-text);
+  background: var(--tq-surface-soft);
+  border: 1px solid var(--tq-border);
+  border-radius: var(--tq-radius-sm);
+  box-shadow: none;
+  font-size: 0.78rem;
+}
+
+.review-filters-toggle > span:first-child {
+  transition: transform 180ms ease;
+}
+
+.review-filters-toggle[aria-expanded="true"] > span:first-child {
+  transform: rotate(180deg);
+}
+
 .review-filters {
   min-width: 0;
   display: grid;
@@ -474,8 +497,30 @@ body[data-screen="resultado"] .legacy-topbar {
 }
 
 .result-discursive-details {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  align-items: stretch;
   padding-top: var(--tq-space-4);
+}
+
+.result-discursive-detail--statement {
+  grid-column: 1 / 11;
+}
+
+.result-discursive-detail--time {
+  grid-column: 11 / 13;
+  display: grid;
+  align-content: start;
+  align-self: stretch;
+}
+
+.result-discursive-detail--answer,
+.result-discursive-detail--criteria {
+  grid-column: 1 / 7;
+}
+
+.result-discursive-detail--expected,
+.result-discursive-detail--note {
+  grid-column: 7 / 13;
 }
 
 .result-detail-column {
@@ -618,6 +663,19 @@ body[data-screen="resultado"] .legacy-topbar {
   margin: 0;
 }
 
+.results-actionbar > .results-actions-toggle {
+  display: none;
+}
+
+.results-actions-toggle__icon {
+  margin-left: auto;
+  transition: transform 180ms ease;
+}
+
+.results-actions-toggle[aria-expanded="true"] .results-actions-toggle__icon {
+  transform: rotate(180deg);
+}
+
 .results-actionbar {
   grid-area: actions;
   min-height: 70px;
@@ -672,10 +730,6 @@ body[data-screen="resultado"] .legacy-topbar {
     gap: var(--tq-space-3);
   }
 
-
-  .result-discursive-details {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
 }
 
 @media (max-width: 900px) {
@@ -717,6 +771,41 @@ body[data-screen="resultado"] .legacy-topbar {
   .subject-performance-panel {
     min-height: 0;
     height: auto;
+  }
+
+  .review-filters-toggle {
+    width: fit-content;
+    max-width: 100%;
+    display: inline-flex;
+  }
+
+  .review-filters {
+    max-height: 0;
+    padding-block: 0;
+    overflow: hidden;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    border-color: transparent;
+    transform: translateY(-0.25rem);
+    transition:
+      max-height 220ms ease,
+      padding 180ms ease,
+      opacity 180ms ease,
+      transform 180ms ease,
+      visibility 180ms ease,
+      border-color 180ms ease;
+  }
+
+  .review-filters.is-open {
+    max-height: 4.5rem;
+    padding-block: var(--tq-space-2);
+    overflow-x: auto;
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    border-color: var(--tq-border);
+    transform: translateY(0);
   }
 
   .results-actionbar {
@@ -834,9 +923,52 @@ body[data-screen="resultado"] .legacy-topbar {
     max-height: 5rem;
   }
 
+  .results-actionbar {
+    gap: var(--tq-space-2);
+  }
+
+  .results-actionbar > .results-actions-toggle {
+    width: 100%;
+    min-height: 46px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+  }
+
   .results-actions__exports {
+    max-height: 0;
+    overflow: hidden;
     display: grid;
     grid-template-columns: 1fr;
+    gap: 0;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(-0.35rem);
+    transition:
+      max-height 220ms ease,
+      opacity 180ms ease,
+      transform 180ms ease,
+      visibility 180ms ease,
+      gap 180ms ease;
+  }
+
+  .results-actions__exports.is-open {
+    max-height: 15rem;
+    gap: var(--tq-space-2);
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateY(0);
+  }
+
+  .result-discursive-detail--statement,
+  .result-discursive-detail--time,
+  .result-discursive-detail--answer,
+  .result-discursive-detail--expected,
+  .result-discursive-detail--criteria,
+  .result-discursive-detail--note {
+    grid-column: 1 / -1;
   }
 
   .results-actions__navigation button {
@@ -896,7 +1028,16 @@ body[data-screen="resultado"] .legacy-topbar {
 
 @media (prefers-reduced-motion: reduce) {
   .result-review-card__toggle,
-  .subject-result-progress__value {
+  .subject-result-progress__value,
+  .results-actions-toggle__icon,
+  .results-actions__exports {
     transition: none;
   }
+}
+
+
+/* Garante que os controles compactos só participem do layout quando o JS os habilitar. */
+.results-actions-toggle[hidden],
+.review-filters-toggle[hidden] {
+  display: none !important;
 }

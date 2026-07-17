@@ -79,6 +79,8 @@ export function initQuestionResolution() {
   let filtroResultadoAtivo = RESULT_FILTERS.ALL;
   let questaoResultadoExpandidaId = null;
   let itensRevisaoResultado = [];
+  const resultadoAcoesMobileMedia = window.matchMedia("(max-width: 720px)");
+  const resultadoFiltrosCompactosMedia = window.matchMedia("(max-width: 900px)");
 
   const entradaQuestoes = $("#entradaQuestoes");
   const arquivoQuestoes = $("#arquivoQuestoes");
@@ -95,6 +97,8 @@ export function initQuestionResolution() {
   function inicializar() {
     carregarConfiguracoes();
     configurarEventos();
+    sincronizarAcoesResultadoResponsivas();
+    sincronizarFiltrosResultadoResponsivos();
     sincronizarSessaoFinalizadaComHistorico();
     trocarTela("home");
     atualizarHome();
@@ -247,6 +251,12 @@ export function initQuestionResolution() {
         alternarCardResultado(button.dataset.resultQuestionId);
       }
     });
+
+    $("#btnAlternarAcoesResultado")?.addEventListener("click", alternarAcoesResultado);
+    resultadoAcoesMobileMedia.addEventListener?.("change", sincronizarAcoesResultadoResponsivas);
+
+    $("#btnAlternarFiltrosResultado")?.addEventListener("click", alternarFiltrosResultado);
+    resultadoFiltrosCompactosMedia.addEventListener?.("change", sincronizarFiltrosResultadoResponsivos);
 
     $("#btnBaixarTxt")?.addEventListener("click", baixarRespostasTxt);
     $("#btnBaixarAnotacoes")?.addEventListener("click", baixarAnotacoesTxt);
@@ -1300,6 +1310,7 @@ export function initQuestionResolution() {
 
     $("#avisoResultadoDiscursivas")?.classList.toggle("hidden", resultado.discursivas === 0);
 
+    recolherAcoesResultadoMobile();
     renderizarResumoPorAssunto();
 
     itensRevisaoResultado = buildQuestionReviewItems({
@@ -1314,6 +1325,96 @@ export function initQuestionResolution() {
     atualizarBotoesFiltroResultado();
     renderizarListaRevisaoResultado();
     atualizarResumoTopo();
+  }
+
+  function alternarAcoesResultado() {
+    const button = $("#btnAlternarAcoesResultado");
+
+    if (!button || !resultadoAcoesMobileMedia.matches) {
+      return;
+    }
+
+    button.dataset.mobileOpen = String(button.dataset.mobileOpen !== "true");
+    sincronizarAcoesResultadoResponsivas();
+  }
+
+  function recolherAcoesResultadoMobile() {
+    const button = $("#btnAlternarAcoesResultado");
+
+    if (button) {
+      button.dataset.mobileOpen = "false";
+    }
+
+    sincronizarAcoesResultadoResponsivas();
+  }
+
+  function sincronizarAcoesResultadoResponsivas() {
+    const button = $("#btnAlternarAcoesResultado");
+    const actions = $("#acoesExportacaoResultado");
+
+    if (!button || !actions) {
+      return;
+    }
+
+    const mobile = resultadoAcoesMobileMedia.matches;
+    const expanded = !mobile || button.dataset.mobileOpen === "true";
+
+    button.hidden = !mobile;
+    button.setAttribute("aria-expanded", String(expanded));
+    actions.classList.toggle("is-open", expanded);
+
+    if (mobile && !expanded) {
+      actions.setAttribute("inert", "");
+      actions.setAttribute("aria-hidden", "true");
+    } else {
+      actions.removeAttribute("inert");
+      actions.removeAttribute("aria-hidden");
+    }
+  }
+
+  function alternarFiltrosResultado() {
+    const button = $("#btnAlternarFiltrosResultado");
+
+    if (!button || !resultadoFiltrosCompactosMedia.matches) {
+      return;
+    }
+
+    button.dataset.compactOpen = String(button.dataset.compactOpen !== "true");
+    sincronizarFiltrosResultadoResponsivos();
+  }
+
+  function recolherFiltrosResultadoCompactos() {
+    const button = $("#btnAlternarFiltrosResultado");
+
+    if (button) {
+      button.dataset.compactOpen = "false";
+    }
+
+    sincronizarFiltrosResultadoResponsivos();
+  }
+
+  function sincronizarFiltrosResultadoResponsivos() {
+    const button = $("#btnAlternarFiltrosResultado");
+    const filters = $("#filtrosResultado");
+
+    if (!button || !filters) {
+      return;
+    }
+
+    const compact = resultadoFiltrosCompactosMedia.matches;
+    const expanded = !compact || button.dataset.compactOpen === "true";
+
+    button.hidden = !compact;
+    button.setAttribute("aria-expanded", String(expanded));
+    filters.classList.toggle("is-open", expanded);
+
+    if (compact && !expanded) {
+      filters.setAttribute("inert", "");
+      filters.setAttribute("aria-hidden", "true");
+    } else {
+      filters.removeAttribute("inert");
+      filters.removeAttribute("aria-hidden");
+    }
   }
 
   function renderizarResumoPorAssunto() {
@@ -1378,6 +1479,9 @@ export function initQuestionResolution() {
     const proximoFiltro = normalizeResultFilter(filter);
 
     if (proximoFiltro === filtroResultadoAtivo) {
+      if (resultadoFiltrosCompactosMedia.matches) {
+        recolherFiltrosResultadoCompactos();
+      }
       return;
     }
 
@@ -1385,6 +1489,10 @@ export function initQuestionResolution() {
     questaoResultadoExpandidaId = null;
     atualizarBotoesFiltroResultado();
     renderizarListaRevisaoResultado();
+
+    if (resultadoFiltrosCompactosMedia.matches) {
+      recolherFiltrosResultadoCompactos();
+    }
   }
 
   function atualizarBotoesFiltroResultado() {
@@ -1393,6 +1501,21 @@ export function initQuestionResolution() {
       button.classList.toggle("is-active", ativo);
       button.setAttribute("aria-pressed", String(ativo));
     });
+
+    const labels = {
+      [RESULT_FILTERS.ALL]: "Todas",
+      [RESULT_FILTERS.INCORRECT]: "Erradas",
+      [RESULT_FILTERS.DISCURSIVE]: "Discursivas",
+      [RESULT_FILTERS.REVIEW]: "Revisão",
+      [RESULT_FILTERS.UNANSWERED]: "Não respondidas"
+    };
+    const currentLabel = $("#textoFiltroResultadoAtual");
+
+    if (currentLabel) {
+      currentLabel.textContent = `Filtros: ${labels[filtroResultadoAtivo] || labels[RESULT_FILTERS.ALL]}`;
+    }
+
+    sincronizarFiltrosResultadoResponsivos();
   }
 
   function alternarCardResultado(questionId) {
@@ -1603,52 +1726,48 @@ export function initQuestionResolution() {
       ? `
         ${renderizarBlocoDetalheResultado({
           title: "Resposta esperada",
-          modifier: "result-detail-block--expected",
+          modifier: "result-detail-block--expected result-discursive-detail--expected",
           content: `<p>${escapeHtml(item.expectedAnswer || "Não informada.")}</p>`
         })}
       `
-      : `<p class="result-answer-key-hidden">A resposta esperada foi ocultada pelas configurações desta sessão.</p>`;
+      : `<p class="result-answer-key-hidden result-discursive-detail--expected">A resposta esperada foi ocultada pelas configurações desta sessão.</p>`;
     const criteria = item.answerKeyVisible
       ? `
         ${renderizarBlocoDetalheResultado({
           title: "Critérios de correção",
-          modifier: "result-detail-block--criteria",
+          modifier: "result-detail-block--criteria result-discursive-detail--criteria",
           content: `<p>${escapeHtml(item.criteria || "Não informados.")}</p>`
         })}
       `
-      : `<p class="result-answer-key-hidden">Os critérios de correção foram ocultados pelas configurações desta sessão.</p>`;
+      : `<p class="result-answer-key-hidden result-discursive-detail--criteria">Os critérios de correção foram ocultados pelas configurações desta sessão.</p>`;
 
     return `
       <div id="${detailsId}" class="result-review-card__details result-discursive-details">
-        <section class="result-detail-column">
-          ${renderizarBlocoDetalheResultado({
-            title: "Enunciado",
-            modifier: "result-detail-block--statement",
-            content: `<p>${escapeHtml(item.statement)}</p>`
-          })}
-          <div class="result-time-block">
-            <span>Tempo utilizado</span>
-            <strong>${formatarTempo(item.timeMs)}</strong>
-          </div>
-        </section>
+        ${renderizarBlocoDetalheResultado({
+          title: "Enunciado",
+          modifier: "result-detail-block--statement result-discursive-detail--statement",
+          content: `<p>${escapeHtml(item.statement)}</p>`
+        })}
 
-        <section class="result-detail-column">
-          ${renderizarBlocoDetalheResultado({
-            title: "Sua resposta",
-            modifier: "result-detail-block--answer",
-            content: `<p>${escapeHtml(item.answer || "Não respondida.")}</p>`
-          })}
-          ${expectedAnswer}
-        </section>
+        <div class="result-time-block result-discursive-detail--time">
+          <span>Tempo utilizado</span>
+          <strong>${formatarTempo(item.timeMs)}</strong>
+        </div>
 
-        <section class="result-detail-column">
-          ${criteria}
-          ${renderizarBlocoDetalheResultado({
-            title: "Anotações",
-            modifier: "result-detail-block--note",
-            content: `<p>${escapeHtml(item.note || "Nenhuma anotação registrada.")}</p>`
-          })}
-        </section>
+        ${renderizarBlocoDetalheResultado({
+          title: "Sua resposta",
+          modifier: "result-detail-block--answer result-discursive-detail--answer",
+          content: `<p>${escapeHtml(item.answer || "Não respondida.")}</p>`
+        })}
+
+        ${expectedAnswer}
+        ${criteria}
+
+        ${renderizarBlocoDetalheResultado({
+          title: "Anotações",
+          modifier: "result-detail-block--note result-discursive-detail--note",
+          content: `<p>${escapeHtml(item.note || "Nenhuma anotação registrada.")}</p>`
+        })}
       </div>
     `;
   }

@@ -174,3 +174,29 @@
 - [ ] Conferir Resultado Final em 1140 × 612.
 - [ ] Repetir o fluxo com zoom de 125% e 150%.
 - [ ] Confirmar que mobile mantém os painéis empilhados e sem rolagem horizontal.
+
+
+## Resultado Final — validação adicional
+
+- [ ] Em telas até 720px, `Ações da sessão` inicia recolhido.
+- [ ] O toggle abre e fecha as três exportações sem deslocamentos bruscos.
+- [ ] `Voltar ao início` permanece sempre acessível.
+- [ ] No desktop, as exportações continuam abertas.
+- [ ] O card discursivo segue a organização visual aprovada.
+- [ ] Em telas pequenas, os seis blocos discursivos são empilhados na ordem correta.
+
+## Resultado Final — controles compactos e alinhamento
+
+- [ ] Confirmar que `Tempo utilizado` começa no topo do bloco discursivo.
+- [ ] Em largura superior a 720px, confirmar que `Ações da sessão` não aparece.
+- [ ] Em largura de até 720px, abrir e fechar o toggle de exportações.
+- [ ] Em largura de até 900px, abrir o toggle de filtros e selecionar cada opção.
+- [ ] Confirmar que o toggle informa o filtro atual e se recolhe após a seleção.
+- [ ] Testar Tab com filtros e exportações recolhidos.
+
+## Tela de Desempenho — encaixe na viewport
+
+- [ ] Conferir a tela em zoom de 100%, 125% e 150%.
+- [ ] Conferir alturas de 900px, 720px, 640px e 600px.
+- [ ] Confirmar que o botão principal permanece integralmente visível.
+- [ ] Confirmar que o Fade In, Fade Out e a aura continuam funcionando.

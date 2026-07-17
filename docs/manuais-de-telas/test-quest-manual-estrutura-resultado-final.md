@@ -1611,3 +1611,34 @@ Após este manual:
 7. substituir Resultado Final;
 8. testar o fluxo completo;
 9. planejar e implementar os modais.
+
+---
+
+# Adendo — controles compactos responsivos
+
+## Toggle de filtros
+
+Em telas de até `900px`, os filtros podem ser recolhidos dentro de um controle compacto.
+
+Regras:
+
+- o botão informa o filtro ativo;
+- o painel começa recolhido;
+- selecionar um filtro recolhe novamente o painel;
+- enquanto recolhidos, os botões recebem `inert` e `aria-hidden`;
+- acima de `900px`, o toggle é ocultado e os filtros permanecem visíveis.
+
+## Toggle de ações
+
+O controle `Ações da sessão` pertence exclusivamente a telas de até `720px`.
+
+Regras:
+
+- acima de `720px`, o toggle não participa do layout;
+- as exportações permanecem visíveis diretamente;
+- até `720px`, o toggle controla apenas as exportações;
+- `Voltar ao início` permanece sempre visível.
+
+## Alinhamento do card discursivo
+
+O bloco `Tempo utilizado` deve usar alinhamento superior, acompanhando o início do bloco `Enunciado`.
