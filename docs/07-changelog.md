@@ -185,3 +185,12 @@ Todas as mudanças importantes do Test Quest serão registradas neste arquivo.
 - marcação para revisão;
 - exportação TXT e JSON;
 - desempenho por assunto.
+
+### Alterado — App Shell global amplo
+
+- a largura máxima global passou a `1880px`;
+- todas as telas agora aproveitam quase toda a largura da viewport em monitores comuns;
+- margens laterais passaram a usar espaçamento fluido compartilhado;
+- Home, Importação, Resolução e Resultado Final receberam proporções internas específicas em telas largas;
+- limites máximos continuam protegendo a leitura em monitores ultrawide;
+- os breakpoints mobile existentes foram preservados.

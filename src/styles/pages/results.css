@@ -94,7 +94,7 @@ body[data-screen="resultado"] .legacy-topbar {
   min-height: 0;
   overflow: hidden;
   display: grid;
-  grid-template-columns: clamp(270px, 27vw, 390px) minmax(0, 1fr);
+  grid-template-columns: clamp(310px, 28vw, 480px) minmax(0, 1fr);
   grid-template-rows: minmax(0, 1fr) auto;
   grid-template-areas:
     "sidebar review"

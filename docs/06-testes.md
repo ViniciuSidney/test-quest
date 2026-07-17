@@ -266,3 +266,14 @@ A versão não pode ser enviada à `main` como estável enquanto houver:
 | T79 | Fonte digital monoespaçada | Percentual e `%` usam a pilha monoespaçada sem oscilar de largura durante a contagem | Pendente |
 | T80 | Base do cálculo | A tela informa corretamente acertos e total de questões objetivas | Pendente |
 | T81 | Singular e plural | `1 acerto em 1 questão objetiva` e demais variações são exibidas corretamente | Pendente |
+
+# App Shell global
+
+| Código | Teste | Resultado esperado | Status |
+|---|---|---|---|
+| T79 | Viewport 1920 × 1080 | A aplicação utiliza quase toda a largura, com margens controladas | Pendente |
+| T80 | Viewport 1600 × 900 | Painéis permanecem proporcionais e legíveis | Pendente |
+| T81 | Viewport 1366 × 768 | Nenhum painel é comprimido ou sobreposto | Pendente |
+| T82 | Zoom 125% e 150% | Os breakpoints continuam estáveis | Pendente |
+| T83 | Monitor ultrawide | A largura para em 1880px e não espalha excessivamente o conteúdo | Pendente |
+| T84 | Mobile 360–390px | O empilhamento existente é preservado | Pendente |

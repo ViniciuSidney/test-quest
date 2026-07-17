@@ -88,7 +88,7 @@ body[data-screen="resolucao"] .legacy-topbar {
   min-height: 0;
   overflow: hidden;
   display: grid;
-  grid-template-columns: clamp(290px, 28vw, 410px) minmax(0, 1fr);
+  grid-template-columns: clamp(300px, 28vw, 500px) minmax(0, 1fr);
   gap: clamp(0.75rem, 1.2vw, 1rem);
 }
 

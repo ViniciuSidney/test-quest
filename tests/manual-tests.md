@@ -165,3 +165,12 @@
 - [ ] Observar se a contagem de 0 até o resultado não desloca o conjunto horizontalmente.
 - [ ] Confirmar a linha de contexto: `X acerto(s) em Y questão(ões) objetiva(s)`.
 - [ ] Conferir singular e plural com sessões de 1 e 2 questões objetivas.
+
+## App Shell amplo
+
+- [ ] Conferir Home em 1920 × 1080 e zoom de 100%.
+- [ ] Conferir Importação em 1600 × 900.
+- [ ] Conferir Resolução em 1366 × 768.
+- [ ] Conferir Resultado Final em 1140 × 612.
+- [ ] Repetir o fluxo com zoom de 125% e 150%.
+- [ ] Confirmar que mobile mantém os painéis empilhados e sem rolagem horizontal.
