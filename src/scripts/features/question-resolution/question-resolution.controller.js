@@ -29,24 +29,24 @@ import {
 
 export function initQuestionResolution() {
   const exemploQuestoes = `@questao
-  assunto: Fluxo de dados: percepção → transporte → decisão → execução
+  assunto: Gramática: uso de mas e mais
   tipo: objetiva
-  enunciado: Um sensor de fumaça detecta sinal de incêndio, envia os dados para a central, o sistema interpreta risco e aciona uma sirene. Qual alternativa classifica corretamente as etapas desse processo?
-  a: Sensor detecta fumaça: execução; envio à central: decisão; interpretação do risco: percepção; sirene: transporte.
-  b: Sensor detecta fumaça: percepção; envio à central: transporte; interpretação do risco: decisão; sirene: execução.
-  c: Sensor detecta fumaça: transporte; envio à central: percepção; interpretação do risco: execução; sirene: decisão.
-  d: Sensor detecta fumaça: decisão; envio à central: execução; interpretação do risco: transporte; sirene: percepção.
-  e: Sensor detecta fumaça: aplicação; envio à central: atuador; interpretação do risco: sensor; sirene: rede.
+  enunciado: Em qual alternativa o uso de "mas" e "mais" está correto?
+  a: Estudei mais não consegui terminar o exercício.
+  b: Quero mais atenção na leitura, mas ainda preciso treinar interpretação.
+  c: Ela falou mas alto para ser ouvida.
+  d: O professor explicou o conteúdo, mais ninguém anotou.
+  e: Preciso de mas exemplos para entender a regra.
   correta: B
-  explicacao: [Pilar: aplicação prática com sensor e atuador]; A alternativa B está correta porque o sensor percebe, a rede transporta, o sistema decide e o atuador executa a ação. A, C e D trocam as funções das etapas; E mistura termos de camadas e componentes sem respeitar o fluxo percepção-transporte-decisão-execução.
+  explicacao: A alternativa B está correta porque "mais" indica intensidade ou quantidade, enquanto "mas" expressa oposição. Nas demais alternativas, as duas palavras foram trocadas de forma inadequada.
   +++
 
   @discursiva
-  assunto: Fluxo de dados: percepção → transporte → decisão → execução
+  assunto: Gramática: uso de mas e mais
   tipo: discursiva curta
-  enunciado: Explique, em 4 a 8 linhas, o fluxo percepção → transporte → decisão → execução usando um exemplo com sensor e atuador em uma casa inteligente.
-  resposta_esperada: Em uma casa inteligente, a percepção ocorre quando um sensor coleta uma informação, como um sensor de presença detectando movimento. O transporte acontece quando esse dado é enviado pela rede para uma central ou aplicativo. A decisão ocorre quando o sistema interpreta a informação e verifica uma regra, como “se houver presença e estiver escuro, ligar a luz”. A execução acontece quando o atuador realiza a ação, nesse caso, acendendo a lâmpada.
-  criterios_de_correcao: Explicar percepção como coleta por sensor; explicar transporte como envio dos dados; explicar decisão como interpretação ou regra; explicar execução como ação por atuador; apresentar exemplo coerente de casa inteligente.
+  enunciado: Explique a diferença entre "mas" e "mais" e escreva um exemplo com cada uma das palavras.
+  resposta_esperada: "Mas" é uma conjunção adversativa e indica oposição, como em "Estudei, mas fiquei com dúvida". "Mais" indica quantidade, intensidade ou comparação, como em "Preciso de mais exercícios para treinar". Portanto, embora tenham som parecido, as duas palavras exercem funções diferentes na frase.
+  criterios_de_correcao: Explicar que "mas" indica oposição; explicar que "mais" indica quantidade, intensidade ou comparação; apresentar um exemplo adequado com "mas"; apresentar um exemplo adequado com "mais".
   +++`;
 
   const $ = (seletor) => document.querySelector(seletor);
@@ -111,7 +111,7 @@ export function initQuestionResolution() {
 
     $("#btnExemplo").addEventListener("click", () => {
       entradaQuestoes.value = exemploQuestoes;
-      nomeLista.value = "Lista exemplo - Smart Home e IoT";
+      nomeLista.value = "Lista exemplo - Gramática";
       atualizarNomeArquivo("Exemplo interno");
       invalidarValidacaoImportacao("Exemplo carregado. Valide o conteúdo antes de começar.");
     });
@@ -1532,6 +1532,17 @@ export function initQuestionResolution() {
     return renderizarDetalhesDiscursivaResultado(item, detailsId);
   }
 
+  function renderizarBlocoDetalheResultado({ title, content, modifier = "" }) {
+    return `
+      <div class="result-detail-block${modifier ? ` ${modifier}` : ""}">
+        <h3>${title}</h3>
+        <div class="result-detail-block__content">
+          ${content}
+        </div>
+      </div>
+    `;
+  }
+
   function renderizarDetalhesObjetivaResultado(item, detailsId) {
     const respondeu = Boolean(item.answer);
     const acertou = item.status === "correct";
@@ -1545,20 +1556,22 @@ export function initQuestionResolution() {
       : "";
     const explanation = item.answerKeyVisible
       ? `
-        <div class="result-detail-block">
-          <h3>Explicação</h3>
-          <p>${escapeHtml(item.explanation || "Nenhuma explicação informada.")}</p>
-        </div>
+        ${renderizarBlocoDetalheResultado({
+          title: "Explicação",
+          modifier: "result-detail-block--explanation",
+          content: `<p>${escapeHtml(item.explanation || "Nenhuma explicação informada.")}</p>`
+        })}
       `
       : `<p class="result-answer-key-hidden">O gabarito e a explicação foram ocultados pelas configurações desta sessão.</p>`;
 
     return `
       <div id="${detailsId}" class="result-review-card__details result-objective-details">
         <section class="result-detail-column">
-          <div class="result-detail-block">
-            <h3>Enunciado</h3>
-            <p>${escapeHtml(item.statement)}</p>
-          </div>
+          ${renderizarBlocoDetalheResultado({
+            title: "Enunciado",
+            modifier: "result-detail-block--statement",
+            content: `<p>${escapeHtml(item.statement)}</p>`
+          })}
 
           <div class="result-answer-comparison ${item.answerKeyVisible ? "" : "is-key-hidden"}">
             <div class="result-answer-stat result-answer-stat--user" data-correct="${acertou}">
@@ -1575,10 +1588,11 @@ export function initQuestionResolution() {
 
         <section class="result-detail-column">
           ${explanation}
-          <div class="result-detail-block">
-            <h3>Anotação</h3>
-            <p>${escapeHtml(item.note || "Nenhuma anotação registrada.")}</p>
-          </div>
+          ${renderizarBlocoDetalheResultado({
+            title: "Anotação",
+            modifier: "result-detail-block--note",
+            content: `<p>${escapeHtml(item.note || "Nenhuma anotação registrada.")}</p>`
+          })}
         </section>
       </div>
     `;
@@ -1587,28 +1601,31 @@ export function initQuestionResolution() {
   function renderizarDetalhesDiscursivaResultado(item, detailsId) {
     const expectedAnswer = item.answerKeyVisible
       ? `
-        <div class="result-detail-block">
-          <h3>Resposta esperada</h3>
-          <p>${escapeHtml(item.expectedAnswer || "Não informada.")}</p>
-        </div>
+        ${renderizarBlocoDetalheResultado({
+          title: "Resposta esperada",
+          modifier: "result-detail-block--expected",
+          content: `<p>${escapeHtml(item.expectedAnswer || "Não informada.")}</p>`
+        })}
       `
       : `<p class="result-answer-key-hidden">A resposta esperada foi ocultada pelas configurações desta sessão.</p>`;
     const criteria = item.answerKeyVisible
       ? `
-        <div class="result-detail-block">
-          <h3>Critérios de correção</h3>
-          <p>${escapeHtml(item.criteria || "Não informados.")}</p>
-        </div>
+        ${renderizarBlocoDetalheResultado({
+          title: "Critérios de correção",
+          modifier: "result-detail-block--criteria",
+          content: `<p>${escapeHtml(item.criteria || "Não informados.")}</p>`
+        })}
       `
       : `<p class="result-answer-key-hidden">Os critérios de correção foram ocultados pelas configurações desta sessão.</p>`;
 
     return `
       <div id="${detailsId}" class="result-review-card__details result-discursive-details">
         <section class="result-detail-column">
-          <div class="result-detail-block">
-            <h3>Enunciado</h3>
-            <p>${escapeHtml(item.statement)}</p>
-          </div>
+          ${renderizarBlocoDetalheResultado({
+            title: "Enunciado",
+            modifier: "result-detail-block--statement",
+            content: `<p>${escapeHtml(item.statement)}</p>`
+          })}
           <div class="result-time-block">
             <span>Tempo utilizado</span>
             <strong>${formatarTempo(item.timeMs)}</strong>
@@ -1616,19 +1633,21 @@ export function initQuestionResolution() {
         </section>
 
         <section class="result-detail-column">
-          <div class="result-detail-block">
-            <h3>Sua resposta</h3>
-            <p>${escapeHtml(item.answer || "Não respondida.")}</p>
-          </div>
+          ${renderizarBlocoDetalheResultado({
+            title: "Sua resposta",
+            modifier: "result-detail-block--answer",
+            content: `<p>${escapeHtml(item.answer || "Não respondida.")}</p>`
+          })}
           ${expectedAnswer}
         </section>
 
         <section class="result-detail-column">
           ${criteria}
-          <div class="result-detail-block">
-            <h3>Anotações</h3>
-            <p>${escapeHtml(item.note || "Nenhuma anotação registrada.")}</p>
-          </div>
+          ${renderizarBlocoDetalheResultado({
+            title: "Anotações",
+            modifier: "result-detail-block--note",
+            content: `<p>${escapeHtml(item.note || "Nenhuma anotação registrada.")}</p>`
+          })}
         </section>
       </div>
     `;

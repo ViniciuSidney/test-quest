@@ -277,3 +277,13 @@ A versão não pode ser enviada à `main` como estável enquanto houver:
 | T82 | Zoom 125% e 150% | Os breakpoints continuam estáveis | Pendente |
 | T83 | Monitor ultrawide | A largura para em 1880px e não espalha excessivamente o conteúdo | Pendente |
 | T84 | Mobile 360–390px | O empilhamento existente é preservado | Pendente |
+
+# Ajustes dos cards do Resultado Final
+
+| Código | Teste | Resultado esperado | Status |
+|---|---|---|---|
+| T85 | Exemplo interno | O botão `Carregar exemplo` insere a lista de Gramática em Português | Pendente |
+| T86 | Arquivo de exemplo público | `public/examples/exemplo-questoes.txt` usa a mesma lista de Gramática | Pendente |
+| T87 | Resultado Geral | O bloco usa 3 cards por linha em desktop largo, reduzindo para 2 quando necessário | Pendente |
+| T88 | Card objetivo expandido | Enunciado, explicação e anotação mantêm altura visual estável com rolagem interna quando o texto excede o espaço | Pendente |
+| T89 | Card discursivo expandido | Enunciado, resposta, resposta esperada, critérios e anotações mantêm altura visual estável com rolagem interna quando necessário | Pendente |

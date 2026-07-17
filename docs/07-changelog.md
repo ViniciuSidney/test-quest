@@ -194,3 +194,17 @@ Todas as mudanças importantes do Test Quest serão registradas neste arquivo.
 - Home, Importação, Resolução e Resultado Final receberam proporções internas específicas em telas largas;
 - limites máximos continuam protegendo a leitura em monitores ultrawide;
 - os breakpoints mobile existentes foram preservados.
+
+## [v0.3-dev] — ajustes de exemplo e refinamento dos cards de resultado
+
+### Alterado
+
+- o exemplo interno e o arquivo de exemplo passaram a usar uma lista simples de Gramática em Português;
+- o nome automático do exemplo agora é `Lista exemplo - Gramática`.
+
+### Melhorado
+
+- o bloco `Resultado Geral` passou a priorizar 3 cards por linha em telas largas e 2 por linha em larguras menores;
+- os cards expandidos da revisão receberam blocos internos com alturas mais padronizadas;
+- blocos textuais longos agora usam rolagem interna individual para preservar a altura visual dos cards;
+- a leitura dos detalhes de questões objetivas e discursivas ficou mais consistente entre diferentes tamanhos de conteúdo.
