@@ -1,3 +1,4 @@
+import { getAlternativePresentation } from "../src/scripts/core/objective-question.js";
 import assert from "node:assert/strict";
 import { parseQuestions, QuestionImportError, summarizeQuestions } from "../src/scripts/features/question-import/question-import.parser.js";
 
@@ -26,6 +27,13 @@ const questions = parseQuestions(validText);
 assert.equal(questions.length, 2);
 assert.equal(questions[0].categoria, "objetiva");
 assert.equal(questions[0].correta, "B");
+assert.equal(Array.isArray(questions[0].alternativas), true);
+assert.equal(questions[0].alternativas.length, 5);
+assert.ok(questions[0].alternativas.every((alternative) => alternative.id));
+assert.equal(
+  getAlternativePresentation(questions[0], questions[0].respostaCorretaId)?.displayLetter,
+  "B"
+);
 assert.equal(questions[1].categoria, "discursiva");
 assert.deepEqual(summarizeQuestions(questions), {
   total: 2,

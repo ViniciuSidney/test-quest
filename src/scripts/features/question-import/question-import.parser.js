@@ -1,3 +1,5 @@
+import { getCorrectAlternativeId, getAlternativePresentation, normalizeObjectiveAlternatives } from "../../core/objective-question.js";
+
 export class QuestionImportError extends Error {
   constructor(message, issues = []) {
     super(message);
@@ -74,17 +76,46 @@ function parseBlock(block, index) {
   if (category === "objetiva") validateObjective(data, index);
   if (category === "discursiva") validateDiscursive(data, index);
 
+  const id = createQuestionId(index);
+
+  if (category === "objetiva") {
+    const alternativas = normalizeObjectiveAlternatives(
+      { A: data.a, B: data.b, C: data.c, D: data.d, E: data.e },
+      id
+    );
+    const question = {
+      id,
+      categoria: category,
+      assunto: data.assunto || "Sem assunto",
+      tipo: data.tipo || category,
+      enunciado: data.enunciado || "",
+      alternativas,
+      respostaCorretaId: "",
+      correta: data.correta.toUpperCase().trim(),
+      explicacao: data.explicacao || "",
+      respostaEsperada: "",
+      criterios: ""
+    };
+    const respostaCorretaId = getCorrectAlternativeId(question);
+    const correta = getAlternativePresentation(question, respostaCorretaId)?.originalKey || question.correta;
+
+    return {
+      ...question,
+      respostaCorretaId,
+      correta
+    };
+  }
+
   return {
-    id: createQuestionId(index),
+    id,
     categoria: category,
     assunto: data.assunto || "Sem assunto",
     tipo: data.tipo || category,
     enunciado: data.enunciado || "",
-    alternativas: category === "objetiva"
-      ? { A: data.a, B: data.b, C: data.c, D: data.d, E: data.e }
-      : null,
-    correta: category === "objetiva" ? data.correta.toUpperCase().trim() : null,
-    explicacao: data.explicacao || "",
+    alternativas: null,
+    respostaCorretaId: null,
+    correta: null,
+    explicacao: "",
     respostaEsperada: data.resposta_esperada || "",
     criterios: data.criterios_de_correcao || ""
   };

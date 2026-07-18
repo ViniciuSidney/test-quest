@@ -270,3 +270,33 @@
 - Navegador e dimensões: não registrados no documento enviado
 - Bugs bloqueadores informados: nenhum
 - Observação: a aprovação para avançar ao fechamento foi considerada como confirmação da regressão manual final.
+
+## v0.5 — Fundação de alternativas e respostas
+
+### Migração real da v0.4
+
+1. Na v0.4.0, inicie uma sessão com ao menos uma questão objetiva.
+2. Selecione uma resposta, marque outra alternativa como `em análise` e escreva uma anotação.
+3. Feche a página sem finalizar a sessão.
+4. Atualize os arquivos para a v0.5-dev e abra novamente pelo Live Server.
+5. Continue a sessão pela Home.
+
+Confirmar:
+
+- [ ] a questão atual foi preservada;
+- [ ] a resposta oficial continua selecionada;
+- [ ] a marcação auxiliar continua na alternativa correta;
+- [ ] anotações e tempos permanecem;
+- [ ] o resultado final calcula acertos corretamente;
+- [ ] o TXT mostra letras, não IDs internos;
+- [ ] o JSON usa `schemaVersion: 4`;
+- [ ] `respostas` e `marcacoesAlternativas` usam IDs de alternativas.
+
+### Regressão visual
+
+- [ ] a Tela de Importação permanece igual;
+- [ ] as alternativas continuam exibindo A–E;
+- [ ] seleção e marcadores mantêm os mesmos estilos;
+- [ ] mapa, temporizador e anotações continuam funcionando;
+- [ ] Resultado Final continua mostrando resposta e gabarito por letras;
+- [ ] temas claro e escuro não apresentam regressões.

@@ -1,3 +1,7 @@
+import {
+  getCorrectAlternativeId,
+  normalizeObjectiveAlternatives
+} from "../src/scripts/core/objective-question.js";
 import assert from "node:assert/strict";
 import {
   RESULT_FILTERS,
@@ -11,23 +15,31 @@ import {
   normalizeResultFilter
 } from "../src/scripts/features/results/results.service.js";
 
+function createObjective({ id, subject, statement, correct }) {
+  const alternativas = normalizeObjectiveAlternatives(
+    { A: "A", B: "B", C: "C", D: "D", E: "E" },
+    id
+  );
+  const question = {
+    id,
+    categoria: "objetiva",
+    assunto: subject,
+    enunciado: statement,
+    alternativas,
+    correta: correct,
+    respostaCorretaId: "",
+    explicacao: "Explicação"
+  };
+
+  return {
+    ...question,
+    respostaCorretaId: getCorrectAlternativeId(question)
+  };
+}
+
 const questions = [
-  {
-    id: "q1",
-    categoria: "objetiva",
-    assunto: "Eventos",
-    enunciado: "Questão correta",
-    correta: "B",
-    explicacao: "Explicação"
-  },
-  {
-    id: "q2",
-    categoria: "objetiva",
-    assunto: "Eventos",
-    enunciado: "Questão incorreta",
-    correta: "A",
-    explicacao: "Explicação"
-  },
+  createObjective({ id: "q1", subject: "Eventos", statement: "Questão correta", correct: "B" }),
+  createObjective({ id: "q2", subject: "Eventos", statement: "Questão incorreta", correct: "A" }),
   {
     id: "q3",
     categoria: "discursiva",
@@ -36,17 +48,14 @@ const questions = [
     respostaEsperada: "Modelo",
     criterios: "Critérios"
   },
-  {
-    id: "q4",
-    categoria: "objetiva",
-    assunto: "Média",
-    enunciado: "Questão pendente",
-    correta: "C",
-    explicacao: "Explicação"
-  }
+  createObjective({ id: "q4", subject: "Média", statement: "Questão pendente", correct: "C" })
 ];
 
-const answers = { q1: "b", q2: "D", q3: "Minha resposta" };
+const answers = {
+  q1: questions[0].respostaCorretaId,
+  q2: questions[1].alternativas[3].id,
+  q3: "Minha resposta"
+};
 const notes = { q2: "Rever este assunto" };
 const timesMs = { q1: 62000, q2: 125000, q3: 185000, q4: 10000, orphan: 999999 };
 const review = { q2: true, q3: true };

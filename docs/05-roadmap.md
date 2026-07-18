@@ -3,8 +3,8 @@
 ## Estado geral
 
 **Versão estável:** `v0.4.0`  
-**Próxima versão planejada:** `v0.5-dev`  
-**Estado:** `v0.4.0 concluída e pronta para publicação`
+**Versão em desenvolvimento:** `v0.5-dev`  
+**Estado:** `Etapa 1 — fundação de alternativas e respostas concluída`
 
 Concluído:
 
@@ -168,20 +168,42 @@ Reduzir a concentração de responsabilidades, proteger os dados locais e prepar
 
 # Marco 4 — Modos de resolução e revisão
 
-## v0.5-dev — Flexibilidade de estudo
+## v0.5-dev — Flexibilidade de resolução e estudo ativo
+
+**Status:** Em desenvolvimento — Etapa 1 concluída
 
 ### Objetivo
 
-Ampliar as formas de responder, corrigir e refazer questões.
+Ampliar as formas de responder, corrigir e revisar questões sem perder compatibilidade com as sessões existentes.
 
-### Planejado
+### Etapa 1 — Fundação de alternativas e respostas — concluída
 
-- gabarito após cada questão;
-- embaralhamento de alternativas com IDs estáveis;
-- questões de verdadeiro ou falso;
-- opção manual para reduzir efeitos visuais;
-- criar nova sessão somente com questões erradas;
-- integração dos novos modos com histórico, exportações e Resultado Final.
+- `APP_VERSION` atualizada para `0.5-dev`;
+- esquema de sessão atualizado para `schemaVersion: 4`;
+- alternativas objetivas convertidas de um mapa por letras para uma lista de objetos;
+- cada alternativa recebe `id`, `chaveOriginal`, `texto` e `ordemOriginal`;
+- gabarito objetivo passa a usar `respostaCorretaId` como referência canônica;
+- respostas e marcações auxiliares passam a usar o ID estável da alternativa;
+- sessões da v0.4 são migradas automaticamente;
+- letras continuam sendo exibidas e exportadas para preservar a experiência atual;
+- correção permanece válida mesmo quando a ordem das alternativas muda;
+- testes automatizados ampliados para 26 arquivos.
+
+### Etapa 2 — Embaralhamento de alternativas — próxima
+
+- adicionar configuração de sessão;
+- reordenar apenas a apresentação das alternativas;
+- preservar a ordem após recarregar;
+- garantir gabarito, marcadores, resultados e exportações corretos;
+- gerar nova ordem apenas em uma nova sessão.
+
+### Etapas seguintes
+
+3. questões de verdadeiro ou falso;
+4. gabarito imediato por questão;
+5. refazer questões erradas;
+6. controle manual dos efeitos visuais;
+7. integração, regressão e fechamento da v0.5.0.
 
 ---
 

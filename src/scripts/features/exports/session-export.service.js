@@ -1,3 +1,8 @@
+import {
+  getAlternativePresentation,
+  getCorrectAlternativePresentation,
+  isObjectiveAnswerCorrect
+} from "../../core/objective-question.js";
 import { calculateSessionResult } from "../results/results.service.js";
 import { formatDateTime, formatDuration, slugify } from "../../shared/formatters.js";
 
@@ -68,14 +73,16 @@ export function buildAnswersReport(state, { now = new Date() } = {}) {
     lines.push(`Enunciado: ${question.enunciado}`);
 
     if (question.categoria === "objetiva") {
+      const answerPresentation = getAlternativePresentation(question, answer);
+      const correctPresentation = getCorrectAlternativePresentation(question);
       const status = !answer
         ? "Não respondida"
-        : answer.toUpperCase() === question.correta
+        : isObjectiveAnswerCorrect(question, answer)
           ? "Correta"
           : "Incorreta";
 
-      lines.push(`Sua resposta: ${answer || "—"}`);
-      lines.push(`Resposta correta: ${question.correta}`);
+      lines.push(`Sua resposta: ${answerPresentation?.displayLetter || "—"}`);
+      lines.push(`Resposta correta: ${correctPresentation?.displayLetter || "—"}`);
       lines.push(`Status: ${status}`);
       lines.push(`Explicação: ${question.explicacao}`);
       return;

@@ -201,7 +201,7 @@ resolvedorQuestoesV2.estado
 resolvedorQuestoesV2.config
 ```
 
-### Namespace atual da v0.4
+### Namespace atual da aplicação
 
 ```text
 testQuest.state
@@ -219,7 +219,7 @@ Ao iniciar:
 2. validar e normalizar a sessão atual;
 3. se ausente, procurar `resolvedorQuestoesV2.estado`;
 4. salvar o conteúdo legado no backup de migração;
-5. transformar para `schemaVersion: 3`;
+5. transformar para o esquema vigente;
 6. salvar na chave atual;
 7. remover a chave legada somente após a nova gravação;
 8. isolar cargas incompatíveis em um backup separado.
@@ -245,6 +245,7 @@ src/scripts
 ├── core
 │   ├── config.js
 │   ├── constants.js
+│   ├── objective-question.js
 │   ├── screens.js
 │   ├── session-schema.js
 │   └── state.js
@@ -423,3 +424,65 @@ erro desconhecido
 Quando a escrita falha, o estado em memória permanece ativo na aba atual. O controlador exibe um aviso recuperável e protege o fechamento quando existe uma sessão que ainda não pôde ser persistida.
 
 A migração só remove a chave legada depois que a nova chave é gravada com sucesso.
+
+
+## Fundação de dados da v0.5
+
+### Esquema de sessão
+
+A sessão passa a usar:
+
+```js
+{
+  schemaVersion: 4,
+  respostas: {
+    "questao-id": "alternativa-id"
+  },
+  marcacoesAlternativas: {
+    "questao-id": {
+      "alternativa-id": "analise"
+    }
+  }
+}
+```
+
+### Questão objetiva
+
+```js
+{
+  id: "questao-id",
+  categoria: "objetiva",
+  alternativas: [
+    {
+      id: "alt-id-estavel",
+      chaveOriginal: "A",
+      texto: "Texto da alternativa",
+      ordemOriginal: 0
+    }
+  ],
+  respostaCorretaId: "alt-id-estavel",
+  correta: "A"
+}
+```
+
+`respostaCorretaId` é a referência canônica. O campo `correta` permanece temporariamente como projeção legível e compatível com dados anteriores.
+
+A letra exibida é calculada pela posição atual da alternativa. Assim, uma alternativa pode mudar de `B` para `A` quando for embaralhada, mas seu ID, sua resposta e o gabarito permanecem os mesmos.
+
+### Migração da v0.4
+
+Ao carregar uma sessão com `schemaVersion: 3`:
+
+1. converter o mapa `{ A, B, C, D, E }` em uma lista de alternativas;
+2. gerar IDs determinísticos a partir da questão e da chave original;
+3. converter `correta` para `respostaCorretaId`;
+4. converter respostas antigas em letras para IDs;
+5. converter marcações auxiliares por letra para IDs;
+6. salvar a sessão como `schemaVersion: 4` mantendo o backup de migração.
+
+### Fronteira de compatibilidade
+
+- a interface trabalha com IDs internamente;
+- resultados e exportações transformam IDs em letras visíveis;
+- serviços aceitam temporariamente letras antigas para facilitar migrações e testes;
+- o modelo já permite reordenar o array de alternativas sem invalidar a resposta.

@@ -24,10 +24,10 @@ A proposta não é apenas registrar acertos, mas ajudar o usuário a:
 ## Estado atual
 
 **Versão estável:** `v0.4.0`  
-**Próximo ciclo planejado:** `v0.5-dev`  
-**Estado:** `versão concluída e pronta para publicação`
+**Versão em desenvolvimento:** `v0.5-dev`  
+**Estado:** `fundação de dados implementada e em validação`
 
-**Fase atual:** fechamento e publicação da v0.4.0, com arquitetura, persistência e confiabilidade consolidadas.
+**Fase atual:** preparação dos novos modos de resolução e revisão, começando pelo modelo estável de alternativas e respostas.
 
 ### Concluído
 
@@ -125,13 +125,26 @@ A v0.4.0 conclui o ciclo de consolidação técnica. A suíte automatizada foi a
 - testes automatizados de fluxo, persistência e regressão;
 - documentação e pacote preparados para publicação.
 
-### v0.5
+### v0.5 — em desenvolvimento
 
-- gabarito após cada questão;
+**Fundação concluída nesta etapa:**
+
+- alternativas objetivas representadas por objetos com IDs estáveis;
+- respostas objetivas salvas pelo ID da alternativa, não pela letra visual;
+- `schemaVersion: 4` com migração automática das sessões da v0.4;
+- marcações auxiliares vinculadas às alternativas estáveis;
+- gabarito objetivo vinculado por `respostaCorretaId`;
+- resultados e exportações convertendo os IDs para letras legíveis;
+- estrutura preparada para reordenar alternativas sem perder resposta ou gabarito;
+- suíte automatizada ampliada para 26 arquivos de teste.
+
+**Próximas entregas planejadas:**
+
 - embaralhamento de alternativas;
 - questões de verdadeiro ou falso;
-- controle manual dos efeitos visuais;
-- opção de refazer questões erradas.
+- gabarito após cada questão;
+- opção de refazer questões erradas;
+- controle manual dos efeitos visuais.
 
 ## Fluxo oficial
 
@@ -192,7 +205,7 @@ Execute toda a suíte da aplicação com:
 node tests/run-all-tests.mjs
 ```
 
-O runner executa 23 arquivos de teste, incluindo interface estrutural, regras de resolução, desempenho, resultado, App Shell, esquema da sessão, migrações, configurações, histórico, falhas de armazenamento e fluxo integrado completo.
+O runner executa 26 arquivos de teste, incluindo interface estrutural, regras de resolução, desempenho, resultado, App Shell, esquema da sessão, migrações, configurações, histórico, falhas de armazenamento, modelo de alternativas e fluxo integrado completo.
 
 ## Estrutura principal
 

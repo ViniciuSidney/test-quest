@@ -360,3 +360,21 @@ A versão não pode ser enviada à `main` como estável enquanto houver:
 | V04-T30 | Regressão manual final | Fluxo completo funciona no navegador em desktop e mobile | OK |
 | V04-T31 | Aviso visual real | Simulação no DevTools mostra o aviso sem bloquear a interface | OK |
 | V04-T32 | Recuperação real | Após restabelecer o armazenamento, `Tentar novamente` salva e remove o aviso | OK |
+
+
+# v0.5 — Fundação de alternativas e respostas
+
+| Código | Teste | Resultado esperado | Status |
+|---|---|---|---|
+| V05-T01 | Conversão das alternativas | Questões antigas recebem cinco objetos com IDs estáveis | OK |
+| V05-T02 | Determinismo dos IDs | A mesma questão produz os mesmos IDs durante a migração | OK |
+| V05-T03 | Gabarito canônico | `respostaCorretaId` aponta para uma alternativa existente | OK |
+| V05-T04 | Migração da resposta | Respostas antigas em letras são convertidas para IDs | OK |
+| V05-T05 | Migração dos marcadores | Marcações antigas por letra passam a usar IDs | OK |
+| V05-T06 | Correção após reordenação | A resposta permanece correta mesmo quando a alternativa muda de posição visual | OK |
+| V05-T07 | Letras visíveis | Interface, resultado e TXT continuam apresentando letras legíveis | OK |
+| V05-T08 | Exportação JSON | Sessão exportada registra `schemaVersion: 4` e respostas por ID | OK |
+| V05-T09 | Fluxo completo | Importar, salvar, restaurar, finalizar e exportar mantém os dados coerentes | OK |
+| V05-T10 | Regressão automatizada | Os 26 arquivos da suíte terminam sem falhas | OK |
+| V05-T11 | Migração real no navegador | Uma sessão ativa da v0.4 reaparece com resposta e marcadores preservados | Pendente |
+| V05-T12 | Regressão visual | As cinco telas permanecem visualmente iguais à v0.4 | Pendente |

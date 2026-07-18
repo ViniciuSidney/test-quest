@@ -131,3 +131,33 @@
 - testes automatizados e manuais essenciais aprovados;
 - documentação atualizada;
 - Pull Request de `dev` para `main` revisado.
+
+## Requisitos estruturais da v0.5
+
+### RF-V05-01 — Identidade estável das alternativas
+
+Cada alternativa objetiva deve possuir um identificador interno independente da letra apresentada na tela.
+
+### RF-V05-02 — Resposta objetiva por ID
+
+A resposta oficial do usuário deve ser salva pelo ID da alternativa. Letras são apenas rótulos visuais calculados conforme a posição atual.
+
+### RF-V05-03 — Gabarito por ID
+
+A resposta correta deve ser referenciada por `respostaCorretaId`, permitindo reordenar as alternativas sem alterar a correção.
+
+### RF-V05-04 — Migração do esquema 3
+
+Sessões da v0.4 devem ser convertidas para o esquema 4 preservando resposta, marcações, anotações, tempos e revisão.
+
+### RF-V05-05 — Compatibilidade visual
+
+A primeira etapa da v0.5 não deve modificar a aparência ou o fluxo das telas. Resultados e relatórios continuam apresentando letras legíveis.
+
+### Critérios desta etapa
+
+- nenhuma resposta antiga pode ser atribuída à alternativa errada;
+- IDs devem permanecer iguais após salvar e restaurar a sessão;
+- reordenar o array de alternativas não pode alterar o gabarito;
+- exportações TXT não devem expor IDs internos;
+- o JSON deve refletir integralmente o esquema 4.

@@ -1,3 +1,8 @@
+import {
+  getAlternativePresentation,
+  getCorrectAlternativePresentation,
+  isObjectiveAnswerCorrect
+} from "../../core/objective-question.js";
 import { calculateDisplayedTotalMs } from "../question-resolution/question-resolution.helpers.js";
 
 export const RESULT_FILTERS = Object.freeze({
@@ -26,11 +31,11 @@ export function calculateSessionResult(state = {}) {
     Boolean(String(answers[question.id] || "").trim())
   ).length;
   const correct = objectives.filter((question) =>
-    String(answers[question.id] || "").toUpperCase() === question.correta
+    isObjectiveAnswerCorrect(question, answers[question.id])
   ).length;
   const incorrect = objectives.filter((question) => {
     const answer = String(answers[question.id] || "").trim();
-    return answer && answer.toUpperCase() !== question.correta;
+    return answer && !isObjectiveAnswerCorrect(question, answer);
   }).length;
   const percentage = objectives.length
     ? Math.round((correct / objectives.length) * 100)
@@ -57,10 +62,6 @@ function normalizeText(value) {
   return String(value ?? "").trim();
 }
 
-function normalizeAnswer(value) {
-  return normalizeText(value).toUpperCase();
-}
-
 function normalizeTime(value) {
   const numeric = Number(value);
   return Number.isFinite(numeric) && numeric > 0 ? numeric : 0;
@@ -79,7 +80,7 @@ export function getQuestionResultStatus(question, answer) {
   }
 
   if (category === "objetiva") {
-    return normalizeAnswer(response) === normalizeAnswer(question?.correta)
+    return isObjectiveAnswerCorrect(question, response)
       ? "correct"
       : "incorrect";
   }
@@ -96,8 +97,17 @@ export function buildQuestionReviewItems({
   showAnswerKey = true
 } = {}) {
   return questions.map((question, index) => {
-    const answer = normalizeText(answers[question.id]);
-    const status = getQuestionResultStatus(question, answer);
+    const rawAnswer = normalizeText(answers[question.id]);
+    const answerPresentation = question.categoria === "objetiva"
+      ? getAlternativePresentation(question, rawAnswer)
+      : null;
+    const correctPresentation = question.categoria === "objetiva"
+      ? getCorrectAlternativePresentation(question)
+      : null;
+    const answer = question.categoria === "objetiva"
+      ? answerPresentation?.displayLetter || ""
+      : rawAnswer;
+    const status = getQuestionResultStatus(question, rawAnswer);
     const markedForReview = Boolean(review[question.id]);
 
     return {
@@ -113,8 +123,16 @@ export function buildQuestionReviewItems({
       timeMs: normalizeTime(timesMs[question.id]),
       markedForReview,
       status,
+      answerId: answerPresentation?.id || "",
+      answerText: answerPresentation?.text || "",
       correctAnswer: showAnswerKey && question.categoria === "objetiva"
-        ? normalizeText(question.correta)
+        ? correctPresentation?.displayLetter || ""
+        : "",
+      correctAnswerId: showAnswerKey && question.categoria === "objetiva"
+        ? correctPresentation?.id || ""
+        : "",
+      correctAnswerText: showAnswerKey && question.categoria === "objetiva"
+        ? correctPresentation?.text || ""
         : "",
       explanation: showAnswerKey && question.categoria === "objetiva"
         ? normalizeText(question.explicacao)

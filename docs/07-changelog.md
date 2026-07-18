@@ -4,7 +4,31 @@ Todas as mudanças importantes do Test Quest serão registradas neste arquivo.
 
 ## [Não lançado]
 
-Ainda não há alterações registradas para o próximo ciclo.
+### v0.5-dev — Fundação de alternativas e respostas
+
+#### Adicionado
+
+- módulo `core/objective-question.js` para identidade, apresentação e correção das alternativas;
+- identificadores estáveis para cada alternativa objetiva;
+- campo canônico `respostaCorretaId`;
+- testes do modelo objetivo e da estrutura inicial da v0.5.
+
+#### Alterado
+
+- versão de desenvolvimento passa a `0.5-dev`;
+- esquema de sessão passa a `schemaVersion: 4`;
+- respostas objetivas e marcações auxiliares passam a usar IDs estáveis;
+- parser passa a produzir alternativas estruturadas;
+- controlador, resultados e exportações deixam de depender da letra original como identidade;
+- suíte automatizada passa de 23 para 26 arquivos.
+
+#### Preservado
+
+- visual e fluxo das cinco telas;
+- letras A–E apresentadas ao usuário;
+- formato textual legível dos relatórios;
+- migração automática e backups da v0.4;
+- sessões discursivas e demais funcionalidades existentes.
 
 ## [v0.4.0] — 2026-07-18
 

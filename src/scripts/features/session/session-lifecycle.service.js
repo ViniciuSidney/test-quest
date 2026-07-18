@@ -115,6 +115,10 @@ export function isActiveSession(state) {
 function cloneQuestions(questions) {
   return questions.map((question) => ({
     ...question,
-    alternativas: question?.alternativas ? { ...question.alternativas } : null
+    alternativas: Array.isArray(question?.alternativas)
+      ? question.alternativas.map((alternative) => ({ ...alternative }))
+      : question?.alternativas
+        ? { ...question.alternativas }
+        : null
   }));
 }

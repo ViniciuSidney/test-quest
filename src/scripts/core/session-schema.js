@@ -1,8 +1,13 @@
 import { SESSION_SCHEMA_VERSION } from "./constants.js";
+import {
+  getAlternativePresentation,
+  getCorrectAlternativeId,
+  normalizeObjectiveAlternatives,
+  resolveObjectiveAnswerId
+} from "./objective-question.js";
 import { createInitialState, SESSION_STATUS } from "./state.js";
 
 const VALID_CATEGORIES = new Set(["objetiva", "discursiva"]);
-const VALID_OBJECTIVE_ANSWERS = new Set(["A", "B", "C", "D", "E"]);
 const VALID_MARKER_STATES = new Set(["neutro", "analise", "eliminada"]);
 
 export class SessionValidationError extends Error {
@@ -127,19 +132,48 @@ function normalizeQuestion(rawQuestion, index, usedIds, issues) {
   }
 
   if (category === "objetiva") {
-    const alternativas = normalizeAlternatives(rawQuestion.alternativas);
-    const correct = normalizeText(rawQuestion.correta).toUpperCase();
+    const wasLegacyAlternativeRecord = !Array.isArray(rawQuestion.alternativas);
+    const alternatives = normalizeObjectiveAlternatives(rawQuestion.alternativas, id, {
+      issues,
+      questionNumber: index + 1
+    });
 
-    if (!alternativas || !VALID_OBJECTIVE_ANSWERS.has(correct)) {
+    if (!alternatives) {
       throw new SessionValidationError(
-        `A questão objetiva ${index + 1} possui alternativas ou gabarito inválidos.`
+        `A questão objetiva ${index + 1} possui alternativas inválidas.`
+      );
+    }
+
+    const temporaryQuestion = {
+      ...common,
+      alternativas: alternatives,
+      respostaCorretaId: normalizeText(rawQuestion.respostaCorretaId),
+      correta: normalizeText(rawQuestion.correta).toUpperCase()
+    };
+    const correctAlternativeId = getCorrectAlternativeId(temporaryQuestion);
+    const correctPresentation = getAlternativePresentation(
+      temporaryQuestion,
+      correctAlternativeId
+    );
+
+    if (!correctAlternativeId || !correctPresentation) {
+      throw new SessionValidationError(
+        `A questão objetiva ${index + 1} possui um gabarito inválido.`
+      );
+    }
+
+    if (wasLegacyAlternativeRecord) {
+      issues.push(
+        `As alternativas da questão ${index + 1} foram migradas para o modelo com identificadores estáveis.`
       );
     }
 
     return {
       ...common,
-      alternativas,
-      correta: correct,
+      alternativas: alternatives,
+      respostaCorretaId: correctAlternativeId,
+      // Campo transitório legível. A correção usa respostaCorretaId.
+      correta: correctPresentation.originalKey,
       explicacao: normalizeText(rawQuestion.explicacao),
       respostaEsperada: "",
       criterios: ""
@@ -149,31 +183,12 @@ function normalizeQuestion(rawQuestion, index, usedIds, issues) {
   return {
     ...common,
     alternativas: null,
+    respostaCorretaId: null,
     correta: null,
     explicacao: "",
     respostaEsperada: normalizeText(rawQuestion.respostaEsperada),
     criterios: normalizeText(rawQuestion.criterios)
   };
-}
-
-function normalizeAlternatives(rawAlternatives) {
-  if (!isPlainObject(rawAlternatives)) {
-    return null;
-  }
-
-  const alternatives = {};
-
-  for (const letter of VALID_OBJECTIVE_ANSWERS) {
-    const text = normalizeText(rawAlternatives[letter] ?? rawAlternatives[letter.toLowerCase()]);
-
-    if (!text) {
-      return null;
-    }
-
-    alternatives[letter] = text;
-  }
-
-  return alternatives;
 }
 
 function normalizeAnswersMap(rawMap, questions) {
@@ -192,10 +207,10 @@ function normalizeAnswersMap(rawMap, questions) {
     }
 
     if (question.categoria === "objetiva") {
-      const answer = normalizeText(value).toUpperCase();
+      const answerId = resolveObjectiveAnswerId(question, value);
 
-      if (VALID_OBJECTIVE_ANSWERS.has(answer)) {
-        result[id] = answer;
+      if (answerId) {
+        result[id] = answerId;
       }
 
       return;
@@ -251,27 +266,30 @@ function normalizeMarkersMap(rawMap, questions) {
     return {};
   }
 
-  const objectiveIds = new Set(
+  const objectiveQuestions = new Map(
     questions
       .filter((question) => question.categoria === "objetiva")
-      .map((question) => question.id)
+      .map((question) => [question.id, question])
   );
   const result = {};
 
   Object.entries(rawMap).forEach(([questionId, markers]) => {
-    if (!objectiveIds.has(questionId) || !isPlainObject(markers)) {
+    const question = objectiveQuestions.get(questionId);
+
+    if (!question || !isPlainObject(markers)) {
       return;
     }
 
     const normalized = {};
 
-    for (const letter of VALID_OBJECTIVE_ANSWERS) {
-      const state = normalizeText(markers[letter] ?? markers[letter.toLowerCase()]);
+    Object.entries(markers).forEach(([reference, value]) => {
+      const alternativeId = resolveObjectiveAnswerId(question, reference);
+      const state = normalizeText(value);
 
-      if (VALID_MARKER_STATES.has(state) && state !== "neutro") {
-        normalized[letter] = state;
+      if (alternativeId && VALID_MARKER_STATES.has(state) && state !== "neutro") {
+        normalized[alternativeId] = state;
       }
-    }
+    });
 
     if (Object.keys(normalized).length) {
       result[questionId] = normalized;

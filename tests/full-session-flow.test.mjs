@@ -29,7 +29,7 @@ let session = createActiveSession({
   now: () => "2026-07-18T13:00:00.000Z"
 });
 
-session.respostas[questions[0].id] = "B";
+session.respostas[questions[0].id] = questions[0].respostaCorretaId;
 session.respostas[questions[1].id] = "Mas indica oposição; mais indica quantidade.";
 session.anotacoes[questions[0].id] = "Revisar conjunções.";
 session.temposMs[questions[0].id] = 65000;
@@ -42,7 +42,7 @@ assert.equal(firstSave.ok, true);
 
 const reloaded = loadSession(storage);
 assert.equal(reloaded.source, "current");
-assert.equal(reloaded.session.respostas[questions[0].id], "B");
+assert.equal(reloaded.session.respostas[questions[0].id], questions[0].respostaCorretaId);
 assert.equal(reloaded.session.anotacoes[questions[0].id], "Revisar conjunções.");
 assert.equal(reloaded.session.revisao[questions[1].id], true);
 assert.equal(reloaded.session.atual, 1);
@@ -88,7 +88,7 @@ assert.match(notes.content, /Revisar conjunções\./);
 
 const json = createSessionJsonExport(session);
 const parsedJson = JSON.parse(json.content);
-assert.equal(parsedJson.schemaVersion, 3);
+assert.equal(parsedJson.schemaVersion, 4);
 assert.equal(parsedJson.status, "finalizada");
 assert.equal(parsedJson.id, "full-flow-session");
 

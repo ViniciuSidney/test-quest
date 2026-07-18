@@ -1,3 +1,7 @@
+import {
+  getCorrectAlternativeId,
+  normalizeObjectiveAlternatives
+} from "../src/scripts/core/objective-question.js";
 import assert from "node:assert/strict";
 import { SESSION_STATUS } from "../src/scripts/core/state.js";
 import {
@@ -10,15 +14,24 @@ import {
   shuffleItems
 } from "../src/scripts/features/session/session-lifecycle.service.js";
 
+const objectiveAlternatives = normalizeObjectiveAlternatives(
+  { A: "A", B: "B", C: "C", D: "D", E: "E" },
+  "q1"
+);
+const objectiveBase = {
+  id: "q1",
+  categoria: "objetiva",
+  assunto: "Gramática",
+  tipo: "objetiva",
+  enunciado: "Questão",
+  alternativas: objectiveAlternatives,
+  correta: "A",
+  respostaCorretaId: ""
+};
 const questions = [
   {
-    id: "q1",
-    categoria: "objetiva",
-    assunto: "Gramática",
-    tipo: "objetiva",
-    enunciado: "Questão",
-    alternativas: { A: "A", B: "B", C: "C", D: "D", E: "E" },
-    correta: "A"
+    ...objectiveBase,
+    respostaCorretaId: getCorrectAlternativeId(objectiveBase)
   },
   {
     id: "q2",
@@ -50,14 +63,14 @@ assert.equal(isActiveSession(active), true);
 const restored = restoreActiveSession({
   ...active,
   id: null,
-  respostas: { q1: "A" },
+  respostas: { q1: questions[0].respostaCorretaId },
   anotacoes: null,
   temposMs: null,
   revisao: null,
   marcacoesAlternativas: null
 });
 assert.ok(restored.id);
-assert.deepEqual(restored.respostas, { q1: "A" });
+assert.deepEqual(restored.respostas, { q1: questions[0].respostaCorretaId });
 assert.deepEqual(restored.anotacoes, {});
 assert.equal(restored.status, SESSION_STATUS.ACTIVE);
 

@@ -1,3 +1,8 @@
+import {
+  getAlternativeDisplayLetter,
+  getObjectiveAlternatives,
+  resolveObjectiveAnswerId
+} from "../../core/objective-question.js";
 import { createInitialState } from "../../core/state.js";
 import { createScreenManager } from "../../core/screens.js";
 import { calculateHistoryMetrics, readHistory, recordCompletedSessionSafe } from "../home/home.service.js";
@@ -758,18 +763,22 @@ export function initQuestionResolution() {
   }
 
   function renderizarObjetiva(questao) {
-    const respostaAtual = (estado.respostas[questao.id] || "").toUpperCase();
+    const alternativas = getObjectiveAlternatives(questao);
+    const respostaAtual = resolveObjectiveAnswerId(
+      questao,
+      estado.respostas[questao.id]
+    );
     const marcacoes = estado.marcacoesAlternativas[questao.id] || {};
 
     $("#areaResposta").innerHTML = `
       <fieldset class="resolution-objective-options">
         <legend class="sr-only">Selecione uma alternativa como resposta oficial</legend>
-        ${Object.entries(questao.alternativas).map(([letraOriginal, textoAlternativa]) => {
-          const letra = letraOriginal.toUpperCase();
-          const selected = respostaAtual === letra;
-          const markerState = normalizeMarkerState(marcacoes[letra]);
+        ${alternativas.map((alternativa, indice) => {
+          const letra = getAlternativeDisplayLetter(questao, alternativa.id);
+          const selected = respostaAtual === alternativa.id;
+          const markerState = normalizeMarkerState(marcacoes[alternativa.id]);
           const markerInfo = getMarkerInfo(markerState, letra);
-          const inputId = `resposta-${questao.id}-${letra}`;
+          const inputId = `resposta-${questao.id}-${indice + 1}`;
 
           return `
             <div class="resolution-option-card ${selected ? "is-selected" : ""} ${markerState === MARKER_STATES.ANALYSIS ? "is-analysis" : ""} ${markerState === MARKER_STATES.ELIMINATED ? "is-eliminated" : ""}">
@@ -778,17 +787,17 @@ export function initQuestionResolution() {
                 class="resolution-option-radio"
                 type="radio"
                 name="respostaObjetiva"
-                value="${escapeHtml(letra)}"
+                value="${escapeHtml(alternativa.id)}"
                 ${selected ? "checked" : ""}
               >
               <label class="resolution-option-answer" for="${escapeHtml(inputId)}">
                 <span class="resolution-option-letter">${escapeHtml(letra)})</span>
-                <span class="resolution-option-text">${escapeHtml(textoAlternativa)}</span>
+                <span class="resolution-option-text">${escapeHtml(alternativa.texto)}</span>
               </label>
               <button
                 class="resolution-option-marker"
                 type="button"
-                data-letra="${escapeHtml(letra)}"
+                data-alternative-id="${escapeHtml(alternativa.id)}"
                 data-marker-state="${markerState}"
                 title="${escapeHtml(markerInfo.title)}"
                 aria-label="${escapeHtml(markerInfo.label)}"
@@ -806,11 +815,11 @@ export function initQuestionResolution() {
 
     document.querySelectorAll("input[name='respostaObjetiva']").forEach((input) => {
       input.addEventListener("change", (evento) => {
-        const letra = evento.target.value.toUpperCase();
-        estado.respostas[questao.id] = letra;
+        const alternativeId = evento.target.value;
+        estado.respostas[questao.id] = alternativeId;
 
-        if (estado.marcacoesAlternativas[questao.id]?.[letra]) {
-          delete estado.marcacoesAlternativas[questao.id][letra];
+        if (estado.marcacoesAlternativas[questao.id]?.[alternativeId]) {
+          delete estado.marcacoesAlternativas[questao.id][alternativeId];
           limparMarcacoesVazias(questao.id);
         }
 
@@ -820,15 +829,16 @@ export function initQuestionResolution() {
         salvarEstadoImediato();
 
         requestAnimationFrame(() => {
-          document.querySelector(`input[name="respostaObjetiva"][value="${letra}"]`)?.focus();
+          Array.from(document.querySelectorAll("input[name='respostaObjetiva']"))
+            .find((item) => item.value === alternativeId)
+            ?.focus();
         });
       });
     });
 
     document.querySelectorAll(".resolution-option-marker").forEach((button) => {
       button.addEventListener("click", () => {
-        const letra = button.dataset.letra;
-        alternarMarcadorAlternativa(questao, letra);
+        alternarMarcadorAlternativa(questao, button.dataset.alternativeId);
       });
     });
   }
@@ -921,23 +931,27 @@ export function initQuestionResolution() {
     renderizarQuestao({ registrarTempo: false, focarTitulo });
   }
 
-  function alternarMarcadorAlternativa(questao, letra) {
-    const proximo = getNextMarkerState(estado.marcacoesAlternativas[questao.id]?.[letra]);
+  function alternarMarcadorAlternativa(questao, alternativeId) {
+    const proximo = getNextMarkerState(
+      estado.marcacoesAlternativas[questao.id]?.[alternativeId]
+    );
 
     estado.marcacoesAlternativas[questao.id] ||= {};
 
     if (proximo === MARKER_STATES.NEUTRAL) {
-      delete estado.marcacoesAlternativas[questao.id][letra];
+      delete estado.marcacoesAlternativas[questao.id][alternativeId];
       limparMarcacoesVazias(questao.id);
     } else {
-      estado.marcacoesAlternativas[questao.id][letra] = proximo;
+      estado.marcacoesAlternativas[questao.id][alternativeId] = proximo;
     }
 
     renderizarObjetiva(questao);
     salvarEstadoImediato();
 
     requestAnimationFrame(() => {
-      document.querySelector(`.resolution-option-marker[data-letra="${letra}"]`)?.focus();
+      Array.from(document.querySelectorAll(".resolution-option-marker"))
+        .find((item) => item.dataset.alternativeId === alternativeId)
+        ?.focus();
     });
   }
 

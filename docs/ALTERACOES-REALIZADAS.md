@@ -57,3 +57,14 @@ Os quatro manuais em `manuais-de-telas/` foram mantidos sem alterações, pois j
 - README, visão, roadmap e índice documental atualizados;
 - regressão de fechamento registrada;
 - pacote preparado para merge na `main`, tag e Release.
+
+## v0.5-dev — Fundação de alternativas e respostas
+
+- versão de desenvolvimento iniciada;
+- esquema de sessão atualizado para 4;
+- criado o modelo central de alternativas objetivas;
+- respostas, gabarito e marcadores passaram a usar IDs estáveis;
+- migração da estrutura da v0.4 implementada;
+- interface e relatórios continuaram apresentando letras A–E;
+- testes automatizados ampliados para 26 arquivos;
+- próxima etapa definida como embaralhamento de alternativas.

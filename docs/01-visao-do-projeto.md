@@ -83,9 +83,9 @@ A Tela Inicial também permite continuar uma sessão salva diretamente na Tela d
 ## Estado atual
 
 **Versão estável:** `v0.4.0`  
-**Próximo ciclo planejado:** `v0.5-dev`
+**Versão em desenvolvimento:** `v0.5-dev`
 
-**Fase do projeto:** v0.4.0 concluída; preparação para modos de resolução e revisão.
+**Fase do projeto:** fundação da v0.5 implementada; preparação para o embaralhamento de alternativas.
 
 Concluído:
 
