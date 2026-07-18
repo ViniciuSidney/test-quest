@@ -401,3 +401,25 @@ Responsabilidades:
 - `formatters.js`: formatação compartilhada de tempo, datas, HTML e nomes de arquivo.
 
 O controlador principal permanece responsável por DOM, eventos, foco, temporizador ativo e transições visuais. A extração reduziu o arquivo sem mudar IDs, telas, armazenamento ou formato público das exportações.
+
+---
+
+# Operação degradada do armazenamento — v0.4
+
+A camada de armazenamento não presume que `localStorage` esteja sempre disponível.
+
+Estados reconhecidos:
+
+```text
+leitura e escrita disponíveis
+somente leitura
+cota esgotada
+acesso bloqueado
+JSON inválido
+falha de serialização
+erro desconhecido
+```
+
+Quando a escrita falha, o estado em memória permanece ativo na aba atual. O controlador exibe um aviso recuperável e protege o fechamento quando existe uma sessão que ainda não pôde ser persistida.
+
+A migração só remove a chave legada depois que a nova chave é gravada com sucesso.

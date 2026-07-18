@@ -35,3 +35,15 @@
 ## Preservado
 
 Os quatro manuais em `manuais-de-telas/` foram mantidos sem alterações, pois já são as referências aprovadas.
+
+## v0.4-dev — Etapa 3: confiabilidade e Release Candidate
+
+- diagnóstico de disponibilidade e cota do `localStorage`;
+- códigos de erro de persistência padronizados;
+- aviso visual com tentativa de recuperação;
+- proteção de saída para sessão ativa não persistida;
+- histórico com relatório seguro de gravação;
+- migração preserva dados legados quando a nova gravação falha;
+- teste integrado do ciclo completo da sessão;
+- suíte ampliada para 23 arquivos automatizados;
+- checklist de fechamento da v0.4.0 criado.

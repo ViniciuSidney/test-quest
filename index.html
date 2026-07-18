@@ -9,6 +9,24 @@
 </head>
 <body data-theme="light" data-screen="home">
   <main class="app">
+    <aside
+      id="avisoPersistencia"
+      class="persistence-warning hidden"
+      data-tone="danger"
+      role="alert"
+      aria-live="assertive"
+      aria-atomic="true"
+    >
+      <span class="persistence-warning__icon" aria-hidden="true">⚠</span>
+      <div class="persistence-warning__content">
+        <strong id="tituloAvisoPersistencia">Não foi possível salvar localmente.</strong>
+        <p id="descricaoAvisoPersistencia">A sessão continua nesta aba, mas as alterações podem ser perdidas ao sair.</p>
+      </div>
+      <div class="persistence-warning__actions">
+        <button id="btnTentarPersistencia" class="secondary" type="button">Tentar novamente</button>
+        <button id="btnFecharAvisoPersistencia" class="ghost" type="button" aria-label="Ocultar aviso de salvamento">×</button>
+      </div>
+    </aside>
     <header class="topbar legacy-topbar">
       <div>
         <p class="eyebrow">Aplicação de estudo ativo</p>

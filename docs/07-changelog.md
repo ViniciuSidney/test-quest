@@ -18,7 +18,11 @@ Todas as mudanças importantes do Test Quest serão registradas neste arquivo.
 - serviço dedicado às confirmações da sessão;
 - serviço de geração e download das exportações;
 - formatadores compartilhados;
-- testes de ciclo de vida, confirmações, exportações, formatadores e estrutura da modularização.
+- testes de ciclo de vida, confirmações, exportações, formatadores e estrutura da modularização;
+- diagnóstico de leitura e escrita do armazenamento local;
+- aviso visual recuperável para armazenamento indisponível ou cheio;
+- teste integrado do fluxo completo da sessão;
+- testes de resiliência, proteção de saída e regressão de release.
 
 ### Alterado
 
@@ -33,7 +37,11 @@ Todas as mudanças importantes do Test Quest serão registradas neste arquivo.
 - relatórios TXT e JSON deixam de ser montados dentro do controlador;
 - confirmações deixam de manter textos repetidos no controlador;
 - controlador principal passa de 2310 para aproximadamente 2050 linhas;
-- suíte automatizada passa de 14 para 19 arquivos de teste.
+- suíte automatizada passa de 14 para 19 arquivos de teste;
+- na etapa de confiabilidade, a suíte passa de 19 para 23 arquivos;
+- gravações de sessão e histórico passam a informar códigos de falha;
+- migrações que não podem ser gravadas permanecem disponíveis apenas em memória e preservam a chave anterior;
+- a página passa a alertar antes de sair quando existe sessão ativa sem persistência confirmada.
 
 ### Preservado
 

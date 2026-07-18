@@ -112,7 +112,7 @@ Substituir as telas atuais pelas cinco telas aprovadas sem perder funcionalidade
 
 ## v0.4-dev — Arquitetura, persistência e confiabilidade
 
-**Status:** Em desenvolvimento
+**Status:** Release Candidate — regressão manual final pendente
 
 ### Objetivo
 
@@ -144,14 +144,26 @@ Reduzir a concentração de responsabilidades, proteger os dados locais e prepar
 - testes automatizados ampliados de 14 para 19 arquivos;
 - interface, persistência e formato dos arquivos preservados.
 
-### Etapa 3 — Confiabilidade e fechamento
+### Etapa 3 — Confiabilidade e fechamento — implementação concluída
 
-- testes de restauração após recarregamento;
-- testes de migração com dados reais da v0.3;
-- teste de armazenamento indisponível ou cheio;
-- regressão dos cinco fluxos de tela;
-- atualização final da documentação;
-- release v0.4.0.
+- teste integrado de restauração após recarregamento;
+- teste de migração e recuperação em memória;
+- classificação de armazenamento indisponível, cheio ou com falha desconhecida;
+- aviso visual recuperável quando o salvamento falha;
+- tentativa manual de restabelecer a persistência;
+- proteção contra fechamento da página quando existe sessão não persistida;
+- histórico passa a comunicar falhas de gravação ao controlador;
+- regressão estrutural das cinco telas;
+- suíte automatizada ampliada de 19 para 23 arquivos;
+- documentação preparada para o fechamento.
+
+### Pendência para publicar v0.4.0
+
+- executar a regressão manual final pelo Live Server;
+- registrar navegador, resoluções e resultados;
+- corrigir apenas bugs bloqueadores encontrados;
+- atualizar `APP_VERSION`, changelog e status para `v0.4.0`;
+- criar merge, tag e Release.
 
 ---
 

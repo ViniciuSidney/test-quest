@@ -56,6 +56,9 @@
 | RF43 | Isolar dados locais incompatíveis sem interromper a aplicação | Implementado |
 | RF44 | Migrar configurações legadas para o namespace atual | Implementado |
 | RF45 | Deduplicar registros históricos pelo ID da sessão | Implementado |
+| RF46 | Detectar armazenamento local indisponível ou sem espaço | Implementado |
+| RF47 | Manter a sessão utilizável em memória quando a gravação falhar | Implementado |
+| RF48 | Permitir nova tentativa de salvamento após uma falha | Implementado |
 
 ## Requisitos não funcionais
 
@@ -86,6 +89,9 @@
 | RNF23 | Backups automáticos devem possuir limite de crescimento |
 | RNF24 | Falhas críticas de inicialização devem apresentar uma recuperação visível |
 | RNF25 | Novos esquemas devem possuir testes de migração e compatibilidade |
+| RNF26 | Falhas de persistência não devem derrubar a aplicação |
+| RNF27 | Migrações não devem remover dados legados antes da nova gravação ser confirmada |
+| RNF28 | Sessões ativas sem persistência confirmada devem proteger o fechamento da página |
 
 ## Escopo do ciclo atual — v0.4
 
@@ -98,8 +104,9 @@
 - repositórios de sessão e configurações;
 - evolução e deduplicação do histórico;
 - remoção gradual de responsabilidades do controlador principal;
-- centralização futura de resultados, formatadores e exportações;
+- centralização de resultados, formatadores e exportações;
 - testes automatizados de persistência;
+- operação degradada segura quando o armazenamento falhar;
 - regressão funcional das cinco telas.
 
 ### Fora do ciclo atual

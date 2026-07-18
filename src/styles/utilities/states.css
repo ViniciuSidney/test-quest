@@ -36,3 +36,93 @@
   color: var(--tq-text-muted, #666a85);
   line-height: 1.5;
 }
+
+/* Aviso recuperável de falha no salvamento local. */
+.persistence-warning {
+  position: fixed;
+  left: 50%;
+  bottom: clamp(0.75rem, 2vw, 1.5rem);
+  z-index: 9500;
+  width: min(calc(100% - 1.5rem), 760px);
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--tq-space-3, 12px);
+  padding: 0.85rem 0.95rem;
+  color: var(--tq-text, #17182f);
+  background: color-mix(in srgb, var(--tq-surface, #fff) 94%, transparent);
+  border: 1px solid color-mix(in srgb, var(--tq-danger, #ef4444) 45%, var(--tq-border, #e3e4f0));
+  border-radius: var(--tq-radius-lg, 18px);
+  box-shadow: 0 18px 44px rgba(23, 24, 47, 0.2);
+  transform: translateX(-50%);
+  backdrop-filter: blur(14px);
+}
+
+.persistence-warning[data-tone="warning"] {
+  border-color: color-mix(in srgb, var(--tq-warning, #f59e0b) 55%, var(--tq-border, #e3e4f0));
+}
+
+.persistence-warning__icon {
+  display: grid;
+  place-items: center;
+  width: 2.2rem;
+  height: 2.2rem;
+  color: var(--tq-danger, #ef4444);
+  background: var(--tq-danger-soft, rgba(239, 68, 68, 0.12));
+  border-radius: 999px;
+  font-size: 1.05rem;
+}
+
+.persistence-warning[data-tone="warning"] .persistence-warning__icon {
+  color: var(--tq-warning, #f59e0b);
+  background: var(--tq-warning-soft, rgba(245, 158, 11, 0.12));
+}
+
+.persistence-warning__content {
+  min-width: 0;
+}
+
+.persistence-warning__content strong,
+.persistence-warning__content p {
+  display: block;
+}
+
+.persistence-warning__content p {
+  margin: 0.2rem 0 0;
+  color: var(--tq-text-muted, #666a85);
+  font-size: 0.82rem;
+  line-height: 1.35;
+}
+
+.persistence-warning__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--tq-space-2, 8px);
+}
+
+.persistence-warning__actions button {
+  min-height: 38px;
+  padding: 0.5rem 0.75rem;
+}
+
+#btnFecharAvisoPersistencia {
+  width: 38px;
+  min-width: 38px;
+  padding: 0;
+  font-size: 1.3rem;
+}
+
+@media (max-width: 640px) {
+  .persistence-warning {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .persistence-warning__actions {
+    grid-column: 1 / -1;
+    justify-content: flex-end;
+  }
+
+  .persistence-warning__actions #btnTentarPersistencia {
+    flex: 1 1 auto;
+  }
+}

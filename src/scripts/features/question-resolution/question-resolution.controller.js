@@ -1,6 +1,6 @@
 import { createInitialState } from "../../core/state.js";
 import { createScreenManager } from "../../core/screens.js";
-import { calculateHistoryMetrics, readHistory, recordCompletedSession } from "../home/home.service.js";
+import { calculateHistoryMetrics, readHistory, recordCompletedSessionSafe } from "../home/home.service.js";
 import { parseQuestions, QuestionImportError, summarizeQuestions } from "../question-import/question-import.parser.js";
 import { clearSession, loadSession, saveSession } from "../session/session.repository.js";
 import {
@@ -17,6 +17,11 @@ import {
   restoreActiveSession
 } from "../session/session-lifecycle.service.js";
 import { loadSettings, saveSettings } from "../settings/settings.repository.js";
+import {
+  getPersistenceWarning,
+  shouldProtectBeforeUnload
+} from "../storage/persistence-feedback.service.js";
+import { inspectStorage } from "../../shared/storage.js";
 import {
   createAnswersExport,
   createNotesExport,
@@ -105,6 +110,9 @@ export function initQuestionResolution() {
   let filtroResultadoAtivo = RESULT_FILTERS.ALL;
   let questaoResultadoExpandidaId = null;
   let itensRevisaoResultado = [];
+  let persistenceAtRisk = false;
+  let persistenceErrorCode = null;
+  let persistenceWarningDismissed = false;
   const resultadoAcoesMobileMedia = window.matchMedia("(max-width: 720px)");
   const resultadoFiltrosCompactosMedia = window.matchMedia("(max-width: 900px)");
 
@@ -117,10 +125,14 @@ export function initQuestionResolution() {
   const btnImportar = $("#btnImportar");
   const btnValidar = $("#btnValidar");
   const nomeArquivoSelecionado = $("#nomeArquivoSelecionado");
+  const avisoPersistencia = $("#avisoPersistencia");
+  const tituloAvisoPersistencia = $("#tituloAvisoPersistencia");
+  const descricaoAvisoPersistencia = $("#descricaoAvisoPersistencia");
 
   inicializar();
 
   function inicializar() {
+    const storageInspection = inspectStorage();
     const persistenceReport = loadSession();
     carregarConfiguracoes();
     configurarEventos();
@@ -131,12 +143,23 @@ export function initQuestionResolution() {
     atualizarHome();
     atualizarResumoTopo();
     comunicarResultadoPersistencia(persistenceReport);
+
+    if (!storageInspection.writable) {
+      registrarFalhaPersistencia(storageInspection.errorCode, storageInspection.error);
+    }
   }
 
   function configurarEventos() {
     document.querySelectorAll("[data-theme-toggle]").forEach((button) => {
       button.addEventListener("click", alternarTema);
     });
+
+    $("#btnTentarPersistencia")?.addEventListener("click", tentarRestaurarPersistencia);
+    $("#btnFecharAvisoPersistencia")?.addEventListener("click", () => {
+      persistenceWarningDismissed = true;
+      avisoPersistencia?.classList.add("hidden");
+    });
+    window.addEventListener("beforeunload", protegerSaidaComPersistenciaEmRisco);
 
     $("#btnNovaResolucao")?.addEventListener("click", abrirNovaResolucao);
     $("#btnVoltarInicioImportacao")?.addEventListener("click", voltarAoInicioDaImportacao);
@@ -506,10 +529,14 @@ export function initQuestionResolution() {
 
   function salvarConfiguracoes() {
     const configAtual = loadSettings();
-    saveSettings({
+    const result = saveSettings({
       ...configAtual,
       tema: document.body.dataset.theme || "light"
     });
+
+    if (!result.ok) {
+      registrarFalhaPersistencia(result.errorCode, result.error);
+    }
   }
 
   function aplicarTema(tema) {
@@ -560,7 +587,15 @@ export function initQuestionResolution() {
     if (!confirmado) return;
 
     pararCronometro();
-    clearSession();
+    const removida = clearSession();
+
+    if (!removida) {
+      const inspection = inspectStorage();
+      registrarFalhaPersistencia(inspection.errorCode, inspection.error);
+      return;
+    }
+
+    resolverFalhaPersistencia();
     estado = estadoInicial();
     limparCamposImportacao();
     atualizarResumoTopo();
@@ -945,7 +980,7 @@ export function initQuestionResolution() {
     const resultadoFinal = calcularResultado(estado);
 
     salvarEstadoImediato();
-    recordCompletedSession(estado, resultadoFinal);
+    registrarResultadoNoHistorico(estado, resultadoFinal);
     pararCronometro();
 
     if (shouldShowPerformanceScreen(resultadoFinal.objetivas)) {
@@ -1752,7 +1787,7 @@ export function initQuestionResolution() {
   }
 
   function salvarEstadoImediato() {
-    if (!estado.questoes.length) return;
+    if (!estado.questoes.length) return true;
     estado.temporizadorPausado = !timerRodando;
 
     const result = saveSession(estado);
@@ -1760,11 +1795,13 @@ export function initQuestionResolution() {
     if (result.ok) {
       estado = result.session;
       if (indicadorSalvo) indicadorSalvo.textContent = "Salvo localmente";
-      return;
+      resolverFalhaPersistencia();
+      return true;
     }
 
     if (indicadorSalvo) indicadorSalvo.textContent = "Falha ao salvar";
-    console.error("Não foi possível salvar a sessão localmente.", result.error);
+    registrarFalhaPersistencia(result.errorCode, result.error);
+    return false;
   }
 
   function atualizarResumoTopo() {
@@ -1885,11 +1922,97 @@ export function initQuestionResolution() {
       return;
     }
 
-    recordCompletedSession(salva, calcularResultado(salva));
+    registrarResultadoNoHistorico(salva, calcularResultado(salva));
+  }
+
+  function registrarResultadoNoHistorico(session, result) {
+    const report = recordCompletedSessionSafe(session, result);
+
+    if (!report.ok) {
+      registrarFalhaPersistencia(report.errorCode, report.error);
+    }
+
+    return report.history;
+  }
+
+  function registrarFalhaPersistencia(errorCode, error = null) {
+    persistenceAtRisk = true;
+    persistenceErrorCode = errorCode || "storage-unknown-error";
+
+    if (error) {
+      console.error("Não foi possível persistir os dados do Test Quest.", error);
+    }
+
+    if (persistenceWarningDismissed || !avisoPersistencia) {
+      return;
+    }
+
+    const warning = getPersistenceWarning(persistenceErrorCode);
+    avisoPersistencia.dataset.tone = warning.tone;
+    tituloAvisoPersistencia.textContent = warning.title;
+    descricaoAvisoPersistencia.textContent = warning.description;
+    avisoPersistencia.classList.remove("hidden");
+  }
+
+  function resolverFalhaPersistencia() {
+    persistenceAtRisk = false;
+    persistenceErrorCode = null;
+    persistenceWarningDismissed = false;
+    avisoPersistencia?.classList.add("hidden");
+  }
+
+  function tentarRestaurarPersistencia() {
+    persistenceWarningDismissed = false;
+    const inspection = inspectStorage();
+
+    if (!inspection.writable) {
+      registrarFalhaPersistencia(inspection.errorCode, inspection.error);
+      return;
+    }
+
+    if (estado.questoes.length) {
+      salvarEstadoImediato();
+      return;
+    }
+
+    const settingsResult = saveSettings(loadSettings());
+
+    if (settingsResult.ok) {
+      resolverFalhaPersistencia();
+      mostrarMensagemInicial("O salvamento local voltou a funcionar.", "ok");
+      return;
+    }
+
+    registrarFalhaPersistencia(settingsResult.errorCode, settingsResult.error);
+  }
+
+  function protegerSaidaComPersistenciaEmRisco(evento) {
+    if (!shouldProtectBeforeUnload({
+      persistenceAtRisk,
+      hasSession: Boolean(estado.questoes.length)
+    })) {
+      return;
+    }
+
+    evento.preventDefault();
+    evento.returnValue = "";
   }
 
   function comunicarResultadoPersistencia(report) {
     if (!report) {
+      return;
+    }
+
+    if (report.errorCode || report.source === "unavailable") {
+      registrarFalhaPersistencia(report.errorCode, report.error);
+
+      if (report.session) {
+        mostrarMensagemInicial(
+          "A sessão foi recuperada nesta aba, mas ainda não pôde ser gravada no armazenamento local.",
+          "error"
+        );
+      }
+
       return;
     }
 

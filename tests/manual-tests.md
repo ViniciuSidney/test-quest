@@ -224,3 +224,41 @@
 - [ ] Baixar anotações TXT e comparar anotações, revisão e tempos.
 - [ ] Exportar JSON e conferir `schemaVersion`, ID, status, questões e mapas da sessão.
 - [ ] Confirmar que limpar importação, substituir sessão, apagar progresso e preparar nova resolução mantêm os mesmos textos e ações.
+
+
+## v0.4 — fechamento da Release Candidate
+
+### Fluxo principal
+
+- [ ] Carregar o exemplo, validar e iniciar uma sessão.
+- [ ] Responder objetiva e discursiva, adicionar anotação e marcar revisão.
+- [ ] Recarregar a página e continuar pela Home sem perda de dados.
+- [ ] Finalizar, passar pelo Desempenho e abrir o Resultado Final.
+- [ ] Conferir os filtros, cards e desempenho por assunto.
+- [ ] Baixar respostas TXT, anotações TXT e sessão JSON.
+- [ ] Voltar ao início e confirmar um único registro no histórico.
+
+### Persistência degradada
+
+- [ ] Bloquear o armazenamento do site pelo navegador e recarregar.
+- [ ] Confirmar que a aplicação inicia e exibe aviso de salvamento indisponível.
+- [ ] Iniciar uma sessão e confirmar que a interface continua utilizável na aba atual.
+- [ ] Tentar recarregar e confirmar que o navegador alerta sobre alterações não persistidas.
+- [ ] Restabelecer a permissão e selecionar **Tentar novamente**.
+- [ ] Confirmar que o aviso desaparece após a gravação funcionar.
+
+### Responsividade
+
+- [ ] Executar o fluxo em 1920 × 1080 e 1366 × 768.
+- [ ] Executar o fluxo em 900 × 720 e 390 × 844.
+- [ ] Conferir zoom de 100%, 125% e 150%.
+- [ ] Confirmar que o aviso de persistência não encobre ações essenciais.
+
+### Registro
+
+- Data:
+- Navegador e versão:
+- Dimensões testadas:
+- Resultado geral:
+- Bugs bloqueadores:
+- Decisão: [ ] Aprovar v0.4.0  [ ] Corrigir e repetir

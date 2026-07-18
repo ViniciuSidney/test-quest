@@ -25,9 +25,9 @@ A proposta não é apenas registrar acertos, mas ajudar o usuário a:
 
 **Versão estável:** `v0.3.0`  
 **Versão em desenvolvimento:** `v0.4-dev`  
-**Estado:** `consolidação técnica em andamento`
+**Estado:** `candidata a fechamento (Release Candidate)`
 
-**Fase atual:** modularização do ciclo de sessão, resultados, formatadores e exportações, mantendo a experiência da v0.3.0.
+**Fase atual:** confiabilidade, regressão e preparação do fechamento da v0.4.0, mantendo a experiência da v0.3.0.
 
 ### Concluído
 
@@ -62,7 +62,7 @@ A proposta não é apenas registrar acertos, mas ajudar o usuário a:
 
 ### Ciclo atual — v0.4-dev
 
-As duas primeiras etapas da consolidação técnica já incluem:
+As três etapas da consolidação técnica já incluem:
 
 1. esquema versionado para sessões salvas;
 2. migração automática das chaves legadas;
@@ -74,10 +74,13 @@ As duas primeiras etapas da consolidação técnica já incluem:
 8. formatadores compartilhados de tempo, datas, HTML e nomes de arquivo;
 9. geração e download das exportações separados da interface;
 10. mensagens de confirmação centralizadas;
-11. controlador principal reduzido de 2310 para cerca de 2050 linhas;
-12. suíte automatizada ampliada para 19 arquivos de teste.
+11. detecção de armazenamento indisponível ou cheio;
+12. aviso recuperável de falha no salvamento e tentativa de recuperação;
+13. proteção contra fechamento quando há sessão não persistida;
+14. teste integrado do fluxo importar → salvar → restaurar → finalizar → histórico → exportar;
+15. suíte automatizada ampliada para 23 arquivos de teste.
 
-A próxima etapa da v0.4 será dedicada aos testes de fluxo completo, falhas de armazenamento, regressão manual e fechamento da versão.
+A implementação da v0.4 está em **Release Candidate**. Falta apenas executar a regressão manual final no navegador e registrar seus resultados antes da tag `v0.4.0`.
 
 ## Funcionalidades atuais
 
@@ -117,8 +120,9 @@ A próxima etapa da v0.4 será dedicada aos testes de fluxo completo, falhas de 
 
 - modularização gradual do controlador principal — em andamento;
 - ciclo de vida, resultados, formatadores, confirmações e exportações — concluídos;
-- reforço do tratamento de erros — em andamento;
-- testes de fluxo e regressão da persistência — próxima etapa.
+- reforço do tratamento de erros — concluído;
+- testes automatizados de fluxo e persistência — concluídos;
+- regressão manual final e fechamento — pendentes.
 
 ### v0.5
 
@@ -187,7 +191,7 @@ Execute toda a suíte da aplicação com:
 node tests/run-all-tests.mjs
 ```
 
-O runner executa os testes de interface estrutural, regras de resolução, desempenho, resultado, App Shell, esquema da sessão, migrações, configurações, histórico e inicialização.
+O runner executa 23 arquivos de teste, incluindo interface estrutural, regras de resolução, desempenho, resultado, App Shell, esquema da sessão, migrações, configurações, histórico, falhas de armazenamento e fluxo integrado completo.
 
 ## Estrutura principal
 

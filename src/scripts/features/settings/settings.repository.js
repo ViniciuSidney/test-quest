@@ -6,6 +6,7 @@ import {
   SETTINGS_SCHEMA_VERSION
 } from "../../core/constants.js";
 import {
+  getDefaultStorage,
   readJsonSafe,
   removeStoredValue,
   writeJsonSafe
@@ -21,7 +22,7 @@ export function createDefaultSettings() {
   return { ...DEFAULT_SETTINGS };
 }
 
-export function loadSettings(storage = globalThis.localStorage) {
+export function loadSettings(storage = getDefaultStorage()) {
   const current = readJsonSafe(CONFIG_KEY, storage);
 
   if (current.exists) {
@@ -69,10 +70,10 @@ export function loadSettings(storage = globalThis.localStorage) {
   return createDefaultSettings();
 }
 
-export function saveSettings(settings, storage = globalThis.localStorage) {
+export function saveSettings(settings, storage = getDefaultStorage()) {
   const normalized = normalizeSettings(settings);
   const result = writeJsonSafe(CONFIG_KEY, normalized, storage);
-  return { ok: result.ok, settings: normalized, error: result.error };
+  return { ok: result.ok, settings: normalized, error: result.error, errorCode: result.errorCode };
 }
 
 export function normalizeSettings(settings) {

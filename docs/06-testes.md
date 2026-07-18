@@ -343,3 +343,20 @@ A versão não pode ser enviada à `main` como estável enquanto houver:
 | V04-T19 | Estrutura modular | Controlador não contém cálculos, relatórios, formatadores ou geração de IDs extraídos | OK |
 | V04-T20 | Regressão manual dos arquivos | Os três botões baixam arquivos válidos pelo navegador | Pendente |
 | V04-T21 | Regressão manual da sessão | Criar, recarregar, continuar e finalizar mantém o mesmo comportamento visual | Pendente |
+
+
+# v0.4 — Confiabilidade e Release Candidate
+
+| Código | Teste | Resultado esperado | Status |
+|---|---|---|---|
+| V04-T22 | Armazenamento bloqueado | A aplicação classifica a falha sem interromper a inicialização | OK |
+| V04-T23 | Cota esgotada | A sessão continua em memória e a falha recebe código específico | OK |
+| V04-T24 | Migração sem espaço | A chave legada permanece intacta quando a nova gravação falha | OK |
+| V04-T25 | Serialização inválida | Estruturas cíclicas são rejeitadas sem quebrar a aplicação | OK |
+| V04-T26 | Aviso de persistência | Mensagens variam entre armazenamento cheio, indisponível e erro desconhecido | OK |
+| V04-T27 | Proteção de saída | O fechamento só é protegido quando há sessão e persistência em risco | OK |
+| V04-T28 | Fluxo integrado completo | Importação, sessão, recarga simulada, resultado, histórico e exportações permanecem coerentes | OK |
+| V04-T29 | Estrutura de release | Cinco telas e controles de recuperação permanecem presentes | OK |
+| V04-T30 | Regressão manual final | Fluxo completo funciona no navegador em desktop e mobile | Pendente |
+| V04-T31 | Aviso visual real | Simulação no DevTools mostra o aviso sem bloquear a interface | Pendente |
+| V04-T32 | Recuperação real | Após restabelecer o armazenamento, `Tentar novamente` salva e remove o aviso | Pendente |

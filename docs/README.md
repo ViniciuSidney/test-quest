@@ -15,7 +15,7 @@ Este diretório reúne a documentação oficial do **Test Quest — Now I Know.*
 - Tela de Resolução oficial implementada;
 - Tela de Desempenho oficial implementada;
 - Tela de Resultado Final oficial implementada;
-- v0.4 em desenvolvimento: persistência versionada, migração e modularização gradual.
+- v0.4 em Release Candidate: persistência versionada, modularização e confiabilidade concluídas; regressão manual final pendente.
 
 ## Documentos principais
 
@@ -31,6 +31,7 @@ Este diretório reúne a documentação oficial do **Test Quest — Now I Know.*
 | `08-identidade-visual.md` | Regras visuais, tokens e usos semânticos |
 | `09-plano-de-implementacao.md` | Ordem segura para substituir as telas atuais |
 | `10-v0.4-consolidacao-tecnica.md` | Persistência, migração e etapas técnicas da v0.4 |
+| `11-checklist-fechamento-v0.4.md` | Regressão final, aprovação, merge, tag e publicação da v0.4.0 |
 
 ## Manuais de telas
 

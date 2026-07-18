@@ -6,14 +6,27 @@ import {
 } from "../../core/constants.js";
 import { normalizeSessionState, validateSessionState } from "../../core/session-schema.js";
 import {
+  getDefaultStorage,
   readJsonSafe,
   readRawValue,
   removeStoredValue,
   writeJsonSafe
 } from "../../shared/storage.js";
 
-export function loadSession(storage = globalThis.localStorage) {
+export function loadSession(storage = getDefaultStorage()) {
   const current = readJsonSafe(STORAGE_KEY, storage);
+
+  if (!current.ok && !current.exists) {
+    return {
+      session: null,
+      source: "unavailable",
+      migrated: false,
+      recovered: false,
+      issues: ["O armazenamento local não pôde ser lido."],
+      error: current.error,
+      errorCode: current.errorCode
+    };
+  }
 
   if (current.exists) {
     if (!current.ok) {
@@ -25,21 +38,27 @@ export function loadSession(storage = globalThis.localStorage) {
     const validation = validateSessionState(current.value);
 
     if (validation.valid) {
+      let rewriteResult = { ok: true, error: null, errorCode: null };
+
       if (validation.migrated || validation.issues.length) {
         backupMigrationPayload({
           key: STORAGE_KEY,
           raw: current.raw,
           reason: validation.migrated ? "schema-migration" : "session-repair"
         }, storage);
-        writeJsonSafe(STORAGE_KEY, validation.state, storage);
+        rewriteResult = writeJsonSafe(STORAGE_KEY, validation.state, storage);
       }
 
       return {
         session: validation.state,
-        source: "current",
+        source: rewriteResult.ok ? "current" : "current-memory",
         migrated: validation.migrated,
-        recovered: Boolean(validation.issues.length),
-        issues: validation.issues
+        recovered: Boolean(validation.issues.length || !rewriteResult.ok),
+        issues: rewriteResult.ok
+          ? validation.issues
+          : [...validation.issues, "A sessão foi recuperada em memória, mas o formato atualizado não pôde ser salvo."],
+        error: rewriteResult.error,
+        errorCode: rewriteResult.errorCode
       };
     }
 
@@ -56,7 +75,7 @@ export function loadSession(storage = globalThis.localStorage) {
   return loadLegacySession(storage);
 }
 
-export function saveSession(session, storage = globalThis.localStorage) {
+export function saveSession(session, storage = getDefaultStorage()) {
   try {
     const normalized = normalizeSessionState(session).state;
     const result = writeJsonSafe(STORAGE_KEY, normalized, storage);
@@ -65,31 +84,34 @@ export function saveSession(session, storage = globalThis.localStorage) {
       return {
         ok: false,
         session: null,
-        error: result.error
+        error: result.error,
+        errorCode: result.errorCode
       };
     }
 
     return {
       ok: true,
       session: normalized,
-      error: null
+      error: null,
+      errorCode: null
     };
   } catch (error) {
     return {
       ok: false,
       session: null,
-      error
+      error,
+      errorCode: null
     };
   }
 }
 
-export function clearSession(storage = globalThis.localStorage) {
+export function clearSession(storage = getDefaultStorage()) {
   const currentRemoved = removeStoredValue(STORAGE_KEY, storage);
   const legacyRemoved = removeStoredValue(LEGACY_STORAGE_KEY, storage);
   return currentRemoved && legacyRemoved;
 }
 
-export function inspectSession(storage = globalThis.localStorage) {
+export function inspectSession(storage = getDefaultStorage()) {
   const current = readJsonSafe(STORAGE_KEY, storage);
   const legacy = readJsonSafe(LEGACY_STORAGE_KEY, storage);
 
@@ -103,6 +125,18 @@ export function inspectSession(storage = globalThis.localStorage) {
 
 function loadLegacySession(storage, previousIssues = []) {
   const legacy = readJsonSafe(LEGACY_STORAGE_KEY, storage);
+
+  if (!legacy.ok && !legacy.exists) {
+    return {
+      session: null,
+      source: "unavailable",
+      migrated: false,
+      recovered: Boolean(previousIssues.length),
+      issues: [...previousIssues, "O armazenamento local não pôde ser lido."],
+      error: legacy.error,
+      errorCode: legacy.errorCode
+    };
+  }
 
   if (!legacy.exists) {
     return {
@@ -154,7 +188,9 @@ function loadLegacySession(storage, previousIssues = []) {
       source: "legacy-memory",
       migrated: true,
       recovered: true,
-      issues: [...previousIssues, "A sessão foi migrada em memória, mas não pôde ser salva na nova chave."]
+      issues: [...previousIssues, "A sessão foi migrada em memória, mas não pôde ser salva na nova chave."],
+      error: writeResult.error,
+      errorCode: writeResult.errorCode
     };
   }
 

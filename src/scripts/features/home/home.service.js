@@ -1,5 +1,5 @@
 import { HISTORY_KEY, HISTORY_SCHEMA_VERSION } from "../../core/constants.js";
-import { readJson, writeJsonSafe } from "../../shared/storage.js";
+import { getDefaultStorage, readJson, writeJsonSafe } from "../../shared/storage.js";
 
 export function createEmptyHistory() {
   return {
@@ -9,7 +9,7 @@ export function createEmptyHistory() {
   };
 }
 
-export function readHistory(storage = globalThis.localStorage) {
+export function readHistory(storage = getDefaultStorage()) {
   const stored = readJson(HISTORY_KEY, createEmptyHistory(), storage);
   const normalized = normalizeHistory(stored);
 
@@ -20,9 +20,18 @@ export function readHistory(storage = globalThis.localStorage) {
   return normalized;
 }
 
-export function recordCompletedSession(state, result, storage = globalThis.localStorage) {
+export function recordCompletedSession(state, result, storage = getDefaultStorage()) {
+  return recordCompletedSessionSafe(state, result, storage).history;
+}
+
+export function recordCompletedSessionSafe(state, result, storage = getDefaultStorage()) {
   if (!state?.questoes?.length || !state.finalizadoEm) {
-    return readHistory(storage);
+    return {
+      ok: true,
+      history: readHistory(storage),
+      error: null,
+      errorCode: null
+    };
   }
 
   const history = readHistory(storage);
@@ -40,7 +49,12 @@ export function recordCompletedSession(state, result, storage = globalThis.local
   });
 
   if (!entry) {
-    return history;
+    return {
+      ok: true,
+      history,
+      error: null,
+      errorCode: null
+    };
   }
 
   const existingIndex = history.sessions.findIndex((session) => session.id === sessionId);
@@ -52,11 +66,17 @@ export function recordCompletedSession(state, result, storage = globalThis.local
   }
 
   history.sessions = sortHistoryEntries(history.sessions);
-  writeJsonSafe(HISTORY_KEY, history, storage);
-  return history;
+  const writeResult = writeJsonSafe(HISTORY_KEY, history, storage);
+
+  return {
+    ok: writeResult.ok,
+    history,
+    error: writeResult.error,
+    errorCode: writeResult.errorCode
+  };
 }
 
-export function removeCompletedSession(sessionId, storage = globalThis.localStorage) {
+export function removeCompletedSession(sessionId, storage = getDefaultStorage()) {
   if (!sessionId) {
     return readHistory(storage);
   }
