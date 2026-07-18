@@ -35,6 +35,23 @@ assert.equal(
   "B"
 );
 assert.equal(questions[1].categoria, "discursiva");
+
+const trueFalseText = `@questao
+assunto: Estatística
+tipo: verdadeiro ou falso
+enunciado: Em uma pesquisa, toda população corresponde ao conjunto completo dos elementos estudados.
+correta: V
+explicacao: A afirmação está correta porque população representa o conjunto total dos elementos analisados.
++++`;
+
+const trueFalseQuestions = parseQuestions(trueFalseText);
+assert.equal(trueFalseQuestions.length, 1);
+assert.equal(trueFalseQuestions[0].alternativas.length, 2);
+assert.equal(trueFalseQuestions[0].correta, "V");
+assert.equal(
+  getAlternativePresentation(trueFalseQuestions[0], trueFalseQuestions[0].respostaCorretaId)?.displayLetter,
+  "V"
+);
 assert.deepEqual(summarizeQuestions(questions), {
   total: 2,
   objective: 1,

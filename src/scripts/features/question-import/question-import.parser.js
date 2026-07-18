@@ -1,4 +1,8 @@
-import { getCorrectAlternativeId, getAlternativePresentation, normalizeObjectiveAlternatives } from "../../core/objective-question.js";
+import {
+  getCorrectAlternativeId,
+  getAlternativePresentation,
+  normalizeObjectiveAlternatives
+} from "../../core/objective-question.js";
 
 export class QuestionImportError extends Error {
   constructor(message, issues = []) {
@@ -79,19 +83,25 @@ function parseBlock(block, index) {
   const id = createQuestionId(index);
 
   if (category === "objetiva") {
+    const trueFalse = isTrueFalseType(data.tipo);
     const alternativas = normalizeObjectiveAlternatives(
-      { A: data.a, B: data.b, C: data.c, D: data.d, E: data.e },
+      trueFalse
+        ? [
+            { chaveOriginal: "V", texto: "Verdadeiro" },
+            { chaveOriginal: "F", texto: "Falso" }
+          ]
+        : { A: data.a, B: data.b, C: data.c, D: data.d, E: data.e },
       id
     );
     const question = {
       id,
       categoria: category,
       assunto: data.assunto || "Sem assunto",
-      tipo: data.tipo || category,
-      enunciado: data.enunciado || "",
+      tipo: data.tipo || (trueFalse ? "verdadeiro ou falso" : category),
+      enunciado: data.enunciado || data.afirmativa || "",
       alternativas,
       respostaCorretaId: "",
-      correta: data.correta.toUpperCase().trim(),
+      correta: normalizeObjectiveCorrectAnswer(data.correta, trueFalse),
       explicacao: data.explicacao || "",
       respostaEsperada: "",
       criterios: ""
@@ -111,7 +121,7 @@ function parseBlock(block, index) {
     categoria: category,
     assunto: data.assunto || "Sem assunto",
     tipo: data.tipo || category,
-    enunciado: data.enunciado || "",
+    enunciado: data.enunciado || data.afirmativa || "",
     alternativas: null,
     respostaCorretaId: null,
     correta: null,
@@ -126,6 +136,7 @@ function extractFields(body) {
     "criterios_de_correcao",
     "resposta_esperada",
     "explicacao",
+    "afirmativa",
     "enunciado",
     "correta",
     "assunto",
@@ -152,15 +163,27 @@ function extractFields(body) {
 }
 
 function validateObjective(data, index) {
-  const required = ["assunto", "enunciado", "a", "b", "c", "d", "e", "correta", "explicacao"];
+  const trueFalse = isTrueFalseType(data.tipo);
+  const statementField = data.enunciado || data.afirmativa ? [] : ["enunciado"];
+  const required = trueFalse
+    ? ["assunto", ...statementField, "correta", "explicacao"]
+    : ["assunto", ...statementField, "a", "b", "c", "d", "e", "correta", "explicacao"];
   const missing = required.filter((field) => !data[field]);
 
   if (missing.length) {
     throw new Error(`Questão objetiva ${index + 1}: campos ausentes — ${missing.join(", ")}.`);
   }
 
-  if (!["A", "B", "C", "D", "E"].includes(data.correta.toUpperCase().trim())) {
-    throw new Error(`Questão objetiva ${index + 1}: “correta” deve ser A, B, C, D ou E.`);
+  const validAnswers = trueFalse
+    ? ["V", "F", "VERDADEIRO", "FALSO", "A", "B"]
+    : ["A", "B", "C", "D", "E"];
+
+  if (!validAnswers.includes(String(data.correta || "").toUpperCase().trim())) {
+    throw new Error(
+      trueFalse
+        ? `Questão objetiva ${index + 1}: “correta” deve ser V, F, Verdadeiro ou Falso.`
+        : `Questão objetiva ${index + 1}: “correta” deve ser A, B, C, D ou E.`
+    );
   }
 }
 
@@ -171,6 +194,29 @@ function validateDiscursive(data, index) {
   if (missing.length) {
     throw new Error(`Questão discursiva ${index + 1}: campos ausentes — ${missing.join(", ")}.`);
   }
+}
+
+function isTrueFalseType(type) {
+  const normalized = String(type || "").trim().toLocaleLowerCase("pt-BR");
+  return normalized === "vf" || normalized.includes("verdadeiro") || normalized.includes("falso");
+}
+
+function normalizeObjectiveCorrectAnswer(rawAnswer, trueFalse = false) {
+  const normalized = String(rawAnswer || "").trim().toUpperCase();
+
+  if (!trueFalse) {
+    return normalized;
+  }
+
+  if (["V", "VERDADEIRO", "A"].includes(normalized)) {
+    return "V";
+  }
+
+  if (["F", "FALSO", "B"].includes(normalized)) {
+    return "F";
+  }
+
+  return normalized;
 }
 
 function createQuestionId(index) {

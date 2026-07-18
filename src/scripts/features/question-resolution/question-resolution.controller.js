@@ -1,67 +1,19 @@
-import {
-  getAlternativeDisplayLetter,
-  getObjectiveAlternatives,
-  resolveObjectiveAnswerId
-} from "../../core/objective-question.js";
+import { getAlternativeDisplayLetter, getObjectiveAlternatives, isTrueFalseQuestion, resolveObjectiveAnswerId } from "../../core/objective-question.js";
 import { createInitialState } from "../../core/state.js";
 import { createScreenManager } from "../../core/screens.js";
 import { calculateHistoryMetrics, readHistory, recordCompletedSessionSafe } from "../home/home.service.js";
 import { parseQuestions, QuestionImportError, summarizeQuestions } from "../question-import/question-import.parser.js";
 import { clearSession, loadSession, saveSession } from "../session/session.repository.js";
-import {
-  getClearImportConfirmation,
-  getDeleteSessionConfirmation,
-  getFinishSessionConfirmation,
-  getNewResolutionConfirmation,
-  getReplaceSessionConfirmation
-} from "../session/session-confirmations.service.js";
-import {
-  createActiveSession,
-  finishSession,
-  isActiveSession,
-  restoreActiveSession
-} from "../session/session-lifecycle.service.js";
+import { getClearImportConfirmation, getDeleteSessionConfirmation, getFinishSessionConfirmation, getNewResolutionConfirmation, getReplaceSessionConfirmation } from "../session/session-confirmations.service.js";
+import { createActiveSession, finishSession, isActiveSession, restoreActiveSession } from "../session/session-lifecycle.service.js";
 import { loadSettings, saveSettings } from "../settings/settings.repository.js";
-import {
-  getPersistenceWarning,
-  shouldProtectBeforeUnload
-} from "../storage/persistence-feedback.service.js";
+import { getPersistenceWarning, shouldProtectBeforeUnload } from "../storage/persistence-feedback.service.js";
 import { inspectStorage } from "../../shared/storage.js";
-import {
-  createAnswersExport,
-  createNotesExport,
-  createSessionJsonExport,
-  downloadExportFile
-} from "../exports/session-export.service.js";
-import {
-  escapeHtml,
-  formatDuration as formatarTempo,
-  formatStudyDuration as formatarTempoHistorico
-} from "../../shared/formatters.js";
-import {
-  formatPerformanceBasis,
-  getPerformanceState,
-  PERFORMANCE_STATE_CLASSES,
-  shouldShowPerformanceScreen
-} from "../performance/performance.service.js";
-import {
-  calculateSessionResult as calcularResultado,
-  calculateSessionTotalTime as calcularTempoTotal,
-  RESULT_FILTERS,
-  buildQuestionReviewItems,
-  buildSubjectResultItems,
-  filterQuestionReviewItems,
-  getSubjectPerformanceTone,
-  normalizeResultFilter
-} from "../results/results.service.js";
-import {
-  buildQuestionMapLabel,
-  getMarkerInfo,
-  getNextMarkerState,
-  isQuestionAnswered,
-  MARKER_STATES,
-  normalizeMarkerState
-} from "./question-resolution.helpers.js";
+import { createAnswersExport, createNotesExport, createSessionJsonExport, downloadExportFile } from "../exports/session-export.service.js";
+import { escapeHtml, formatDuration as formatarTempo, formatStudyDuration as formatarTempoHistorico } from "../../shared/formatters.js";
+import { formatPerformanceBasis, getPerformanceState, PERFORMANCE_STATE_CLASSES, shouldShowPerformanceScreen } from "../performance/performance.service.js";
+import { calculateSessionResult as calcularResultado, calculateSessionTotalTime as calcularTempoTotal, RESULT_FILTERS, buildQuestionReviewItems, buildSubjectResultItems, filterQuestionReviewItems, getSubjectPerformanceTone, normalizeResultFilter } from "../results/results.service.js";
+import { buildQuestionMapLabel, buildTrueFalseOptionsMarkup, getMarkerInfo, getNextMarkerState, getQuestionTypeLabel, isQuestionAnswered, MARKER_STATES, normalizeMarkerState } from "./question-resolution.helpers.js";
 
 export function initQuestionResolution() {
   const exemploQuestoes = `@questao
@@ -702,6 +654,7 @@ export function initQuestionResolution() {
     }
   }
 
+
   function renderizarQuestao({ registrarTempo = true, focarTitulo = false } = {}) {
     if (registrarTempo) {
       registrarTempoAtual();
@@ -725,9 +678,10 @@ export function initQuestionResolution() {
     $("#progressoResolucao")?.setAttribute("aria-valuenow", String(progresso));
 
     $("#numeroQuestao").textContent = `Questão ${numero}`;
-    $("#tipoQuestao").textContent = questao.categoria === "objetiva" ? "Objetiva" : "Discursiva";
+    $("#tipoQuestao").textContent = getQuestionTypeLabel(questao);
     $("#assuntoQuestao").textContent = questao.assunto || "Sem assunto";
     $("#assuntoQuestao").title = questao.assunto || "Sem assunto";
+    $("#tituloEnunciadoQuestao").textContent = isTrueFalseQuestion(questao) ? "Afirmativa" : "Enunciado";
     $("#enunciadoQuestao").textContent = questao.enunciado;
 
     $("#revisaoQuestao").classList.toggle("hidden", !marcadaParaRevisao);
@@ -765,6 +719,11 @@ export function initQuestionResolution() {
   }
 
   function renderizarObjetiva(questao) {
+    if (isTrueFalseQuestion(questao)) {
+      renderizarVerdadeiroFalso(questao);
+      return;
+    }
+
     const alternativas = getObjectiveAlternatives(questao);
     const respostaAtual = resolveObjectiveAnswerId(
       questao,
@@ -818,23 +777,7 @@ export function initQuestionResolution() {
     document.querySelectorAll("input[name='respostaObjetiva']").forEach((input) => {
       input.addEventListener("change", (evento) => {
         const alternativeId = evento.target.value;
-        estado.respostas[questao.id] = alternativeId;
-
-        if (estado.marcacoesAlternativas[questao.id]?.[alternativeId]) {
-          delete estado.marcacoesAlternativas[questao.id][alternativeId];
-          limparMarcacoesVazias(questao.id);
-        }
-
-        renderizarObjetiva(questao);
-        renderizarMapa();
-        atualizarResumoTopo();
-        salvarEstadoImediato();
-
-        requestAnimationFrame(() => {
-          Array.from(document.querySelectorAll("input[name='respostaObjetiva']"))
-            .find((item) => item.value === alternativeId)
-            ?.focus();
-        });
+        selecionarRespostaObjetiva(questao, alternativeId, { refocusSelector: "input[name='respostaObjetiva']" });
       });
     });
 
@@ -843,6 +786,43 @@ export function initQuestionResolution() {
         alternarMarcadorAlternativa(questao, button.dataset.alternativeId);
       });
     });
+  }
+
+  function renderizarVerdadeiroFalso(questao) {
+    const alternativas = getObjectiveAlternatives(questao);
+    const respostaAtual = resolveObjectiveAnswerId(questao, estado.respostas[questao.id]);
+
+    $("#areaResposta").innerHTML = buildTrueFalseOptionsMarkup({
+      alternatives: alternativas,
+      selectedId: respostaAtual,
+      escapeHtml
+    });
+
+    document.querySelectorAll("[data-vf-choice-id]").forEach((button) => {
+      button.addEventListener("click", () => selecionarRespostaObjetiva(questao, button.dataset.vfChoiceId, { refocusSelector: "[data-vf-choice-id]" }));
+    });
+  }
+
+  function selecionarRespostaObjetiva(questao, alternativeId, { refocusSelector = "" } = {}) {
+    if (!alternativeId) return;
+
+    estado.respostas[questao.id] = alternativeId;
+
+    if (estado.marcacoesAlternativas[questao.id]?.[alternativeId]) {
+      delete estado.marcacoesAlternativas[questao.id][alternativeId];
+      limparMarcacoesVazias(questao.id);
+    }
+
+    renderizarObjetiva(questao);
+    renderizarMapa();
+    atualizarResumoTopo();
+    salvarEstadoImediato();
+
+    if (refocusSelector) {
+      requestAnimationFrame(() => Array.from(document.querySelectorAll(refocusSelector))
+        .find((item) => item.value === alternativeId || item.dataset.vfChoiceId === alternativeId)
+        ?.focus());
+    }
   }
 
   function renderizarDiscursiva(questao) {

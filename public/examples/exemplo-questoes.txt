@@ -17,4 +17,4 @@ tipo: discursiva curta
 enunciado: Explique a diferença entre "mas" e "mais" e escreva um exemplo com cada uma das palavras.
 resposta_esperada: "Mas" é uma conjunção adversativa e indica oposição, como em "Estudei, mas fiquei com dúvida". "Mais" indica quantidade, intensidade ou comparação, como em "Preciso de mais exercícios para treinar". Portanto, embora tenham som parecido, as duas palavras exercem funções diferentes na frase.
 criterios_de_correcao: Explicar que "mas" indica oposição; explicar que "mais" indica quantidade, intensidade ou comparação; apresentar um exemplo adequado com "mas"; apresentar um exemplo adequado com "mais".
-+++
+

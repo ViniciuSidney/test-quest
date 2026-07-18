@@ -1,7 +1,8 @@
 import {
   getAlternativePresentation,
   getCorrectAlternativePresentation,
-  isObjectiveAnswerCorrect
+  isObjectiveAnswerCorrect,
+  isTrueFalseQuestion
 } from "../../core/objective-question.js";
 import { calculateDisplayedTotalMs } from "../question-resolution/question-resolution.helpers.js";
 
@@ -115,7 +116,9 @@ export function buildQuestionReviewItems({
       index,
       number: index + 1,
       category: question.categoria,
-      typeLabel: question.categoria === "objetiva" ? "Objetiva" : "Discursiva",
+      typeLabel: question.categoria === "objetiva"
+        ? (isTrueFalseQuestion(question) ? "Verdadeiro ou Falso" : "Objetiva")
+        : "Discursiva",
       subject: normalizeText(question.assunto) || "Sem assunto",
       statement: normalizeText(question.enunciado) || "Enunciado não informado.",
       answer,

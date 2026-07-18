@@ -1,4 +1,39 @@
 export const OBJECTIVE_ALTERNATIVE_KEYS = Object.freeze(["A", "B", "C", "D", "E"]);
+export const TRUE_FALSE_ALTERNATIVE_KEYS = Object.freeze(["V", "F"]);
+
+export function isTrueFalseQuestion(question) {
+  if (!question || question.categoria !== "objetiva") {
+    return false;
+  }
+
+  const normalizedType = normalizeText(question.tipo).toLocaleLowerCase("pt-BR");
+
+  if (normalizedType.includes("verdadeiro") || normalizedType.includes("falso") || normalizedType === "vf") {
+    return true;
+  }
+
+  const alternatives = getObjectiveAlternatives(question);
+
+  if (alternatives.length !== 2) {
+    return false;
+  }
+
+  return alternatives.every((alternative, index) => {
+    const originalKey = normalizeOriginalKey(
+      alternative?.chaveOriginal ?? alternative?.letraOriginal ?? alternative?.key,
+      index,
+      TRUE_FALSE_ALTERNATIVE_KEYS
+    );
+
+    return TRUE_FALSE_ALTERNATIVE_KEYS.includes(originalKey);
+  });
+}
+
+export function getObjectiveDisplayKeys(question) {
+  return isTrueFalseQuestion(question)
+    ? [...TRUE_FALSE_ALTERNATIVE_KEYS]
+    : [...OBJECTIVE_ALTERNATIVE_KEYS];
+}
 
 export function normalizeObjectiveAlternatives(rawAlternatives, questionId, {
   issues = [],
@@ -6,15 +41,17 @@ export function normalizeObjectiveAlternatives(rawAlternatives, questionId, {
 } = {}) {
   const sourceItems = toAlternativeSourceItems(rawAlternatives);
 
-  if (!sourceItems || sourceItems.length !== OBJECTIVE_ALTERNATIVE_KEYS.length) {
+  if (!sourceItems || !isSupportedObjectiveAlternativeCount(sourceItems.length)) {
     return null;
   }
 
+  const allowedKeys = getAllowedOriginalKeys(sourceItems.length);
   const usedIds = new Set();
   const alternatives = sourceItems.map((item, index) => {
     const originalKey = normalizeOriginalKey(
       item?.chaveOriginal ?? item?.letraOriginal ?? item?.key,
-      index
+      index,
+      allowedKeys
     );
     const text = normalizeText(item?.texto ?? item?.text ?? item?.value);
 
@@ -53,7 +90,7 @@ export function normalizeObjectiveAlternatives(rawAlternatives, questionId, {
 
 export function createAlternativeId(questionId, originalKey, index = 0) {
   const safeQuestion = normalizeText(questionId) || "question";
-  const safeKey = normalizeOriginalKey(originalKey, index).toLowerCase();
+  const safeKey = normalizeText(originalKey).toLowerCase() || String(index + 1);
   return `alt-${stableHash(`${safeQuestion}|${safeKey}|${index}`)}-${safeKey}`;
 }
 
@@ -108,6 +145,13 @@ export function resolveObjectiveAnswerId(question, rawAnswer) {
     return byOriginalKey.id;
   }
 
+  const displayKeys = getObjectiveDisplayKeys(question);
+  const displayIndex = displayKeys.indexOf(normalizedKey);
+
+  if (displayIndex >= 0 && alternatives[displayIndex]) {
+    return alternatives[displayIndex].id;
+  }
+
   return "";
 }
 
@@ -121,10 +165,11 @@ export function getAlternativePresentation(question, rawAnswer) {
   }
 
   const alternative = alternatives[index];
+  const displayKeys = getObjectiveDisplayKeys(question);
 
   return {
     id: alternative.id,
-    displayLetter: OBJECTIVE_ALTERNATIVE_KEYS[index] || String(index + 1),
+    displayLetter: displayKeys[index] || String(index + 1),
     originalKey: alternative.chaveOriginal,
     text: alternative.texto,
     index
@@ -158,7 +203,20 @@ function toAlternativeSourceItems(rawAlternatives) {
     return null;
   }
 
-  return OBJECTIVE_ALTERNATIVE_KEYS.map((key, index) => ({
+  const normalizedEntries = Object.entries(rawAlternatives)
+    .map(([key, value]) => [String(key).trim(), value]);
+  const trueFalseKeys = ["V", "F"];
+  const objectiveKeys = ["A", "B", "C", "D", "E"];
+  const availableKeys = new Set(normalizedEntries.map(([key]) => key.toUpperCase()));
+  const orderedKeys = trueFalseKeys.every((key) => availableKeys.has(key))
+    ? trueFalseKeys
+    : objectiveKeys.filter((key) => availableKeys.has(key));
+
+  if (![2, 5].includes(orderedKeys.length)) {
+    return null;
+  }
+
+  return orderedKeys.map((key, index) => ({
     id: null,
     chaveOriginal: key,
     texto: rawAlternatives[key] ?? rawAlternatives[key.toLowerCase()],
@@ -176,11 +234,11 @@ function normalizeAnswerReference(value) {
   return normalizeText(value);
 }
 
-function normalizeOriginalKey(value, fallbackIndex) {
+function normalizeOriginalKey(value, fallbackIndex, allowedKeys = OBJECTIVE_ALTERNATIVE_KEYS) {
   const normalized = normalizeText(value).toUpperCase();
-  return OBJECTIVE_ALTERNATIVE_KEYS.includes(normalized)
+  return allowedKeys.includes(normalized)
     ? normalized
-    : OBJECTIVE_ALTERNATIVE_KEYS[fallbackIndex] || String(fallbackIndex + 1);
+    : allowedKeys[fallbackIndex] || String(fallbackIndex + 1);
 }
 
 function normalizeOrder(value, fallback) {
@@ -197,6 +255,16 @@ function stableHash(value) {
   }
 
   return (hash >>> 0).toString(36);
+}
+
+function isSupportedObjectiveAlternativeCount(length) {
+  return length === TRUE_FALSE_ALTERNATIVE_KEYS.length || length === OBJECTIVE_ALTERNATIVE_KEYS.length;
+}
+
+function getAllowedOriginalKeys(length) {
+  return length === TRUE_FALSE_ALTERNATIVE_KEYS.length
+    ? TRUE_FALSE_ALTERNATIVE_KEYS
+    : OBJECTIVE_ALTERNATIVE_KEYS;
 }
 
 function normalizeText(value) {

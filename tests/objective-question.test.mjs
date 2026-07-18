@@ -42,4 +42,29 @@ assert.equal(isObjectiveAnswerCorrect(shuffledQuestion, first[1].id), true);
 assert.equal(getAlternativeDisplayLetter(shuffledQuestion, first[1].id), "A");
 assert.equal(getAlternativePresentation(shuffledQuestion, first[1].id).originalKey, "B");
 
+
+const trueFalseAlternatives = normalizeObjectiveAlternatives([
+  { chaveOriginal: "V", texto: "Verdadeiro" },
+  { chaveOriginal: "F", texto: "Falso" }
+], "q-vf");
+
+assert.equal(trueFalseAlternatives.length, 2);
+assert.deepEqual(trueFalseAlternatives.map((alternative) => alternative.chaveOriginal), ["V", "F"]);
+
+const trueFalseQuestion = {
+  id: "q-vf",
+  categoria: "objetiva",
+  tipo: "verdadeiro ou falso",
+  alternativas: trueFalseAlternatives,
+  correta: "V",
+  respostaCorretaId: ""
+};
+trueFalseQuestion.respostaCorretaId = getCorrectAlternativeId(trueFalseQuestion);
+
+assert.equal(resolveObjectiveAnswerId(trueFalseQuestion, "V"), trueFalseAlternatives[0].id);
+assert.equal(resolveObjectiveAnswerId(trueFalseQuestion, "F"), trueFalseAlternatives[1].id);
+assert.equal(isObjectiveAnswerCorrect(trueFalseQuestion, trueFalseAlternatives[0].id), true);
+assert.equal(getAlternativeDisplayLetter(trueFalseQuestion, trueFalseAlternatives[0].id), "V");
+assert.equal(getAlternativeDisplayLetter(trueFalseQuestion, trueFalseAlternatives[1].id), "F");
+
 console.log("Objective question model: todos os testes passaram.");
