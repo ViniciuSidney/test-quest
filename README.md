@@ -23,11 +23,11 @@ A proposta não é apenas registrar acertos, mas ajudar o usuário a:
 
 ## Estado atual
 
-**Versão estável:** `v0.3.0`  
-**Versão em desenvolvimento:** `v0.4-dev`  
-**Estado:** `candidata a fechamento (Release Candidate)`
+**Versão estável:** `v0.4.0`  
+**Próximo ciclo planejado:** `v0.5-dev`  
+**Estado:** `versão concluída e pronta para publicação`
 
-**Fase atual:** confiabilidade, regressão e preparação do fechamento da v0.4.0, mantendo a experiência da v0.3.0.
+**Fase atual:** fechamento e publicação da v0.4.0, com arquitetura, persistência e confiabilidade consolidadas.
 
 ### Concluído
 
@@ -60,7 +60,7 @@ A proposta não é apenas registrar acertos, mas ajudar o usuário a:
 - pausa do temporizador preservada no estado da sessão;
 - navegação entre questões sem atribuição incorreta de tempo.
 
-### Ciclo atual — v0.4-dev
+### Entregue na v0.4.0
 
 As três etapas da consolidação técnica já incluem:
 
@@ -80,7 +80,7 @@ As três etapas da consolidação técnica já incluem:
 14. teste integrado do fluxo importar → salvar → restaurar → finalizar → histórico → exportar;
 15. suíte automatizada ampliada para 23 arquivos de teste.
 
-A implementação da v0.4 está em **Release Candidate**. Falta apenas executar a regressão manual final no navegador e registrar seus resultados antes da tag `v0.4.0`.
+A v0.4.0 conclui o ciclo de consolidação técnica. A suíte automatizada foi aprovada e o fechamento manual foi autorizado para publicação na `main`.
 
 ## Funcionalidades atuais
 
@@ -116,13 +116,14 @@ A implementação da v0.4 está em **Release Candidate**. Falta apenas executar 
 
 ## Funcionalidades planejadas para os próximos ciclos
 
-### v0.4
+### v0.4.0 — concluída
 
-- modularização gradual do controlador principal — em andamento;
-- ciclo de vida, resultados, formatadores, confirmações e exportações — concluídos;
-- reforço do tratamento de erros — concluído;
-- testes automatizados de fluxo e persistência — concluídos;
-- regressão manual final e fechamento — pendentes.
+- modularização gradual do controlador principal;
+- ciclo de vida, resultados, formatadores, confirmações e exportações separados;
+- persistência versionada, migrações e recuperação de dados;
+- tratamento seguro de armazenamento indisponível ou cheio;
+- testes automatizados de fluxo, persistência e regressão;
+- documentação e pacote preparados para publicação.
 
 ### v0.5
 
@@ -215,6 +216,8 @@ test-quest/
 │   ├── 08-identidade-visual.md
 │   ├── 09-plano-de-implementacao.md
 │   ├── 10-v0.4-consolidacao-tecnica.md
+│   ├── 11-checklist-fechamento-v0.4.md
+│   ├── 12-notas-release-v0.4.0.md
 │   └── ALTERACOES-REALIZADAS.md
 ├── public/
 │   ├── examples/

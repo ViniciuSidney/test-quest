@@ -262,3 +262,11 @@
 - Resultado geral:
 - Bugs bloqueadores:
 - Decisão: [ ] Aprovar v0.4.0  [ ] Corrigir e repetir
+
+## Registro de fechamento da v0.4.0
+
+- Data de aprovação: 2026-07-18
+- Resultado geral: aprovado para fechamento e publicação
+- Navegador e dimensões: não registrados no documento enviado
+- Bugs bloqueadores informados: nenhum
+- Observação: a aprovação para avançar ao fechamento foi considerada como confirmação da regressão manual final.

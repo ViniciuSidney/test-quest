@@ -47,3 +47,13 @@ Os quatro manuais em `manuais-de-telas/` foram mantidos sem alterações, pois j
 - teste integrado do ciclo completo da sessão;
 - suíte ampliada para 23 arquivos automatizados;
 - checklist de fechamento da v0.4.0 criado.
+
+## v0.4.0 — Fechamento oficial
+
+**Data:** 2026-07-18
+
+- `APP_VERSION` promovida de `0.4-dev` para `0.4.0`;
+- changelog consolidado na seção `v0.4.0`;
+- README, visão, roadmap e índice documental atualizados;
+- regressão de fechamento registrada;
+- pacote preparado para merge na `main`, tag e Release.

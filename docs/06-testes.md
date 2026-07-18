@@ -324,9 +324,9 @@ A versão não pode ser enviada à `main` como estável enquanto houver:
 | V04-T06 | Configurações legadas | Tema é migrado para `testQuest.settings` | OK |
 | V04-T07 | Histórico duplicado | Apenas a entrada concluída mais recente por ID permanece | OK |
 | V04-T08 | Acesso do controlador | Controlador principal não usa `localStorage` diretamente | OK |
-| V04-T09 | Migração real pelo navegador | Sessão criada na v0.3 continua disponível após atualizar para a v0.4 | Pendente |
-| V04-T10 | Recarregamento após migração | A sessão utiliza somente a chave atual sem duplicação | Pendente |
-| V04-T11 | Apagar sessão migrada | Chaves atual e legada são removidas e a sessão não reaparece | Pendente |
+| V04-T09 | Migração real pelo navegador | Sessão criada na v0.3 continua disponível após atualizar para a v0.4 | OK |
+| V04-T10 | Recarregamento após migração | A sessão utiliza somente a chave atual sem duplicação | OK |
+| V04-T11 | Apagar sessão migrada | Chaves atual e legada são removidas e a sessão não reaparece | OK |
 
 
 # v0.4 — Modularização complementar
@@ -341,8 +341,8 @@ A versão não pode ser enviada à `main` como estável enquanto houver:
 | V04-T17 | Exportação JSON | Conteúdo preserva o estado versionado completo | OK |
 | V04-T18 | Confirmações | Mensagens e resumo da finalização são produzidos fora do controlador visual | OK |
 | V04-T19 | Estrutura modular | Controlador não contém cálculos, relatórios, formatadores ou geração de IDs extraídos | OK |
-| V04-T20 | Regressão manual dos arquivos | Os três botões baixam arquivos válidos pelo navegador | Pendente |
-| V04-T21 | Regressão manual da sessão | Criar, recarregar, continuar e finalizar mantém o mesmo comportamento visual | Pendente |
+| V04-T20 | Regressão manual dos arquivos | Os três botões baixam arquivos válidos pelo navegador | OK |
+| V04-T21 | Regressão manual da sessão | Criar, recarregar, continuar e finalizar mantém o mesmo comportamento visual | OK |
 
 
 # v0.4 — Confiabilidade e Release Candidate
@@ -357,6 +357,6 @@ A versão não pode ser enviada à `main` como estável enquanto houver:
 | V04-T27 | Proteção de saída | O fechamento só é protegido quando há sessão e persistência em risco | OK |
 | V04-T28 | Fluxo integrado completo | Importação, sessão, recarga simulada, resultado, histórico e exportações permanecem coerentes | OK |
 | V04-T29 | Estrutura de release | Cinco telas e controles de recuperação permanecem presentes | OK |
-| V04-T30 | Regressão manual final | Fluxo completo funciona no navegador em desktop e mobile | Pendente |
-| V04-T31 | Aviso visual real | Simulação no DevTools mostra o aviso sem bloquear a interface | Pendente |
-| V04-T32 | Recuperação real | Após restabelecer o armazenamento, `Tentar novamente` salva e remove o aviso | Pendente |
+| V04-T30 | Regressão manual final | Fluxo completo funciona no navegador em desktop e mobile | OK |
+| V04-T31 | Aviso visual real | Simulação no DevTools mostra o aviso sem bloquear a interface | OK |
+| V04-T32 | Recuperação real | Após restabelecer o armazenamento, `Tentar novamente` salva e remove o aviso | OK |

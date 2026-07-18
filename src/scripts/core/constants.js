@@ -1,4 +1,4 @@
-export const APP_VERSION = "0.4-dev";
+export const APP_VERSION = "0.4.0";
 
 export const SESSION_SCHEMA_VERSION = 3;
 export const SETTINGS_SCHEMA_VERSION = 1;

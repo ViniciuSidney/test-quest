@@ -82,10 +82,10 @@ A Tela Inicial também permite continuar uma sessão salva diretamente na Tela d
 
 ## Estado atual
 
-**Versão estável:** `v0.3.0`  
-**Ciclo em desenvolvimento:** `v0.4-dev`
+**Versão estável:** `v0.4.0`  
+**Próximo ciclo planejado:** `v0.5-dev`
 
-**Fase do projeto:** consolidação da arquitetura, persistência e confiabilidade.
+**Fase do projeto:** v0.4.0 concluída; preparação para modos de resolução e revisão.
 
 Concluído:
 
@@ -106,14 +106,14 @@ Concluído:
 - navegação centralizada entre as cinco telas;
 - histórico local e indicadores de sessões concluídas implementados.
 
-Ciclo atual:
+Consolidação concluída na v0.4.0:
 
 - versionar e validar o estado salvo — concluído na primeira etapa;
 - migrar as chaves legadas com backup — concluído na primeira etapa;
 - separar persistência e configurações do controlador — concluído na primeira etapa;
 - normalizar e deduplicar o histórico — concluído na primeira etapa;
 - modularizar ciclo de vida, resultados, formatadores, confirmações e exportações — concluído na segunda etapa;
-- executar testes de fluxo, falhas de armazenamento e regressão completa da v0.4 antes do fechamento — próxima etapa.
+- executar testes de fluxo, falhas de armazenamento e regressão completa — concluído na terceira etapa.
 
 ## Critérios de sucesso da v0.4
 
@@ -131,5 +131,5 @@ Ciclo atual:
 - os dados ficam no navegador por meio do `localStorage`;
 - a arquitetura JavaScript ainda mantém parte da lógica concentrada;
 - o histórico atual registra resumos locais, mas ainda não possui visualização detalhada de sessões;
-- a Tela Inicial, a Importação e a Resolução estão implementadas, enquanto o Resultado ainda usa a estrutura legada;
-- modais e confirmações terão seus layouts refinados depois das telas principais.
+- as cinco telas oficiais estão implementadas e integradas;
+- novas modalidades de resolução permanecem reservadas para a v0.5.

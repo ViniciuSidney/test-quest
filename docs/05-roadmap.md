@@ -2,9 +2,9 @@
 
 ## Estado geral
 
-**Versão estável:** `v0.3.0`  
-**Versão em desenvolvimento:** `v0.4-dev`  
-**Estado:** `consolidação técnica em andamento`
+**Versão estável:** `v0.4.0`  
+**Próxima versão planejada:** `v0.5-dev`  
+**Estado:** `v0.4.0 concluída e pronta para publicação`
 
 Concluído:
 
@@ -110,9 +110,9 @@ Substituir as telas atuais pelas cinco telas aprovadas sem perder funcionalidade
 
 # Marco 3 — Modularização e migração de dados
 
-## v0.4-dev — Arquitetura, persistência e confiabilidade
+## v0.4.0 — Arquitetura, persistência e confiabilidade
 
-**Status:** Release Candidate — regressão manual final pendente
+**Status:** Concluída
 
 ### Objetivo
 
@@ -157,13 +157,12 @@ Reduzir a concentração de responsabilidades, proteger os dados locais e prepar
 - suíte automatizada ampliada de 19 para 23 arquivos;
 - documentação preparada para o fechamento.
 
-### Pendência para publicar v0.4.0
+### Fechamento da v0.4.0
 
-- executar a regressão manual final pelo Live Server;
-- registrar navegador, resoluções e resultados;
-- corrigir apenas bugs bloqueadores encontrados;
-- atualizar `APP_VERSION`, changelog e status para `v0.4.0`;
-- criar merge, tag e Release.
+- regressão automatizada concluída com 23 arquivos de teste;
+- preparação manual aprovada para fechamento;
+- `APP_VERSION`, changelog e status atualizados para `v0.4.0`;
+- pacote final preparado para merge, tag e Release.
 
 ---
 

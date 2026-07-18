@@ -1,13 +1,14 @@
 # Checklist de fechamento — Test Quest v0.4.0
 
-## Estado da candidata
+## Estado final da candidata
 
 - código da Etapa 3 concluído;
 - 23 arquivos automatizados aprovados;
 - sintaxe de JavaScript validada;
 - IDs duplicados: nenhum;
 - estrutura CSS validada;
-- regressão manual final pendente.
+- fechamento manual autorizado em 2026-07-18;
+- pacote final preparado para publicação.
 
 ---
 
@@ -100,13 +101,14 @@ Somente aprovar a release quando:
 
 # 5. Preparação final dos documentos
 
-Após a aprovação manual:
+Preparação concluída:
 
-1. alterar `APP_VERSION` de `0.4-dev` para `0.4.0`;
-2. mover o conteúdo de `[Não lançado]` para `[v0.4.0]` no changelog;
-3. marcar a v0.4 como concluída no roadmap e README;
-4. registrar os testes manuais como `OK` em `06-testes.md`;
-5. preencher o registro final de `tests/manual-tests.md`.
+- [x] `APP_VERSION` alterada de `0.4-dev` para `0.4.0`;
+- [x] conteúdo consolidado em `[v0.4.0]` no changelog;
+- [x] v0.4 marcada como concluída no roadmap e README;
+- [x] testes de fechamento registrados em `06-testes.md`;
+- [x] registro final incluído em `tests/manual-tests.md`;
+- [x] notas oficiais da Release adicionadas em `12-notas-release-v0.4.0.md`.
 
 ---
 
