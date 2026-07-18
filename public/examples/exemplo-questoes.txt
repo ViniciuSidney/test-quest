@@ -8,7 +8,7 @@ c: Ela falou mas alto para ser ouvida.
 d: O professor explicou o conteúdo, mais ninguém anotou.
 e: Preciso de mas exemplos para entender a regra.
 correta: B
-explicacao: A alternativa B está correta porque "mais" indica intensidade ou quantidade, enquanto "mas" expressa oposição. Nas demais alternativas, as duas palavras foram trocadas de forma inadequada.
+explicacao: A opção correta usa "mais" para indicar intensidade ou quantidade e "mas" para expressar oposição. Nas demais opções, as duas palavras foram trocadas de forma inadequada.
 +++
 
 @discursiva

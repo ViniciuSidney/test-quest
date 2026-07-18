@@ -30,6 +30,31 @@ Todas as mudanças importantes do Test Quest serão registradas neste arquivo.
 - migração automática e backups da v0.4;
 - sessões discursivas e demais funcionalidades existentes.
 
+### v0.5-dev — Embaralhamento de alternativas
+
+#### Adicionado
+
+- opção `Embaralhar alternativas` na configuração da sessão;
+- serviço de reordenação que preserva IDs, gabarito e respostas;
+- testes funcionais e estruturais do embaralhamento;
+- aviso no modelo de importação sobre explicações que dependem de letras.
+
+#### Alterado
+
+- sessões passam a registrar `embaralharQuestoes` e `embaralharAlternativas` em `opcoes`;
+- a ordem sorteada das alternativas passa a fazer parte do estado persistido;
+- Resultado Final mostra também o texto da resposta objetiva;
+- relatório TXT mostra letra visual e texto da alternativa;
+- exemplo de Gramática deixa de citar uma letra específica na explicação;
+- suíte automatizada passa de 26 para 28 arquivos.
+
+#### Preservado
+
+- correção automática pelo ID estável;
+- respostas e marcações após recarregar a página;
+- compatibilidade com sessões da v0.4 e com sessões da fundação da v0.5;
+- comportamento das questões discursivas.
+
 ## [v0.4.0] — 2026-07-18
 
 ### Adicionado

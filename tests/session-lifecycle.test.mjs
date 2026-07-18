@@ -11,7 +11,8 @@ import {
   finishSession,
   isActiveSession,
   restoreActiveSession,
-  shuffleItems
+  shuffleItems,
+  shuffleQuestionAlternatives
 } from "../src/scripts/features/session/session-lifecycle.service.js";
 
 const objectiveAlternatives = normalizeObjectiveAlternatives(
@@ -56,6 +57,8 @@ assert.equal(active.listaNome, "Lista teste");
 assert.equal(active.importadoEm, "2026-07-17T12:00:00.000Z");
 assert.equal(active.iniciadoEm, active.importadoEm);
 assert.equal(active.opcoes.mostrarGabaritoFinal, false);
+assert.equal(active.opcoes.embaralharQuestoes, false);
+assert.equal(active.opcoes.embaralharAlternativas, false);
 assert.notEqual(active.questoes[0], questions[0]);
 assert.notEqual(active.questoes[0].alternativas, questions[0].alternativas);
 assert.equal(isActiveSession(active), true);
@@ -91,5 +94,9 @@ assert.equal(
   "sessao-123-8"
 );
 assert.deepEqual(shuffleItems([1, 2, 3], () => 0), [2, 3, 1]);
+assert.notDeepEqual(
+  shuffleQuestionAlternatives(objectiveBase, () => 0).alternativas.map((item) => item.id),
+  objectiveBase.alternativas.map((item) => item.id)
+);
 
 console.log("Session lifecycle: todos os testes passaram.");

@@ -25,9 +25,9 @@ A proposta não é apenas registrar acertos, mas ajudar o usuário a:
 
 **Versão estável:** `v0.4.0`  
 **Versão em desenvolvimento:** `v0.5-dev`  
-**Estado:** `fundação de dados implementada e em validação`
+**Estado:** `Etapa 2 — embaralhamento de alternativas implementado`
 
-**Fase atual:** preparação dos novos modos de resolução e revisão, começando pelo modelo estável de alternativas e respostas.
+**Fase atual:** novos modos de resolução e revisão, com modelo estável e embaralhamento persistente das alternativas concluídos.
 
 ### Concluído
 
@@ -112,7 +112,9 @@ A v0.4.0 conclui o ciclo de consolidação técnica. A suíte automatizada foi a
 - Resultado Final com resumo geral, desempenho por assunto e filtros;
 - cards objetivos e discursivos expansíveis;
 - estado vazio para filtros sem resultados;
-- apenas um card de revisão expandido por vez.
+- apenas um card de revisão expandido por vez;
+- opção de embaralhar alternativas nas questões objetivas;
+- ordem das alternativas preservada após recarregar a sessão.
 
 ## Funcionalidades planejadas para os próximos ciclos
 
@@ -127,7 +129,7 @@ A v0.4.0 conclui o ciclo de consolidação técnica. A suíte automatizada foi a
 
 ### v0.5 — em desenvolvimento
 
-**Fundação concluída nesta etapa:**
+**Etapa 1 — fundação concluída:**
 
 - alternativas objetivas representadas por objetos com IDs estáveis;
 - respostas objetivas salvas pelo ID da alternativa, não pela letra visual;
@@ -138,9 +140,19 @@ A v0.4.0 conclui o ciclo de consolidação técnica. A suíte automatizada foi a
 - estrutura preparada para reordenar alternativas sem perder resposta ou gabarito;
 - suíte automatizada ampliada para 26 arquivos de teste.
 
+**Etapa 2 — embaralhamento de alternativas concluído:**
+
+- opção própria na configuração da sessão;
+- reordenação apenas das alternativas objetivas;
+- IDs, respostas, gabarito e marcadores preservados;
+- mesma ordem mantida depois de recarregar ou continuar a sessão;
+- nova ordem gerada somente ao iniciar uma nova sessão;
+- Resultado Final e TXT mostram a letra visual atual junto ao texto da alternativa;
+- orientações para evitar explicações dependentes das letras A–E;
+- suíte automatizada ampliada para 28 arquivos de teste.
+
 **Próximas entregas planejadas:**
 
-- embaralhamento de alternativas;
 - questões de verdadeiro ou falso;
 - gabarito após cada questão;
 - opção de refazer questões erradas;
@@ -205,7 +217,7 @@ Execute toda a suíte da aplicação com:
 node tests/run-all-tests.mjs
 ```
 
-O runner executa 26 arquivos de teste, incluindo interface estrutural, regras de resolução, desempenho, resultado, App Shell, esquema da sessão, migrações, configurações, histórico, falhas de armazenamento, modelo de alternativas e fluxo integrado completo.
+O runner executa 28 arquivos de teste, incluindo interface estrutural, regras de resolução, desempenho, resultado, App Shell, esquema da sessão, migrações, configurações, histórico, falhas de armazenamento, modelo de alternativas, embaralhamento persistente e fluxo integrado completo.
 
 ## Estrutura principal
 

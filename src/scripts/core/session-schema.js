@@ -64,7 +64,9 @@ export function normalizeSessionState(rawState) {
     opcoes: {
       ...base.opcoes,
       ...(isPlainObject(rawState.opcoes) ? rawState.opcoes : {}),
-      mostrarGabaritoFinal: rawState?.opcoes?.mostrarGabaritoFinal !== false
+      mostrarGabaritoFinal: rawState?.opcoes?.mostrarGabaritoFinal !== false,
+      embaralharQuestoes: Boolean(rawState?.opcoes?.embaralharQuestoes),
+      embaralharAlternativas: Boolean(rawState?.opcoes?.embaralharAlternativas)
     },
     importadoEm: importedAt,
     iniciadoEm: startedAt,

@@ -68,3 +68,14 @@ Os quatro manuais em `manuais-de-telas/` foram mantidos sem alterações, pois j
 - interface e relatórios continuaram apresentando letras A–E;
 - testes automatizados ampliados para 26 arquivos;
 - próxima etapa definida como embaralhamento de alternativas.
+
+
+## v0.5-dev — Etapa 2: embaralhamento de alternativas
+
+- adicionada opção própria na tela de Importação;
+- ordem das alternativas definida ao criar a sessão e preservada no estado;
+- IDs, resposta correta, resposta oficial e marcadores mantidos após a reordenação;
+- Resultado Final e TXT passam a mostrar letra visual e texto da alternativa;
+- exemplo e guia de importação adaptados para explicações independentes das letras;
+- adicionados testes de ordem, restauração, correção e estrutura;
+- suíte ampliada para 28 arquivos de teste.

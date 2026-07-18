@@ -23,7 +23,9 @@ export function createInitialState() {
     marcacoesAlternativas: {},
     temporizadorPausado: false,
     opcoes: {
-      mostrarGabaritoFinal: true
+      mostrarGabaritoFinal: true,
+      embaralharQuestoes: false,
+      embaralharAlternativas: false
     },
     importadoEm: null,
     iniciadoEm: null,

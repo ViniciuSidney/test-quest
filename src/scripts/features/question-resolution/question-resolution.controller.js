@@ -74,7 +74,7 @@ export function initQuestionResolution() {
   d: O professor explicou o conteúdo, mais ninguém anotou.
   e: Preciso de mas exemplos para entender a regra.
   correta: B
-  explicacao: A alternativa B está correta porque "mais" indica intensidade ou quantidade, enquanto "mas" expressa oposição. Nas demais alternativas, as duas palavras foram trocadas de forma inadequada.
+  explicacao: A opção correta usa "mais" para indicar intensidade ou quantidade e "mas" para expressar oposição. Nas demais opções, as duas palavras foram trocadas de forma inadequada.
   +++
 
   @discursiva
@@ -353,6 +353,7 @@ export function initQuestionResolution() {
     arquivoQuestoes.value = "";
     nomeLista.value = "";
     $("#opcaoEmbaralhar").checked = false;
+    $("#opcaoEmbaralharAlternativas").checked = false;
     $("#opcaoMostrarGabaritoFinal").checked = true;
     atualizarNomeArquivo();
     importValidation = createImportValidationState();
@@ -680,7 +681,8 @@ export function initQuestionResolution() {
         questions: importValidation.questions,
         listName: nomeLista.value,
         showAnswerKey: $("#opcaoMostrarGabaritoFinal").checked,
-        shuffleQuestions: $("#opcaoEmbaralhar").checked
+        shuffleQuestions: $("#opcaoEmbaralhar").checked,
+        shuffleAlternatives: $("#opcaoEmbaralharAlternativas").checked
       });
       substituicaoAutorizada = false;
 
@@ -1642,6 +1644,7 @@ export function initQuestionResolution() {
         <div class="result-answer-stat result-answer-stat--correct">
           <span>Resposta correta</span>
           <strong>${escapeHtml(item.correctAnswer || "—")} ✓</strong>
+          ${item.correctAnswerText ? `<small class="result-answer-stat__text">${escapeHtml(item.correctAnswerText)}</small>` : ""}
         </div>
       `
       : "";
@@ -1668,6 +1671,7 @@ export function initQuestionResolution() {
             <div class="result-answer-stat result-answer-stat--user" data-correct="${acertou}">
               <span>Sua resposta</span>
               <strong>${respondeu ? `${escapeHtml(item.answer)} ${acertou ? "✓" : "✕"}` : "Não respondida"}</strong>
+              ${respondeu && item.answerText ? `<small class="result-answer-stat__text">${escapeHtml(item.answerText)}</small>` : ""}
             </div>
             ${answerKey}
             <div class="result-answer-stat">

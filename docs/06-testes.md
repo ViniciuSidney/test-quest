@@ -378,3 +378,22 @@ A versão não pode ser enviada à `main` como estável enquanto houver:
 | V05-T10 | Regressão automatizada | Os 26 arquivos da suíte terminam sem falhas | OK |
 | V05-T11 | Migração real no navegador | Uma sessão ativa da v0.4 reaparece com resposta e marcadores preservados | Pendente |
 | V05-T12 | Regressão visual | As cinco telas permanecem visualmente iguais à v0.4 | Pendente |
+
+
+# v0.5 — Embaralhamento de alternativas
+
+| Código | Teste | Resultado esperado | Status |
+|---|---|---|---|
+| V05-T13 | Opção de sessão | A Importação oferece `Embaralhar alternativas` separadamente de `Embaralhar questões` | OK |
+| V05-T14 | Ordem alterada | Uma sessão nova com a opção ativa recebe ordem diferente da importada | OK |
+| V05-T15 | IDs preservados | O embaralhamento não modifica os IDs nem o `respostaCorretaId` | OK |
+| V05-T16 | Correção automática | Uma alternativa correta continua correta em qualquer posição visual | OK |
+| V05-T17 | Marcadores auxiliares | Estados em análise e eliminada continuam ligados à alternativa certa | OK |
+| V05-T18 | Restauração | A mesma ordem reaparece depois de salvar e restaurar a sessão | OK |
+| V05-T19 | Nova sessão | Uma nova sessão pode gerar outra ordem sem modificar a sessão anterior | OK |
+| V05-T20 | Resultado Final | Letra visual e texto da resposta aparecem corretamente no card expandido | OK |
+| V05-T21 | Relatório TXT | Resposta e gabarito usam letra visual atual acompanhada do texto | OK |
+| V05-T22 | Opção desativada | A ordem importada é preservada quando o embaralhamento está desligado | OK |
+| V05-T23 | Regressão automatizada | Os 28 arquivos da suíte terminam sem falhas | OK |
+| V05-T24 | Teste real no navegador | Responder, marcar, recarregar e finalizar mantém alternativa e gabarito corretos | Pendente |
+| V05-T25 | Combinação das opções | Embaralhar questões e alternativas simultaneamente mantém o fluxo correto | OK |

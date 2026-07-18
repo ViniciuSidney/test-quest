@@ -610,6 +610,19 @@ body[data-screen="resultado"] .legacy-topbar {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
+.result-answer-stat__text {
+  display: -webkit-box;
+  margin-top: 0.4rem;
+  overflow: hidden;
+  color: var(--tq-text-muted);
+  font-size: 0.72rem;
+  font-weight: 700;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
 .result-answer-stat strong,
 .result-time-block strong {
   font-family: "Cascadia Mono", "Cascadia Code", Consolas, monospace;

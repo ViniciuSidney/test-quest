@@ -81,8 +81,12 @@ export function buildAnswersReport(state, { now = new Date() } = {}) {
           ? "Correta"
           : "Incorreta";
 
-      lines.push(`Sua resposta: ${answerPresentation?.displayLetter || "—"}`);
-      lines.push(`Resposta correta: ${correctPresentation?.displayLetter || "—"}`);
+      lines.push(
+        `Sua resposta: ${formatObjectiveAlternativeForReport(answerPresentation)}`
+      );
+      lines.push(
+        `Resposta correta: ${formatObjectiveAlternativeForReport(correctPresentation)}`
+      );
       lines.push(`Status: ${status}`);
       lines.push(`Explicação: ${question.explicacao}`);
       return;
@@ -94,6 +98,17 @@ export function buildAnswersReport(state, { now = new Date() } = {}) {
   });
 
   return lines.join("\n");
+}
+
+
+function formatObjectiveAlternativeForReport(presentation) {
+  if (!presentation) {
+    return "—";
+  }
+
+  const letter = presentation.displayLetter || "—";
+  const text = String(presentation.text || "").trim();
+  return text ? `${letter}) ${text}` : letter;
 }
 
 export function buildNotesReport(state, { now = new Date() } = {}) {

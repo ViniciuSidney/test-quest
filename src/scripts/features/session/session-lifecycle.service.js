@@ -28,15 +28,19 @@ export function createActiveSession({
   listName = "",
   showAnswerKey = true,
   shuffleQuestions = false,
+  shuffleAlternatives = false,
   now = () => new Date().toISOString(),
   idFactory = createSessionId,
   random = Math.random
 } = {}) {
   const importedAt = now();
   const clonedQuestions = cloneQuestions(questions);
-  const orderedQuestions = shuffleQuestions
-    ? shuffleItems(clonedQuestions, random)
+  const questionsWithAlternativeOrder = shuffleAlternatives
+    ? clonedQuestions.map((question) => shuffleQuestionAlternatives(question, random))
     : clonedQuestions;
+  const orderedQuestions = shuffleQuestions
+    ? shuffleItems(questionsWithAlternativeOrder, random)
+    : questionsWithAlternativeOrder;
   const state = createInitialState();
 
   return {
@@ -47,7 +51,9 @@ export function createActiveSession({
     questoes: orderedQuestions,
     opcoes: {
       ...state.opcoes,
-      mostrarGabaritoFinal: Boolean(showAnswerKey)
+      mostrarGabaritoFinal: Boolean(showAnswerKey),
+      embaralharQuestoes: Boolean(shuffleQuestions),
+      embaralharAlternativas: Boolean(shuffleAlternatives)
     },
     importadoEm: importedAt,
     iniciadoEm: importedAt,
@@ -110,6 +116,37 @@ export function isActiveSession(state) {
     !state.finalizadoEm &&
     state.status !== SESSION_STATUS.FINISHED
   );
+}
+
+export function shuffleQuestionAlternatives(question, random = Math.random) {
+  if (question?.categoria !== "objetiva" || !Array.isArray(question.alternativas)) {
+    return question;
+  }
+
+  const originalAlternatives = question.alternativas;
+
+  if (originalAlternatives.length < 2) {
+    return question;
+  }
+
+  let shuffledAlternatives = shuffleItems(originalAlternatives, random);
+  const unchanged = shuffledAlternatives.every(
+    (alternative, index) => alternative === originalAlternatives[index]
+  );
+
+  // Evita que a opção pareça não ter funcionado quando o sorteio produz
+  // exatamente a mesma ordem (chance de 1 em 120 para cinco alternativas).
+  if (unchanged) {
+    shuffledAlternatives = [
+      ...originalAlternatives.slice(1),
+      originalAlternatives[0]
+    ];
+  }
+
+  return {
+    ...question,
+    alternativas: shuffledAlternatives
+  };
 }
 
 function cloneQuestions(questions) {

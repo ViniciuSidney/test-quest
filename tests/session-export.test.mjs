@@ -58,6 +58,8 @@ assert.match(answers, /RELATÓRIO DE RESPOSTAS/);
 assert.match(answers, /Questões respondidas: 2\/2/);
 assert.match(answers, /Acertos nas objetivas: 1\/1/);
 assert.match(answers, /Tempo total: 03:01/);
+assert.match(answers, /Sua resposta: B\) B/);
+assert.match(answers, /Resposta correta: B\) B/);
 assert.match(answers, /Status: Correta/);
 assert.match(answers, /Resposta esperada: Uma explicação\./);
 

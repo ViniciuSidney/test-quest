@@ -4,7 +4,7 @@
 
 **Versão estável:** `v0.4.0`  
 **Versão em desenvolvimento:** `v0.5-dev`  
-**Estado:** `Etapa 1 — fundação de alternativas e respostas concluída`
+**Estado:** `Etapa 2 — embaralhamento de alternativas concluído`
 
 Concluído:
 
@@ -170,7 +170,7 @@ Reduzir a concentração de responsabilidades, proteger os dados locais e prepar
 
 ## v0.5-dev — Flexibilidade de resolução e estudo ativo
 
-**Status:** Em desenvolvimento — Etapa 1 concluída
+**Status:** Em desenvolvimento — Etapas 1 e 2 concluídas
 
 ### Objetivo
 
@@ -189,13 +189,16 @@ Ampliar as formas de responder, corrigir e revisar questões sem perder compatib
 - correção permanece válida mesmo quando a ordem das alternativas muda;
 - testes automatizados ampliados para 26 arquivos.
 
-### Etapa 2 — Embaralhamento de alternativas — próxima
+### Etapa 2 — Embaralhamento de alternativas — concluída
 
-- adicionar configuração de sessão;
-- reordenar apenas a apresentação das alternativas;
-- preservar a ordem após recarregar;
-- garantir gabarito, marcadores, resultados e exportações corretos;
-- gerar nova ordem apenas em uma nova sessão.
+- configuração própria na importação;
+- reordenação somente das alternativas objetivas;
+- ordem persistida dentro da sessão;
+- gabarito, respostas e marcadores vinculados aos IDs estáveis;
+- Resultado Final e exportações convertendo IDs para a letra visual atual;
+- nova ordem gerada somente em uma nova sessão;
+- orientação para explicações independentes de letras;
+- testes automatizados ampliados para 28 arquivos.
 
 ### Etapas seguintes
 
