@@ -14,6 +14,11 @@ Todas as mudanças importantes do Test Quest serão registradas neste arquivo.
 - runner único `tests/run-all-tests.mjs` para executar toda a suíte;
 - documento técnico da v0.4.
 - fallback visual para falhas críticas durante a inicialização.
+- serviço de ciclo de vida da sessão;
+- serviço dedicado às confirmações da sessão;
+- serviço de geração e download das exportações;
+- formatadores compartilhados;
+- testes de ciclo de vida, confirmações, exportações, formatadores e estrutura da modularização.
 
 ### Alterado
 
@@ -23,6 +28,12 @@ Todas as mudanças importantes do Test Quest serão registradas neste arquivo.
 - estado da sessão passa ao esquema 3 e recebe `iniciadoEm`;
 - controlador principal deixa de acessar `localStorage` diretamente;
 - versão de desenvolvimento passa a `0.4-dev`.
+- criação, restauração e finalização de sessões deixam o controlador visual;
+- cálculo de resultado e tempo total passa ao serviço de resultados;
+- relatórios TXT e JSON deixam de ser montados dentro do controlador;
+- confirmações deixam de manter textos repetidos no controlador;
+- controlador principal passa de 2310 para aproximadamente 2050 linhas;
+- suíte automatizada passa de 14 para 19 arquivos de teste.
 
 ### Preservado
 

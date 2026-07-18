@@ -112,8 +112,8 @@ Ciclo atual:
 - migrar as chaves legadas com backup — concluído na primeira etapa;
 - separar persistência e configurações do controlador — concluído na primeira etapa;
 - normalizar e deduplicar o histórico — concluído na primeira etapa;
-- modularizar ciclo de vida, resultados, formatadores e exportações — próxima etapa;
-- executar a regressão completa da v0.4 antes do fechamento.
+- modularizar ciclo de vida, resultados, formatadores, confirmações e exportações — concluído na segunda etapa;
+- executar testes de fluxo, falhas de armazenamento e regressão completa da v0.4 antes do fechamento — próxima etapa.
 
 ## Critérios de sucesso da v0.4
 

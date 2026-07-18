@@ -132,14 +132,17 @@ Reduzir a concentração de responsabilidades, proteger os dados locais e prepar
 - controlador sem acesso direto ao `localStorage`;
 - testes de esquema, repositórios, configurações e histórico.
 
-### Etapa 2 — Modularização complementar — próxima
+### Etapa 2 — Modularização complementar — concluída
 
-- separar ciclo de vida da sessão do controlador visual;
-- centralizar cálculo de resultado;
-- centralizar formatação de tempo e datas;
-- separar geração de arquivos e downloads;
-- organizar mensagens e confirmações;
-- reduzir o tamanho do controlador principal sem alterar o comportamento.
+- ciclo de vida da sessão separado em `session-lifecycle.service.js`;
+- criação, restauração, finalização, identificação e detecção de sessão ativa centralizadas;
+- cálculo geral e tempo total centralizados em `results.service.js`;
+- formatadores de tempo, duração histórica, datas, HTML e slugs centralizados;
+- relatórios TXT, exportação JSON e download separados em `session-export.service.js`;
+- mensagens das confirmações centralizadas em `session-confirmations.service.js`;
+- controlador principal reduzido de 2310 para aproximadamente 2050 linhas;
+- testes automatizados ampliados de 14 para 19 arquivos;
+- interface, persistência e formato dos arquivos preservados.
 
 ### Etapa 3 — Confiabilidade e fechamento
 

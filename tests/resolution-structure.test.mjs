@@ -12,6 +12,10 @@ const controller = await readFile(
   new URL("../src/scripts/features/question-resolution/question-resolution.controller.js", import.meta.url),
   "utf8"
 );
+const confirmationsService = await readFile(
+  new URL("../src/scripts/features/session/session-confirmations.service.js", import.meta.url),
+  "utf8"
+);
 
 const requiredIds = [
   "telaResolucao",
@@ -59,8 +63,8 @@ assert.doesNotMatch(controller, /querySelectorAll\("\.map-btn"\)/);
 
 assert.match(resolutionCss, /\.resolution-tag--subject\s*\{[^}]*padding-inline:\s*0\.95rem/s);
 assert.match(confirmationCss, /\.confirmation-modal__summary-item/);
-assert.match(controller, /calculateDisplayedTotalMs/);
-assert.match(controller, /items:\s*\[/);
-assert.match(controller, /Questões respondidas/);
+assert.match(controller, /calculateSessionTotalTime as calcularTempoTotal/);
+assert.match(confirmationsService, /items:\s*\[/);
+assert.match(confirmationsService, /Questões respondidas/);
 
 console.log("Resolution structure: todos os testes passaram.");

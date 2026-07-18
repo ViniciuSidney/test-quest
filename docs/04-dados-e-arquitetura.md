@@ -246,23 +246,46 @@ src/scripts
 │   ├── config.js
 │   ├── constants.js
 │   ├── screens.js
+│   ├── session-schema.js
 │   └── state.js
 ├── features
+│   ├── exports
+│   │   └── session-export.service.js
 │   ├── home
 │   │   └── home.service.js
+│   ├── performance
+│   │   └── performance.service.js
 │   ├── question-import
 │   │   └── question-import.parser.js
-│   └── question-resolution
-│       ├── question-resolution.controller.js
-│       └── question-resolution.helpers.js
+│   ├── question-resolution
+│   │   ├── question-resolution.controller.js
+│   │   └── question-resolution.helpers.js
+│   ├── results
+│   │   └── results.service.js
+│   ├── session
+│   │   ├── session-confirmations.service.js
+│   │   ├── session-lifecycle.service.js
+│   │   └── session.repository.js
+│   └── settings
+│       └── settings.repository.js
 ├── shared
 │   ├── dom.js
+│   ├── formatters.js
+│   ├── startup-error.js
 │   └── storage.js
 ├── app.js
 └── main.js
 ```
 
-A navegação, o histórico da Home, o parser de importação e as regras puras dos marcadores da Resolução já foram separados. O controlador principal ainda coordena eventos e transições entre as funcionalidades durante a migração gradual.
+## Fronteiras atuais
+
+- o controlador coordena DOM, eventos e transições entre telas;
+- repositórios cuidam de leitura, gravação, migração e recuperação;
+- o serviço de ciclo de vida cria, restaura e finaliza sessões;
+- o serviço de resultados fornece uma única fonte para métricas;
+- o serviço de exportação gera arquivos sem conhecer a interface;
+- formatadores não acessam estado nem DOM;
+- confirmações retornam apenas descrições consumidas pelo modal visual.
 
 ## Arquitetura-alvo
 
@@ -351,3 +374,30 @@ Responsabilidades:
 - `session.repository.js`: leitura, gravação, migração, backup e limpeza;
 - `settings.repository.js`: tema e preferências globais versionadas;
 - `storage.js`: operações seguras e injetáveis para testes.
+
+
+## Implementação da segunda etapa da v0.4
+
+```text
+src/scripts
+├── features
+│   ├── exports
+│   │   └── session-export.service.js
+│   ├── results
+│   │   └── results.service.js
+│   └── session
+│       ├── session-confirmations.service.js
+│       └── session-lifecycle.service.js
+└── shared
+    └── formatters.js
+```
+
+Responsabilidades:
+
+- `session-lifecycle.service.js`: criação, restauração, identificação, embaralhamento e finalização de sessões;
+- `session-confirmations.service.js`: descrições puras das confirmações exibidas pelo modal;
+- `results.service.js`: cálculo geral, tempo total e preparação das métricas do resultado;
+- `session-export.service.js`: geração dos relatórios TXT, JSON e download no navegador;
+- `formatters.js`: formatação compartilhada de tempo, datas, HTML e nomes de arquivo.
+
+O controlador principal permanece responsável por DOM, eventos, foco, temporizador ativo e transições visuais. A extração reduziu o arquivo sem mudar IDs, telas, armazenamento ou formato público das exportações.

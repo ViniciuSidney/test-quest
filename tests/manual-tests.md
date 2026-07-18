@@ -211,3 +211,16 @@
 - [ ] Apagar o progresso e confirmar que a sessão não reaparece.
 - [ ] Alternar o tema antes e depois da migração e confirmar persistência.
 - [ ] Finalizar uma sessão migrada e confirmar apenas um registro no histórico.
+
+
+## v0.4 — regressão após modularização
+
+- [ ] Criar uma sessão com o exemplo interno e confirmar que o nome, as questões e as opções permanecem corretos.
+- [ ] Responder uma objetiva e uma discursiva, adicionar anotação, marcar revisão e recarregar a página.
+- [ ] Continuar a sessão pela Home e confirmar respostas, tempos, anotação, revisão e questão atual.
+- [ ] Finalizar com questões pendentes e conferir o mesmo resumo no modal.
+- [ ] Finalizar sem pendências e conferir a Tela de Desempenho e o Resultado Final.
+- [ ] Baixar respostas TXT e comparar resumo, gabarito, explicações e tempos.
+- [ ] Baixar anotações TXT e comparar anotações, revisão e tempos.
+- [ ] Exportar JSON e conferir `schemaVersion`, ID, status, questões e mapas da sessão.
+- [ ] Confirmar que limpar importação, substituir sessão, apagar progresso e preparar nova resolução mantêm os mesmos textos e ações.

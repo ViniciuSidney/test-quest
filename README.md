@@ -27,7 +27,7 @@ A proposta não é apenas registrar acertos, mas ajudar o usuário a:
 **Versão em desenvolvimento:** `v0.4-dev`  
 **Estado:** `consolidação técnica em andamento`
 
-**Fase atual:** fortalecimento da arquitetura, persistência e recuperação segura dos dados locais.
+**Fase atual:** modularização do ciclo de sessão, resultados, formatadores e exportações, mantendo a experiência da v0.3.0.
 
 ### Concluído
 
@@ -62,18 +62,22 @@ A proposta não é apenas registrar acertos, mas ajudar o usuário a:
 
 ### Ciclo atual — v0.4-dev
 
-A primeira etapa da consolidação técnica já inclui:
+As duas primeiras etapas da consolidação técnica já incluem:
 
 1. esquema versionado para sessões salvas;
 2. migração automática das chaves legadas;
-3. backup dos dados anteriores antes da migração;
-4. isolamento de dados corrompidos;
-5. repositórios próprios para sessão e configurações;
-6. normalização e deduplicação do histórico;
-7. remoção do acesso direto ao `localStorage` pelo controlador principal;
-8. novos testes automatizados de persistência e migração.
+3. backup e isolamento de dados incompatíveis;
+4. repositórios próprios para sessão e configurações;
+5. normalização e deduplicação do histórico;
+6. ciclo de vida da sessão separado do controlador visual;
+7. cálculo geral de resultados centralizado;
+8. formatadores compartilhados de tempo, datas, HTML e nomes de arquivo;
+9. geração e download das exportações separados da interface;
+10. mensagens de confirmação centralizadas;
+11. controlador principal reduzido de 2310 para cerca de 2050 linhas;
+12. suíte automatizada ampliada para 19 arquivos de teste.
 
-As próximas etapas da v0.4 serão a modularização complementar do controlador, centralização de formatadores e exportações e reforço dos testes de fluxo completo.
+A próxima etapa da v0.4 será dedicada aos testes de fluxo completo, falhas de armazenamento, regressão manual e fechamento da versão.
 
 ## Funcionalidades atuais
 
@@ -111,10 +115,10 @@ As próximas etapas da v0.4 serão a modularização complementar do controlador
 
 ### v0.4
 
-- modularização gradual do controlador principal;
-- centralização de formatadores e exportações;
-- reforço do tratamento de erros;
-- testes de fluxo e regressão da persistência.
+- modularização gradual do controlador principal — em andamento;
+- ciclo de vida, resultados, formatadores, confirmações e exportações — concluídos;
+- reforço do tratamento de erros — em andamento;
+- testes de fluxo e regressão da persistência — próxima etapa.
 
 ### v0.5
 

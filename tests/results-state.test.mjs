@@ -2,6 +2,8 @@ import assert from "node:assert/strict";
 import {
   RESULT_FILTERS,
   buildQuestionReviewItems,
+  calculateSessionResult,
+  calculateSessionTotalTime,
   buildSubjectResultItems,
   filterQuestionReviewItems,
   getQuestionResultStatus,
@@ -53,6 +55,27 @@ assert.equal(getQuestionResultStatus(questions[0], "B"), "correct");
 assert.equal(getQuestionResultStatus(questions[1], "D"), "incorrect");
 assert.equal(getQuestionResultStatus(questions[2], "texto"), "discursive");
 assert.equal(getQuestionResultStatus(questions[3], ""), "unanswered");
+
+
+const sessionResult = calculateSessionResult({
+  questoes: questions,
+  respostas: answers,
+  temposMs: timesMs,
+  revisao: review
+});
+assert.deepEqual(sessionResult, {
+  total: 4,
+  respondidas: 3,
+  objetivas: 3,
+  discursivas: 1,
+  acertos: 1,
+  erros: 1,
+  percentual: 33,
+  tempoTotal: 382000,
+  tempoMedio: 95500,
+  marcadas: 2
+});
+assert.equal(calculateSessionTotalTime({ questoes: questions, temposMs: timesMs }), 382000);
 
 const items = buildQuestionReviewItems({
   questions,

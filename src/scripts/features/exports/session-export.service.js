@@ -1,0 +1,139 @@
+import { calculateSessionResult } from "../results/results.service.js";
+import { formatDateTime, formatDuration, slugify } from "../../shared/formatters.js";
+
+export const EXPORT_MIME_TYPES = Object.freeze({
+  TEXT: "text/plain;charset=utf-8",
+  JSON: "application/json;charset=utf-8"
+});
+
+export function createAnswersExport(state, { now = new Date() } = {}) {
+  return {
+    content: buildAnswersReport(state, { now }),
+    fileName: `${slugify(state?.listaNome || "respostas")}-respostas.txt`,
+    mimeType: EXPORT_MIME_TYPES.TEXT
+  };
+}
+
+export function createNotesExport(state, { now = new Date() } = {}) {
+  return {
+    content: buildNotesReport(state, { now }),
+    fileName: `${slugify(state?.listaNome || "anotacoes")}-anotacoes.txt`,
+    mimeType: EXPORT_MIME_TYPES.TEXT
+  };
+}
+
+export function createSessionJsonExport(state) {
+  return {
+    content: JSON.stringify(state, null, 2),
+    fileName: `${slugify(state?.listaNome || "sessao")}-sessao.json`,
+    mimeType: EXPORT_MIME_TYPES.JSON
+  };
+}
+
+export function buildAnswersReport(state, { now = new Date() } = {}) {
+  const result = calculateSessionResult(state);
+  const lines = [
+    "RELATÓRIO DE RESPOSTAS",
+    "======================",
+    `Lista: ${state?.listaNome || "Lista sem nome"}`,
+    `Data de exportação: ${now.toLocaleString("pt-BR")}`,
+    `Importado em: ${formatDateTime(state?.importadoEm)}`,
+    `Finalizado em: ${formatDateTime(state?.finalizadoEm)}`,
+    "",
+    "RESUMO",
+    "------",
+    `Total de questões: ${result.total}`,
+    `Questões respondidas: ${result.respondidas}/${result.total}`,
+    `Objetivas: ${result.objetivas}`,
+    `Discursivas: ${result.discursivas}`,
+    `Acertos nas objetivas: ${result.objetivas > 0 ? `${result.acertos}/${result.objetivas}` : "Não disponível"}`,
+    `Desempenho nas objetivas: ${result.objetivas > 0 ? `${result.percentual}%` : "Não disponível"}`,
+    `Tempo total: ${formatDuration(result.tempoTotal)}`,
+    `Tempo médio por questão: ${formatDuration(result.tempoMedio)}`,
+    `Marcadas para revisão: ${result.marcadas}`,
+    "",
+    "RESPOSTAS",
+    "---------"
+  ];
+
+  (state?.questoes || []).forEach((question, index) => {
+    const answer = state?.respostas?.[question.id] || "";
+    const time = state?.temposMs?.[question.id] || 0;
+    const marked = state?.revisao?.[question.id] ? "Sim" : "Não";
+
+    lines.push("");
+    lines.push(`${index + 1}. ${String(question.categoria || "").toUpperCase()} - ${question.assunto}`);
+    lines.push(`Tempo usado: ${formatDuration(time)}`);
+    lines.push(`Marcada para revisão: ${marked}`);
+    lines.push(`Enunciado: ${question.enunciado}`);
+
+    if (question.categoria === "objetiva") {
+      const status = !answer
+        ? "Não respondida"
+        : answer.toUpperCase() === question.correta
+          ? "Correta"
+          : "Incorreta";
+
+      lines.push(`Sua resposta: ${answer || "—"}`);
+      lines.push(`Resposta correta: ${question.correta}`);
+      lines.push(`Status: ${status}`);
+      lines.push(`Explicação: ${question.explicacao}`);
+      return;
+    }
+
+    lines.push(`Sua resposta: ${answer || "—"}`);
+    lines.push(`Resposta esperada: ${question.respostaEsperada}`);
+    lines.push(`Critérios de correção: ${question.criterios}`);
+  });
+
+  return lines.join("\n");
+}
+
+export function buildNotesReport(state, { now = new Date() } = {}) {
+  const lines = [
+    "ANOTAÇÕES DA RESOLUÇÃO",
+    "======================",
+    `Lista: ${state?.listaNome || "Lista sem nome"}`,
+    `Data de exportação: ${now.toLocaleString("pt-BR")}`,
+    "",
+    "ANOTAÇÕES POR QUESTÃO",
+    "---------------------"
+  ];
+
+  (state?.questoes || []).forEach((question, index) => {
+    const note = state?.anotacoes?.[question.id] || "";
+    const time = state?.temposMs?.[question.id] || 0;
+    const marked = state?.revisao?.[question.id] ? "Sim" : "Não";
+
+    lines.push("");
+    lines.push(`${index + 1}. ${String(question.categoria || "").toUpperCase()} - ${question.assunto}`);
+    lines.push(`Tempo usado: ${formatDuration(time)}`);
+    lines.push(`Marcada para revisão: ${marked}`);
+    lines.push(`Enunciado: ${question.enunciado}`);
+    lines.push("");
+    lines.push("Anotação:");
+    lines.push(note || "—");
+  });
+
+  return lines.join("\n");
+}
+
+export function downloadExportFile(file, {
+  documentRef = globalThis.document,
+  urlRef = globalThis.URL
+} = {}) {
+  if (!file || !documentRef || !urlRef) {
+    throw new Error("O ambiente atual não permite baixar arquivos.");
+  }
+
+  const blob = new Blob([file.content], { type: file.mimeType });
+  const url = urlRef.createObjectURL(blob);
+  const link = documentRef.createElement("a");
+
+  link.href = url;
+  link.download = file.fileName;
+  documentRef.body.appendChild(link);
+  link.click();
+  link.remove();
+  urlRef.revokeObjectURL(url);
+}
