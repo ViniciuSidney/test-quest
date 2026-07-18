@@ -82,10 +82,10 @@ A Tela Inicial também permite continuar uma sessão salva diretamente na Tela d
 
 ## Estado atual
 
-**Base funcional:** `v0.2.5-dev`  
-**Ciclo em desenvolvimento:** `v0.3-dev`
+**Versão estável:** `v0.4.0`  
+**Próximo ciclo planejado:** `v0.5-dev`
 
-**Fase do projeto:** implementação gradual das cinco telas oficiais.
+**Fase do projeto:** v0.4.0 concluída; preparação para modos de resolução e revisão.
 
 Concluído:
 
@@ -106,21 +106,23 @@ Concluído:
 - navegação centralizada entre as cinco telas;
 - histórico local e indicadores de sessões concluídas implementados.
 
-Próxima etapa:
+Consolidação concluída na v0.4.0:
 
-- executar o roteiro completo de testes das cinco telas;
-- refinar os modais e confirmações restantes;
-- modularizar responsabilidades ainda concentradas no controlador;
-- preparar a revisão final da branch `dev`.
+- versionar e validar o estado salvo — concluído na primeira etapa;
+- migrar as chaves legadas com backup — concluído na primeira etapa;
+- separar persistência e configurações do controlador — concluído na primeira etapa;
+- normalizar e deduplicar o histórico — concluído na primeira etapa;
+- modularizar ciclo de vida, resultados, formatadores, confirmações e exportações — concluído na segunda etapa;
+- executar testes de fluxo, falhas de armazenamento e regressão completa — concluído na terceira etapa.
 
-## Critérios de sucesso da próxima etapa
+## Critérios de sucesso da v0.4
 
-- cinco telas implementadas conforme os manuais — concluído;
-- nenhuma perda de respostas, anotações ou tempos;
-- temporizador ativo somente durante a resolução;
-- ausência de rolagem global e sobreposições;
-- tema claro e escuro consistentes;
-- fluxo completo validado na branch `dev`.
+- sessões da v0.3 migradas sem perda de dados;
+- dados inválidos não impedem a inicialização;
+- controlador principal reduzido gradualmente;
+- nenhuma regressão nas cinco telas;
+- persistência e histórico cobertos por testes automatizados;
+- documentação atualizada para o novo esquema.
 
 ## Limites atuais
 
@@ -129,5 +131,5 @@ Próxima etapa:
 - os dados ficam no navegador por meio do `localStorage`;
 - a arquitetura JavaScript ainda mantém parte da lógica concentrada;
 - o histórico atual registra resumos locais, mas ainda não possui visualização detalhada de sessões;
-- a Tela Inicial, a Importação e a Resolução estão implementadas, enquanto o Resultado ainda usa a estrutura legada;
-- modais e confirmações terão seus layouts refinados depois das telas principais.
+- as cinco telas oficiais estão implementadas e integradas;
+- novas modalidades de resolução permanecem reservadas para a v0.5.

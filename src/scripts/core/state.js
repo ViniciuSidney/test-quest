@@ -1,8 +1,18 @@
+import { SESSION_SCHEMA_VERSION } from "./constants.js";
+
+export const SESSION_STATUS = Object.freeze({
+  PREPARING: "preparando",
+  ACTIVE: "em_andamento",
+  FINISHED: "finalizada"
+});
+
 export function createInitialState() {
   return {
-    versao: 2,
+    schemaVersion: SESSION_SCHEMA_VERSION,
+    // Mantido durante a v0.4 para compatibilidade com exportações da v0.3.
+    versao: SESSION_SCHEMA_VERSION,
     id: null,
-    status: "preparando",
+    status: SESSION_STATUS.PREPARING,
     listaNome: "",
     questoes: [],
     atual: 0,
@@ -16,6 +26,7 @@ export function createInitialState() {
       mostrarGabaritoFinal: true
     },
     importadoEm: null,
+    iniciadoEm: null,
     finalizadoEm: null
   };
 }

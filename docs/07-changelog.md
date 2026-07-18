@@ -6,6 +6,53 @@ Todas as mudanças importantes do Test Quest serão registradas neste arquivo.
 
 Ainda não há alterações registradas para o próximo ciclo.
 
+## [v0.4.0] — 2026-07-18
+
+### Adicionado
+
+- esquema versionado de sessão em `core/session-schema.js`;
+- repositório de sessão com migração, validação e recuperação;
+- repositório de configurações com migração da preferência de tema;
+- backups locais limitados para dados migrados e cargas inválidas;
+- testes automatizados de esquema, persistência, configurações e histórico;
+- runner único `tests/run-all-tests.mjs` para executar toda a suíte;
+- documento técnico da v0.4.
+- fallback visual para falhas críticas durante a inicialização.
+- serviço de ciclo de vida da sessão;
+- serviço dedicado às confirmações da sessão;
+- serviço de geração e download das exportações;
+- formatadores compartilhados;
+- testes de ciclo de vida, confirmações, exportações, formatadores e estrutura da modularização;
+- diagnóstico de leitura e escrita do armazenamento local;
+- aviso visual recuperável para armazenamento indisponível ou cheio;
+- teste integrado do fluxo completo da sessão;
+- testes de resiliência, proteção de saída e regressão de release.
+
+### Alterado
+
+- chave da sessão ativa passa a ser `testQuest.state`;
+- chave de configurações passa a ser `testQuest.settings`;
+- histórico passa ao esquema 2, com normalização e deduplicação;
+- estado da sessão passa ao esquema 3 e recebe `iniciadoEm`;
+- controlador principal deixa de acessar `localStorage` diretamente;
+- versão da aplicação passa a `0.4.0`.
+- criação, restauração e finalização de sessões deixam o controlador visual;
+- cálculo de resultado e tempo total passa ao serviço de resultados;
+- relatórios TXT e JSON deixam de ser montados dentro do controlador;
+- confirmações deixam de manter textos repetidos no controlador;
+- controlador principal passa de 2310 para aproximadamente 2050 linhas;
+- suíte automatizada passa de 14 para 19 arquivos de teste;
+- na etapa de confiabilidade, a suíte passa de 19 para 23 arquivos;
+- gravações de sessão e histórico passam a informar códigos de falha;
+- migrações que não podem ser gravadas permanecem disponíveis apenas em memória e preservam a chave anterior;
+- a página passa a alertar antes de sair quando existe sessão ativa sem persistência confirmada.
+
+### Preservado
+
+- migração automática das chaves `resolvedorQuestoesV2.estado` e `resolvedorQuestoesV2.config`;
+- respostas, anotações, tempos, marcações e opções das sessões antigas;
+- fluxo e interface completos da v0.3.0.
+
 ## [v0.3.0] — 2026-07-17
 
 ### Adicionado

@@ -200,3 +200,73 @@
 - [ ] Conferir alturas de 900px, 720px, 640px e 600px.
 - [ ] Confirmar que o botão principal permanece integralmente visível.
 - [ ] Confirmar que o Fade In, Fade Out e a aura continuam funcionando.
+
+
+## V0.4 — Migração e recuperação
+
+- [ ] Criar uma sessão na v0.3, atualizar os arquivos e confirmar a continuação na v0.4.
+- [ ] Verificar no DevTools que `testQuest.state` foi criada.
+- [ ] Confirmar que a antiga `resolvedorQuestoesV2.estado` não permanece ativa após a migração.
+- [ ] Recarregar a página e confirmar respostas, anotações, tempo, revisão e questão atual.
+- [ ] Apagar o progresso e confirmar que a sessão não reaparece.
+- [ ] Alternar o tema antes e depois da migração e confirmar persistência.
+- [ ] Finalizar uma sessão migrada e confirmar apenas um registro no histórico.
+
+
+## v0.4 — regressão após modularização
+
+- [ ] Criar uma sessão com o exemplo interno e confirmar que o nome, as questões e as opções permanecem corretos.
+- [ ] Responder uma objetiva e uma discursiva, adicionar anotação, marcar revisão e recarregar a página.
+- [ ] Continuar a sessão pela Home e confirmar respostas, tempos, anotação, revisão e questão atual.
+- [ ] Finalizar com questões pendentes e conferir o mesmo resumo no modal.
+- [ ] Finalizar sem pendências e conferir a Tela de Desempenho e o Resultado Final.
+- [ ] Baixar respostas TXT e comparar resumo, gabarito, explicações e tempos.
+- [ ] Baixar anotações TXT e comparar anotações, revisão e tempos.
+- [ ] Exportar JSON e conferir `schemaVersion`, ID, status, questões e mapas da sessão.
+- [ ] Confirmar que limpar importação, substituir sessão, apagar progresso e preparar nova resolução mantêm os mesmos textos e ações.
+
+
+## v0.4 — fechamento da Release Candidate
+
+### Fluxo principal
+
+- [ ] Carregar o exemplo, validar e iniciar uma sessão.
+- [ ] Responder objetiva e discursiva, adicionar anotação e marcar revisão.
+- [ ] Recarregar a página e continuar pela Home sem perda de dados.
+- [ ] Finalizar, passar pelo Desempenho e abrir o Resultado Final.
+- [ ] Conferir os filtros, cards e desempenho por assunto.
+- [ ] Baixar respostas TXT, anotações TXT e sessão JSON.
+- [ ] Voltar ao início e confirmar um único registro no histórico.
+
+### Persistência degradada
+
+- [ ] Bloquear o armazenamento do site pelo navegador e recarregar.
+- [ ] Confirmar que a aplicação inicia e exibe aviso de salvamento indisponível.
+- [ ] Iniciar uma sessão e confirmar que a interface continua utilizável na aba atual.
+- [ ] Tentar recarregar e confirmar que o navegador alerta sobre alterações não persistidas.
+- [ ] Restabelecer a permissão e selecionar **Tentar novamente**.
+- [ ] Confirmar que o aviso desaparece após a gravação funcionar.
+
+### Responsividade
+
+- [ ] Executar o fluxo em 1920 × 1080 e 1366 × 768.
+- [ ] Executar o fluxo em 900 × 720 e 390 × 844.
+- [ ] Conferir zoom de 100%, 125% e 150%.
+- [ ] Confirmar que o aviso de persistência não encobre ações essenciais.
+
+### Registro
+
+- Data:
+- Navegador e versão:
+- Dimensões testadas:
+- Resultado geral:
+- Bugs bloqueadores:
+- Decisão: [ ] Aprovar v0.4.0  [ ] Corrigir e repetir
+
+## Registro de fechamento da v0.4.0
+
+- Data de aprovação: 2026-07-18
+- Resultado geral: aprovado para fechamento e publicação
+- Navegador e dimensões: não registrados no documento enviado
+- Bugs bloqueadores informados: nenhum
+- Observação: a aprovação para avançar ao fechamento foi considerada como confirmação da regressão manual final.

@@ -23,10 +23,11 @@ A proposta não é apenas registrar acertos, mas ajudar o usuário a:
 
 ## Estado atual
 
-**Versão atual:** `v0.3.0`  
-**Estado:** `versão concluída`
+**Versão estável:** `v0.4.0`  
+**Próximo ciclo planejado:** `v0.5-dev`  
+**Estado:** `versão concluída e pronta para publicação`
 
-**Fase atual:** As cinco telas oficiais foram implementadas e o ciclo v0.3.0 foi concluído.
+**Fase atual:** fechamento e publicação da v0.4.0, com arquitetura, persistência e confiabilidade consolidadas.
 
 ### Concluído
 
@@ -59,19 +60,27 @@ A proposta não é apenas registrar acertos, mas ajudar o usuário a:
 - pausa do temporizador preservada no estado da sessão;
 - navegação entre questões sem atribuição incorreta de tempo.
 
-### Próxima etapa
+### Entregue na v0.4.0
 
-**v0.4-dev — arquitetura, modularização e persistência**
+As três etapas da consolidação técnica já incluem:
 
-As cinco telas oficiais já estão implementadas. O ciclo seguirá agora para:
+1. esquema versionado para sessões salvas;
+2. migração automática das chaves legadas;
+3. backup e isolamento de dados incompatíveis;
+4. repositórios próprios para sessão e configurações;
+5. normalização e deduplicação do histórico;
+6. ciclo de vida da sessão separado do controlador visual;
+7. cálculo geral de resultados centralizado;
+8. formatadores compartilhados de tempo, datas, HTML e nomes de arquivo;
+9. geração e download das exportações separados da interface;
+10. mensagens de confirmação centralizadas;
+11. detecção de armazenamento indisponível ou cheio;
+12. aviso recuperável de falha no salvamento e tentativa de recuperação;
+13. proteção contra fechamento quando há sessão não persistida;
+14. teste integrado do fluxo importar → salvar → restaurar → finalizar → histórico → exportar;
+15. suíte automatizada ampliada para 23 arquivos de teste.
 
-1. testes funcionais e visuais completos;
-2. refinamento dos modais e confirmações restantes;
-3. modularização complementar do controlador;
-4. revisão da documentação;
-5. integração da branch `dev` na `main`.
-
-As correções continuarão sendo registradas em etapas pequenas, com testes e commits separados.
+A v0.4.0 conclui o ciclo de consolidação técnica. A suíte automatizada foi aprovada e o fechamento manual foi autorizado para publicação na `main`.
 
 ## Funcionalidades atuais
 
@@ -107,11 +116,22 @@ As correções continuarão sendo registradas em etapas pequenas, com testes e c
 
 ## Funcionalidades planejadas para os próximos ciclos
 
-- refinamento dos modais restantes;
-- modularização gradual do JavaScript;
-- migração versionada dos dados locais;
-- histórico detalhado de sessões;
-- testes completos para fechamento da versão.
+### v0.4.0 — concluída
+
+- modularização gradual do controlador principal;
+- ciclo de vida, resultados, formatadores, confirmações e exportações separados;
+- persistência versionada, migrações e recuperação de dados;
+- tratamento seguro de armazenamento indisponível ou cheio;
+- testes automatizados de fluxo, persistência e regressão;
+- documentação e pacote preparados para publicação.
+
+### v0.5
+
+- gabarito após cada questão;
+- embaralhamento de alternativas;
+- questões de verdadeiro ou falso;
+- controle manual dos efeitos visuais;
+- opção de refazer questões erradas.
 
 ## Fluxo oficial
 
@@ -164,6 +184,16 @@ Depois, abra:
 http://localhost:5501
 ```
 
+## Testes automatizados
+
+Execute toda a suíte da aplicação com:
+
+```bash
+node tests/run-all-tests.mjs
+```
+
+O runner executa 23 arquivos de teste, incluindo interface estrutural, regras de resolução, desempenho, resultado, App Shell, esquema da sessão, migrações, configurações, histórico, falhas de armazenamento e fluxo integrado completo.
+
 ## Estrutura principal
 
 ```text
@@ -185,6 +215,9 @@ test-quest/
 │   ├── 07-changelog.md
 │   ├── 08-identidade-visual.md
 │   ├── 09-plano-de-implementacao.md
+│   ├── 10-v0.4-consolidacao-tecnica.md
+│   ├── 11-checklist-fechamento-v0.4.md
+│   ├── 12-notas-release-v0.4.0.md
 │   └── ALTERACOES-REALIZADAS.md
 ├── public/
 │   ├── examples/
@@ -193,7 +226,10 @@ test-quest/
 │   ├── assets/
 │   ├── scripts/
 │   │   ├── core/
-│   │   │   └── screens.js
+│   │   │   ├── constants.js
+│   │   │   ├── screens.js
+│   │   │   ├── session-schema.js
+│   │   │   └── state.js
 │   │   ├── features/
 │   │   │   ├── home/
 │   │   │   ├── performance/

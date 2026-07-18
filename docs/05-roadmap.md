@@ -2,8 +2,9 @@
 
 ## Estado geral
 
-**Versão atual:** `v0.3.0`  
-**Estado:** `versão concluída`
+**Versão estável:** `v0.4.0`  
+**Próxima versão planejada:** `v0.5-dev`  
+**Estado:** `v0.4.0 concluída e pronta para publicação`
 
 Concluído:
 
@@ -109,42 +110,78 @@ Substituir as telas atuais pelas cinco telas aprovadas sem perder funcionalidade
 
 # Marco 3 — Modularização e migração de dados
 
-## v0.4-dev — Arquitetura e persistência
+## v0.4.0 — Arquitetura, persistência e confiabilidade
+
+**Status:** Concluída
 
 ### Objetivo
 
-Reduzir concentração de código e preparar evolução segura.
+Reduzir a concentração de responsabilidades, proteger os dados locais e preparar a aplicação para receber novos modos de resolução sem regressões.
 
-### Planejado
+### Etapa 1 — Persistência versionada — concluída
 
-- separar features;
-- ampliar o gerenciador interno de telas;
-- versionar esquema do estado;
-- migrar chaves legadas;
-- evoluir o histórico de sessões e suas migrações;
-- centralizar formatação de tempo;
-- centralizar exportações;
-- organizar modais;
-- revisar tratamento de erros.
+- esquema de sessão `schemaVersion: 3`;
+- chave atual `testQuest.state`;
+- configurações em `testQuest.settings`;
+- migração automática das chaves `resolvedorQuestoesV2.*`;
+- backup limitado das cargas migradas;
+- isolamento de JSON inválido ou sessão incompatível;
+- validação e normalização de questões, respostas, tempos, revisão e marcadores;
+- histórico atualizado para o esquema 2;
+- deduplicação de sessões concluídas;
+- controlador sem acesso direto ao `localStorage`;
+- testes de esquema, repositórios, configurações e histórico.
+
+### Etapa 2 — Modularização complementar — concluída
+
+- ciclo de vida da sessão separado em `session-lifecycle.service.js`;
+- criação, restauração, finalização, identificação e detecção de sessão ativa centralizadas;
+- cálculo geral e tempo total centralizados em `results.service.js`;
+- formatadores de tempo, duração histórica, datas, HTML e slugs centralizados;
+- relatórios TXT, exportação JSON e download separados em `session-export.service.js`;
+- mensagens das confirmações centralizadas em `session-confirmations.service.js`;
+- controlador principal reduzido de 2310 para aproximadamente 2050 linhas;
+- testes automatizados ampliados de 14 para 19 arquivos;
+- interface, persistência e formato dos arquivos preservados.
+
+### Etapa 3 — Confiabilidade e fechamento — implementação concluída
+
+- teste integrado de restauração após recarregamento;
+- teste de migração e recuperação em memória;
+- classificação de armazenamento indisponível, cheio ou com falha desconhecida;
+- aviso visual recuperável quando o salvamento falha;
+- tentativa manual de restabelecer a persistência;
+- proteção contra fechamento da página quando existe sessão não persistida;
+- histórico passa a comunicar falhas de gravação ao controlador;
+- regressão estrutural das cinco telas;
+- suíte automatizada ampliada de 19 para 23 arquivos;
+- documentação preparada para o fechamento.
+
+### Fechamento da v0.4.0
+
+- regressão automatizada concluída com 23 arquivos de teste;
+- preparação manual aprovada para fechamento;
+- `APP_VERSION`, changelog e status atualizados para `v0.4.0`;
+- pacote final preparado para merge, tag e Release.
 
 ---
 
-# Marco 4 — Testes e polimento
+# Marco 4 — Modos de resolução e revisão
 
-## v0.5 — Validação completa
+## v0.5-dev — Flexibilidade de estudo
+
+### Objetivo
+
+Ampliar as formas de responder, corrigir e refazer questões.
 
 ### Planejado
 
-- executar roteiro completo;
-- testar sessões longas;
-- testar conteúdo extenso;
-- testar desktop, tablet e mobile;
-- revisar acessibilidade;
-- revisar contraste;
-- revisar tema escuro;
-- validar GitHub Pages;
-- corrigir regressões;
-- atualizar documentação.
+- gabarito após cada questão;
+- embaralhamento de alternativas com IDs estáveis;
+- questões de verdadeiro ou falso;
+- opção manual para reduzir efeitos visuais;
+- criar nova sessão somente com questões erradas;
+- integração dos novos modos com histórico, exportações e Resultado Final.
 
 ---
 
@@ -154,9 +191,10 @@ Reduzir concentração de código e preparar evolução segura.
 
 Critérios:
 
-- cinco telas implementadas;
+- arquitetura consolidada;
+- modos essenciais de resolução implementados;
 - fluxos principais sem bugs críticos;
-- migração de dados validada;
+- migrações de dados validadas;
 - identidade visual aplicada;
 - testes essenciais aprovados;
 - documentação atualizada;
@@ -168,9 +206,8 @@ Critérios:
 
 # Ideias futuras
 
-- refazer questões erradas;
 - modo prova;
-- modo estudo;
+- modo estudo guiado;
 - histórico detalhado;
 - gráficos por período;
 - banco local de listas;

@@ -201,7 +201,7 @@ resolvedorQuestoesV2.estado
 resolvedorQuestoesV2.config
 ```
 
-### Namespace futuro recomendado
+### Namespace atual da v0.4
 
 ```text
 testQuest.state
@@ -209,18 +209,22 @@ testQuest.settings
 testQuest.history
 ```
 
-## Migração de dados
+As chaves antigas são reconhecidas somente pelo processo de migração.
+
+## Migração de dados — implementação da v0.4
 
 Ao iniciar:
 
-1. procurar dados no namespace novo;
-2. se ausente, procurar chaves legadas;
-3. transformar para o esquema atual;
-4. adicionar `schemaVersion`;
-5. salvar no namespace novo;
-6. manter backup temporário até os testes concluírem.
+1. procurar dados em `testQuest.state`;
+2. validar e normalizar a sessão atual;
+3. se ausente, procurar `resolvedorQuestoesV2.estado`;
+4. salvar o conteúdo legado no backup de migração;
+5. transformar para `schemaVersion: 3`;
+6. salvar na chave atual;
+7. remover a chave legada somente após a nova gravação;
+8. isolar cargas incompatíveis em um backup separado.
 
-Nunca apagar dados legados antes de confirmar a migração.
+O controlador principal não acessa mais o `localStorage` diretamente.
 
 ## Implementação atual da navegação e da Home
 
@@ -242,23 +246,46 @@ src/scripts
 │   ├── config.js
 │   ├── constants.js
 │   ├── screens.js
+│   ├── session-schema.js
 │   └── state.js
 ├── features
+│   ├── exports
+│   │   └── session-export.service.js
 │   ├── home
 │   │   └── home.service.js
+│   ├── performance
+│   │   └── performance.service.js
 │   ├── question-import
 │   │   └── question-import.parser.js
-│   └── question-resolution
-│       ├── question-resolution.controller.js
-│       └── question-resolution.helpers.js
+│   ├── question-resolution
+│   │   ├── question-resolution.controller.js
+│   │   └── question-resolution.helpers.js
+│   ├── results
+│   │   └── results.service.js
+│   ├── session
+│   │   ├── session-confirmations.service.js
+│   │   ├── session-lifecycle.service.js
+│   │   └── session.repository.js
+│   └── settings
+│       └── settings.repository.js
 ├── shared
 │   ├── dom.js
+│   ├── formatters.js
+│   ├── startup-error.js
 │   └── storage.js
 ├── app.js
 └── main.js
 ```
 
-A navegação, o histórico da Home, o parser de importação e as regras puras dos marcadores da Resolução já foram separados. O controlador principal ainda coordena eventos e transições entre as funcionalidades durante a migração gradual.
+## Fronteiras atuais
+
+- o controlador coordena DOM, eventos e transições entre telas;
+- repositórios cuidam de leitura, gravação, migração e recuperação;
+- o serviço de ciclo de vida cria, restaura e finaliza sessões;
+- o serviço de resultados fornece uma única fonte para métricas;
+- o serviço de exportação gera arquivos sem conhecer a interface;
+- formatadores não acessam estado nem DOM;
+- confirmações retornam apenas descrições consumidas pelo modal visual.
 
 ## Arquitetura-alvo
 
@@ -324,3 +351,75 @@ A substituição das telas deve acontecer uma por vez. A lógica legada pode per
 A Tela de Desempenho não cria um segundo cálculo independente. Ela recebe o percentual já produzido pelo cálculo final da sessão e seleciona um estado visual por faixa.
 
 Quando não existem questões objetivas, a aplicação não apresenta porcentagem artificial de `0%`: o fluxo segue diretamente para o Resultado Final, onde a revisão manual das discursivas é apresentada.
+
+
+## Implementação da primeira etapa da v0.4
+
+```text
+src/scripts
+├── core
+│   └── session-schema.js
+├── features
+│   ├── session
+│   │   └── session.repository.js
+│   └── settings
+│       └── settings.repository.js
+└── shared
+    └── storage.js
+```
+
+Responsabilidades:
+
+- `session-schema.js`: validação, normalização e evolução do estado;
+- `session.repository.js`: leitura, gravação, migração, backup e limpeza;
+- `settings.repository.js`: tema e preferências globais versionadas;
+- `storage.js`: operações seguras e injetáveis para testes.
+
+
+## Implementação da segunda etapa da v0.4
+
+```text
+src/scripts
+├── features
+│   ├── exports
+│   │   └── session-export.service.js
+│   ├── results
+│   │   └── results.service.js
+│   └── session
+│       ├── session-confirmations.service.js
+│       └── session-lifecycle.service.js
+└── shared
+    └── formatters.js
+```
+
+Responsabilidades:
+
+- `session-lifecycle.service.js`: criação, restauração, identificação, embaralhamento e finalização de sessões;
+- `session-confirmations.service.js`: descrições puras das confirmações exibidas pelo modal;
+- `results.service.js`: cálculo geral, tempo total e preparação das métricas do resultado;
+- `session-export.service.js`: geração dos relatórios TXT, JSON e download no navegador;
+- `formatters.js`: formatação compartilhada de tempo, datas, HTML e nomes de arquivo.
+
+O controlador principal permanece responsável por DOM, eventos, foco, temporizador ativo e transições visuais. A extração reduziu o arquivo sem mudar IDs, telas, armazenamento ou formato público das exportações.
+
+---
+
+# Operação degradada do armazenamento — v0.4
+
+A camada de armazenamento não presume que `localStorage` esteja sempre disponível.
+
+Estados reconhecidos:
+
+```text
+leitura e escrita disponíveis
+somente leitura
+cota esgotada
+acesso bloqueado
+JSON inválido
+falha de serialização
+erro desconhecido
+```
+
+Quando a escrita falha, o estado em memória permanece ativo na aba atual. O controlador exibe um aviso recuperável e protege o fechamento quando existe uma sessão que ainda não pôde ser persistida.
+
+A migração só remove a chave legada depois que a nova chave é gravada com sucesso.

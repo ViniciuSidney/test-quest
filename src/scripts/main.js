@@ -1,7 +1,12 @@
 import { initApp } from "./app.js";
+import { reportStartupError } from "./shared/startup-error.js";
 
 function start() {
-  initApp();
+  try {
+    initApp();
+  } catch (error) {
+    reportStartupError(error);
+  }
 }
 
 if (document.readyState === "loading") {

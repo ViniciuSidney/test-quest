@@ -1,8 +1,38 @@
-import { CONFIG_KEY, STORAGE_KEY } from "../../core/constants.js";
 import { createInitialState } from "../../core/state.js";
 import { createScreenManager } from "../../core/screens.js";
-import { calculateHistoryMetrics, readHistory, recordCompletedSession } from "../home/home.service.js";
+import { calculateHistoryMetrics, readHistory, recordCompletedSessionSafe } from "../home/home.service.js";
 import { parseQuestions, QuestionImportError, summarizeQuestions } from "../question-import/question-import.parser.js";
+import { clearSession, loadSession, saveSession } from "../session/session.repository.js";
+import {
+  getClearImportConfirmation,
+  getDeleteSessionConfirmation,
+  getFinishSessionConfirmation,
+  getNewResolutionConfirmation,
+  getReplaceSessionConfirmation
+} from "../session/session-confirmations.service.js";
+import {
+  createActiveSession,
+  finishSession,
+  isActiveSession,
+  restoreActiveSession
+} from "../session/session-lifecycle.service.js";
+import { loadSettings, saveSettings } from "../settings/settings.repository.js";
+import {
+  getPersistenceWarning,
+  shouldProtectBeforeUnload
+} from "../storage/persistence-feedback.service.js";
+import { inspectStorage } from "../../shared/storage.js";
+import {
+  createAnswersExport,
+  createNotesExport,
+  createSessionJsonExport,
+  downloadExportFile
+} from "../exports/session-export.service.js";
+import {
+  escapeHtml,
+  formatDuration as formatarTempo,
+  formatStudyDuration as formatarTempoHistorico
+} from "../../shared/formatters.js";
 import {
   formatPerformanceBasis,
   getPerformanceState,
@@ -10,6 +40,8 @@ import {
   shouldShowPerformanceScreen
 } from "../performance/performance.service.js";
 import {
+  calculateSessionResult as calcularResultado,
+  calculateSessionTotalTime as calcularTempoTotal,
   RESULT_FILTERS,
   buildQuestionReviewItems,
   buildSubjectResultItems,
@@ -19,7 +51,6 @@ import {
 } from "../results/results.service.js";
 import {
   buildQuestionMapLabel,
-  calculateDisplayedTotalMs,
   getMarkerInfo,
   getNextMarkerState,
   isQuestionAnswered,
@@ -79,6 +110,9 @@ export function initQuestionResolution() {
   let filtroResultadoAtivo = RESULT_FILTERS.ALL;
   let questaoResultadoExpandidaId = null;
   let itensRevisaoResultado = [];
+  let persistenceAtRisk = false;
+  let persistenceErrorCode = null;
+  let persistenceWarningDismissed = false;
   const resultadoAcoesMobileMedia = window.matchMedia("(max-width: 720px)");
   const resultadoFiltrosCompactosMedia = window.matchMedia("(max-width: 900px)");
 
@@ -91,10 +125,15 @@ export function initQuestionResolution() {
   const btnImportar = $("#btnImportar");
   const btnValidar = $("#btnValidar");
   const nomeArquivoSelecionado = $("#nomeArquivoSelecionado");
+  const avisoPersistencia = $("#avisoPersistencia");
+  const tituloAvisoPersistencia = $("#tituloAvisoPersistencia");
+  const descricaoAvisoPersistencia = $("#descricaoAvisoPersistencia");
 
   inicializar();
 
   function inicializar() {
+    const storageInspection = inspectStorage();
+    const persistenceReport = loadSession();
     carregarConfiguracoes();
     configurarEventos();
     sincronizarAcoesResultadoResponsivas();
@@ -103,12 +142,24 @@ export function initQuestionResolution() {
     trocarTela("home");
     atualizarHome();
     atualizarResumoTopo();
+    comunicarResultadoPersistencia(persistenceReport);
+
+    if (!storageInspection.writable) {
+      registrarFalhaPersistencia(storageInspection.errorCode, storageInspection.error);
+    }
   }
 
   function configurarEventos() {
     document.querySelectorAll("[data-theme-toggle]").forEach((button) => {
       button.addEventListener("click", alternarTema);
     });
+
+    $("#btnTentarPersistencia")?.addEventListener("click", tentarRestaurarPersistencia);
+    $("#btnFecharAvisoPersistencia")?.addEventListener("click", () => {
+      persistenceWarningDismissed = true;
+      avisoPersistencia?.classList.add("hidden");
+    });
+    window.addEventListener("beforeunload", protegerSaidaComPersistenciaEmRisco);
 
     $("#btnNovaResolucao")?.addEventListener("click", abrirNovaResolucao);
     $("#btnVoltarInicioImportacao")?.addEventListener("click", voltarAoInicioDaImportacao);
@@ -285,13 +336,7 @@ export function initQuestionResolution() {
     );
 
     if (confirmar && possuiDados) {
-      const confirmado = await solicitarConfirmacao({
-        label: "Limpar importação",
-        title: "Limpar todo o conteúdo?",
-        message: "O arquivo selecionado, o texto importado, o nome da lista e as configurações desta importação serão removidos.",
-        confirmText: "Limpar conteúdo",
-        variant: "danger"
-      });
+      const confirmado = await solicitarConfirmacao(getClearImportConfirmation());
 
       if (!confirmado) {
         return false;
@@ -478,16 +523,20 @@ export function initQuestionResolution() {
 
 
   function carregarConfiguracoes() {
-    try {
-      const config = JSON.parse(localStorage.getItem(CONFIG_KEY)) || {};
-      aplicarTema(config.tema || "light");
-    } catch {
-      aplicarTema("light");
-    }
+    const config = loadSettings();
+    aplicarTema(config.tema || "light");
   }
 
   function salvarConfiguracoes() {
-    localStorage.setItem(CONFIG_KEY, JSON.stringify({ tema: document.body.dataset.theme || "light" }));
+    const configAtual = loadSettings();
+    const result = saveSettings({
+      ...configAtual,
+      tema: document.body.dataset.theme || "light"
+    });
+
+    if (!result.ok) {
+      registrarFalhaPersistencia(result.errorCode, result.error);
+    }
   }
 
   function aplicarTema(tema) {
@@ -511,35 +560,19 @@ export function initQuestionResolution() {
   }
 
   function obterSessaoSalva() {
-    try {
-      return JSON.parse(localStorage.getItem(STORAGE_KEY));
-    } catch {
-      return null;
-    }
+    return loadSession().session;
   }
 
   function continuarSessao() {
     const salva = obterSessaoAtiva();
 
-    if (!salva || !salva.questoes || !salva.questoes.length) {
+    if (!salva) {
       mostrarMensagemInicial("Não encontrei uma sessão em andamento para continuar.");
       atualizarHome();
       return;
     }
 
-    estado = {
-      ...estadoInicial(),
-      ...salva,
-      respostas: salva.respostas || {},
-      anotacoes: salva.anotacoes || {},
-      temposMs: salva.temposMs || {},
-      revisao: salva.revisao || {},
-      opcoes: { ...estadoInicial().opcoes, ...(salva.opcoes || {}) },
-      marcacoesAlternativas: salva.marcacoesAlternativas || {}
-    };
-
-    garantirIdentidadeSessao();
-    estado.status = "em_andamento";
+    estado = restoreActiveSession(salva);
     timerRodando = !Boolean(estado.temporizadorPausado);
     atualizarBotaoCronometro();
     trocarTela("resolucao");
@@ -549,18 +582,20 @@ export function initQuestionResolution() {
   }
 
   async function apagarSessaoSalva() {
-    const confirmado = await solicitarConfirmacao({
-      label: "Apagar progresso",
-      title: "Apagar a sessão salva?",
-      message: "Respostas, anotações, tempos e marcações da sessão em andamento serão removidos deste navegador.",
-      confirmText: "Apagar progresso",
-      variant: "danger"
-    });
+    const confirmado = await solicitarConfirmacao(getDeleteSessionConfirmation());
 
     if (!confirmado) return;
 
     pararCronometro();
-    localStorage.removeItem(STORAGE_KEY);
+    const removida = clearSession();
+
+    if (!removida) {
+      const inspection = inspectStorage();
+      registrarFalhaPersistencia(inspection.errorCode, inspection.error);
+      return;
+    }
+
+    resolverFalhaPersistencia();
     estado = estadoInicial();
     limparCamposImportacao();
     atualizarResumoTopo();
@@ -628,13 +663,7 @@ export function initQuestionResolution() {
 
     const sessaoExistente = obterSessaoAtiva();
     if (sessaoExistente?.questoes?.length && !substituicaoAutorizada) {
-      const confirmado = await solicitarConfirmacao({
-        label: "Substituir sessão",
-        title: "Iniciar uma nova resolução?",
-        message: "A resolução em andamento será substituída pela lista que acabou de ser validada.",
-        confirmText: "Substituir sessão",
-        variant: "danger"
-      });
+      const confirmado = await solicitarConfirmacao(getReplaceSessionConfirmation());
 
       if (!confirmado) {
         return;
@@ -642,23 +671,12 @@ export function initQuestionResolution() {
     }
 
     try {
-      let questoes = importValidation.questions.map((question) => ({
-        ...question,
-        alternativas: question.alternativas ? { ...question.alternativas } : null
-      }));
-
-      if ($("#opcaoEmbaralhar").checked) {
-        questoes = embaralhar(questoes);
-      }
-
-      estado = estadoInicial();
-      estado.id = gerarIdSessao();
-      estado.status = "em_andamento";
-      estado.listaNome = nomeLista.value.trim() || "Lista sem nome";
-      estado.questoes = questoes;
-      estado.opcoes.mostrarGabaritoFinal = $("#opcaoMostrarGabaritoFinal").checked;
-      estado.importadoEm = new Date().toISOString();
-      estado.temporizadorPausado = false;
+      estado = createActiveSession({
+        questions: importValidation.questions,
+        listName: nomeLista.value,
+        showAnswerKey: $("#opcaoMostrarGabaritoFinal").checked,
+        shuffleQuestions: $("#opcaoEmbaralhar").checked
+      });
       substituicaoAutorizada = false;
 
       timerRodando = true;
@@ -948,48 +966,21 @@ export function initQuestionResolution() {
     salvarEstadoImediato();
 
     const r = calcularResultado(estado);
-    const naoRespondidas = r.total - r.respondidas;
     const marcadas = Object.values(estado.revisao || {}).filter(Boolean).length;
-    const confirmado = await solicitarConfirmacao({
-      label: "Finalizar sessão",
-      title: naoRespondidas > 0 ? "Existem questões não respondidas" : "Finalizar esta resolução?",
-      message: "Confira o resumo da sessão antes de finalizar.",
-      items: [
-        {
-          label: "Questões respondidas",
-          value: `${r.respondidas} de ${r.total}`,
-          tone: r.respondidas === r.total ? "success" : "neutral"
-        },
-        {
-          label: "Sem resposta",
-          value: String(naoRespondidas),
-          tone: naoRespondidas > 0 ? "warning" : "success"
-        },
-        {
-          label: "Marcadas para revisão",
-          value: String(marcadas),
-          tone: marcadas > 0 ? "review" : "neutral"
-        }
-      ],
-      note: naoRespondidas > 0
-        ? "A sessão pode ser finalizada mesmo com questões pendentes."
-        : "Todas as questões foram respondidas. O resultado será exibido após a confirmação.",
-      confirmText: "Finalizar resolução",
-      variant: "warning"
-    });
+    const confirmado = await solicitarConfirmacao(
+      getFinishSessionConfirmation(r, marcadas)
+    );
 
     if (!confirmado) {
       return;
     }
 
-    estado.finalizadoEm = new Date().toISOString();
-    estado.status = "finalizada";
-    garantirIdentidadeSessao();
+    estado = finishSession(estado);
 
     const resultadoFinal = calcularResultado(estado);
 
     salvarEstadoImediato();
-    recordCompletedSession(estado, resultadoFinal);
+    registrarResultadoNoHistorico(estado, resultadoFinal);
     pararCronometro();
 
     if (shouldShowPerformanceScreen(resultadoFinal.objetivas)) {
@@ -1085,43 +1076,6 @@ export function initQuestionResolution() {
 
     $("#tempoAtual").textContent = formatarTempo(tempoAtual);
     $("#tempoTotal").textContent = formatarTempo(total);
-  }
-
-  function calcularTempoTotal(baseEstado = estado) {
-    return calculateDisplayedTotalMs(
-      baseEstado.questoes || [],
-      baseEstado.temposMs || {}
-    );
-  }
-
-  function calcularResultado(baseEstado = estado) {
-    const questoes = baseEstado.questoes || [];
-    const respostas = baseEstado.respostas || {};
-    const objetivas = questoes.filter((q) => q.categoria === "objetiva");
-    const discursivas = questoes.filter((q) => q.categoria === "discursiva");
-    const respondidas = questoes.filter((q) => Boolean((respostas[q.id] || "").trim())).length;
-    const acertos = objetivas.filter((q) => (respostas[q.id] || "").toUpperCase() === q.correta).length;
-    const erros = objetivas.filter((q) => {
-      const resposta = String(respostas[q.id] || "").trim();
-      return resposta && resposta.toUpperCase() !== q.correta;
-    }).length;
-    const percentual = objetivas.length ? Math.round((acertos / objetivas.length) * 100) : 0;
-    const tempoTotal = calcularTempoTotal(baseEstado);
-    const tempoMedio = questoes.length ? Math.round(tempoTotal / questoes.length) : 0;
-    const marcadas = Object.values(baseEstado.revisao || {}).filter(Boolean).length;
-
-    return {
-      total: questoes.length,
-      respondidas,
-      objetivas: objetivas.length,
-      discursivas: discursivas.length,
-      acertos,
-      erros,
-      percentual,
-      tempoTotal,
-      tempoMedio,
-      marcadas
-    };
   }
 
   function renderizarDesempenho(resultado) {
@@ -1806,116 +1760,23 @@ export function initQuestionResolution() {
   }
 
   function baixarRespostasTxt() {
-    baixarArquivo(gerarRespostasTxt(), `${slugify(estado.listaNome || "respostas")}-respostas.txt`, "text/plain;charset=utf-8");
+    prepararEstadoParaExportacao();
+    downloadExportFile(createAnswersExport(estado));
   }
 
   function baixarAnotacoesTxt() {
-    baixarArquivo(gerarAnotacoesTxt(), `${slugify(estado.listaNome || "anotacoes")}-anotacoes.txt`, "text/plain;charset=utf-8");
+    prepararEstadoParaExportacao();
+    downloadExportFile(createNotesExport(estado));
   }
 
   function exportarJson() {
+    prepararEstadoParaExportacao();
+    downloadExportFile(createSessionJsonExport(estado));
+  }
+
+  function prepararEstadoParaExportacao() {
     registrarTempoAtual();
     salvarEstadoImediato();
-    baixarArquivo(JSON.stringify(estado, null, 2), `${slugify(estado.listaNome || "sessao")}-sessao.json`, "application/json;charset=utf-8");
-  }
-
-  function gerarRespostasTxt() {
-    const r = calcularResultado(estado);
-    const linhas = [
-      "RELATÓRIO DE RESPOSTAS",
-      "======================",
-      `Lista: ${estado.listaNome}`,
-      `Data de exportação: ${new Date().toLocaleString("pt-BR")}`,
-      `Importado em: ${formatarData(estado.importadoEm)}`,
-      `Finalizado em: ${formatarData(estado.finalizadoEm)}`,
-      "",
-      "RESUMO",
-      "------",
-      `Total de questões: ${r.total}`,
-      `Questões respondidas: ${r.respondidas}/${r.total}`,
-      `Objetivas: ${r.objetivas}`,
-      `Discursivas: ${r.discursivas}`,
-      `Acertos nas objetivas: ${r.objetivas > 0 ? `${r.acertos}/${r.objetivas}` : "Não disponível"}`,
-      `Desempenho nas objetivas: ${r.objetivas > 0 ? `${r.percentual}%` : "Não disponível"}`,
-      `Tempo total: ${formatarTempo(r.tempoTotal)}`,
-      `Tempo médio por questão: ${formatarTempo(r.tempoMedio)}`,
-      `Marcadas para revisão: ${r.marcadas}`,
-      "",
-      "RESPOSTAS",
-      "---------"
-    ];
-
-    estado.questoes.forEach((q, indice) => {
-      const resposta = estado.respostas[q.id] || "";
-      const tempo = estado.temposMs[q.id] || 0;
-      const marcada = estado.revisao[q.id] ? "Sim" : "Não";
-
-      linhas.push("");
-      linhas.push(`${indice + 1}. ${q.categoria.toUpperCase()} - ${q.assunto}`);
-      linhas.push(`Tempo usado: ${formatarTempo(tempo)}`);
-      linhas.push(`Marcada para revisão: ${marcada}`);
-      linhas.push(`Enunciado: ${q.enunciado}`);
-
-      if (q.categoria === "objetiva") {
-        const status = !resposta ? "Não respondida" : resposta.toUpperCase() === q.correta ? "Correta" : "Incorreta";
-        linhas.push(`Sua resposta: ${resposta || "—"}`);
-        linhas.push(`Resposta correta: ${q.correta}`);
-        linhas.push(`Status: ${status}`);
-        linhas.push(`Explicação: ${q.explicacao}`);
-      } else {
-        linhas.push(`Sua resposta: ${resposta || "—"}`);
-        linhas.push(`Resposta esperada: ${q.respostaEsperada}`);
-        linhas.push(`Critérios de correção: ${q.criterios}`);
-      }
-    });
-
-    return linhas.join("\n");
-  }
-
-  function gerarAnotacoesTxt() {
-    const linhas = [
-      "ANOTAÇÕES DA RESOLUÇÃO",
-      "======================",
-      `Lista: ${estado.listaNome}`,
-      `Data de exportação: ${new Date().toLocaleString("pt-BR")}`,
-      "",
-      "ANOTAÇÕES POR QUESTÃO",
-      "---------------------"
-    ];
-
-    estado.questoes.forEach((q, indice) => {
-      const anotacao = estado.anotacoes[q.id] || "";
-      const tempo = estado.temposMs[q.id] || 0;
-      const marcada = estado.revisao[q.id] ? "Sim" : "Não";
-
-      linhas.push("");
-      linhas.push(`${indice + 1}. ${q.categoria.toUpperCase()} - ${q.assunto}`);
-      linhas.push(`Tempo usado: ${formatarTempo(tempo)}`);
-      linhas.push(`Marcada para revisão: ${marcada}`);
-      linhas.push(`Enunciado: ${q.enunciado}`);
-      linhas.push("");
-      linhas.push("Anotação:");
-      linhas.push(anotacao || "—");
-    });
-
-    return linhas.join("\n");
-  }
-
-  function baixarArquivo(conteudo, nomeArquivo, tipo) {
-    registrarTempoAtual();
-    salvarEstadoImediato();
-
-    const blob = new Blob([conteudo], { type: tipo });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-
-    link.href = url;
-    link.download = nomeArquivo;
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-
-    URL.revokeObjectURL(url);
   }
 
   function salvarEstadoDebounced() {
@@ -1926,10 +1787,21 @@ export function initQuestionResolution() {
   }
 
   function salvarEstadoImediato() {
-    if (!estado.questoes.length) return;
+    if (!estado.questoes.length) return true;
     estado.temporizadorPausado = !timerRodando;
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(estado));
-    if (indicadorSalvo) indicadorSalvo.textContent = "Salvo localmente";
+
+    const result = saveSession(estado);
+
+    if (result.ok) {
+      estado = result.session;
+      if (indicadorSalvo) indicadorSalvo.textContent = "Salvo localmente";
+      resolverFalhaPersistencia();
+      return true;
+    }
+
+    if (indicadorSalvo) indicadorSalvo.textContent = "Falha ao salvar";
+    registrarFalhaPersistencia(result.errorCode, result.error);
+    return false;
   }
 
   function atualizarResumoTopo() {
@@ -1950,13 +1822,7 @@ export function initQuestionResolution() {
     const sessaoAtiva = obterSessaoAtiva();
 
     if (sessaoAtiva?.questoes?.length) {
-      const confirmado = await solicitarConfirmacao({
-        label: "Nova resolução",
-        title: "Preparar uma nova lista?",
-        message: "Existe uma resolução em andamento. O progresso atual será substituído quando a nova lista for iniciada.",
-        confirmText: "Preparar nova lista",
-        variant: "danger"
-      });
+      const confirmado = await solicitarConfirmacao(getNewResolutionConfirmation());
 
       if (!confirmado) {
         return;
@@ -1985,7 +1851,7 @@ export function initQuestionResolution() {
   function voltarAoInicioAposResultado() {
     ocultarDesempenhoImediato();
     pararCronometro();
-    localStorage.removeItem(STORAGE_KEY);
+    clearSession();
     estado = estadoInicial();
     limparCamposImportacao();
     $("#listaRevisaoResultado")?.replaceChildren();
@@ -2046,16 +1912,7 @@ export function initQuestionResolution() {
 
   function obterSessaoAtiva() {
     const salva = obterSessaoSalva();
-
-    if (
-      !salva?.questoes?.length ||
-      salva.finalizadoEm ||
-      salva.status === "finalizada"
-    ) {
-      return null;
-    }
-
-    return salva;
+    return isActiveSession(salva) ? salva : null;
   }
 
   function sincronizarSessaoFinalizadaComHistorico() {
@@ -2065,28 +1922,122 @@ export function initQuestionResolution() {
       return;
     }
 
-    recordCompletedSession(salva, calcularResultado(salva));
+    registrarResultadoNoHistorico(salva, calcularResultado(salva));
   }
 
-  function garantirIdentidadeSessao() {
-    if (!estado.id) {
-      estado.id = gerarIdSessao();
-    }
-  }
+  function registrarResultadoNoHistorico(session, result) {
+    const report = recordCompletedSessionSafe(session, result);
 
-  function gerarIdSessao() {
-    if (window.crypto && typeof window.crypto.randomUUID === "function") {
-      return window.crypto.randomUUID();
+    if (!report.ok) {
+      registrarFalhaPersistencia(report.errorCode, report.error);
     }
 
-    return `sessao-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+    return report.history;
   }
 
-  function formatarTempoHistorico(ms) {
-    const totalMinutos = Math.floor(Number(ms || 0) / 60000);
-    const horas = Math.floor(totalMinutos / 60);
-    const minutos = totalMinutos % 60;
-    return `${horas}h ${String(minutos).padStart(2, "0")}min`;
+  function registrarFalhaPersistencia(errorCode, error = null) {
+    persistenceAtRisk = true;
+    persistenceErrorCode = errorCode || "storage-unknown-error";
+
+    if (error) {
+      console.error("Não foi possível persistir os dados do Test Quest.", error);
+    }
+
+    if (persistenceWarningDismissed || !avisoPersistencia) {
+      return;
+    }
+
+    const warning = getPersistenceWarning(persistenceErrorCode);
+    avisoPersistencia.dataset.tone = warning.tone;
+    tituloAvisoPersistencia.textContent = warning.title;
+    descricaoAvisoPersistencia.textContent = warning.description;
+    avisoPersistencia.classList.remove("hidden");
+  }
+
+  function resolverFalhaPersistencia() {
+    persistenceAtRisk = false;
+    persistenceErrorCode = null;
+    persistenceWarningDismissed = false;
+    avisoPersistencia?.classList.add("hidden");
+  }
+
+  function tentarRestaurarPersistencia() {
+    persistenceWarningDismissed = false;
+    const inspection = inspectStorage();
+
+    if (!inspection.writable) {
+      registrarFalhaPersistencia(inspection.errorCode, inspection.error);
+      return;
+    }
+
+    if (estado.questoes.length) {
+      salvarEstadoImediato();
+      return;
+    }
+
+    const settingsResult = saveSettings(loadSettings());
+
+    if (settingsResult.ok) {
+      resolverFalhaPersistencia();
+      mostrarMensagemInicial("O salvamento local voltou a funcionar.", "ok");
+      return;
+    }
+
+    registrarFalhaPersistencia(settingsResult.errorCode, settingsResult.error);
+  }
+
+  function protegerSaidaComPersistenciaEmRisco(evento) {
+    if (!shouldProtectBeforeUnload({
+      persistenceAtRisk,
+      hasSession: Boolean(estado.questoes.length)
+    })) {
+      return;
+    }
+
+    evento.preventDefault();
+    evento.returnValue = "";
+  }
+
+  function comunicarResultadoPersistencia(report) {
+    if (!report) {
+      return;
+    }
+
+    if (report.errorCode || report.source === "unavailable") {
+      registrarFalhaPersistencia(report.errorCode, report.error);
+
+      if (report.session) {
+        mostrarMensagemInicial(
+          "A sessão foi recuperada nesta aba, mas ainda não pôde ser gravada no armazenamento local.",
+          "error"
+        );
+      }
+
+      return;
+    }
+
+    if (report.migrated && report.session) {
+      mostrarMensagemInicial(
+        "Sua sessão salva foi atualizada com segurança para o formato da v0.4.",
+        "ok"
+      );
+      return;
+    }
+
+    if (report.recovered && report.session) {
+      mostrarMensagemInicial(
+        "A sessão salva precisou de pequenos reparos e foi recuperada.",
+        "ok"
+      );
+      return;
+    }
+
+    if (report.recovered && !report.session) {
+      mostrarMensagemInicial(
+        "Os dados salvos estavam incompatíveis e foram isolados para evitar falhas. Você pode iniciar uma nova resolução.",
+        "error"
+      );
+    }
   }
 
   function mostrarMensagemInicial(texto, tipo = "error") {
@@ -2220,53 +2171,4 @@ export function initQuestionResolution() {
     nomeArquivoSelecionado.title = displayName;
   }
 
-  function embaralhar(lista) {
-    const copia = [...lista];
-
-    for (let i = copia.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [copia[i], copia[j]] = [copia[j], copia[i]];
-    }
-
-    return copia;
-  }
-
-  function formatarTempo(ms) {
-    const totalSegundos = Math.floor((ms || 0) / 1000);
-    const horas = Math.floor(totalSegundos / 3600);
-    const minutos = Math.floor((totalSegundos % 3600) / 60);
-    const segundos = totalSegundos % 60;
-
-    if (horas > 0) {
-      return `${String(horas).padStart(2, "0")}:${String(minutos).padStart(2, "0")}:${String(segundos).padStart(2, "0")}`;
-    }
-
-    return `${String(minutos).padStart(2, "0")}:${String(segundos).padStart(2, "0")}`;
-  }
-
-  function formatarData(iso) {
-    if (!iso) return "—";
-    try { return new Date(iso).toLocaleString("pt-BR"); }
-    catch { return "—"; }
-  }
-
-  function escapeHtml(texto) {
-    return String(texto)
-      .replaceAll("&", "&amp;")
-      .replaceAll("<", "&lt;")
-      .replaceAll(">", "&gt;")
-      .replaceAll('"', "&quot;")
-      .replaceAll("'", "&#039;")
-      .replaceAll("\n", "<br>");
-  }
-
-  function slugify(texto) {
-    return texto
-      .toLowerCase()
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/(^-|-$)+/g, "")
-      .slice(0, 60) || "arquivo";
-  }
 }

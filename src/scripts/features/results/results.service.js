@@ -1,3 +1,5 @@
+import { calculateDisplayedTotalMs } from "../question-resolution/question-resolution.helpers.js";
+
 export const RESULT_FILTERS = Object.freeze({
   ALL: "all",
   INCORRECT: "incorrect",
@@ -7,6 +9,49 @@ export const RESULT_FILTERS = Object.freeze({
 });
 
 export const RESULT_FILTER_VALUES = Object.freeze(Object.values(RESULT_FILTERS));
+
+export function calculateSessionTotalTime(state = {}) {
+  return calculateDisplayedTotalMs(
+    state.questoes || [],
+    state.temposMs || {}
+  );
+}
+
+export function calculateSessionResult(state = {}) {
+  const questions = state.questoes || [];
+  const answers = state.respostas || {};
+  const objectives = questions.filter((question) => question.categoria === "objetiva");
+  const discursives = questions.filter((question) => question.categoria === "discursiva");
+  const answered = questions.filter((question) =>
+    Boolean(String(answers[question.id] || "").trim())
+  ).length;
+  const correct = objectives.filter((question) =>
+    String(answers[question.id] || "").toUpperCase() === question.correta
+  ).length;
+  const incorrect = objectives.filter((question) => {
+    const answer = String(answers[question.id] || "").trim();
+    return answer && answer.toUpperCase() !== question.correta;
+  }).length;
+  const percentage = objectives.length
+    ? Math.round((correct / objectives.length) * 100)
+    : 0;
+  const totalTime = calculateSessionTotalTime(state);
+  const averageTime = questions.length ? Math.round(totalTime / questions.length) : 0;
+  const marked = Object.values(state.revisao || {}).filter(Boolean).length;
+
+  return {
+    total: questions.length,
+    respondidas: answered,
+    objetivas: objectives.length,
+    discursivas: discursives.length,
+    acertos: correct,
+    erros: incorrect,
+    percentual: percentage,
+    tempoTotal: totalTime,
+    tempoMedio: averageTime,
+    marcadas: marked
+  };
+}
 
 function normalizeText(value) {
   return String(value ?? "").trim();
