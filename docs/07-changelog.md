@@ -361,3 +361,12 @@ Todas as mudanças importantes do Test Quest serão registradas neste arquivo.
 - questões respondidas no mapa agora usam a cor informativa, sem sugerir acerto antes da correção;
 - os cards Verdadeiro e Falso ficaram menores e mais próximos das proporções do mockup oficial;
 - foram preservados o empilhamento mobile, foco por teclado e estados selecionados.
+
+## [v0.5-dev] — atualização do ícone do Test Quest
+
+### Alterado
+
+- o novo ícone monocromático foi adicionado à Tela Inicial;
+- as bordas externas do PNG passaram a ser transparentes;
+- o favicon principal passou a usar SVG vetorial;
+- os ícones do manifesto e do atalho móvel foram sincronizados com a nova identidade.
