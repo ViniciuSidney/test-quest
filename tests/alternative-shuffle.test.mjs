@@ -138,4 +138,39 @@ assert.deepEqual(
 );
 assert.equal(normalSession.opcoes.embaralharAlternativas, false);
 
+const trueFalseAlternatives = normalizeObjectiveAlternatives([
+  { chaveOriginal: "V", texto: "Verdadeiro" },
+  { chaveOriginal: "F", texto: "Falso" }
+], "q-vf-fixed");
+const trueFalseQuestion = {
+  id: "q-vf-fixed",
+  categoria: "objetiva",
+  assunto: "Estatística",
+  tipo: "verdadeiro ou falso",
+  enunciado: "A média pode ser afetada por valores extremos.",
+  alternativas: trueFalseAlternatives,
+  correta: "V",
+  respostaCorretaId: ""
+};
+trueFalseQuestion.respostaCorretaId = getCorrectAlternativeId(trueFalseQuestion);
+
+const shuffledTrueFalse = shuffleQuestionAlternatives(trueFalseQuestion, () => 0);
+assert.deepEqual(
+  shuffledTrueFalse.alternativas.map((alternative) => alternative.chaveOriginal),
+  ["V", "F"],
+  "Questões de Verdadeiro ou Falso devem manter a ordem fixa V → F."
+);
+
+const sessionWithTrueFalse = createActiveSession({
+  questions: [trueFalseQuestion],
+  shuffleAlternatives: true,
+  random: () => 0,
+  now: () => "2026-07-18T12:00:00.000Z",
+  idFactory: () => "vf-session"
+});
+assert.deepEqual(
+  sessionWithTrueFalse.questoes[0].alternativas.map((alternative) => alternative.chaveOriginal),
+  ["V", "F"]
+);
+
 console.log("Alternative shuffle: todos os testes passaram.");

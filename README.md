@@ -151,9 +151,17 @@ A v0.4.0 conclui o ciclo de consolidação técnica. A suíte automatizada foi a
 - orientações para evitar explicações dependentes das letras A–E;
 - suíte automatizada ampliada para 28 arquivos de teste.
 
+**Etapa 3 — Verdadeiro ou Falso concluída:**
+
+- novo formato de importação sem alternativas A–E;
+- ordem fixa Verdadeiro → Falso, mesmo com embaralhamento ativado;
+- layout próprio de resolução inspirado no mockup oficial;
+- Resultado Final com selo V/F e comparação visual específica;
+- guia de importação reorganizado por tipo de questão;
+- suíte automatizada ampliada para 29 arquivos de teste.
+
 **Próximas entregas planejadas:**
 
-- questões de verdadeiro ou falso;
 - gabarito após cada questão;
 - opção de refazer questões erradas;
 - controle manual dos efeitos visuais.

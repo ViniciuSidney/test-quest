@@ -674,13 +674,22 @@
         <div>
           <p class="eyebrow">Guia de importação</p>
           <h2 id="tituloModalModelo">Modelo aceito pela aplicação</h2>
-          <p>Use estes formatos para importar questões objetivas e discursivas.</p>
+          <p>Use estes formatos para importar questões objetivas, discursivas e de Verdadeiro ou Falso.</p>
         </div>
         <button id="btnFecharModelo" class="icon-button modal-close" type="button" aria-label="Fechar modelo">✕</button>
       </div>
 
-      <div class="modal-content">
-        <pre><code>@questao
+      <div class="modal-content import-model-content">
+        <div class="import-model-grid">
+          <article class="import-model-card">
+            <header class="import-model-card__header">
+              <span class="import-model-card__badge">A–E</span>
+              <div>
+                <h3>Questão objetiva</h3>
+                <p>Use cinco alternativas e indique a correta pela letra original.</p>
+              </div>
+            </header>
+            <pre><code>@questao
 assunto: Nome do assunto
 tipo: objetiva
 enunciado: Texto do enunciado
@@ -690,29 +699,56 @@ c: Alternativa C
 d: Alternativa D
 e: Alternativa E
 correta: B
-explicacao: Explicação da alternativa correta
-+++
+explicacao: Explicação da resposta correta
++++</code></pre>
+          </article>
 
-@discursiva
-assunto: Nome do assunto
-tipo: discursiva curta
-enunciado: Texto da pergunta
-resposta_esperada: Resposta modelo
-criterios_de_correcao: Critérios de correção
-+++
-
-@questao
+          <article class="import-model-card import-model-card--vf">
+            <header class="import-model-card__header">
+              <span class="import-model-card__badge">V/F</span>
+              <div>
+                <h3>Verdadeiro ou Falso</h3>
+                <p>Não informe alternativas: a aplicação cria Verdadeiro e Falso automaticamente.</p>
+              </div>
+            </header>
+            <pre><code>@questao
 assunto: Nome do assunto
 tipo: verdadeiro ou falso
 enunciado: A média é influenciada por valores extremos.
 correta: V
 explicacao: A média pode ser alterada por valores muito altos ou muito baixos.
 +++</code></pre>
+            <p class="import-model-card__hint"><strong>Gabarito aceito:</strong> V, F, Verdadeiro ou Falso.</p>
+          </article>
 
-        <p class="import-model-note">
-          <strong>Ao embaralhar alternativas:</strong>
-          escreva explicações baseadas no conteúdo da resposta, evitando referências como “a alternativa B”.
-        </p>
+          <article class="import-model-card import-model-card--discursive">
+            <header class="import-model-card__header">
+              <span class="import-model-card__badge">TXT</span>
+              <div>
+                <h3>Questão discursiva</h3>
+                <p>Inclua uma resposta modelo e os critérios que orientarão a revisão manual.</p>
+              </div>
+            </header>
+            <pre><code>@discursiva
+assunto: Nome do assunto
+tipo: discursiva curta
+enunciado: Texto da pergunta
+resposta_esperada: Resposta modelo
+criterios_de_correcao: Critérios de correção
++++</code></pre>
+          </article>
+        </div>
+
+        <div class="import-model-notes">
+          <p class="import-model-note">
+            <strong>Embaralhamento:</strong>
+            afeta somente questões objetivas A–E. A ordem Verdadeiro → Falso permanece fixa.
+          </p>
+          <p class="import-model-note">
+            <strong>Explicações:</strong>
+            descreva o conteúdo correto, evitando referências como “a alternativa B”.
+          </p>
+        </div>
       </div>
     </div>
   </div>

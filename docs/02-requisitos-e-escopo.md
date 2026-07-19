@@ -161,3 +161,20 @@ A primeira etapa da v0.5 não deve modificar a aparência ou o fluxo das telas. 
 - reordenar o array de alternativas não pode alterar o gabarito;
 - exportações TXT não devem expor IDs internos;
 - o JSON deve refletir integralmente o esquema 4.
+
+
+### RF-V05-06 — Questões de Verdadeiro ou Falso
+
+A aplicação deve aceitar questões objetivas com `tipo: verdadeiro ou falso`, criando automaticamente duas opções com IDs estáveis.
+
+### RF-V05-07 — Ordem fixa V/F
+
+A configuração de embaralhamento de alternativas não deve alterar a ordem Verdadeiro → Falso.
+
+### RF-V05-08 — Resultado específico V/F
+
+O Resultado Final deve identificar visualmente o tipo V/F e comparar resposta do usuário, gabarito, explicação, tempo e anotação.
+
+### RF-V05-09 — Guia de importação por tipo
+
+O modal de modelo deve separar claramente objetiva A–E, Verdadeiro ou Falso e discursiva, incluindo as regras específicas de cada formato.

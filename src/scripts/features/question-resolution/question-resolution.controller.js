@@ -105,7 +105,6 @@ export function initQuestionResolution() {
       registrarFalhaPersistencia(storageInspection.errorCode, storageInspection.error);
     }
   }
-
   function configurarEventos() {
     document.querySelectorAll("[data-theme-toggle]").forEach((button) => {
       button.addEventListener("click", alternarTema);
@@ -159,14 +158,11 @@ export function initQuestionResolution() {
           fecharModalConfirmacao(false);
           return;
         }
-
         if (evento.key === "Tab") {
           manterFocoNoModal(evento, modalConfirmacao);
         }
-
         return;
       }
-
       const desempenho = $("#telaDesempenho");
 
       if (desempenho && !desempenho.classList.contains("hidden")) {
@@ -174,22 +170,18 @@ export function initQuestionResolution() {
           evento.preventDefault();
           $("#btnVerResultadoFinal")?.focus();
         }
-
         return;
       }
-
       const modal = $("#modalModelo");
 
       if (!modal || modal.classList.contains("hidden")) {
         return;
       }
-
       if (evento.key === "Escape") {
         evento.preventDefault();
         fecharModalModelo();
         return;
       }
-
       if (evento.key === "Tab") {
         manterFocoNoModal(evento, modal);
       }
@@ -203,27 +195,23 @@ export function initQuestionResolution() {
         atualizarNomeArquivo();
         return;
       }
-
       try {
         const texto = await arquivo.text();
 
         if (readToken !== importFileReadToken) {
           return;
         }
-
         entradaQuestoes.value = texto;
         atualizarNomeArquivo(arquivo.name);
 
         if (!nomeLista.value.trim()) {
           nomeLista.value = arquivo.name.replace(/\.[^/.]+$/, "");
         }
-
         invalidarValidacaoImportacao(`Arquivo “${arquivo.name}” carregado. Valide o conteúdo.`);
       } catch {
         if (readToken !== importFileReadToken) {
           return;
         }
-
         definirEstadoValidacao("invalid", {
           errors: ["Não foi possível ler o arquivo selecionado. Escolha outro arquivo TXT."]
         });
@@ -284,7 +272,6 @@ export function initQuestionResolution() {
       salvarEstadoImediato();
     });
   }
-
   async function limparCamposImportacao({ confirmar = false } = {}) {
     const possuiDados = Boolean(
       entradaQuestoes.value.trim() ||
@@ -299,7 +286,6 @@ export function initQuestionResolution() {
         return false;
       }
     }
-
     importFileReadToken += 1;
     entradaQuestoes.value = "";
     arquivoQuestoes.value = "";
@@ -312,7 +298,6 @@ export function initQuestionResolution() {
     definirEstadoValidacao("idle");
     return true;
   }
-
   function solicitarConfirmacao({
     label = "Confirmar ação",
     title = "Deseja continuar?",
@@ -327,11 +312,9 @@ export function initQuestionResolution() {
     if (!modal) {
       return Promise.resolve(false);
     }
-
     if (confirmationResolver) {
       fecharModalConfirmacao(false);
     }
-
     registrarTempoAtual();
     ultimoTick = Date.now();
     confirmationPreviousFocus = document.activeElement;
@@ -387,7 +370,6 @@ export function initQuestionResolution() {
     } else if (variant === "warning") {
       confirmButton.classList.add("confirmation-modal__confirm--warning");
     }
-
     modal.classList.remove("hidden");
     modal.setAttribute("aria-hidden", "false");
     document.body.classList.add("modal-open");
@@ -400,21 +382,18 @@ export function initQuestionResolution() {
       confirmationResolver = resolve;
     });
   }
-
   function fecharModalConfirmacao(confirmado) {
     const modal = $("#modalConfirmacao");
 
     if (!modal || modal.classList.contains("hidden")) {
       return;
     }
-
     modal.classList.add("hidden");
     modal.setAttribute("aria-hidden", "true");
 
     if ($("#modalModelo")?.classList.contains("hidden")) {
       document.body.classList.remove("modal-open");
     }
-
     const resolver = confirmationResolver;
     confirmationResolver = null;
 
@@ -429,7 +408,6 @@ export function initQuestionResolution() {
     focusTarget?.focus();
     resolver?.(Boolean(confirmado));
   }
-
   function abrirModalModelo() {
     const modal = $("#modalModelo");
     if (!modal) return;
@@ -440,7 +418,6 @@ export function initQuestionResolution() {
     document.body.classList.add("modal-open");
     $("#btnFecharModelo")?.focus();
   }
-
   function fecharModalModelo() {
     const modal = $("#modalModelo");
     if (!modal) return;
@@ -456,7 +433,6 @@ export function initQuestionResolution() {
     focusTarget?.focus();
     modalPreviousFocus = null;
   }
-
   function manterFocoNoModal(evento, modal) {
     const focusable = [...modal.querySelectorAll(
       'button:not([disabled]), [href], input:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
@@ -466,7 +442,6 @@ export function initQuestionResolution() {
       evento.preventDefault();
       return;
     }
-
     const first = focusable[0];
     const last = focusable[focusable.length - 1];
 
@@ -479,12 +454,10 @@ export function initQuestionResolution() {
     }
   }
 
-
   function carregarConfiguracoes() {
     const config = loadSettings();
     aplicarTema(config.tema || "light");
   }
-
   function salvarConfiguracoes() {
     const configAtual = loadSettings();
     const result = saveSettings({
@@ -496,7 +469,6 @@ export function initQuestionResolution() {
       registrarFalhaPersistencia(result.errorCode, result.error);
     }
   }
-
   function aplicarTema(tema) {
     document.body.dataset.theme = tema;
     document.querySelectorAll("[data-theme-toggle]").forEach((button) => {
@@ -507,20 +479,16 @@ export function initQuestionResolution() {
       );
     });
   }
-
   function alternarTema() {
     aplicarTema(document.body.dataset.theme === "dark" ? "light" : "dark");
     salvarConfiguracoes();
   }
-
   function verificarSessaoSalva() {
     atualizarHome();
   }
-
   function obterSessaoSalva() {
     return loadSession().session;
   }
-
   function continuarSessao() {
     const salva = obterSessaoAtiva();
 
@@ -529,7 +497,6 @@ export function initQuestionResolution() {
       atualizarHome();
       return;
     }
-
     estado = restoreActiveSession(salva);
     timerRodando = !Boolean(estado.temporizadorPausado);
     atualizarBotaoCronometro();
@@ -538,7 +505,6 @@ export function initQuestionResolution() {
     iniciarCronometro();
     atualizarResumoTopo();
   }
-
   async function apagarSessaoSalva() {
     const confirmado = await solicitarConfirmacao(getDeleteSessionConfirmation());
 
@@ -552,7 +518,6 @@ export function initQuestionResolution() {
       registrarFalhaPersistencia(inspection.errorCode, inspection.error);
       return;
     }
-
     resolverFalhaPersistencia();
     estado = estadoInicial();
     limparCamposImportacao();
@@ -561,7 +526,6 @@ export function initQuestionResolution() {
     atualizarHome();
     mostrarMensagemInicial("Progresso da sessão apagado.", "ok");
   }
-
   async function validarImportacao() {
     const texto = entradaQuestoes.value.trim();
 
@@ -572,7 +536,6 @@ export function initQuestionResolution() {
       entradaQuestoes.focus();
       return;
     }
-
     definirEstadoValidacao("loading");
     await new Promise((resolve) => requestAnimationFrame(resolve));
 
@@ -603,7 +566,6 @@ export function initQuestionResolution() {
       definirEstadoValidacao("invalid", { errors });
     }
   }
-
   async function importarQuestoes() {
     const texto = entradaQuestoes.value.trim();
 
@@ -613,12 +575,10 @@ export function initQuestionResolution() {
       });
       return;
     }
-
     if (importValidation.status !== "valid" || importValidation.snapshot !== texto) {
       invalidarValidacaoImportacao("O conteúdo precisa ser validado antes de começar.");
       return;
     }
-
     const sessaoExistente = obterSessaoAtiva();
     if (sessaoExistente?.questoes?.length && !substituicaoAutorizada) {
       const confirmado = await solicitarConfirmacao(getReplaceSessionConfirmation());
@@ -627,7 +587,6 @@ export function initQuestionResolution() {
         return;
       }
     }
-
     try {
       estado = createActiveSession({
         questions: importValidation.questions,
@@ -654,12 +613,10 @@ export function initQuestionResolution() {
     }
   }
 
-
   function renderizarQuestao({ registrarTempo = true, focarTitulo = false } = {}) {
     if (registrarTempo) {
       registrarTempoAtual();
     }
-
     ultimoTick = Date.now();
 
     const questao = estado.questoes[estado.atual];
@@ -669,6 +626,10 @@ export function initQuestionResolution() {
     const numero = estado.atual + 1;
     const progresso = total ? Math.round((numero / total) * 100) : 0;
     const marcadaParaRevisao = Boolean(estado.revisao[questao.id]);
+    const verdadeiroFalso = isTrueFalseQuestion(questao);
+
+    $(".resolution-question-panel")?.classList.toggle("is-true-false", verdadeiroFalso);
+    $("#areaResposta")?.classList.toggle("is-true-false", verdadeiroFalso);
 
     $("#nomeListaResolucao").textContent = estado.listaNome || "Lista sem nome";
     $("#nomeListaResolucao").title = estado.listaNome || "Lista sem nome";
@@ -681,7 +642,7 @@ export function initQuestionResolution() {
     $("#tipoQuestao").textContent = getQuestionTypeLabel(questao);
     $("#assuntoQuestao").textContent = questao.assunto || "Sem assunto";
     $("#assuntoQuestao").title = questao.assunto || "Sem assunto";
-    $("#tituloEnunciadoQuestao").textContent = isTrueFalseQuestion(questao) ? "Afirmativa" : "Enunciado";
+    $("#tituloEnunciadoQuestao").textContent = verdadeiroFalso ? "Afirmativa" : "Enunciado";
     $("#enunciadoQuestao").textContent = questao.enunciado;
 
     $("#revisaoQuestao").classList.toggle("hidden", !marcadaParaRevisao);
@@ -694,7 +655,6 @@ export function initQuestionResolution() {
     } else {
       renderizarDiscursiva(questao);
     }
-
     $("#anotacaoQuestao").value = estado.anotacoes[questao.id] || "";
     $("#anotacaoQuestao").oninput = (evento) => {
       estado.anotacoes[questao.id] = evento.target.value;
@@ -717,7 +677,6 @@ export function initQuestionResolution() {
       requestAnimationFrame(() => $("#tituloResolverQuestao")?.focus({ preventScroll: true }));
     }
   }
-
   function renderizarObjetiva(questao) {
     if (isTrueFalseQuestion(questao)) {
       renderizarVerdadeiroFalso(questao);
@@ -1534,11 +1493,13 @@ export function initQuestionResolution() {
     const expandedClass = expanded ? " is-expanded" : "";
     const detailsId = `detalhes-resultado-${item.id}`;
     const reviewText = item.markedForReview ? " • ★ Marcada para revisão" : "";
+    const typeClass = item.isTrueFalse ? " is-true-false" : "";
 
     return `
       <article
-        class="result-review-card${markedClass}${expandedClass}"
+        class="result-review-card${markedClass}${expandedClass}${typeClass}"
         data-status="${presentation.statusAttribute}"
+        data-question-type="${item.isTrueFalse ? "true-false" : item.category}"
       >
         <button
           class="result-review-card__summary"
@@ -1553,6 +1514,7 @@ export function initQuestionResolution() {
             <strong>${item.typeLabel} • ${escapeHtml(item.subject)}</strong>
             <span class="result-review-card__status">${presentation.icon} ${presentation.label} • ${formatarTempo(item.timeMs)}${reviewText}</span>
           </span>
+          ${item.isTrueFalse ? '<span class="result-review-card__type-badge" aria-hidden="true">V/F</span>' : ""}
           <span class="result-review-card__toggle" aria-hidden="true">▶</span>
         </button>
 
@@ -1598,6 +1560,10 @@ export function initQuestionResolution() {
   }
 
   function renderizarDetalhesResultado(item, detailsId) {
+    if (item.isTrueFalse) {
+      return renderizarDetalhesVerdadeiroFalsoResultado(item, detailsId);
+    }
+
     if (item.category === "objetiva") {
       return renderizarDetalhesObjetivaResultado(item, detailsId);
     }
@@ -1612,6 +1578,57 @@ export function initQuestionResolution() {
         <div class="result-detail-block__content">
           ${content}
         </div>
+      </div>
+    `;
+  }
+
+  function renderizarDetalhesVerdadeiroFalsoResultado(item, detailsId) {
+    const respondeu = Boolean(item.answer);
+    const acertou = item.status === "correct";
+    const respostaUsuario = respondeu ? item.answerText || item.answer : "Não respondida";
+    const respostaCorreta = item.answerKeyVisible ? item.correctAnswerText || item.correctAnswer : "Gabarito oculto";
+    const explanation = item.answerKeyVisible
+      ? renderizarBlocoDetalheResultado({
+          title: "Explicação",
+          modifier: "result-detail-block--explanation result-vf-detail--explanation",
+          content: `<p>${escapeHtml(item.explanation || "Nenhuma explicação informada.")}</p>`
+        })
+      : `<p class="result-answer-key-hidden result-vf-detail--explanation">O gabarito e a explicação foram ocultados pelas configurações desta sessão.</p>`;
+
+    return `
+      <div id="${detailsId}" class="result-review-card__details result-vf-details">
+        ${renderizarBlocoDetalheResultado({
+          title: "Afirmativa",
+          modifier: "result-detail-block--statement result-vf-detail--statement",
+          content: `<p>${escapeHtml(item.statement)}</p>`
+        })}
+
+        <div class="result-vf-verdict-grid" aria-label="Comparação da resposta de Verdadeiro ou Falso">
+          <div class="result-vf-verdict result-vf-verdict--user" data-correct="${acertou}" data-value="${escapeHtml(item.answer || "")}">
+            <span>Sua resposta</span>
+            <strong>${escapeHtml(respostaUsuario)}</strong>
+            <small>${respondeu ? (acertou ? "Resposta correta" : "Resposta incorreta") : "Questão não respondida"}</small>
+          </div>
+
+          <div class="result-vf-verdict result-vf-verdict--correct" data-value="${escapeHtml(item.correctAnswer || "")}">
+            <span>Resposta correta</span>
+            <strong>${escapeHtml(respostaCorreta)}</strong>
+            <small>${item.answerKeyVisible ? "Gabarito da afirmativa" : "Indisponível nesta sessão"}</small>
+          </div>
+
+          <div class="result-time-block result-vf-detail--time">
+            <span>Tempo utilizado</span>
+            <strong>${formatarTempo(item.timeMs)}</strong>
+          </div>
+        </div>
+
+        ${explanation}
+
+        ${renderizarBlocoDetalheResultado({
+          title: "Anotação",
+          modifier: "result-detail-block--note result-vf-detail--note",
+          content: `<p>${escapeHtml(item.note || "Nenhuma anotação registrada.")}</p>`
+        })}
       </div>
     `;
   }

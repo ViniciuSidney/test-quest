@@ -48,16 +48,36 @@ const questions = [
     respostaEsperada: "Modelo",
     criterios: "Critérios"
   },
-  createObjective({ id: "q4", subject: "Média", statement: "Questão pendente", correct: "C" })
+  createObjective({ id: "q4", subject: "Média", statement: "Questão pendente", correct: "C" }),
+  (() => {
+    const alternativas = normalizeObjectiveAlternatives([
+      { chaveOriginal: "V", texto: "Verdadeiro" },
+      { chaveOriginal: "F", texto: "Falso" }
+    ], "q5");
+    const question = {
+      id: "q5",
+      categoria: "objetiva",
+      assunto: "Média",
+      tipo: "verdadeiro ou falso",
+      enunciado: "A média pode ser afetada por valores extremos.",
+      alternativas,
+      correta: "V",
+      respostaCorretaId: "",
+      explicacao: "Explicação V/F"
+    };
+    question.respostaCorretaId = getCorrectAlternativeId(question);
+    return question;
+  })()
 ];
 
 const answers = {
   q1: questions[0].respostaCorretaId,
   q2: questions[1].alternativas[3].id,
-  q3: "Minha resposta"
+  q3: "Minha resposta",
+  q5: questions[4].respostaCorretaId
 };
 const notes = { q2: "Rever este assunto" };
-const timesMs = { q1: 62000, q2: 125000, q3: 185000, q4: 10000, orphan: 999999 };
+const timesMs = { q1: 62000, q2: 125000, q3: 185000, q4: 10000, q5: 30000, orphan: 999999 };
 const review = { q2: true, q3: true };
 
 assert.equal(getQuestionResultStatus(questions[0], "B"), "correct");
@@ -73,18 +93,18 @@ const sessionResult = calculateSessionResult({
   revisao: review
 });
 assert.deepEqual(sessionResult, {
-  total: 4,
-  respondidas: 3,
-  objetivas: 3,
+  total: 5,
+  respondidas: 4,
+  objetivas: 4,
   discursivas: 1,
-  acertos: 1,
+  acertos: 2,
   erros: 1,
-  percentual: 33,
-  tempoTotal: 382000,
-  tempoMedio: 95500,
+  percentual: 50,
+  tempoTotal: 412000,
+  tempoMedio: 82400,
   marcadas: 2
 });
-assert.equal(calculateSessionTotalTime({ questoes: questions, temposMs: timesMs }), 382000);
+assert.equal(calculateSessionTotalTime({ questoes: questions, temposMs: timesMs }), 412000);
 
 const items = buildQuestionReviewItems({
   questions,
@@ -95,18 +115,21 @@ const items = buildQuestionReviewItems({
   showAnswerKey: true
 });
 
-assert.equal(items.length, 4);
+assert.equal(items.length, 5);
 assert.equal(items[0].status, "correct");
 assert.equal(items[1].status, "incorrect");
 assert.equal(items[1].markedForReview, true);
 assert.equal(items[2].expectedAnswer, "Modelo");
 assert.equal(items[3].status, "unanswered");
+assert.equal(items[4].isTrueFalse, true);
+assert.equal(items[4].typeLabel, "Verdadeiro ou Falso");
+assert.equal(items[4].answerText, "Verdadeiro");
 
 assert.equal(filterQuestionReviewItems(items, RESULT_FILTERS.INCORRECT).length, 1);
 assert.equal(filterQuestionReviewItems(items, RESULT_FILTERS.DISCURSIVE).length, 1);
 assert.equal(filterQuestionReviewItems(items, RESULT_FILTERS.REVIEW).length, 2);
 assert.equal(filterQuestionReviewItems(items, RESULT_FILTERS.UNANSWERED).length, 1);
-assert.equal(filterQuestionReviewItems(items, RESULT_FILTERS.ALL).length, 4);
+assert.equal(filterQuestionReviewItems(items, RESULT_FILTERS.ALL).length, 5);
 
 const subjects = buildSubjectResultItems({ questions, answers, timesMs });
 const eventos = subjects.find((item) => item.subject === "Eventos");

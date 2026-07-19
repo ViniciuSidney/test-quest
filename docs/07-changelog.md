@@ -334,3 +334,30 @@ Todas as mudanças importantes do Test Quest serão registradas neste arquivo.
 - o filtro ativo é informado no próprio toggle;
 - ao selecionar um filtro em tela compacta, o painel é recolhido automaticamente para devolver espaço à listagem;
 - filtros e exportações recolhidos são removidos da navegação por teclado.
+
+## [v0.5-dev] — Etapa 3: Verdadeiro ou Falso
+
+### Adicionado
+
+- suporte a questões objetivas de Verdadeiro ou Falso;
+- layout próprio de resolução com escolhas semânticas;
+- tratamento visual especial no Resultado Final;
+- seção dedicada a V/F no guia de importação;
+- testes de estrutura, correção e integração do novo tipo.
+
+### Corrigido
+
+- o embaralhamento de alternativas não altera mais a ordem Verdadeiro → Falso;
+- o guia de importação separa claramente objetiva A–E, V/F e discursiva.
+
+### Melhorado
+
+- proporções, afirmativa e área de resposta da tela V/F aproximadas do mockup oficial;
+- Resultado Final mostra comparação específica entre resposta e gabarito V/F.
+
+### Refinamento da Resolução V/F
+
+- a pill do assunto passou a acompanhar o tamanho do texto e aplicar reticências quando necessário;
+- questões respondidas no mapa agora usam a cor informativa, sem sugerir acerto antes da correção;
+- os cards Verdadeiro e Falso ficaram menores e mais próximos das proporções do mockup oficial;
+- foram preservados o empilhamento mobile, foco por teclado e estados selecionados.

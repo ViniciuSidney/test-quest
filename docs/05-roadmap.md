@@ -170,7 +170,7 @@ Reduzir a concentração de responsabilidades, proteger os dados locais e prepar
 
 ## v0.5-dev — Flexibilidade de resolução e estudo ativo
 
-**Status:** Em desenvolvimento — Etapas 1 e 2 concluídas
+**Status:** Em desenvolvimento — Etapas 1, 2 e 3 concluídas
 
 ### Objetivo
 
@@ -200,9 +200,18 @@ Ampliar as formas de responder, corrigir e revisar questões sem perder compatib
 - orientação para explicações independentes de letras;
 - testes automatizados ampliados para 28 arquivos.
 
+### Etapa 3 — Verdadeiro ou Falso — concluída
+
+- importação própria com `tipo: verdadeiro ou falso`;
+- alternativas Verdadeiro e Falso geradas automaticamente;
+- ordem fixa V → F, sem interferência do embaralhamento;
+- tela de resolução específica e responsiva;
+- Resultado Final com apresentação especial;
+- guia de importação dividido por tipo;
+- testes automatizados ampliados para 29 arquivos.
+
 ### Etapas seguintes
 
-3. questões de verdadeiro ou falso;
 4. gabarito imediato por questão;
 5. refazer questões erradas;
 6. controle manual dos efeitos visuais;

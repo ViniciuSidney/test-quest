@@ -1,3 +1,4 @@
+import { isTrueFalseQuestion } from "../../core/objective-question.js";
 import { createInitialState, SESSION_STATUS } from "../../core/state.js";
 
 export function createSessionId({
@@ -119,7 +120,11 @@ export function isActiveSession(state) {
 }
 
 export function shuffleQuestionAlternatives(question, random = Math.random) {
-  if (question?.categoria !== "objetiva" || !Array.isArray(question.alternativas)) {
+  if (
+    question?.categoria !== "objetiva" ||
+    !Array.isArray(question.alternativas) ||
+    isTrueFalseQuestion(question)
+  ) {
     return question;
   }
 

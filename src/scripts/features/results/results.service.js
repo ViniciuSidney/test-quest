@@ -116,6 +116,7 @@ export function buildQuestionReviewItems({
       index,
       number: index + 1,
       category: question.categoria,
+      isTrueFalse: isTrueFalseQuestion(question),
       typeLabel: question.categoria === "objetiva"
         ? (isTrueFalseQuestion(question) ? "Verdadeiro ou Falso" : "Objetiva")
         : "Discursiva",

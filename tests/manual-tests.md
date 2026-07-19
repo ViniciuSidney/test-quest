@@ -300,3 +300,22 @@ Confirmar:
 - [ ] mapa, temporizador e anotações continuam funcionando;
 - [ ] Resultado Final continua mostrando resposta e gabarito por letras;
 - [ ] temas claro e escuro não apresentam regressões.
+
+## Verdadeiro ou Falso — refinamento visual
+
+1. Importe uma questão V/F com `correta: V`.
+2. Ative `Embaralhar alternativas` e inicie a sessão.
+3. Confirme que Verdadeiro permanece à esquerda e Falso à direita.
+4. Selecione Falso, recarregue a página e continue a sessão.
+5. Confirme que a resposta continua selecionada.
+6. Finalize e abra o card no Resultado Final.
+7. Confira selo V/F, afirmativa, resposta escolhida, resposta correta, explicação, tempo e anotação.
+8. Repita em 1366×768, 754×817, 390×844 e nos temas claro e escuro.
+
+## Refinamento visual da resolução V/F
+
+- [ ] assunto curto produz uma pill compacta, sem largura artificial;
+- [ ] assunto longo termina com reticências e não invade outras pills;
+- [ ] questões respondidas usam cor informativa, diferente de verde/sucesso;
+- [ ] Verdadeiro e Falso permanecem menores que a área interna e centralizados;
+- [ ] em mobile, Verdadeiro, “ou” e Falso continuam empilhados e legíveis.

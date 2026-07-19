@@ -68,6 +68,12 @@ assert.match(controller, /function selecionarFiltroResultado/);
 assert.match(controller, /function alternarCardResultado/);
 assert.match(controller, /function renderizarDetalhesObjetivaResultado/);
 assert.match(controller, /function renderizarDetalhesDiscursivaResultado/);
+assert.match(resultsCss, /\.result-vf-details/);
+assert.match(resultsCss, /\.result-vf-verdict-grid/);
+assert.match(resultsCss, /\.result-review-card__type-badge/);
+assert.match(controller, /function renderizarDetalhesVerdadeiroFalsoResultado/);
+assert.match(controller, /data-question-type=/);
+
 assert.match(controller, /function alternarAcoesResultado/);
 assert.match(controller, /function sincronizarAcoesResultadoResponsivas/);
 assert.match(controller, /function alternarFiltrosResultado/);

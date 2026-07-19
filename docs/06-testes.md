@@ -397,3 +397,16 @@ A versão não pode ser enviada à `main` como estável enquanto houver:
 | V05-T23 | Regressão automatizada | Os 28 arquivos da suíte terminam sem falhas | OK |
 | V05-T24 | Teste real no navegador | Responder, marcar, recarregar e finalizar mantém alternativa e gabarito corretos | Pendente |
 | V05-T25 | Combinação das opções | Embaralhar questões e alternativas simultaneamente mantém o fluxo correto | OK |
+
+# v0.5 — Verdadeiro ou Falso
+
+| Código | Teste | Resultado esperado | Status |
+|---|---|---|---|
+| T-VF-01 | Importar `correta: V` | Questão aceita e gabarito associado a Verdadeiro | Automatizado — OK |
+| T-VF-02 | Importar `correta: F` | Questão aceita e gabarito associado a Falso | Automatizado — OK |
+| T-VF-03 | Embaralhar alternativas | Questão V/F mantém a ordem Verdadeiro → Falso | Automatizado — OK |
+| T-VF-04 | Responder e recarregar | Escolha permanece salva após restauração | Pendente manual |
+| T-VF-05 | Resultado correto | Card V/F mostra acerto, gabarito, explicação e tempo | Pendente manual |
+| T-VF-06 | Resultado incorreto | Card V/F diferencia resposta escolhida e correta | Pendente manual |
+| T-VF-07 | Guia de importação | Os três formatos aparecem separados e legíveis | Pendente manual |
+| T-VF-08 | Mobile | Escolhas empilham sem extrapolação horizontal | Pendente manual |

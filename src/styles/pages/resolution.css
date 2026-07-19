@@ -325,9 +325,9 @@ body[data-screen="resolucao"] .legacy-topbar {
 }
 
 .resolution-map-button.is-answered:not(.is-current) {
-  color: color-mix(in srgb, var(--tq-success) 74%, var(--tq-text));
-  background: var(--tq-success-soft);
-  border-color: color-mix(in srgb, var(--tq-success) 40%, var(--tq-border));
+  color: color-mix(in srgb, var(--tq-info) 82%, var(--tq-text));
+  background: var(--tq-info-soft);
+  border-color: color-mix(in srgb, var(--tq-info) 42%, var(--tq-border));
 }
 
 .resolution-map-button.is-current {
@@ -442,7 +442,9 @@ body[data-screen="resolucao"] .legacy-topbar {
 }
 
 .resolution-tag--subject {
-  max-width: min(58%, 560px);
+  flex: 0 1 auto;
+  width: fit-content;
+  max-width: min(100%, 34rem);
   padding-inline: 0.95rem;
   line-height: 1.25;
   overflow: hidden;
@@ -1117,5 +1119,127 @@ body[data-screen="resolucao"] .legacy-topbar {
   .resolution-question-map {
     max-height: none;
     overflow: visible;
+  }
+}
+
+/* Refinamento específico — Verdadeiro ou Falso */
+.resolution-question-panel.is-true-false {
+  grid-template-rows: auto minmax(105px, auto) minmax(0, 1fr);
+}
+
+.resolution-question-panel.is-true-false .resolution-question-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.resolution-question-panel.is-true-false .resolution-tag--subject {
+  flex: 0 1 auto;
+  width: fit-content;
+  max-width: min(48%, 34rem);
+}
+
+.resolution-question-panel.is-true-false .resolution-tag--review {
+  margin-left: auto;
+}
+
+.resolution-question-panel.is-true-false .resolution-statement {
+  min-height: 105px;
+  max-height: clamp(130px, 22vh, 190px);
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  align-content: start;
+  padding: 0.8rem 1rem;
+}
+
+.resolution-question-panel.is-true-false .resolution-statement p {
+  align-self: center;
+  text-align: center;
+  font-size: clamp(1.05rem, 2vw, 1.75rem);
+  font-weight: 760;
+  line-height: 1.35;
+}
+
+.resolution-answer-area.is-true-false {
+  min-height: 0;
+  overflow: auto;
+  padding: clamp(0.75rem, 1.2vw, 1rem);
+  background: color-mix(in srgb, var(--tq-surface-soft) 88%, var(--tq-surface));
+  border: 1px solid var(--tq-border);
+  border-radius: var(--tq-radius-md);
+  scrollbar-gutter: stable;
+}
+
+.resolution-answer-area.is-true-false .resolution-vf-layout {
+  min-height: 100%;
+  grid-template-columns: minmax(180px, 34%) minmax(44px, auto) minmax(180px, 34%);
+  align-items: center;
+  justify-content: space-between;
+  gap: clamp(0.8rem, 1.5vw, 1.4rem);
+  padding: clamp(0.35rem, 1vw, 0.9rem);
+}
+
+.resolution-answer-area.is-true-false .resolution-vf-choice {
+  width: 100%;
+  min-height: clamp(155px, 24vh, 235px);
+  height: auto;
+  align-self: center;
+  border-radius: var(--tq-radius-md);
+  box-shadow: 0 10px 22px rgba(13, 14, 34, 0.18);
+}
+
+.resolution-answer-area.is-true-false .resolution-vf-choice--true {
+  background: color-mix(in srgb, var(--tq-success) 68%, var(--tq-surface));
+}
+
+.resolution-answer-area.is-true-false .resolution-vf-choice--false {
+  background: color-mix(in srgb, var(--tq-danger) 68%, var(--tq-surface));
+}
+
+.resolution-answer-area.is-true-false .resolution-vf-divider {
+  min-width: 44px;
+  color: color-mix(in srgb, var(--tq-text-muted) 78%, var(--tq-text));
+  font-size: clamp(1.15rem, 2vw, 1.8rem);
+  text-transform: lowercase;
+}
+
+@media (max-width: 1100px) and (min-width: 721px) {
+  .resolution-question-panel.is-true-false .resolution-tag--subject {
+    max-width: min(42%, 26rem);
+  }
+
+  .resolution-answer-area.is-true-false .resolution-vf-layout {
+    grid-template-columns: minmax(165px, 37%) minmax(38px, auto) minmax(165px, 37%);
+  }
+
+  .resolution-answer-area.is-true-false .resolution-vf-choice {
+    min-height: clamp(145px, 22vh, 210px);
+  }
+}
+
+@media (max-width: 720px) {
+  .resolution-question-panel.is-true-false .resolution-question-meta {
+    display: flex;
+  }
+
+  .resolution-question-panel.is-true-false .resolution-tag--subject {
+    max-width: 100%;
+  }
+
+  .resolution-question-panel.is-true-false .resolution-tag--review {
+    margin-left: 0;
+  }
+
+  .resolution-answer-area.is-true-false .resolution-vf-layout {
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(140px, 1fr) auto minmax(140px, 1fr);
+  }
+
+  .resolution-answer-area.is-true-false .resolution-vf-choice {
+    min-height: 145px;
+  }
+
+  .resolution-answer-area.is-true-false .resolution-vf-divider {
+    min-width: 0;
   }
 }
