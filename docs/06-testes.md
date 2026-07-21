@@ -410,3 +410,19 @@ A versão não pode ser enviada à `main` como estável enquanto houver:
 | T-VF-06 | Resultado incorreto | Card V/F diferencia resposta escolhida e correta | Pendente manual |
 | T-VF-07 | Guia de importação | Os três formatos aparecem separados e legíveis | Pendente manual |
 | T-VF-08 | Mobile | Escolhas empilham sem extrapolação horizontal | Pendente manual |
+
+
+# v0.5 — Etapa 4: gabarito imediato
+
+| Código | Teste | Resultado esperado | Status |
+|---|---|---|---|
+| T90 | Modo final | A resolução mantém o comportamento anterior e não exibe o botão de confirmação | Automatizado OK |
+| T91 | Modo imediato objetivo | Confirmar bloqueia a alternativa e revela acerto, gabarito e explicação | Automatizado OK |
+| T92 | Modo imediato V/F | Confirmar preserva a ordem V → F e revela a correção | Automatizado OK |
+| T93 | Modo imediato discursivo | Confirmar bloqueia o texto e mostra resposta esperada e critérios | Automatizado OK |
+| T94 | Persistência | Recarregar mantém respostas confirmadas e o painel de correção | Automatizado OK |
+| T95 | Migração | Sessões antigas recebem `modoCorrecao: final` e `confirmacoes: {}` | Automatizado OK |
+| T96 | Encerramento | O modal informa a quantidade de questões sem confirmação imediata | Automatizado OK |
+| T97 | Regressão | Embaralhamento, resultado, exportações e histórico continuam funcionando | Automatizado OK |
+
+A suíte contém 31 arquivos de teste automatizado.

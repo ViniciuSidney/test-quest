@@ -48,7 +48,7 @@ const answerId = report.session.respostas[question.id];
 
 assert.equal(report.source, "current");
 assert.equal(report.migrated, true);
-assert.equal(report.session.schemaVersion, 4);
+assert.equal(report.session.schemaVersion, 5);
 assert.equal(Array.isArray(question.alternativas), true);
 assert.equal(question.alternativas.length, 5);
 assert.equal(answerId, question.respostaCorretaId);
@@ -59,10 +59,12 @@ assert.deepEqual(report.session.marcacoesAlternativas[question.id], {
 assert.equal(report.session.anotacoes[question.id], "Nota preservada");
 assert.equal(report.session.temposMs[question.id], 42000);
 assert.equal(report.session.revisao[question.id], true);
+assert.equal(report.session.opcoes.modoCorrecao, "final");
+assert.deepEqual(report.session.confirmacoes, {});
 assert.ok(storage.getItem(MIGRATION_BACKUP_KEY));
 
 const persisted = JSON.parse(storage.getItem(STORAGE_KEY));
-assert.equal(persisted.schemaVersion, 4);
+assert.equal(persisted.schemaVersion, 5);
 assert.equal(persisted.respostas[question.id], question.respostaCorretaId);
 
 console.log("v0.4 → v0.5 migration: todos os testes passaram.");

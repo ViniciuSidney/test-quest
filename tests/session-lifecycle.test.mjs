@@ -99,4 +99,14 @@ assert.notDeepEqual(
   objectiveBase.alternativas.map((item) => item.id)
 );
 
+
+const immediateSession = createActiveSession({
+  questions,
+  correctionMode: "imediata",
+  idFactory: () => "session-immediate",
+  now: () => "2026-07-18T12:00:00.000Z"
+});
+assert.equal(immediateSession.opcoes.modoCorrecao, "imediata");
+assert.deepEqual(immediateSession.confirmacoes, {});
+
 console.log("Session lifecycle: todos os testes passaram.");

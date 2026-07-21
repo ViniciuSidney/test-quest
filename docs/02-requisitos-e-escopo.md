@@ -178,3 +178,14 @@ O Resultado Final deve identificar visualmente o tipo V/F e comparar resposta do
 ### RF-V05-09 — Guia de importação por tipo
 
 O modal de modelo deve separar claramente objetiva A–E, Verdadeiro ou Falso e discursiva, incluindo as regras específicas de cada formato.
+
+
+## RF-v0.5-04 — Correção após cada questão
+
+- permitir escolher entre correção final e correção imediata;
+- exigir resposta antes da confirmação;
+- impedir alteração depois da confirmação;
+- mostrar acerto, erro, resposta correta e explicação nas objetivas e V/F;
+- mostrar resposta esperada e critérios nas discursivas;
+- persistir confirmações durante recarregamento e retomada;
+- manter compatibilidade com sessões anteriores.

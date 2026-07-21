@@ -18,6 +18,12 @@ assert.equal(pending.items[1].value, "2");
 assert.equal(pending.items[2].value, "2");
 assert.equal(pending.items[1].tone, "warning");
 
+
+const immediatePending = getFinishSessionConfirmation({ total: 2, respondidas: 2 }, 0, 1);
+assert.equal(immediatePending.items.at(-1).label, "Sem confirmação imediata");
+assert.equal(immediatePending.items.at(-1).value, "1");
+assert.match(immediatePending.note, /sem confirmação imediata/);
+
 const complete = getFinishSessionConfirmation({ total: 2, respondidas: 2 }, 0);
 assert.equal(complete.title, "Finalizar esta resolução?");
 assert.equal(complete.items[0].tone, "success");

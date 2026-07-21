@@ -170,7 +170,7 @@ Reduzir a concentração de responsabilidades, proteger os dados locais e prepar
 
 ## v0.5-dev — Flexibilidade de resolução e estudo ativo
 
-**Status:** Em desenvolvimento — Etapas 1, 2 e 3 concluídas
+**Status:** Em desenvolvimento — Etapas 1, 2, 3 e 4 concluídas
 
 ### Objetivo
 
@@ -210,9 +210,22 @@ Ampliar as formas de responder, corrigir e revisar questões sem perder compatib
 - guia de importação dividido por tipo;
 - testes automatizados ampliados para 29 arquivos.
 
+
+### Etapa 4 — Gabarito imediato por questão — concluída
+
+- configuração de correção na tela de Importação;
+- modo padrão mantém o gabarito somente no Resultado Final;
+- modo imediato exige confirmação explícita da resposta;
+- respostas objetivas, V/F e discursivas ficam bloqueadas após a confirmação;
+- objetivas e V/F exibem acerto, erro, gabarito e explicação;
+- discursivas exibem resposta esperada e critérios de correção;
+- confirmações persistem no `localStorage` e após a retomada da sessão;
+- sessões anteriores migram para o modo de correção final;
+- esquema de sessão atualizado para `schemaVersion: 5`;
+- testes automatizados ampliados para 31 arquivos.
+
 ### Etapas seguintes
 
-4. gabarito imediato por questão;
 5. refazer questões erradas;
 6. controle manual dos efeitos visuais;
 7. integração, regressão e fechamento da v0.5.0.

@@ -66,10 +66,11 @@ export function isQuestionAnswered(answer) {
   return Boolean(String(answer ?? "").trim());
 }
 
-export function buildQuestionMapLabel({ number, current, answered, review }) {
+export function buildQuestionMapLabel({ number, current, answered, review, confirmed = false }) {
   const states = [
     current ? "atual" : "",
     answered ? "respondida" : "pendente",
+    confirmed ? "resposta confirmada" : "",
     review ? "marcada para revisão" : ""
   ].filter(Boolean);
 
@@ -98,17 +99,30 @@ export function getQuestionTypeLabel(question) {
   return isTrueFalseQuestion(question) ? "Verdadeiro ou Falso" : "Objetiva";
 }
 
-export function buildTrueFalseOptionsMarkup({ alternatives = [], selectedId = "", escapeHtml = (value) => String(value ?? "") } = {}) {
+export function buildTrueFalseOptionsMarkup({
+  alternatives = [],
+  selectedId = "",
+  correctId = "",
+  confirmed = false,
+  escapeHtml = (value) => String(value ?? "")
+} = {}) {
   const trueOptionId = alternatives[0]?.id || "";
   const falseOptionId = alternatives[1]?.id || "";
+  const getStateClasses = (id) => [
+    selectedId === id ? "is-selected" : "",
+    confirmed && correctId === id ? "is-correct" : "",
+    confirmed && selectedId === id && selectedId !== correctId ? "is-incorrect" : "",
+    confirmed ? "is-locked" : ""
+  ].filter(Boolean).join(" ");
 
   return `
     <div class="resolution-vf-layout" role="group" aria-label="Selecione Verdadeiro ou Falso">
       <button
-        class="resolution-vf-choice resolution-vf-choice--true ${selectedId === trueOptionId ? "is-selected" : ""}"
+        class="resolution-vf-choice resolution-vf-choice--true ${getStateClasses(trueOptionId)}"
         type="button"
         data-vf-choice-id="${escapeHtml(trueOptionId)}"
         aria-pressed="${String(selectedId === trueOptionId)}"
+        ${confirmed ? "disabled" : ""}
       >
         <span class="resolution-vf-choice__text">${escapeHtml(alternatives[0]?.texto || "Verdadeiro")}</span>
       </button>
@@ -116,10 +130,11 @@ export function buildTrueFalseOptionsMarkup({ alternatives = [], selectedId = ""
       <span class="resolution-vf-divider" aria-hidden="true">ou</span>
 
       <button
-        class="resolution-vf-choice resolution-vf-choice--false ${selectedId === falseOptionId ? "is-selected" : ""}"
+        class="resolution-vf-choice resolution-vf-choice--false ${getStateClasses(falseOptionId)}"
         type="button"
         data-vf-choice-id="${escapeHtml(falseOptionId)}"
         aria-pressed="${String(selectedId === falseOptionId)}"
+        ${confirmed ? "disabled" : ""}
       >
         <span class="resolution-vf-choice__text">${escapeHtml(alternatives[1]?.texto || "Falso")}</span>
       </button>

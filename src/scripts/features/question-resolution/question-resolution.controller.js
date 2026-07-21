@@ -1,4 +1,4 @@
-import { getAlternativeDisplayLetter, getObjectiveAlternatives, isTrueFalseQuestion, resolveObjectiveAnswerId } from "../../core/objective-question.js";
+import { getAlternativeDisplayLetter, getCorrectAlternativeId, getObjectiveAlternatives, isTrueFalseQuestion, resolveObjectiveAnswerId } from "../../core/objective-question.js";
 import { createInitialState } from "../../core/state.js";
 import { createScreenManager } from "../../core/screens.js";
 import { calculateHistoryMetrics, readHistory, recordCompletedSessionSafe } from "../home/home.service.js";
@@ -14,6 +14,7 @@ import { escapeHtml, formatDuration as formatarTempo, formatStudyDuration as for
 import { formatPerformanceBasis, getPerformanceState, PERFORMANCE_STATE_CLASSES, shouldShowPerformanceScreen } from "../performance/performance.service.js";
 import { calculateSessionResult as calcularResultado, calculateSessionTotalTime as calcularTempoTotal, RESULT_FILTERS, buildQuestionReviewItems, buildSubjectResultItems, filterQuestionReviewItems, getSubjectPerformanceTone, normalizeResultFilter } from "../results/results.service.js";
 import { buildQuestionMapLabel, buildTrueFalseOptionsMarkup, getMarkerInfo, getNextMarkerState, getQuestionTypeLabel, isQuestionAnswered, MARKER_STATES, normalizeMarkerState } from "./question-resolution.helpers.js";
+import { buildImmediateFeedbackMarkup, canConfirmQuestion, confirmQuestion, isImmediateCorrectionEnabled, isQuestionConfirmed } from "./immediate-feedback.service.js";
 
 export function initQuestionResolution() {
   const exemploQuestoes = `@questao
@@ -223,6 +224,7 @@ export function initQuestionResolution() {
     $("#btnApagarSessao").addEventListener("click", apagarSessaoSalva);
 
     $("#btnAnterior").addEventListener("click", irAnterior);
+    $("#btnConfirmarResposta")?.addEventListener("click", confirmarRespostaAtual);
     $("#btnProxima").addEventListener("click", irProxima);
     $("#btnFinalizar").addEventListener("click", finalizar);
     $("#btnFinalizarSessao")?.addEventListener("click", finalizar);
@@ -292,6 +294,7 @@ export function initQuestionResolution() {
     nomeLista.value = "";
     $("#opcaoEmbaralhar").checked = false;
     $("#opcaoEmbaralharAlternativas").checked = false;
+    document.querySelector('input[name="modoCorrecao"][value="final"]').checked = true;
     $("#opcaoMostrarGabaritoFinal").checked = true;
     atualizarNomeArquivo();
     importValidation = createImportValidationState();
@@ -591,9 +594,10 @@ export function initQuestionResolution() {
       estado = createActiveSession({
         questions: importValidation.questions,
         listName: nomeLista.value,
-        showAnswerKey: $("#opcaoMostrarGabaritoFinal").checked,
+        showAnswerKey: true,
         shuffleQuestions: $("#opcaoEmbaralhar").checked,
-        shuffleAlternatives: $("#opcaoEmbaralharAlternativas").checked
+        shuffleAlternatives: $("#opcaoEmbaralharAlternativas").checked,
+        correctionMode: document.querySelector('input[name="modoCorrecao"]:checked')?.value || "final"
       });
       substituicaoAutorizada = false;
 
@@ -627,9 +631,12 @@ export function initQuestionResolution() {
     const progresso = total ? Math.round((numero / total) * 100) : 0;
     const marcadaParaRevisao = Boolean(estado.revisao[questao.id]);
     const verdadeiroFalso = isTrueFalseQuestion(questao);
+    const correcaoImediata = isImmediateCorrectionEnabled(estado);
+    const confirmada = isQuestionConfirmed(estado, questao.id);
 
     $(".resolution-question-panel")?.classList.toggle("is-true-false", verdadeiroFalso);
     $("#areaResposta")?.classList.toggle("is-true-false", verdadeiroFalso);
+    $("#areaResposta")?.classList.toggle("has-feedback", confirmada);
 
     $("#nomeListaResolucao").textContent = estado.listaNome || "Lista sem nome";
     $("#nomeListaResolucao").title = estado.listaNome || "Lista sem nome";
@@ -662,9 +669,12 @@ export function initQuestionResolution() {
     };
 
     const ultimaQuestao = estado.atual === total - 1;
+    const exigeConfirmacao = correcaoImediata && !confirmada;
     $("#btnAnterior").disabled = estado.atual === 0;
-    $("#btnProxima").classList.toggle("hidden", ultimaQuestao);
-    $("#btnFinalizar").classList.toggle("hidden", !ultimaQuestao);
+    $("#btnConfirmarResposta")?.classList.toggle("hidden", !exigeConfirmacao);
+    $("#btnConfirmarResposta").disabled = exigeConfirmacao && !canConfirmQuestion(estado, questao);
+    $("#btnProxima").classList.toggle("hidden", ultimaQuestao || exigeConfirmacao);
+    $("#btnFinalizar").classList.toggle("hidden", !ultimaQuestao || exigeConfirmacao);
     $("#btnFinalizarSessao")?.classList.toggle("hidden", ultimaQuestao);
 
     renderizarMapa();
@@ -689,6 +699,8 @@ export function initQuestionResolution() {
       estado.respostas[questao.id]
     );
     const marcacoes = estado.marcacoesAlternativas[questao.id] || {};
+    const confirmada = isQuestionConfirmed(estado, questao.id);
+    const corretaId = getCorrectAlternativeId(questao);
 
     $("#areaResposta").innerHTML = `
       <fieldset class="resolution-objective-options">
@@ -701,7 +713,7 @@ export function initQuestionResolution() {
           const inputId = `resposta-${questao.id}-${indice + 1}`;
 
           return `
-            <div class="resolution-option-card ${selected ? "is-selected" : ""} ${markerState === MARKER_STATES.ANALYSIS ? "is-analysis" : ""} ${markerState === MARKER_STATES.ELIMINATED ? "is-eliminated" : ""}">
+            <div class="resolution-option-card ${selected ? "is-selected" : ""} ${confirmada && alternativa.id === corretaId ? "is-correct" : ""} ${confirmada && selected && alternativa.id !== corretaId ? "is-incorrect" : ""} ${confirmada ? "is-locked" : ""} ${markerState === MARKER_STATES.ANALYSIS ? "is-analysis" : ""} ${markerState === MARKER_STATES.ELIMINATED ? "is-eliminated" : ""}">
               <input
                 id="${escapeHtml(inputId)}"
                 class="resolution-option-radio"
@@ -709,6 +721,7 @@ export function initQuestionResolution() {
                 name="respostaObjetiva"
                 value="${escapeHtml(alternativa.id)}"
                 ${selected ? "checked" : ""}
+                ${confirmada ? "disabled" : ""}
               >
               <label class="resolution-option-answer" for="${escapeHtml(inputId)}">
                 <span class="resolution-option-letter">${escapeHtml(letra)})</span>
@@ -721,6 +734,7 @@ export function initQuestionResolution() {
                 data-marker-state="${markerState}"
                 title="${escapeHtml(markerInfo.title)}"
                 aria-label="${escapeHtml(markerInfo.label)}"
+                ${confirmada ? "disabled" : ""}
               >
                 <span aria-hidden="true">${markerInfo.icon}</span>
               </button>
@@ -728,9 +742,12 @@ export function initQuestionResolution() {
           `;
         }).join("")}
         <p class="resolution-marker-legend">
-          O card define a resposta oficial. O botão lateral alterna entre sem marcação, em análise e eliminada.
+          ${confirmada
+            ? "Resposta confirmada. As alternativas e marcações foram bloqueadas."
+            : "O card define a resposta oficial. O botão lateral alterna entre sem marcação, em análise e eliminada."}
         </p>
       </fieldset>
+      ${confirmada ? buildImmediateFeedbackMarkup({ question: questao, answer: respostaAtual, escapeHtml }) : ""}
     `;
 
     document.querySelectorAll("input[name='respostaObjetiva']").forEach((input) => {
@@ -751,11 +768,14 @@ export function initQuestionResolution() {
     const alternativas = getObjectiveAlternatives(questao);
     const respostaAtual = resolveObjectiveAnswerId(questao, estado.respostas[questao.id]);
 
+    const confirmada = isQuestionConfirmed(estado, questao.id);
     $("#areaResposta").innerHTML = buildTrueFalseOptionsMarkup({
       alternatives: alternativas,
       selectedId: respostaAtual,
+      correctId: getCorrectAlternativeId(questao),
+      confirmed: confirmada,
       escapeHtml
-    });
+    }) + (confirmada ? buildImmediateFeedbackMarkup({ question: questao, answer: respostaAtual, escapeHtml }) : "");
 
     document.querySelectorAll("[data-vf-choice-id]").forEach((button) => {
       button.addEventListener("click", () => selecionarRespostaObjetiva(questao, button.dataset.vfChoiceId, { refocusSelector: "[data-vf-choice-id]" }));
@@ -763,7 +783,7 @@ export function initQuestionResolution() {
   }
 
   function selecionarRespostaObjetiva(questao, alternativeId, { refocusSelector = "" } = {}) {
-    if (!alternativeId) return;
+    if (!alternativeId || isQuestionConfirmed(estado, questao.id)) return;
 
     estado.respostas[questao.id] = alternativeId;
 
@@ -774,6 +794,7 @@ export function initQuestionResolution() {
 
     renderizarObjetiva(questao);
     renderizarMapa();
+    atualizarEstadoBotaoConfirmar(questao);
     atualizarResumoTopo();
     salvarEstadoImediato();
 
@@ -786,28 +807,23 @@ export function initQuestionResolution() {
 
   function renderizarDiscursiva(questao) {
     const respostaAtual = estado.respostas[questao.id] || "";
+    const confirmada = isQuestionConfirmed(estado, questao.id);
 
     $("#areaResposta").innerHTML = `
       <label class="resolution-discursive-field" for="respostaDiscursiva">
         <span>Sua resposta</span>
-        <textarea
-          class="resolution-discursive-textarea"
-          id="respostaDiscursiva"
-          placeholder="Responda aqui..."
-          spellcheck="true"
-        >${escapeHtml(respostaAtual)}</textarea>
+        <textarea class="resolution-discursive-textarea" id="respostaDiscursiva" placeholder="Responda aqui..." spellcheck="true" ${confirmada ? "readonly" : ""}>${escapeHtml(respostaAtual)}</textarea>
       </label>
+      ${confirmada ? buildImmediateFeedbackMarkup({ question: questao, answer: respostaAtual, escapeHtml }) : ""}
     `;
 
     $("#respostaDiscursiva").addEventListener("input", (evento) => {
+      if (confirmada) return;
       const estavaRespondida = isQuestionAnswered(estado.respostas[questao.id]);
       estado.respostas[questao.id] = evento.target.value;
       const estaRespondida = isQuestionAnswered(estado.respostas[questao.id]);
-
-      if (estavaRespondida !== estaRespondida) {
-        renderizarMapa();
-      }
-
+      if (estavaRespondida !== estaRespondida) renderizarMapa();
+      atualizarEstadoBotaoConfirmar(questao);
       atualizarResumoTopo();
       salvarEstadoDebounced();
     });
@@ -820,11 +836,12 @@ export function initQuestionResolution() {
       const respondida = isQuestionAnswered(estado.respostas[questao.id]);
       const atual = indice === estado.atual;
       const revisao = Boolean(estado.revisao[questao.id]);
-      const ariaLabel = buildQuestionMapLabel({ number: indice + 1, current: atual, answered: respondida, review: revisao });
+      const confirmada = isQuestionConfirmed(estado, questao.id);
+      const ariaLabel = buildQuestionMapLabel({ number: indice + 1, current: atual, answered: respondida, review: revisao, confirmed: confirmada });
 
       return `
         <button
-          class="resolution-map-button ${respondida ? "is-answered" : ""} ${atual ? "is-current" : ""} ${revisao ? "is-review" : ""}"
+          class="resolution-map-button ${respondida ? "is-answered" : ""} ${confirmada ? "is-confirmed" : ""} ${atual ? "is-current" : ""} ${revisao ? "is-review" : ""}"
           type="button"
           data-indice="${indice}"
           aria-label="${escapeHtml(ariaLabel)}"
@@ -850,6 +867,23 @@ export function initQuestionResolution() {
     });
   }
 
+  function atualizarEstadoBotaoConfirmar(questao = estado.questoes[estado.atual]) {
+    const button = $("#btnConfirmarResposta");
+    if (button && isImmediateCorrectionEnabled(estado) && !isQuestionConfirmed(estado, questao?.id)) {
+      button.disabled = !canConfirmQuestion(estado, questao);
+    }
+  }
+
+  function confirmarRespostaAtual() {
+    const questao = estado.questoes[estado.atual];
+    if (!questao || !isImmediateCorrectionEnabled(estado) || !canConfirmQuestion(estado, questao)) return;
+    registrarTempoAtual();
+    estado = confirmQuestion(estado, questao.id);
+    salvarEstadoImediato();
+    renderizarQuestao({ registrarTempo: false });
+    requestAnimationFrame(() => $(".resolution-feedback")?.focus({ preventScroll: false }));
+  }
+
   function irAnterior() {
     if (estado.atual > 0) {
       irParaQuestao(estado.atual - 1, { focarTitulo: true });
@@ -873,6 +907,7 @@ export function initQuestionResolution() {
   }
 
   function alternarMarcadorAlternativa(questao, alternativeId) {
+    if (isQuestionConfirmed(estado, questao.id)) return;
     const proximo = getNextMarkerState(
       estado.marcacoesAlternativas[questao.id]?.[alternativeId]
     );
@@ -922,8 +957,11 @@ export function initQuestionResolution() {
 
     const r = calcularResultado(estado);
     const marcadas = Object.values(estado.revisao || {}).filter(Boolean).length;
+    const naoConfirmadas = isImmediateCorrectionEnabled(estado)
+      ? estado.questoes.filter((questao) => !isQuestionConfirmed(estado, questao.id)).length
+      : 0;
     const confirmado = await solicitarConfirmacao(
-      getFinishSessionConfirmation(r, marcadas)
+      getFinishSessionConfirmation(r, marcadas, naoConfirmadas)
     );
 
     if (!confirmado) {

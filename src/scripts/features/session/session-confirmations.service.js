@@ -38,11 +38,12 @@ export function getNewResolutionConfirmation() {
   };
 }
 
-export function getFinishSessionConfirmation(result = {}, markedCount = 0) {
+export function getFinishSessionConfirmation(result = {}, markedCount = 0, unconfirmedCount = 0) {
   const total = Number(result.total) || 0;
   const answered = Number(result.respondidas) || 0;
   const unanswered = Math.max(0, total - answered);
   const marked = Math.max(0, Number(markedCount) || 0);
+  const unconfirmed = Math.max(0, Number(unconfirmedCount) || 0);
 
   return {
     label: "Finalizar sessão",
@@ -63,10 +64,15 @@ export function getFinishSessionConfirmation(result = {}, markedCount = 0) {
         label: "Marcadas para revisão",
         value: String(marked),
         tone: marked > 0 ? "review" : "neutral"
-      }
+      },
+      ...(unconfirmed > 0 ? [{
+        label: "Sem confirmação imediata",
+        value: String(unconfirmed),
+        tone: "warning"
+      }] : [])
     ],
-    note: unanswered > 0
-      ? "A sessão pode ser finalizada mesmo com questões pendentes."
+    note: unanswered > 0 || unconfirmed > 0
+      ? "A sessão pode ser finalizada, mas ainda existem questões pendentes ou sem confirmação imediata."
       : "Todas as questões foram respondidas. O resultado será exibido após a confirmação.",
     confirmText: "Finalizar resolução",
     variant: "warning"

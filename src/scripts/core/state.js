@@ -21,11 +21,13 @@ export function createInitialState() {
     temposMs: {},
     revisao: {},
     marcacoesAlternativas: {},
+    confirmacoes: {},
     temporizadorPausado: false,
     opcoes: {
       mostrarGabaritoFinal: true,
       embaralharQuestoes: false,
-      embaralharAlternativas: false
+      embaralharAlternativas: false,
+      modoCorrecao: "final"
     },
     importadoEm: null,
     iniciadoEm: null,

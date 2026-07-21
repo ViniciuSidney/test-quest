@@ -289,7 +289,7 @@ Confirmar:
 - [ ] anotações e tempos permanecem;
 - [ ] o resultado final calcula acertos corretamente;
 - [ ] o TXT mostra letras, não IDs internos;
-- [ ] o JSON usa `schemaVersion: 4`;
+- [ ] o JSON usa `schemaVersion: 5`;
 - [ ] `respostas` e `marcacoesAlternativas` usam IDs de alternativas.
 
 ### Regressão visual
@@ -319,3 +319,19 @@ Confirmar:
 - [ ] questões respondidas usam cor informativa, diferente de verde/sucesso;
 - [ ] Verdadeiro e Falso permanecem menores que a área interna e centralizados;
 - [ ] em mobile, Verdadeiro, “ou” e Falso continuam empilhados e legíveis.
+
+
+## Etapa 4 — Gabarito imediato
+
+- [ ] iniciar uma sessão com `Somente no resultado final` e confirmar que o fluxo antigo permanece igual;
+- [ ] iniciar uma sessão com `Após confirmar cada questão`;
+- [ ] verificar que `Confirmar resposta` fica desabilitado enquanto não houver resposta;
+- [ ] confirmar uma objetiva correta e conferir bloqueio, gabarito e explicação;
+- [ ] confirmar uma objetiva incorreta e conferir destaque da escolhida e da correta;
+- [ ] confirmar uma questão V/F e conferir a ordem Verdadeiro → Falso;
+- [ ] confirmar uma discursiva e conferir resposta esperada e critérios;
+- [ ] recarregar a página e verificar que a resposta continua bloqueada;
+- [ ] continuar a sessão pela Home e verificar que o painel de correção reaparece;
+- [ ] navegar para uma questão não confirmada e verificar que ela continua editável;
+- [ ] finalizar com questões não confirmadas e conferir o aviso no modal;
+- [ ] testar tema claro, tema escuro, desktop e mobile.

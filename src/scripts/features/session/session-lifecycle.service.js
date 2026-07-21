@@ -1,5 +1,6 @@
 import { isTrueFalseQuestion } from "../../core/objective-question.js";
 import { createInitialState, SESSION_STATUS } from "../../core/state.js";
+import { normalizeCorrectionMode } from "../question-resolution/immediate-feedback.service.js";
 
 export function createSessionId({
   cryptoRef = globalThis.crypto,
@@ -30,6 +31,7 @@ export function createActiveSession({
   showAnswerKey = true,
   shuffleQuestions = false,
   shuffleAlternatives = false,
+  correctionMode = "final",
   now = () => new Date().toISOString(),
   idFactory = createSessionId,
   random = Math.random
@@ -54,7 +56,8 @@ export function createActiveSession({
       ...state.opcoes,
       mostrarGabaritoFinal: Boolean(showAnswerKey),
       embaralharQuestoes: Boolean(shuffleQuestions),
-      embaralharAlternativas: Boolean(shuffleAlternatives)
+      embaralharAlternativas: Boolean(shuffleAlternatives),
+      modoCorrecao: normalizeCorrectionMode(correctionMode)
     },
     importadoEm: importedAt,
     iniciadoEm: importedAt,
@@ -78,6 +81,7 @@ export function restoreActiveSession(savedState) {
     temposMs: savedState.temposMs || {},
     revisao: savedState.revisao || {},
     marcacoesAlternativas: savedState.marcacoesAlternativas || {},
+    confirmacoes: savedState.confirmacoes || {},
     opcoes: {
       ...base.opcoes,
       ...(savedState.opcoes || {})

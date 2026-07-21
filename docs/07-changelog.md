@@ -370,3 +370,31 @@ Todas as mudanças importantes do Test Quest serão registradas neste arquivo.
 - as bordas externas do PNG passaram a ser transparentes;
 - o favicon principal passou a usar SVG vetorial;
 - os ícones do manifesto e do atalho móvel foram sincronizados com a nova identidade.
+
+
+## [v0.5-dev] — Etapa 4: gabarito imediato por questão
+
+### Adicionado
+
+- opção de correção somente no Resultado Final ou após confirmar cada questão;
+- botão `Confirmar resposta` no fluxo de resolução imediata;
+- painel de correção para objetivas e Verdadeiro ou Falso;
+- comparação orientada para questões discursivas;
+- mapa `confirmacoes` persistido no estado da sessão;
+- serviço dedicado `immediate-feedback.service.js`;
+- testes de comportamento, estrutura, migração e persistência da correção imediata.
+
+### Alterado
+
+- esquema da sessão atualizado para `schemaVersion: 5`;
+- respostas confirmadas são bloqueadas contra alterações posteriores;
+- o fluxo de navegação libera `Próxima` ou `Finalizar` depois da confirmação;
+- o modal de encerramento informa questões ainda sem confirmação imediata;
+- sessões antigas são migradas para o modo de correção final.
+
+### Preservado
+
+- modo tradicional de resolução sem confirmação por questão;
+- embaralhamento de questões e alternativas;
+- ordem fixa das questões de Verdadeiro ou Falso;
+- anotações, revisão, temporizadores, resultado e exportações.

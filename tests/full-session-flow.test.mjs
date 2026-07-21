@@ -88,7 +88,7 @@ assert.match(notes.content, /Revisar conjunções\./);
 
 const json = createSessionJsonExport(session);
 const parsedJson = JSON.parse(json.content);
-assert.equal(parsedJson.schemaVersion, 4);
+assert.equal(parsedJson.schemaVersion, 5);
 assert.equal(parsedJson.status, "finalizada");
 assert.equal(parsedJson.id, "full-flow-session");
 

@@ -274,14 +274,29 @@
                 </span>
               </label>
 
-              <label class="import-check-option">
-                <input id="opcaoMostrarGabaritoFinal" type="checkbox" checked />
+            </fieldset>
+
+            <fieldset class="session-options correction-options">
+              <legend>Correção das questões</legend>
+
+              <label class="import-check-option import-radio-option">
+                <input type="radio" name="modoCorrecao" value="final" checked />
                 <span>
-                  <strong>Mostrar gabarito</strong>
-                  <small>Exibe respostas e explicações no resultado.</small>
+                  <strong>Somente no resultado final</strong>
+                  <small>Permite alterar as respostas livremente até encerrar a sessão.</small>
+                </span>
+              </label>
+
+              <label class="import-check-option import-radio-option">
+                <input type="radio" name="modoCorrecao" value="imediata" />
+                <span>
+                  <strong>Após confirmar cada questão</strong>
+                  <small>Bloqueia a resposta e mostra o gabarito ou o modelo de correção imediatamente.</small>
                 </span>
               </label>
             </fieldset>
+
+            <input id="opcaoMostrarGabaritoFinal" type="checkbox" checked hidden aria-hidden="true" tabindex="-1" />
           </section>
 
           <section class="import-panel validation-panel" aria-labelledby="tituloValidacaoImportacao">
@@ -475,6 +490,9 @@
 
             <div class="resolution-actions__navigation">
               <button id="btnAnterior" class="secondary" type="button">Anterior</button>
+              <button id="btnConfirmarResposta" class="primary resolution-confirm-action hidden" type="button">
+                Confirmar resposta
+              </button>
               <button id="btnProxima" class="primary" type="button">Próxima</button>
               <button id="btnFinalizar" class="primary hidden" type="button">Finalizar</button>
             </div>

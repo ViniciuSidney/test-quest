@@ -486,3 +486,21 @@ Ao carregar uma sessão com `schemaVersion: 3`:
 - resultados e exportações transformam IDs em letras visíveis;
 - serviços aceitam temporariamente letras antigas para facilitar migrações e testes;
 - o modelo já permite reordenar o array de alternativas sem invalidar a resposta.
+
+
+## Correção imediata — v0.5 Etapa 4
+
+A sessão utiliza `schemaVersion: 5` e acrescenta:
+
+```js
+{
+  confirmacoes: {
+    "id-da-questao": true
+  },
+  opcoes: {
+    modoCorrecao: "final" | "imediata"
+  }
+}
+```
+
+O módulo `features/question-resolution/immediate-feedback.service.js` concentra normalização do modo, confirmação, bloqueio lógico e preparação do feedback. O controlador permanece responsável por DOM, eventos e transições da tela.

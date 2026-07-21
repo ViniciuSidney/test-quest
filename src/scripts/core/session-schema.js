@@ -6,6 +6,7 @@ import {
   resolveObjectiveAnswerId
 } from "./objective-question.js";
 import { createInitialState, SESSION_STATUS } from "./state.js";
+import { normalizeCorrectionMode } from "../features/question-resolution/immediate-feedback.service.js";
 
 const VALID_CATEGORIES = new Set(["objetiva", "discursiva"]);
 const VALID_MARKER_STATES = new Set(["neutro", "analise", "eliminada"]);
@@ -60,13 +61,15 @@ export function normalizeSessionState(rawState) {
       rawState.marcacoesAlternativas,
       questions
     ),
+    confirmacoes: normalizeBooleanMap(rawState.confirmacoes, questionIds),
     temporizadorPausado: Boolean(rawState.temporizadorPausado),
     opcoes: {
       ...base.opcoes,
       ...(isPlainObject(rawState.opcoes) ? rawState.opcoes : {}),
       mostrarGabaritoFinal: rawState?.opcoes?.mostrarGabaritoFinal !== false,
       embaralharQuestoes: Boolean(rawState?.opcoes?.embaralharQuestoes),
-      embaralharAlternativas: Boolean(rawState?.opcoes?.embaralharAlternativas)
+      embaralharAlternativas: Boolean(rawState?.opcoes?.embaralharAlternativas),
+      modoCorrecao: normalizeCorrectionMode(rawState?.opcoes?.modoCorrecao)
     },
     importadoEm: importedAt,
     iniciadoEm: startedAt,
