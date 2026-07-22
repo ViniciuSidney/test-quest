@@ -52,7 +52,8 @@ export function buildAnswersReport(state, { now = new Date() } = {}) {
     `Objetivas: ${result.objetivas}`,
     `Discursivas: ${result.discursivas}`,
     `Acertos nas objetivas: ${result.objetivas > 0 ? `${result.acertos}/${result.objetivas}` : "Não disponível"}`,
-    `Desempenho nas objetivas: ${result.objetivas > 0 ? `${result.percentual}%` : "Não disponível"}`,
+    `Discursivas autoavaliadas: ${result.discursivasAvaliadas}/${result.discursivas}`,
+    `Desempenho geral: ${result.questoesAvaliadas > 0 ? `${result.percentual}%` : "Não disponível"}`,
     `Tempo total: ${formatDuration(result.tempoTotal)}`,
     `Tempo médio por questão: ${formatDuration(result.tempoMedio)}`,
     `Marcadas para revisão: ${result.marcadas}`,
@@ -92,9 +93,16 @@ export function buildAnswersReport(state, { now = new Date() } = {}) {
       return;
     }
 
+    const metacognition = state?.metacognicao?.[question.id] || {};
+    const performanceLabel = metacognition.nivel
+      ? `${metacognition.nivel} (${metacognition.percentual ?? 0}%)`
+      : "Não avaliada";
+
     lines.push(`Sua resposta: ${answer || "—"}`);
     lines.push(`Resposta esperada: ${question.respostaEsperada}`);
     lines.push(`Critérios de correção: ${question.criterios}`);
+    lines.push(`Metacognição: ${performanceLabel}`);
+    lines.push(`Observações da metacognição: ${metacognition.observacao || "—"}`);
   });
 
   return lines.join("\n");

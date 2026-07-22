@@ -81,15 +81,31 @@ export function getPerformanceState(value) {
   };
 }
 
-export function shouldShowPerformanceScreen(objectiveCount) {
-  return Number.isFinite(Number(objectiveCount)) && Number(objectiveCount) > 0;
+export function shouldShowPerformanceScreen(scoredQuestionCount) {
+  return Number.isFinite(Number(scoredQuestionCount)) && Number(scoredQuestionCount) > 0;
 }
 
-export function formatPerformanceBasis(correctCount, objectiveCount) {
-  const correct = Math.max(0, Math.trunc(Number(correctCount) || 0));
-  const objectives = Math.max(0, Math.trunc(Number(objectiveCount) || 0));
-  const hitLabel = correct === 1 ? "acerto" : "acertos";
-  const questionLabel = objectives === 1 ? "questão objetiva" : "questões objetivas";
+export function formatPerformanceBasis({
+  earnedPoints = 0,
+  scoredQuestions = 0,
+  objectives = 0,
+  discursivesEvaluated = 0
+} = {}) {
+  const points = Math.max(0, Math.round(Number(earnedPoints) || 0));
+  const scored = Math.max(0, Math.trunc(Number(scoredQuestions) || 0));
+  const objectiveCount = Math.max(0, Math.trunc(Number(objectives) || 0));
+  const discursiveCount = Math.max(0, Math.trunc(Number(discursivesEvaluated) || 0));
+  const questionLabel = scored === 1 ? "questão avaliada" : "questões avaliadas";
+  const composition = [];
 
-  return `${correct} ${hitLabel} em ${objectives} ${questionLabel}`;
+  if (objectiveCount > 0) {
+    composition.push(`${objectiveCount} ${objectiveCount === 1 ? "objetiva" : "objetivas"}`);
+  }
+
+  if (discursiveCount > 0) {
+    composition.push(`${discursiveCount} ${discursiveCount === 1 ? "discursiva" : "discursivas"}`);
+  }
+
+  const suffix = composition.length ? ` • ${composition.join(" + ")}` : "";
+  return `${points} pontos em ${scored} ${questionLabel}${suffix}`;
 }

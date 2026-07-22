@@ -1012,3 +1012,43 @@ body[data-screen="importacao"] #modalModelo .modal-card {
     max-height: 270px;
   }
 }
+
+/* =========================================================
+   v0.5 — Robustez da coluna de configurações em zoom alto
+   ========================================================= */
+@media (min-width: 821px) {
+  .import-side-column {
+    overflow-y: auto;
+    overflow-x: hidden;
+    grid-template-rows: max-content max-content;
+    align-content: start;
+    padding-right: 0.2rem;
+    scrollbar-gutter: stable;
+  }
+
+  .import-settings-panel,
+  .validation-panel {
+    min-height: max-content;
+    overflow: visible;
+  }
+
+  .import-settings-panel {
+    grid-template-rows: auto auto max-content max-content;
+    align-content: start;
+  }
+
+  .session-options {
+    min-height: max-content;
+  }
+
+  .import-check-option,
+  .import-radio-option {
+    min-height: max-content;
+  }
+
+  .import-check-option span,
+  .import-check-option strong,
+  .import-check-option small {
+    min-width: 0;
+  }
+}

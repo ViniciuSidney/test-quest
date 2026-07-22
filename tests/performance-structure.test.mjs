@@ -41,7 +41,7 @@ assert.match(performanceCss, /max-height:\s*calc\(100dvh\s*-\s*2rem\)/);
 assert.match(performanceCss, /prefers-reduced-motion/);
 
 assert.match(controller, /mostrarDesempenho\(resultadoFinal\)/);
-assert.match(controller, /shouldShowPerformanceScreen\(resultadoFinal\.objetivas\)/);
+assert.match(controller, /shouldShowPerformanceScreen\(resultadoFinal\.questoesAvaliadas\)/);
 assert.match(controller, /abrirResultadoFinal\(\{ focar: false \}\)/);
 assert.match(controller, /btnVerResultadoFinal/);
 assert.match(controller, /function fecharDesempenho\(\)/);

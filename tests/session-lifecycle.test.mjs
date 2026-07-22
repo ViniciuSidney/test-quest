@@ -108,5 +108,6 @@ const immediateSession = createActiveSession({
 });
 assert.equal(immediateSession.opcoes.modoCorrecao, "imediata");
 assert.deepEqual(immediateSession.confirmacoes, {});
+assert.deepEqual(immediateSession.metacognicao, {});
 
 console.log("Session lifecycle: todos os testes passaram.");

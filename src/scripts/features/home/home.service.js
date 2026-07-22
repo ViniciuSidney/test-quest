@@ -43,7 +43,10 @@ export function recordCompletedSessionSafe(state, result, storage = getDefaultSt
     answered: Number(result.respondidas) || 0,
     objectives: Number(result.objetivas) || 0,
     correct: Number(result.acertos) || 0,
-    performance: result.objetivas ? Number(result.percentual) || 0 : null,
+    discursivesEvaluated: Number(result.discursivasAvaliadas) || 0,
+    scoredQuestions: Number(result.questoesAvaliadas) || 0,
+    earnedPoints: Number(result.pontosObtidos) || 0,
+    performance: result.questoesAvaliadas ? Number(result.percentual) || 0 : null,
     totalTimeMs: Number(result.tempoTotal) || 0,
     completedAt: state.finalizadoEm
   });
@@ -90,13 +93,19 @@ export function removeCompletedSession(sessionId, storage = getDefaultStorage())
 export function calculateHistoryMetrics(history = readHistory()) {
   const sessions = Array.isArray(history.sessions) ? history.sessions : [];
   const answered = sessions.reduce((sum, session) => sum + Number(session.answered || 0), 0);
-  const objectives = sessions.reduce((sum, session) => sum + Number(session.objectives || 0), 0);
-  const correct = sessions.reduce((sum, session) => sum + Number(session.correct || 0), 0);
+  const scoredQuestions = sessions.reduce(
+    (sum, session) => sum + Number(session.scoredQuestions || 0),
+    0
+  );
+  const earnedPoints = sessions.reduce(
+    (sum, session) => sum + Number(session.earnedPoints || 0),
+    0
+  );
   const totalTimeMs = sessions.reduce((sum, session) => sum + Number(session.totalTimeMs || 0), 0);
 
   return {
     answered,
-    averageAccuracy: objectives ? Math.round((correct / objectives) * 100) : 0,
+    averageAccuracy: scoredQuestions ? Math.round(earnedPoints / scoredQuestions) : 0,
     totalTimeMs,
     completedSessions: sessions.length
   };
@@ -144,8 +153,26 @@ function normalizeHistoryEntry(session) {
     toNonNegativeInteger(session.correct ?? session.corretas),
     objectives
   );
-  const performance = objectives > 0
-    ? clampPercentage(session.performance ?? session.desempenho ?? Math.round((correct / objectives) * 100))
+  const discursivesEvaluated = toNonNegativeInteger(
+    session.discursivesEvaluated ?? session.discursivasAvaliadas
+  );
+  const fallbackScoredQuestions = objectives + discursivesEvaluated;
+  const scoredQuestions = toNonNegativeInteger(
+    session.scoredQuestions ?? session.questoesAvaliadas ?? fallbackScoredQuestions
+  );
+  const fallbackEarnedPoints = (correct * 100) + (
+    discursivesEvaluated > 0
+      ? Math.round((Number(session.performance ?? session.desempenho) || 0) * discursivesEvaluated)
+      : 0
+  );
+  const earnedPoints = Math.min(
+    scoredQuestions * 100,
+    toNonNegativeInteger(session.earnedPoints ?? session.pontosObtidos ?? fallbackEarnedPoints)
+  );
+  const performance = scoredQuestions > 0
+    ? clampPercentage(
+      session.performance ?? session.desempenho ?? Math.round(earnedPoints / scoredQuestions)
+    )
     : null;
 
   return {
@@ -155,6 +182,9 @@ function normalizeHistoryEntry(session) {
     answered: toNonNegativeInteger(session.answered ?? session.respondidas),
     objectives,
     correct,
+    discursivesEvaluated,
+    scoredQuestions,
+    earnedPoints,
     performance,
     totalTimeMs: toNonNegativeInteger(session.totalTimeMs ?? session.tempoTotalMs),
     completedAt

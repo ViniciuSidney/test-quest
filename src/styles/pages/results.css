@@ -1184,3 +1184,24 @@ body[data-screen="resultado"] .legacy-topbar {
     grid-template-columns: 1fr;
   }
 }
+
+/* Metacognição exibida na revisão de discursivas */
+.result-metacognition-summary {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.result-metacognition-summary strong,
+.result-metacognition-summary p {
+  margin: 0;
+}
+
+.result-metacognition-summary strong {
+  color: var(--tq-primary);
+}
+
+.result-metacognition-summary p {
+  color: var(--tq-text-muted);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}

@@ -79,6 +79,13 @@ const answers = {
 const notes = { q2: "Rever este assunto" };
 const timesMs = { q1: 62000, q2: 125000, q3: 185000, q4: 10000, q5: 30000, orphan: 999999 };
 const review = { q2: true, q3: true };
+const metacognition = {
+  q3: {
+    nivel: "parcial",
+    percentual: 50,
+    observacao: "Faltou desenvolver o raciocínio."
+  }
+};
 
 assert.equal(getQuestionResultStatus(questions[0], "B"), "correct");
 assert.equal(getQuestionResultStatus(questions[1], "D"), "incorrect");
@@ -90,16 +97,21 @@ const sessionResult = calculateSessionResult({
   questoes: questions,
   respostas: answers,
   temposMs: timesMs,
-  revisao: review
+  revisao: review,
+  metacognicao: metacognition
 });
 assert.deepEqual(sessionResult, {
   total: 5,
   respondidas: 4,
   objetivas: 4,
   discursivas: 1,
+  discursivasAvaliadas: 1,
+  questoesAvaliadas: 5,
+  pontosObtidos: 250,
   acertos: 2,
   erros: 1,
   percentual: 50,
+  percentualObjetivas: 50,
   tempoTotal: 412000,
   tempoMedio: 82400,
   marcadas: 2
@@ -112,6 +124,7 @@ const items = buildQuestionReviewItems({
   notes,
   timesMs,
   review,
+  metacognition,
   showAnswerKey: true
 });
 
@@ -120,6 +133,9 @@ assert.equal(items[0].status, "correct");
 assert.equal(items[1].status, "incorrect");
 assert.equal(items[1].markedForReview, true);
 assert.equal(items[2].expectedAnswer, "Modelo");
+assert.equal(items[2].metacognitionLabel, "Resposta parcial");
+assert.equal(items[2].metacognitionPercentage, 50);
+assert.equal(items[2].metacognitionObservation, "Faltou desenvolver o raciocínio.");
 assert.equal(items[3].status, "unanswered");
 assert.equal(items[4].isTrueFalse, true);
 assert.equal(items[4].typeLabel, "Verdadeiro ou Falso");
@@ -131,7 +147,7 @@ assert.equal(filterQuestionReviewItems(items, RESULT_FILTERS.REVIEW).length, 2);
 assert.equal(filterQuestionReviewItems(items, RESULT_FILTERS.UNANSWERED).length, 1);
 assert.equal(filterQuestionReviewItems(items, RESULT_FILTERS.ALL).length, 5);
 
-const subjects = buildSubjectResultItems({ questions, answers, timesMs });
+const subjects = buildSubjectResultItems({ questions, answers, timesMs, metacognition });
 const eventos = subjects.find((item) => item.subject === "Eventos");
 const mediana = subjects.find((item) => item.subject === "Mediana");
 
@@ -140,7 +156,9 @@ assert.deepEqual(
   { objectives: 2, correct: 1, percentage: 50 }
 );
 assert.equal(mediana.objectives, 0);
-assert.equal(mediana.percentage, null);
+assert.equal(mediana.discursivesEvaluated, 1);
+assert.equal(mediana.scoredQuestions, 1);
+assert.equal(mediana.percentage, 50);
 assert.equal(getSubjectPerformanceTone(90), "success");
 assert.equal(getSubjectPerformanceTone(60), "warning");
 assert.equal(getSubjectPerformanceTone(30), "danger");

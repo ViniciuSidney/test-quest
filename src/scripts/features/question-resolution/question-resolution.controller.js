@@ -15,6 +15,13 @@ import { formatPerformanceBasis, getPerformanceState, PERFORMANCE_STATE_CLASSES,
 import { calculateSessionResult as calcularResultado, calculateSessionTotalTime as calcularTempoTotal, RESULT_FILTERS, buildQuestionReviewItems, buildSubjectResultItems, filterQuestionReviewItems, getSubjectPerformanceTone, normalizeResultFilter } from "../results/results.service.js";
 import { buildQuestionMapLabel, buildTrueFalseOptionsMarkup, getMarkerInfo, getNextMarkerState, getQuestionTypeLabel, isQuestionAnswered, MARKER_STATES, normalizeMarkerState } from "./question-resolution.helpers.js";
 import { buildImmediateFeedbackMarkup, canConfirmQuestion, confirmQuestion, isImmediateCorrectionEnabled, isQuestionConfirmed } from "./immediate-feedback.service.js";
+import {
+  buildMetacognitionMarkup,
+  getMetacognitionAssessment,
+  hasMetacognitionAssessment,
+  setMetacognitionLevel,
+  setMetacognitionObservation
+} from "./metacognition.service.js";
 
 export function initQuestionResolution() {
   const exemploQuestoes = `@questao
@@ -670,11 +677,16 @@ export function initQuestionResolution() {
 
     const ultimaQuestao = estado.atual === total - 1;
     const exigeConfirmacao = correcaoImediata && !confirmada;
+    const exigeMetacognicao = correcaoImediata && confirmada &&
+      questao.categoria === "discursiva" &&
+      !hasMetacognitionAssessment(estado, questao.id);
+    const etapaPendente = exigeConfirmacao || exigeMetacognicao;
+
     $("#btnAnterior").disabled = estado.atual === 0;
     $("#btnConfirmarResposta")?.classList.toggle("hidden", !exigeConfirmacao);
     $("#btnConfirmarResposta").disabled = exigeConfirmacao && !canConfirmQuestion(estado, questao);
-    $("#btnProxima").classList.toggle("hidden", ultimaQuestao || exigeConfirmacao);
-    $("#btnFinalizar").classList.toggle("hidden", !ultimaQuestao || exigeConfirmacao);
+    $("#btnProxima").classList.toggle("hidden", ultimaQuestao || etapaPendente);
+    $("#btnFinalizar").classList.toggle("hidden", !ultimaQuestao || etapaPendente);
     $("#btnFinalizarSessao")?.classList.toggle("hidden", ultimaQuestao);
 
     renderizarMapa();
@@ -808,6 +820,7 @@ export function initQuestionResolution() {
   function renderizarDiscursiva(questao) {
     const respostaAtual = estado.respostas[questao.id] || "";
     const confirmada = isQuestionConfirmed(estado, questao.id);
+    const avaliacao = getMetacognitionAssessment(estado, questao.id);
 
     $("#areaResposta").innerHTML = `
       <label class="resolution-discursive-field" for="respostaDiscursiva">
@@ -815,6 +828,7 @@ export function initQuestionResolution() {
         <textarea class="resolution-discursive-textarea" id="respostaDiscursiva" placeholder="Responda aqui..." spellcheck="true" ${confirmada ? "readonly" : ""}>${escapeHtml(respostaAtual)}</textarea>
       </label>
       ${confirmada ? buildImmediateFeedbackMarkup({ question: questao, answer: respostaAtual, escapeHtml }) : ""}
+      ${confirmada ? buildMetacognitionMarkup({ assessment: avaliacao, escapeHtml }) : ""}
     `;
 
     $("#respostaDiscursiva").addEventListener("input", (evento) => {
@@ -825,6 +839,40 @@ export function initQuestionResolution() {
       if (estavaRespondida !== estaRespondida) renderizarMapa();
       atualizarEstadoBotaoConfirmar(questao);
       atualizarResumoTopo();
+      salvarEstadoDebounced();
+    });
+
+    if (confirmada) {
+      vincularMetacognicaoDiscursiva(questao);
+    }
+  }
+
+  function vincularMetacognicaoDiscursiva(questao) {
+    document.querySelectorAll("[data-metacognition-level]").forEach((button) => {
+      button.addEventListener("click", () => {
+        estado = setMetacognitionLevel(
+          estado,
+          questao.id,
+          button.dataset.metacognitionLevel
+        );
+        salvarEstadoImediato();
+        renderizarQuestao({ registrarTempo: false });
+        requestAnimationFrame(() => {
+          document.querySelector(
+            `[data-metacognition-level="${button.dataset.metacognitionLevel}"]`
+          )?.focus();
+        });
+      });
+    });
+
+    const observation = $("#observacaoMetacognicao");
+
+    observation?.addEventListener("input", (evento) => {
+      estado = setMetacognitionObservation(
+        estado,
+        questao.id,
+        evento.target.value
+      );
       salvarEstadoDebounced();
     });
   }
@@ -960,8 +1008,15 @@ export function initQuestionResolution() {
     const naoConfirmadas = isImmediateCorrectionEnabled(estado)
       ? estado.questoes.filter((questao) => !isQuestionConfirmed(estado, questao.id)).length
       : 0;
+    const discursivasSemMetacognicao = isImmediateCorrectionEnabled(estado)
+      ? estado.questoes.filter((questao) =>
+        questao.categoria === "discursiva" &&
+        isQuestionConfirmed(estado, questao.id) &&
+        !hasMetacognitionAssessment(estado, questao.id)
+      ).length
+      : 0;
     const confirmado = await solicitarConfirmacao(
-      getFinishSessionConfirmation(r, marcadas, naoConfirmadas)
+      getFinishSessionConfirmation(r, marcadas, naoConfirmadas, discursivasSemMetacognicao)
     );
 
     if (!confirmado) {
@@ -976,7 +1031,7 @@ export function initQuestionResolution() {
     registrarResultadoNoHistorico(estado, resultadoFinal);
     pararCronometro();
 
-    if (shouldShowPerformanceScreen(resultadoFinal.objetivas)) {
+    if (shouldShowPerformanceScreen(resultadoFinal.questoesAvaliadas)) {
       abrirResultadoFinal({ focar: false });
       mostrarDesempenho(resultadoFinal);
     } else {
@@ -1087,10 +1142,12 @@ export function initQuestionResolution() {
     $("#valorDesempenho").textContent = String(state.percentage);
     $("#tituloDesempenho").textContent = state.title;
     $("#subtituloDesempenho").textContent = state.subtitle;
-    $("#detalheDesempenho").textContent = formatPerformanceBasis(
-      resultado?.acertos,
-      resultado?.objetivas
-    );
+    $("#detalheDesempenho").textContent = formatPerformanceBasis({
+      earnedPoints: resultado?.pontosObtidos,
+      scoredQuestions: resultado?.questoesAvaliadas,
+      objectives: resultado?.objetivas,
+      discursivesEvaluated: resultado?.discursivasAvaliadas
+    });
     $("#btnVerResultadoFinal").textContent = state.buttonLabel;
     $("#blocoPontuacaoDesempenho").setAttribute(
       "aria-label",
@@ -1249,13 +1306,20 @@ export function initQuestionResolution() {
       ? `${resultado.acertos}/${resultado.objetivas}`
       : "—";
     $("#resultadoTempoTotal").textContent = formatarTempo(resultado.tempoTotal);
-    $("#resultadoDesempenho").textContent = resultado.objetivas > 0
+    $("#resultadoDesempenho").textContent = resultado.questoesAvaliadas > 0
       ? `${resultado.percentual}%`
       : "—";
     $("#resultadoRevisao").textContent = String(resultado.marcadas);
     $("#resultadoTempoMedio").textContent = formatarTempo(resultado.tempoMedio);
 
-    $("#avisoResultadoDiscursivas")?.classList.toggle("hidden", resultado.discursivas === 0);
+    const avisoDiscursivas = $("#avisoResultadoDiscursivas");
+    avisoDiscursivas?.classList.toggle("hidden", resultado.discursivas === 0);
+    const textoAvisoDiscursivas = $("#textoAvisoResultadoDiscursivas");
+    if (textoAvisoDiscursivas && resultado.discursivas > 0) {
+      textoAvisoDiscursivas.textContent = resultado.discursivasAvaliadas > 0
+        ? `${resultado.discursivasAvaliadas}/${resultado.discursivas} discursivas contribuíram para o desempenho geral por autoavaliação.`
+        : "As questões discursivas não avaliadas não entram no desempenho geral.";
+    }
 
     recolherAcoesResultadoMobile();
     renderizarResumoPorAssunto();
@@ -1266,6 +1330,7 @@ export function initQuestionResolution() {
       notes: estado.anotacoes,
       timesMs: estado.temposMs,
       review: estado.revisao,
+      metacognition: estado.metacognicao,
       showAnswerKey: estado.opcoes.mostrarGabaritoFinal
     });
 
@@ -1374,7 +1439,8 @@ export function initQuestionResolution() {
     const assuntos = buildSubjectResultItems({
       questions: estado.questoes,
       answers: estado.respostas,
-      timesMs: estado.temposMs
+      timesMs: estado.temposMs,
+      metacognition: estado.metacognicao
     });
 
     if (assuntos.length === 0) {
@@ -1388,13 +1454,20 @@ export function initQuestionResolution() {
     }
 
     container.innerHTML = assuntos.map((item) => {
-      const possuiObjetivas = item.objectives > 0;
-      const percentual = possuiObjetivas ? item.percentage : null;
+      const possuiAvaliacao = item.scoredQuestions > 0;
+      const percentual = possuiAvaliacao ? item.percentage : null;
       const tone = getSubjectPerformanceTone(percentual);
-      const meta = possuiObjetivas
-        ? `${item.correct}/${item.objectives} objetivas • ${formatarTempo(item.timeMs)}`
-        : `Sem questões objetivas • ${formatarTempo(item.timeMs)}`;
-      const progress = possuiObjetivas
+      const partesAvaliadas = [];
+
+      if (item.objectives > 0) {
+        partesAvaliadas.push(`${item.correct}/${item.objectives} objetivas`);
+      }
+      if (item.discursivesEvaluated > 0) {
+        partesAvaliadas.push(`${item.discursivesEvaluated} discursiva${item.discursivesEvaluated === 1 ? "" : "s"} autoavaliada${item.discursivesEvaluated === 1 ? "" : "s"}`);
+      }
+
+      const meta = `${partesAvaliadas.length ? partesAvaliadas.join(" • ") : "Sem questões avaliadas"} • ${formatarTempo(item.timeMs)}`;
+      const progress = possuiAvaliacao
         ? `
           <div
             class="subject-result-progress"
@@ -1413,7 +1486,7 @@ export function initQuestionResolution() {
         <article class="subject-result-item" data-tone="${tone}">
           <div class="subject-result-item__header">
             <strong title="${escapeHtml(item.subject)}">${escapeHtml(item.subject)}</strong>
-            <span class="subject-result-item__percentage">${possuiObjetivas ? `${percentual}%` : "—"}</span>
+            <span class="subject-result-item__percentage">${possuiAvaliacao ? `${percentual}%` : "—"}</span>
           </div>
           <p class="subject-result-item__meta">${meta}</p>
           ${progress}
@@ -1769,6 +1842,14 @@ export function initQuestionResolution() {
 
         ${expectedAnswer}
         ${criteria}
+
+        ${renderizarBlocoDetalheResultado({
+          title: "Metacognição",
+          modifier: "result-detail-block--metacognition result-discursive-detail--metacognition",
+          content: item.metacognitionLabel
+            ? `<div class="result-metacognition-summary"><strong>${escapeHtml(item.metacognitionLabel)} (${item.metacognitionPercentage}%)</strong><p>${escapeHtml(item.metacognitionObservation || "Nenhuma observação registrada.")}</p></div>`
+            : `<p>Esta questão não recebeu autoavaliação.</p>`
+        })}
 
         ${renderizarBlocoDetalheResultado({
           title: "Anotações",

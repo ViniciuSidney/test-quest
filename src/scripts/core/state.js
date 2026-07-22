@@ -22,6 +22,7 @@ export function createInitialState() {
     revisao: {},
     marcacoesAlternativas: {},
     confirmacoes: {},
+    metacognicao: {},
     temporizadorPausado: false,
     opcoes: {
       mostrarGabaritoFinal: true,

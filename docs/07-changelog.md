@@ -4,6 +4,34 @@ Todas as mudanças importantes do Test Quest serão registradas neste arquivo.
 
 ## [Não lançado]
 
+### v0.5-dev — Refinamento do gabarito imediato e metacognição
+
+#### Adicionado
+
+- bloco de metacognição para questões discursivas confirmadas;
+- autoavaliação em `Resposta completa (100%)`, `Resposta parcial (50%)` e `Resposta incorreta (0%)`;
+- campo opcional de observações metacognitivas;
+- cálculo de desempenho geral combinando objetivas e discursivas avaliadas;
+- testes automatizados de metacognição e responsividade do feedback.
+
+#### Alterado
+
+- esquema da sessão passa a `schemaVersion: 6`;
+- esquema do histórico passa à versão 3;
+- Tela de Desempenho, Resultado Final, histórico e exportações passam a usar o desempenho geral;
+- painéis de configuração e correção preservam altura natural em zooms maiores;
+- em desktop, a área de resposta passa a ter rolagem vertical interna mantendo a barra de ações visível;
+- em tablet e mobile, a Tela de Resolução mantém rolagem geral sem alturas artificiais;
+- alternativas, correção e metacognição passam a ocupar linhas de altura natural, sem sobreposição;
+- a grade da área de resposta usa linhas `max-content`, impedindo que painéis extensos sejam comprimidos.
+
+#### Preservado
+
+- modo de correção somente no resultado final;
+- correção automática das objetivas e de Verdadeiro ou Falso;
+- migração de sessões e históricos anteriores;
+- respostas, confirmações, tempos e anotações existentes.
+
 ### v0.5-dev — Fundação de alternativas e respostas
 
 #### Adicionado

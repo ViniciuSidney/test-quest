@@ -1,8 +1,8 @@
 export const APP_VERSION = "0.5-dev";
 
-export const SESSION_SCHEMA_VERSION = 5;
+export const SESSION_SCHEMA_VERSION = 6;
 export const SETTINGS_SCHEMA_VERSION = 1;
-export const HISTORY_SCHEMA_VERSION = 2;
+export const HISTORY_SCHEMA_VERSION = 3;
 
 export const STORAGE_KEY = "testQuest.state";
 export const CONFIG_KEY = "testQuest.settings";

@@ -32,9 +32,18 @@ assert.equal(shouldShowPerformanceScreen(1), true);
 assert.equal(shouldShowPerformanceScreen(0), false);
 assert.equal(shouldShowPerformanceScreen(undefined), false);
 
-assert.equal(formatPerformanceBasis(10, 10), "10 acertos em 10 questões objetivas");
-assert.equal(formatPerformanceBasis(1, 1), "1 acerto em 1 questão objetiva");
-assert.equal(formatPerformanceBasis(1, 2), "1 acerto em 2 questões objetivas");
-assert.equal(formatPerformanceBasis(undefined, undefined), "0 acertos em 0 questões objetivas");
+assert.equal(
+  formatPerformanceBasis({ earnedPoints: 1000, scoredQuestions: 10, objectives: 10 }),
+  "1000 pontos em 10 questões avaliadas • 10 objetivas"
+);
+assert.equal(
+  formatPerformanceBasis({ earnedPoints: 150, scoredQuestions: 2, objectives: 1, discursivesEvaluated: 1 }),
+  "150 pontos em 2 questões avaliadas • 1 objetiva + 1 discursiva"
+);
+assert.equal(
+  formatPerformanceBasis({ earnedPoints: 50, scoredQuestions: 1, discursivesEvaluated: 1 }),
+  "50 pontos em 1 questão avaliada • 1 discursiva"
+);
+assert.equal(formatPerformanceBasis(), "0 pontos em 0 questões avaliadas");
 
 console.log("Performance state: todos os testes passaram.");

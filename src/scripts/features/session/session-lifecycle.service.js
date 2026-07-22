@@ -82,6 +82,7 @@ export function restoreActiveSession(savedState) {
     revisao: savedState.revisao || {},
     marcacoesAlternativas: savedState.marcacoesAlternativas || {},
     confirmacoes: savedState.confirmacoes || {},
+    metacognicao: savedState.metacognicao || {},
     opcoes: {
       ...base.opcoes,
       ...(savedState.opcoes || {})

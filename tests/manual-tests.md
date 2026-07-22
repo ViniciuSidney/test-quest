@@ -335,3 +335,28 @@ Confirmar:
 - [ ] navegar para uma questão não confirmada e verificar que ela continua editável;
 - [ ] finalizar com questões não confirmadas e conferir o aviso no modal;
 - [ ] testar tema claro, tema escuro, desktop e mobile.
+
+
+## Etapa 4 — Refinamento responsivo e metacognição
+
+### Zoom e rolagem
+
+- [ ] conferir a configuração da sessão em 90%, 100%, 125% e 150%;
+- [ ] confirmar que opções e modos de correção não se sobrepõem;
+- [ ] conferir a correção objetiva com explicação curta e extensa;
+- [ ] confirmar rolagem vertical da Resolução em desktop, tablet e mobile;
+- [ ] verificar que a última parte do feedback e as ações continuam alcançáveis;
+- [ ] repetir nos temas claro e escuro.
+
+### Metacognição discursiva
+
+- [ ] confirmar uma discursiva no modo imediato;
+- [ ] conferir resposta esperada, critérios e bloco de Metacognição;
+- [ ] selecionar `Resposta completa` e verificar 100%;
+- [ ] selecionar `Resposta parcial` e verificar 50%;
+- [ ] selecionar `Resposta incorreta` e verificar 0%;
+- [ ] escrever uma observação, recarregar e confirmar persistência;
+- [ ] verificar que Próxima/Finalizar só é liberado após a seleção;
+- [ ] finalizar com uma discursiva sem avaliação e conferir o aviso;
+- [ ] confirmar o desempenho geral combinado no Resultado Final;
+- [ ] conferir metacognição no histórico e nas exportações TXT/JSON.

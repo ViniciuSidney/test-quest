@@ -4,6 +4,10 @@ import {
   isObjectiveAnswerCorrect,
   isTrueFalseQuestion
 } from "../../core/objective-question.js";
+import {
+  getMetacognitionAssessment,
+  getMetacognitionLevel
+} from "../question-resolution/metacognition.service.js";
 import { calculateDisplayedTotalMs } from "../question-resolution/question-resolution.helpers.js";
 
 export const RESULT_FILTERS = Object.freeze({
@@ -38,9 +42,25 @@ export function calculateSessionResult(state = {}) {
     const answer = String(answers[question.id] || "").trim();
     return answer && !isObjectiveAnswerCorrect(question, answer);
   }).length;
-  const percentage = objectives.length
-    ? Math.round((correct / objectives.length) * 100)
+  const evaluatedDiscursives = discursives
+    .map((question) => ({
+      question,
+      assessment: getMetacognitionAssessment(state, question.id)
+    }))
+    .filter(({ assessment }) => getMetacognitionLevel(assessment?.nivel));
+  const discursivePoints = evaluatedDiscursives.reduce(
+    (sum, { assessment }) => sum + Number(assessment.percentual || 0),
+    0
+  );
+  const objectivePoints = correct * 100;
+  const scoredQuestions = objectives.length + evaluatedDiscursives.length;
+  const earnedPoints = objectivePoints + discursivePoints;
+  const percentage = scoredQuestions
+    ? Math.round(earnedPoints / scoredQuestions)
     : 0;
+  const objectivePercentage = objectives.length
+    ? Math.round((correct / objectives.length) * 100)
+    : null;
   const totalTime = calculateSessionTotalTime(state);
   const averageTime = questions.length ? Math.round(totalTime / questions.length) : 0;
   const marked = Object.values(state.revisao || {}).filter(Boolean).length;
@@ -50,9 +70,13 @@ export function calculateSessionResult(state = {}) {
     respondidas: answered,
     objetivas: objectives.length,
     discursivas: discursives.length,
+    discursivasAvaliadas: evaluatedDiscursives.length,
+    questoesAvaliadas: scoredQuestions,
+    pontosObtidos: earnedPoints,
     acertos: correct,
     erros: incorrect,
     percentual: percentage,
+    percentualObjetivas: objectivePercentage,
     tempoTotal: totalTime,
     tempoMedio: averageTime,
     marcadas: marked
@@ -95,6 +119,7 @@ export function buildQuestionReviewItems({
   notes = {},
   timesMs = {},
   review = {},
+  metacognition = {},
   showAnswerKey = true
 } = {}) {
   return questions.map((question, index) => {
@@ -110,6 +135,10 @@ export function buildQuestionReviewItems({
       : rawAnswer;
     const status = getQuestionResultStatus(question, rawAnswer);
     const markedForReview = Boolean(review[question.id]);
+    const assessment = question.categoria === "discursiva"
+      ? getMetacognitionAssessment({ metacognicao: metacognition }, question.id)
+      : null;
+    const assessmentLevel = getMetacognitionLevel(assessment?.nivel);
 
     return {
       id: question.id,
@@ -147,6 +176,10 @@ export function buildQuestionReviewItems({
       criteria: showAnswerKey && question.categoria === "discursiva"
         ? normalizeText(question.criterios)
         : "",
+      metacognitionLevel: assessmentLevel?.key || "",
+      metacognitionLabel: assessmentLevel?.label || "",
+      metacognitionPercentage: assessmentLevel?.percentage ?? null,
+      metacognitionObservation: normalizeText(assessment?.observacao),
       answerKeyVisible: Boolean(showAnswerKey)
     };
   });
@@ -171,7 +204,8 @@ export function filterQuestionReviewItems(items = [], filter = RESULT_FILTERS.AL
 export function buildSubjectResultItems({
   questions = [],
   answers = {},
-  timesMs = {}
+  timesMs = {},
+  metacognition = {}
 } = {}) {
   const subjectMap = new Map();
 
@@ -182,6 +216,9 @@ export function buildSubjectResultItems({
       total: 0,
       objectives: 0,
       correct: 0,
+      discursivesEvaluated: 0,
+      scoredQuestions: 0,
+      earnedPoints: 0,
       timeMs: 0
     };
 
@@ -190,9 +227,23 @@ export function buildSubjectResultItems({
 
     if (question.categoria === "objetiva") {
       current.objectives += 1;
+      current.scoredQuestions += 1;
 
       if (getQuestionResultStatus(question, answers[question.id]) === "correct") {
         current.correct += 1;
+        current.earnedPoints += 100;
+      }
+    } else if (question.categoria === "discursiva") {
+      const assessment = getMetacognitionAssessment(
+        { metacognicao: metacognition },
+        question.id
+      );
+      const level = getMetacognitionLevel(assessment?.nivel);
+
+      if (level) {
+        current.discursivesEvaluated += 1;
+        current.scoredQuestions += 1;
+        current.earnedPoints += level.percentage;
       }
     }
 
@@ -201,8 +252,8 @@ export function buildSubjectResultItems({
 
   return Array.from(subjectMap.values()).map((item) => ({
     ...item,
-    percentage: item.objectives > 0
-      ? Math.round((item.correct / item.objectives) * 100)
+    percentage: item.scoredQuestions > 0
+      ? Math.round(item.earnedPoints / item.scoredQuestions)
       : null
   }));
 }

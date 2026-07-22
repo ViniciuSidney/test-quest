@@ -17,6 +17,27 @@
 ---
 
 
+
+## Pré-validação técnica — Rolagem interna da Resolução — 2026-07-22
+
+Foram verificadas as seguintes condições:
+
+- área de resposta com `overflow-y: auto` em larguras a partir de 981 px;
+- barra de ações separada e sempre abaixo do painel da questão;
+- alternativas, correção e metacognição sem sobreposição;
+- rolagem interna alcançando o fim do bloco de Metacognição;
+- rolagem geral preservada em tablet e mobile;
+- cenários equivalentes a 100%, 110% e 125% de zoom;
+- 34 arquivos de teste automatizado concluídos com sucesso.
+
+Teste estrutural adicionado:
+
+```bash
+node tests/resolution-internal-scroll.test.mjs
+```
+
+---
+
 ## Pré-validação técnica da Importação — 2026-07-15
 
 Foram executados testes automatizados antes da entrega do pacote:

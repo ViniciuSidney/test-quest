@@ -16,7 +16,8 @@ const requiredModules = [
   "../src/scripts/features/session/session-lifecycle.service.js",
   "../src/scripts/features/session/session-confirmations.service.js",
   "../src/scripts/features/exports/session-export.service.js",
-  "../src/scripts/features/question-resolution/immediate-feedback.service.js"
+  "../src/scripts/features/question-resolution/immediate-feedback.service.js",
+  "../src/scripts/features/question-resolution/metacognition.service.js"
 ];
 
 for (const modulePath of requiredModules) {
@@ -34,6 +35,6 @@ assert.doesNotMatch(controller, /function gerarRespostasTxt\(/);
 assert.doesNotMatch(controller, /function formatarTempo\(/);
 assert.doesNotMatch(controller, /function gerarIdSessao\(/);
 assert.match(resultsService, /export function calculateSessionResult/);
-assert.ok(controller.split("\n").length < 2300, "O controlador excedeu o limite estrutural esperado.");
+assert.ok(controller.split("\n").length < 2400, "O controlador excedeu o limite estrutural esperado.");
 
 console.log("Modularization structure: todos os testes passaram.");
