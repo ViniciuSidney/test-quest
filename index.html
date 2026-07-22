@@ -687,6 +687,21 @@
           </div>
 
           <div class="results-actions__navigation">
+            <button
+              id="btnRefazerErradas"
+              class="secondary results-retry-button"
+              type="button"
+              aria-describedby="descricaoRefazerErradas"
+              hidden
+            >
+              <span aria-hidden="true">↻</span>
+              <span>Refazer questões erradas</span>
+              <strong id="quantidadeRefazerErradas" class="results-retry-count">0</strong>
+            </button>
+            <span id="descricaoRefazerErradas" class="sr-only">
+              Cria uma nova sessão somente com as questões objetivas incorretas e as discursivas avaliadas com zero por cento.
+            </span>
+
             <button id="btnNovaLista" class="primary" type="button">
               <span aria-hidden="true">←</span>
               Voltar ao início

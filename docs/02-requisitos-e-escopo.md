@@ -130,7 +130,7 @@
 - dados locais preservados;
 - testes automatizados e manuais essenciais aprovados;
 - documentação atualizada;
-- Pull Request de `dev` para `main` revisado.
+- Pull Request de `feature/v0.5` para `main` revisado.
 
 ## Requisitos estruturais da v0.5
 
@@ -189,3 +189,16 @@ O modal de modelo deve separar claramente objetiva A–E, Verdadeiro ou Falso e 
 - mostrar resposta esperada e critérios nas discursivas;
 - persistir confirmações durante recarregamento e retomada;
 - manter compatibilidade com sessões anteriores.
+
+
+## RF-v0.5-05 — Refazer questões erradas
+
+- disponibilizar a ação no Resultado Final somente quando houver questões elegíveis;
+- incluir objetivas e Verdadeiro ou Falso respondidas incorretamente;
+- incluir discursivas avaliadas como `Resposta incorreta (0%)`;
+- não incluir automaticamente objetivas não respondidas ou discursivas avaliadas em 50% e 100%;
+- criar uma sessão ativa com novo ID sem modificar o resultado original;
+- reiniciar respostas, confirmações, tempos, revisão, marcadores, anotações e metacognição;
+- preservar conteúdo, gabarito, embaralhamento e modo de correção;
+- registrar a nova tentativa separadamente no histórico quando ela for concluída;
+- manter o filtro `Erradas` coerente com os critérios da revisão.

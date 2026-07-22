@@ -4,7 +4,7 @@
 
 **Versão estável:** `v0.4.0`  
 **Versão em desenvolvimento:** `v0.5-dev`  
-**Estado:** `Etapa 2 — embaralhamento de alternativas concluído`
+**Estado:** `Etapa 5 — refazer questões erradas concluída`
 
 Concluído:
 
@@ -170,7 +170,7 @@ Reduzir a concentração de responsabilidades, proteger os dados locais e prepar
 
 ## v0.5-dev — Flexibilidade de resolução e estudo ativo
 
-**Status:** Em desenvolvimento — Etapas 1, 2, 3 e 4 concluídas
+**Status:** Em desenvolvimento — Etapas 1, 2, 3, 4 e 5 concluídas
 
 ### Objetivo
 
@@ -218,15 +218,27 @@ Ampliar as formas de responder, corrigir e revisar questões sem perder compatib
 - modo imediato exige confirmação explícita da resposta;
 - respostas objetivas, V/F e discursivas ficam bloqueadas após a confirmação;
 - objetivas e V/F exibem acerto, erro, gabarito e explicação;
-- discursivas exibem resposta esperada e critérios de correção;
-- confirmações persistem no `localStorage` e após a retomada da sessão;
+- discursivas exibem resposta esperada, critérios e Metacognição em 100%, 50% ou 0%;
+- confirmações e autoavaliações persistem no `localStorage` e após a retomada da sessão;
 - sessões anteriores migram para o modo de correção final;
-- esquema de sessão atualizado para `schemaVersion: 5`;
-- testes automatizados ampliados para 31 arquivos.
+- desempenho geral combina objetivas e discursivas avaliadas;
+- esquema de sessão atualizado para `schemaVersion: 6`;
+- testes automatizados ampliados para 34 arquivos.
+
+### Etapa 5 — Refazer questões erradas — concluída
+
+- ação própria no Resultado Final, exibida somente quando há erros elegíveis;
+- nova sessão composta por objetivas e V/F incorretas;
+- inclusão de discursivas avaliadas como `Resposta incorreta (0%)`;
+- exclusão de questões não respondidas e discursivas parciais ou completas;
+- respostas, confirmações, tempos, revisão, marcadores, anotações e metacognição reiniciados;
+- conteúdo, gabarito e configurações da sessão preservados;
+- sessão original mantida no histórico e nova tentativa registrada separadamente;
+- filtro `Erradas` alinhado ao mesmo critério da revisão;
+- suíte automatizada ampliada para 36 arquivos.
 
 ### Etapas seguintes
 
-5. refazer questões erradas;
 6. controle manual dos efeitos visuais;
 7. integração, regressão e fechamento da v0.5.0.
 

@@ -446,4 +446,25 @@ A versão não pode ser enviada à `main` como estável enquanto houver:
 | T96 | Encerramento | O modal informa a quantidade de questões sem confirmação imediata | Automatizado OK |
 | T97 | Regressão | Embaralhamento, resultado, exportações e histórico continuam funcionando | Automatizado OK |
 
-A suíte contém 31 arquivos de teste automatizado.
+A suíte contém 34 arquivos de teste automatizado até a conclusão da Etapa 4.
+
+
+# v0.5 — Etapa 5: refazer questões erradas
+
+| Código | Teste | Resultado esperado | Status |
+|---|---|---|---|
+| T102 | Objetiva incorreta | Questão entra na nova sessão | Automatizado OK |
+| T103 | Verdadeiro ou Falso incorreta | Questão entra mantendo o modelo V/F | Automatizado OK |
+| T104 | Objetiva não respondida | Questão não entra automaticamente | Automatizado OK |
+| T105 | Discursiva incorreta em 0% | Questão entra na revisão | Automatizado OK |
+| T106 | Discursiva parcial ou completa | Questão não entra automaticamente | Automatizado OK |
+| T107 | Sessão original | Dados da sessão concluída não são modificados | Automatizado OK |
+| T108 | Nova tentativa | Respostas, tempos, confirmações, revisão, marcadores, anotações e metacognição começam vazios | Automatizado OK |
+| T109 | Configurações | Embaralhamento e modo de correção são preservados | Automatizado OK |
+| T110 | Resultado sem erros | O botão de revisão permanece oculto | Estrutural OK |
+| T111 | Filtro Erradas | Objetivas incorretas e discursivas em 0% aparecem juntas | Automatizado OK |
+| T112 | Histórico | A nova tentativa recebe ID próprio e pode ser registrada separadamente | Automatizado OK |
+| T113 | Regressão automatizada | Os 36 arquivos da suíte terminam sem falhas | Automatizado OK |
+| T114 | Fluxo real no navegador | Finalizar, iniciar revisão e concluir nova tentativa mantém o histórico coerente | Pendente manual |
+
+A suíte contém 36 arquivos de teste automatizado.

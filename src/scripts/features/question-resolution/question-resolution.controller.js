@@ -4,8 +4,9 @@ import { createScreenManager } from "../../core/screens.js";
 import { calculateHistoryMetrics, readHistory, recordCompletedSessionSafe } from "../home/home.service.js";
 import { parseQuestions, QuestionImportError, summarizeQuestions } from "../question-import/question-import.parser.js";
 import { clearSession, loadSession, saveSession } from "../session/session.repository.js";
-import { getClearImportConfirmation, getDeleteSessionConfirmation, getFinishSessionConfirmation, getNewResolutionConfirmation, getReplaceSessionConfirmation } from "../session/session-confirmations.service.js";
+import { getClearImportConfirmation, getDeleteSessionConfirmation, getFinishSessionConfirmation, getNewResolutionConfirmation, getReplaceSessionConfirmation, getRetryWrongQuestionsConfirmation } from "../session/session-confirmations.service.js";
 import { createActiveSession, finishSession, isActiveSession, restoreActiveSession } from "../session/session-lifecycle.service.js";
+import { createRetryWrongSession, getRetryWrongSummary } from "../retry-wrong/retry-wrong.service.js";
 import { loadSettings, saveSettings } from "../settings/settings.repository.js";
 import { getPersistenceWarning, shouldProtectBeforeUnload } from "../storage/persistence-feedback.service.js";
 import { inspectStorage } from "../../shared/storage.js";
@@ -245,6 +246,7 @@ export function initQuestionResolution() {
     $("#btnVerResultadoFinal")?.addEventListener("click", fecharDesempenho);
     $("#btnInicioResultado")?.addEventListener("click", voltarAoInicioAposResultado);
     $("#btnNovaLista")?.addEventListener("click", voltarAoInicioAposResultado);
+    $("#btnRefazerErradas")?.addEventListener("click", refazerQuestoesErradas);
     document.querySelectorAll("[data-result-filter]").forEach((button) => {
       button.addEventListener("click", () => selecionarFiltroResultado(button.dataset.resultFilter));
     });
@@ -1321,6 +1323,7 @@ export function initQuestionResolution() {
         : "As questões discursivas não avaliadas não entram no desempenho geral.";
     }
 
+    atualizarAcaoRefazerQuestoesErradas();
     recolherAcoesResultadoMobile();
     renderizarResumoPorAssunto();
 
@@ -1337,6 +1340,80 @@ export function initQuestionResolution() {
     atualizarBotoesFiltroResultado();
     renderizarListaRevisaoResultado();
     atualizarResumoTopo();
+  }
+
+  function atualizarAcaoRefazerQuestoesErradas() {
+    const button = $("#btnRefazerErradas");
+    const countElement = $("#quantidadeRefazerErradas");
+
+    if (!button) {
+      return;
+    }
+
+    const summary = getRetryWrongSummary(estado);
+    const available = summary.total > 0;
+
+    button.hidden = !available;
+    button.disabled = !available;
+    button.dataset.retryCount = String(summary.total);
+    button.setAttribute(
+      "aria-label",
+      available
+        ? `Refazer ${summary.total} ${summary.total === 1 ? "questão errada" : "questões erradas"}`
+        : "Nenhuma questão errada para refazer"
+    );
+
+    if (countElement) {
+      countElement.textContent = String(summary.total);
+    }
+  }
+
+  async function refazerQuestoesErradas() {
+    const summary = getRetryWrongSummary(estado);
+
+    if (summary.total === 0) {
+      atualizarAcaoRefazerQuestoesErradas();
+      return;
+    }
+
+    const confirmed = await solicitarConfirmacao(
+      getRetryWrongQuestionsConfirmation(summary, estado.listaNome)
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    const sourceState = estado;
+
+    try {
+      const retrySession = createRetryWrongSession(sourceState);
+
+      ocultarDesempenhoImediato();
+      pararCronometro();
+      estado = retrySession;
+      filtroResultadoAtivo = RESULT_FILTERS.ALL;
+      questaoResultadoExpandidaId = null;
+      itensRevisaoResultado = [];
+      timerRodando = true;
+      atualizarBotaoCronometro();
+
+      if (!salvarEstadoImediato()) {
+        estado = sourceState;
+        renderizarResultado();
+        return;
+      }
+
+      atualizarResumoTopo();
+      trocarTela("resolucao");
+      renderizarQuestao({ registrarTempo: false, focarTitulo: true });
+      iniciarCronometro();
+      atualizarHome();
+    } catch (error) {
+      estado = sourceState;
+      console.error("Não foi possível iniciar a revisão de erros.", error);
+      atualizarAcaoRefazerQuestoesErradas();
+    }
   }
 
   function alternarAcoesResultado() {
@@ -1864,7 +1941,7 @@ export function initQuestionResolution() {
     const mensagens = {
       [RESULT_FILTERS.INCORRECT]: [
         "Nenhuma questão errada.",
-        "As questões objetivas respondidas corretamente não aparecem neste filtro."
+        "Este filtro reúne objetivas incorretas e discursivas avaliadas como resposta incorreta (0%)."
       ],
       [RESULT_FILTERS.DISCURSIVE]: [
         "Nenhuma questão discursiva.",

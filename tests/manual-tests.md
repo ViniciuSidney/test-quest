@@ -360,3 +360,17 @@ Confirmar:
 - [ ] finalizar com uma discursiva sem avaliação e conferir o aviso;
 - [ ] confirmar o desempenho geral combinado no Resultado Final;
 - [ ] conferir metacognição no histórico e nas exportações TXT/JSON.
+
+
+## Etapa 5 — Refazer questões erradas
+
+- [ ] finalizar uma sessão com uma objetiva incorreta e confirmar que o botão `Refazer questões erradas` aparece com contador `1`;
+- [ ] finalizar uma sessão sem erros e confirmar que o botão não aparece;
+- [ ] criar uma revisão contendo uma objetiva incorreta, uma V/F incorreta e uma discursiva avaliada em 0%;
+- [ ] confirmar que objetivas não respondidas não entram automaticamente;
+- [ ] confirmar que discursivas avaliadas em 50% ou 100% não entram automaticamente;
+- [ ] confirmar no modal a quantidade total, objetiva/V/F e discursiva;
+- [ ] iniciar a revisão e verificar que respostas, tempos, anotações, revisão, marcações, confirmações e Metacognição estão vazios;
+- [ ] verificar que o modo de correção e as opções de embaralhamento foram preservados;
+- [ ] finalizar a revisão e confirmar que a sessão original e a nova tentativa aparecem separadamente nos indicadores históricos;
+- [ ] repetir o fluxo nos temas claro e escuro, em desktop e mobile.

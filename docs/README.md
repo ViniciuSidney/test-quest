@@ -6,17 +6,17 @@ Este diretório reúne a documentação oficial do **Test Quest — Now I Know.*
 
 - base funcional local preservada;
 - repositório Git criado e publicado;
-- branches `main` e `dev` configuradas;
+- branch estável `main` e desenvolvimento atual em `feature/v0.5`;
 - identidade visual oficial definida;
 - cinco telas principais planejadas e aprovadas;
 - manuais estruturais concluídos;
-- Tela Inicial oficial implementada na branch `dev`;
+- Tela Inicial oficial implementada;
 - Tela de Importação e Validação oficial implementada;
 - Tela de Resolução oficial implementada;
 - Tela de Desempenho oficial implementada;
 - Tela de Resultado Final oficial implementada;
 - v0.4.0 concluída: persistência versionada, modularização, confiabilidade e preparação de release finalizadas.
-- v0.5-dev em desenvolvimento: alternativas estáveis, embaralhamento, Verdadeiro ou Falso, gabarito imediato e metacognição implementados.
+- v0.5-dev em desenvolvimento: alternativas estáveis, embaralhamento, Verdadeiro ou Falso, gabarito imediato, metacognição e revisão de erros implementados.
 
 ## Documentos principais
 
@@ -39,6 +39,8 @@ Este diretório reúne a documentação oficial do **Test Quest — Now I Know.*
 | `15-v0.5-verdadeiro-falso.md` | Formato, comportamento e validação de Verdadeiro ou Falso |
 | `16-v0.5-gabarito-imediato.md` | Modos de correção e confirmação por questão |
 | `17-v0.5-refino-gabarito-e-metacognicao.md` | Responsividade do feedback, metacognição e desempenho geral |
+| `18-v0.5-correcao-rolagem-resolucao.md` | Correção da rolagem interna e sobreposição na Resolução |
+| `19-v0.5-refazer-questoes-erradas.md` | Regras e fluxo da revisão focada em erros |
 
 ## Manuais de telas
 

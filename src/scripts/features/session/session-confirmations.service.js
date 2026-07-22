@@ -38,6 +38,40 @@ export function getNewResolutionConfirmation() {
   };
 }
 
+
+export function getRetryWrongQuestionsConfirmation(summary = {}, listName = "") {
+  const total = Math.max(0, Number(summary.total) || 0);
+  const objectives = Math.max(0, Number(summary.objetivas) || 0);
+  const discursives = Math.max(0, Number(summary.discursivas) || 0);
+  const sourceName = String(listName || "").trim() || "Lista sem nome";
+
+  return {
+    label: "Refazer questões erradas",
+    title: total === 1 ? "Refazer a questão errada?" : `Refazer ${total} questões erradas?`,
+    message: `Uma nova sessão de revisão será criada a partir de “${sourceName}”. O resultado atual continuará registrado no histórico.`,
+    items: [
+      {
+        label: "Questões na revisão",
+        value: String(total),
+        tone: "review"
+      },
+      {
+        label: "Objetivas e V/F",
+        value: String(objectives),
+        tone: objectives > 0 ? "warning" : "neutral"
+      },
+      {
+        label: "Discursivas com 0%",
+        value: String(discursives),
+        tone: discursives > 0 ? "warning" : "neutral"
+      }
+    ],
+    note: "Respostas, confirmações, tempos, marcações, anotações e metacognição serão reiniciados apenas na nova tentativa.",
+    confirmText: "Iniciar revisão de erros",
+    variant: "warning"
+  };
+}
+
 export function getFinishSessionConfirmation(result = {}, markedCount = 0, unconfirmedCount = 0, unassessedDiscursiveCount = 0) {
   const total = Number(result.total) || 0;
   const answered = Number(result.respondidas) || 0;

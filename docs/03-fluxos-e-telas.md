@@ -22,6 +22,7 @@ Tela de Desempenho
 
 Resultado Final
 ├── Revisar e exportar
+├── Refazer questões erradas → Resolução
 └── Voltar ao início → Tela Inicial
 ```
 
@@ -219,12 +220,13 @@ Apresentar o desempenho, apoiar a revisão e permitir exportações.
 - card objetivo expandido;
 - card discursivo expandido;
 - exportações;
+- botão para refazer questões erradas, quando aplicável;
 - retorno ao início.
 
 ## Filtros
 
 - todas;
-- erradas;
+- erradas, incluindo discursivas autoavaliadas em 0%;
 - discursivas;
 - revisão;
 - não respondidas.
@@ -243,7 +245,9 @@ Apresentar o desempenho, apoiar a revisão e permitir exportações.
 - o card expandido ocupa toda a largura;
 - discursivas usam revisão manual;
 - assuntos sem objetivas não mostram `0%`;
-- não respondida não é chamada de incorreta.
+- não respondida não é chamada de incorreta;
+- refazer erros cria uma sessão independente e não modifica o resultado concluído;
+- a ação de revisão permanece oculta quando não existem erros elegíveis.
 
 ---
 

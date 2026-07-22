@@ -9,6 +9,7 @@ import {
   getMetacognitionLevel
 } from "../question-resolution/metacognition.service.js";
 import { calculateDisplayedTotalMs } from "../question-resolution/question-resolution.helpers.js";
+import { isRetryEligibleQuestion } from "../retry-wrong/retry-wrong.service.js";
 
 export const RESULT_FILTERS = Object.freeze({
   ALL: "all",
@@ -180,6 +181,10 @@ export function buildQuestionReviewItems({
       metacognitionLabel: assessmentLevel?.label || "",
       metacognitionPercentage: assessmentLevel?.percentage ?? null,
       metacognitionObservation: normalizeText(assessment?.observacao),
+      retryEligible: isRetryEligibleQuestion(
+        { respostas: answers, metacognicao: metacognition },
+        question
+      ),
       answerKeyVisible: Boolean(showAnswerKey)
     };
   });
@@ -188,7 +193,7 @@ export function buildQuestionReviewItems({
 export function filterQuestionReviewItems(items = [], filter = RESULT_FILTERS.ALL) {
   switch (filter) {
     case RESULT_FILTERS.INCORRECT:
-      return items.filter((item) => item.status === "incorrect");
+      return items.filter((item) => item.retryEligible || item.status === "incorrect");
     case RESULT_FILTERS.DISCURSIVE:
       return items.filter((item) => item.category === "discursiva");
     case RESULT_FILTERS.REVIEW:

@@ -4,6 +4,31 @@ Todas as mudanças importantes do Test Quest serão registradas neste arquivo.
 
 ## [Não lançado]
 
+### v0.5-dev — Refazer questões erradas
+
+#### Adicionado
+
+- botão `Refazer questões erradas` no Resultado Final;
+- contador de questões elegíveis para a nova tentativa;
+- confirmação antes de substituir a sessão concluída por uma revisão ativa;
+- serviço dedicado `retry-wrong.service.js`;
+- testes funcionais e estruturais da Etapa 5.
+
+#### Alterado
+
+- o filtro `Erradas` passa a incluir discursivas avaliadas como incorretas em 0%;
+- a nova sessão preserva embaralhamento, modo de correção, conteúdo e gabarito;
+- respostas, tempos, confirmações, marcadores, revisão, anotações e metacognição são reiniciados;
+- a barra de ações do Resultado Final passa a acomodar a ação de revisão de forma responsiva;
+- suíte automatizada ampliada para 36 arquivos.
+
+#### Preservado
+
+- resultado original já registrado no histórico;
+- sessões anteriores e o esquema atual de persistência;
+- questões não respondidas fora da revisão automática;
+- discursivas parciais e completas fora da revisão automática.
+
 ### v0.5-dev — Refinamento do gabarito imediato e metacognição
 
 #### Adicionado

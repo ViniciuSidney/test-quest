@@ -25,9 +25,9 @@ A proposta não é apenas registrar acertos, mas ajudar o usuário a:
 
 **Versão estável:** `v0.4.0`  
 **Versão em desenvolvimento:** `v0.5-dev`  
-**Estado:** `Etapa 4 — gabarito imediato por questão implementado`
+**Estado:** `Etapa 5 — refazer questões erradas implementado`
 
-**Fase atual:** novos modos de resolução e revisão, com alternativas estáveis, embaralhamento, Verdadeiro ou Falso e correção imediata concluídos.
+**Fase atual:** novos modos de resolução e revisão, com alternativas estáveis, embaralhamento, Verdadeiro ou Falso, correção imediata, metacognição e revisão de erros concluídos.
 
 ### Concluído
 
@@ -41,7 +41,7 @@ A proposta não é apenas registrar acertos, mas ajudar o usuário a:
 - estrutura baseada no Modelo de Projeto;
 - repositório Git inicializado;
 - repositório remoto publicado no GitHub;
-- branches `main` e `dev` configuradas;
+- branches `main` e `feature/v0.5` organizadas;
 - layouts das cinco telas principais aprovados;
 - manuais estruturais concluídos;
 - Tela Inicial oficial implementada;
@@ -166,15 +166,26 @@ A v0.4.0 conclui o ciclo de consolidação técnica. A suíte automatizada foi a
 - confirmação explícita antes de revelar o gabarito;
 - respostas confirmadas ficam bloqueadas após a correção;
 - objetivas e V/F exibem acerto, erro, resposta correta e explicação;
-- discursivas exibem resposta esperada e critérios de correção;
-- confirmações são preservadas ao recarregar e continuar a sessão;
+- discursivas exibem resposta esperada, critérios e Metacognição em 100%, 50% ou 0%;
+- confirmações e autoavaliações são preservadas ao recarregar e continuar a sessão;
 - sessões antigas migram para o modo de correção final;
-- esquema da sessão atualizado para `schemaVersion: 5`;
-- suíte automatizada ampliada para 31 arquivos.
+- desempenho geral combina objetivas e discursivas avaliadas;
+- esquema da sessão atualizado para `schemaVersion: 6`;
+- suíte automatizada ampliada para 34 arquivos.
+
+**Etapa 5 — refazer questões erradas concluída:**
+
+- ação no Resultado Final com contador de erros elegíveis;
+- nova sessão com objetivas e V/F incorretas;
+- inclusão de discursivas avaliadas como incorretas em 0%;
+- sessão original preservada no histórico;
+- respostas, tempos, confirmações, marcações, anotações e metacognição reiniciados;
+- configurações de embaralhamento e correção preservadas;
+- filtro `Erradas` atualizado para o mesmo critério da revisão;
+- suíte automatizada ampliada para 36 arquivos.
 
 **Próximas entregas planejadas:**
 
-- opção de refazer questões erradas;
 - controle manual dos efeitos visuais;
 - integração, regressão e fechamento da v0.5.0.
 
@@ -195,6 +206,7 @@ Tela de Desempenho
 └── Continuar → Resultado Final
 
 Resultado Final
+├── Refazer questões erradas → Resolução
 └── Voltar ao início → Tela Inicial
 ```
 

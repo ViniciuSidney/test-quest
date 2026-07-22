@@ -79,3 +79,15 @@ Os quatro manuais em `manuais-de-telas/` foram mantidos sem alterações, pois j
 - exemplo e guia de importação adaptados para explicações independentes das letras;
 - adicionados testes de ordem, restauração, correção e estrutura;
 - suíte ampliada para 28 arquivos de teste.
+
+
+## v0.5-dev — Etapa 5: refazer questões erradas
+
+- criada ação de revisão no Resultado Final;
+- objetivas e V/F incorretas passam a formar uma nova sessão;
+- discursivas avaliadas em 0% também entram na revisão;
+- sessão original permanece registrada no histórico;
+- nova tentativa recebe ID próprio e mapas de progresso vazios;
+- configurações de embaralhamento e correção são preservadas;
+- filtro `Erradas` atualizado;
+- suíte automatizada ampliada para 36 arquivos.
