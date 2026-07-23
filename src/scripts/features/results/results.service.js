@@ -5,7 +5,8 @@ import {
   isTrueFalseQuestion
 } from "../../core/objective-question.js";
 import {
-  getMetacognitionAssessment,
+  getFinalVerdict,
+  getInitialMetacognition,
   getMetacognitionLevel
 } from "../question-resolution/metacognition.service.js";
 import { calculateDisplayedTotalMs } from "../question-resolution/question-resolution.helpers.js";
@@ -46,7 +47,7 @@ export function calculateSessionResult(state = {}) {
   const evaluatedDiscursives = discursives
     .map((question) => ({
       question,
-      assessment: getMetacognitionAssessment(state, question.id)
+      assessment: getFinalVerdict(state, question.id)
     }))
     .filter(({ assessment }) => getMetacognitionLevel(assessment?.nivel));
   const discursivePoints = evaluatedDiscursives.reduce(
@@ -120,7 +121,7 @@ export function buildQuestionReviewItems({
   notes = {},
   timesMs = {},
   review = {},
-  metacognition = {},
+  discursiveAssessments = {},
   showAnswerKey = true
 } = {}) {
   return questions.map((question, index) => {
@@ -137,8 +138,12 @@ export function buildQuestionReviewItems({
     const status = getQuestionResultStatus(question, rawAnswer);
     const markedForReview = Boolean(review[question.id]);
     const assessment = question.categoria === "discursiva"
-      ? getMetacognitionAssessment({ metacognicao: metacognition }, question.id)
+      ? getFinalVerdict({ avaliacoesDiscursivas: discursiveAssessments }, question.id)
       : null;
+    const initialMetacognition = question.categoria === "discursiva"
+      ? getInitialMetacognition({ avaliacoesDiscursivas: discursiveAssessments }, question.id)
+      : null;
+    const initialLevel = getMetacognitionLevel(initialMetacognition?.nivel);
     const assessmentLevel = getMetacognitionLevel(assessment?.nivel);
 
     return {
@@ -177,12 +182,21 @@ export function buildQuestionReviewItems({
       criteria: showAnswerKey && question.categoria === "discursiva"
         ? normalizeText(question.criterios)
         : "",
+      initialMetacognitionLevel: initialLevel?.key || "",
+      initialMetacognitionLabel: initialLevel?.label || "",
+      initialMetacognitionPercentage: initialLevel?.percentage ?? null,
+      initialMetacognitionObservation: normalizeText(initialMetacognition?.observacao),
+      finalVerdictLevel: assessmentLevel?.key || "",
+      finalVerdictLabel: assessmentLevel?.label || "",
+      finalVerdictPercentage: assessmentLevel?.percentage ?? null,
+      finalVerdictObservation: normalizeText(assessment?.observacao),
+      // Campos transitórios para componentes antigos da tela de resultado.
       metacognitionLevel: assessmentLevel?.key || "",
       metacognitionLabel: assessmentLevel?.label || "",
       metacognitionPercentage: assessmentLevel?.percentage ?? null,
       metacognitionObservation: normalizeText(assessment?.observacao),
       retryEligible: isRetryEligibleQuestion(
-        { respostas: answers, metacognicao: metacognition },
+        { respostas: answers, avaliacoesDiscursivas: discursiveAssessments },
         question
       ),
       answerKeyVisible: Boolean(showAnswerKey)
@@ -210,7 +224,7 @@ export function buildSubjectResultItems({
   questions = [],
   answers = {},
   timesMs = {},
-  metacognition = {}
+  discursiveAssessments = {}
 } = {}) {
   const subjectMap = new Map();
 
@@ -239,8 +253,8 @@ export function buildSubjectResultItems({
         current.earnedPoints += 100;
       }
     } else if (question.categoria === "discursiva") {
-      const assessment = getMetacognitionAssessment(
-        { metacognicao: metacognition },
+      const assessment = getFinalVerdict(
+        { avaliacoesDiscursivas: discursiveAssessments },
         question.id
       );
       const level = getMetacognitionLevel(assessment?.nivel);

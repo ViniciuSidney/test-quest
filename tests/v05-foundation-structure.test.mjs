@@ -11,7 +11,7 @@ const [constants, schema, parser, controller, results, exportsService] = await P
 ]);
 
 assert.match(constants, /APP_VERSION\s*=\s*"0\.5-dev"/);
-assert.match(constants, /SESSION_SCHEMA_VERSION\s*=\s*6/);
+assert.match(constants, /SESSION_SCHEMA_VERSION\s*=\s*7/);
 assert.match(schema, /respostaCorretaId/);
 assert.match(schema, /resolveObjectiveAnswerId/);
 assert.match(parser, /normalizeObjectiveAlternatives/);

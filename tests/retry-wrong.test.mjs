@@ -91,10 +91,10 @@ const source = {
   revisao: { q1: true },
   marcacoesAlternativas: { q1: { [wrongObjective.alternativas[0].id]: "eliminada" } },
   confirmacoes: { q1: true, q4: true, q5: true },
-  metacognicao: {
-    q5: { nivel: "incorreta", percentual: 0, observacao: "Rever tudo." },
-    q6: { nivel: "parcial", percentual: 50, observacao: "Faltou um ponto." },
-    q7: { nivel: "completa", percentual: 100, observacao: "Tudo certo." }
+  avaliacoesDiscursivas: {
+    q5: { metacognicaoInicial: { nivel: "parcial", percentual: 50 }, vereditoFinal: { nivel: "incorreta", percentual: 0, observacao: "Rever tudo." } },
+    q6: { metacognicaoInicial: { nivel: "completa", percentual: 100 }, vereditoFinal: { nivel: "parcial", percentual: 50, observacao: "Faltou um ponto." } },
+    q7: { metacognicaoInicial: { nivel: "parcial", percentual: 50 }, vereditoFinal: { nivel: "completa", percentual: 100, observacao: "Tudo certo." } }
   },
   temporizadorPausado: true,
   opcoes: {
@@ -143,7 +143,7 @@ assert.deepEqual(retry.temposMs, {});
 assert.deepEqual(retry.revisao, {});
 assert.deepEqual(retry.marcacoesAlternativas, {});
 assert.deepEqual(retry.confirmacoes, {});
-assert.deepEqual(retry.metacognicao, {});
+assert.deepEqual(retry.avaliacoesDiscursivas, {});
 assert.equal(retry.temporizadorPausado, false);
 assert.equal(retry.finalizadoEm, null);
 assert.equal(retry.opcoes.modoCorrecao, "imediata");
@@ -159,7 +159,7 @@ assert.ok(buildRetryWrongListName("x".repeat(100)).length <= 80);
 const reviewItems = buildQuestionReviewItems({
   questions: source.questoes,
   answers: source.respostas,
-  metacognition: source.metacognicao
+  discursiveAssessments: source.avaliacoesDiscursivas
 });
 assert.deepEqual(
   filterQuestionReviewItems(reviewItems, RESULT_FILTERS.INCORRECT).map((item) => item.id),

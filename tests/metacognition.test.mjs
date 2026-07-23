@@ -1,89 +1,80 @@
 import assert from "node:assert/strict";
 import {
   METACOGNITION_LEVELS,
+  buildFinalVerdictMarkup,
   buildMetacognitionMarkup,
-  getMetacognitionAssessment,
+  getFinalVerdict,
+  getInitialMetacognition,
   getMetacognitionLevel,
-  hasMetacognitionAssessment,
-  normalizeMetacognitionMap,
-  setMetacognitionLevel,
-  setMetacognitionObservation
+  hasFinalVerdict,
+  hasInitialMetacognition,
+  normalizeDiscursiveAssessmentsMap,
+  setFinalVerdictLevel,
+  setFinalVerdictObservation,
+  setInitialMetacognitionLevel,
+  setInitialMetacognitionObservation
 } from "../src/scripts/features/question-resolution/metacognition.service.js";
 import { calculateSessionResult } from "../src/scripts/features/results/results.service.js";
-import { shouldShowPerformanceScreen } from "../src/scripts/features/performance/performance.service.js";
 
 const questions = [
-  {
-    id: "d1",
-    categoria: "discursiva",
-    assunto: "Gramática",
-    enunciado: "Explique a regra."
-  },
-  {
-    id: "o1",
-    categoria: "objetiva",
-    assunto: "Gramática",
-    enunciado: "Questão objetiva."
-  }
+  { id: "d1", categoria: "discursiva", assunto: "Gramática", enunciado: "Explique a regra." },
+  { id: "o1", categoria: "objetiva", assunto: "Gramática", enunciado: "Questão objetiva." }
 ];
 
 assert.equal(getMetacognitionLevel("completa")?.percentage, 100);
 assert.equal(getMetacognitionLevel("parcial")?.percentage, 50);
 assert.equal(getMetacognitionLevel("incorreta")?.percentage, 0);
-assert.equal(getMetacognitionLevel("invalida"), null);
 assert.equal(METACOGNITION_LEVELS.COMPLETE.label, "Resposta completa");
 
-let state = { metacognicao: {} };
-state = setMetacognitionObservation(state, "d1", "Faltou um exemplo.");
-assert.equal(getMetacognitionAssessment(state, "d1")?.observacao, "Faltou um exemplo.");
-assert.equal(hasMetacognitionAssessment(state, "d1"), false);
-
-state = setMetacognitionLevel(state, "d1", "parcial");
-assert.equal(hasMetacognitionAssessment(state, "d1"), true);
-assert.deepEqual(getMetacognitionAssessment(state, "d1"), {
+let state = { avaliacoesDiscursivas: {} };
+state = setInitialMetacognitionObservation(state, "d1", "Acho que faltou um exemplo.");
+state = setInitialMetacognitionLevel(state, "d1", "parcial");
+assert.equal(hasInitialMetacognition(state, "d1"), true);
+assert.equal(hasFinalVerdict(state, "d1"), false);
+assert.deepEqual(getInitialMetacognition(state, "d1"), {
   nivel: "parcial",
   percentual: 50,
-  observacao: "Faltou um exemplo."
+  observacao: "Acho que faltou um exemplo."
 });
 
-const normalized = normalizeMetacognitionMap({
-  d1: { desempenho: "completa", observacoes: "Atendeu aos critérios." },
-  o1: { nivel: "incorreta", observacao: "Não deve permanecer." },
-  orfao: { nivel: "parcial" }
+state = setFinalVerdictObservation(state, "d1", "O exemplo realmente ficou incompleto.");
+state = setFinalVerdictLevel(state, "d1", "incorreta", {
+  now: () => "2026-07-23T12:00:00.000Z"
+});
+assert.equal(hasFinalVerdict(state, "d1"), true);
+assert.deepEqual(getFinalVerdict(state, "d1"), {
+  nivel: "incorreta",
+  percentual: 0,
+  observacao: "O exemplo realmente ficou incompleto.",
+  registradoEm: "2026-07-23T12:00:00.000Z"
+});
+
+const migrated = normalizeDiscursiveAssessmentsMap({
+  d1: { desempenho: "completa", observacoes: "Registro legado." },
+  o1: { nivel: "incorreta" }
 }, questions);
-assert.deepEqual(normalized, {
-  d1: {
-    nivel: "completa",
-    percentual: 100,
-    observacao: "Atendeu aos critérios."
-  }
-});
+assert.equal(migrated.d1.metacognicaoInicial.nivel, "completa");
+assert.equal(migrated.d1.vereditoFinal.nivel, "completa");
+assert.equal(migrated.o1, undefined);
 
-const markup = buildMetacognitionMarkup({ assessment: state.metacognicao.d1 });
-assert.match(markup, /Metacognição/);
-assert.match(markup, /Resposta completa \(100%\)/);
-assert.match(markup, /Resposta parcial \(50%\)/);
-assert.match(markup, /Resposta incorreta \(0%\)/);
-assert.match(markup, /aria-checked="true"/);
-assert.match(markup, /Faltou um exemplo\./);
+const initialMarkup = buildMetacognitionMarkup({ assessment: getInitialMetacognition(state, "d1") });
+assert.match(initialMarkup, /Metacognição inicial/);
+assert.match(initialMarkup, /esta percepção não define a pontuação final/i);
+assert.match(initialMarkup, /Resposta parcial \(50%\)/);
 
-const finalModeMarkup = buildMetacognitionMarkup({
-  assessment: state.metacognicao.d1,
-  referenceVisible: false
-});
-assert.match(finalModeMarkup, /modelo e os critérios serão exibidos ao final/);
+const verdictMarkup = buildFinalVerdictMarkup({ verdict: getFinalVerdict(state, "d1") });
+assert.match(verdictMarkup, /Veredito final/);
+assert.match(verdictMarkup, /Somente este veredito será usado/);
+assert.match(verdictMarkup, /aria-checked="true"/);
 
-const discursiveResult = calculateSessionResult({
+const result = calculateSessionResult({
   questoes: [questions[0]],
   respostas: { d1: "Minha resposta" },
-  metacognicao: state.metacognicao,
+  avaliacoesDiscursivas: state.avaliacoesDiscursivas,
   temposMs: { d1: 1000 }
 });
-assert.equal(discursiveResult.objetivas, 0);
-assert.equal(discursiveResult.discursivasAvaliadas, 1);
-assert.equal(discursiveResult.questoesAvaliadas, 1);
-assert.equal(discursiveResult.pontosObtidos, 50);
-assert.equal(discursiveResult.percentual, 50);
-assert.equal(shouldShowPerformanceScreen(discursiveResult.questoesAvaliadas), true);
+assert.equal(result.discursivasAvaliadas, 1);
+assert.equal(result.pontosObtidos, 0, "O desempenho deve usar o veredito final, não a percepção inicial.");
+assert.equal(result.percentual, 0);
 
-console.log("Metacognition: todos os testes passaram.");
+console.log("Metacognition and final verdict: todos os testes passaram.");

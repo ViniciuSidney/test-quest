@@ -25,9 +25,9 @@ assert.equal(immediatePending.items.at(-1).value, "1");
 assert.match(immediatePending.note, /sem confirmação/);
 
 const metacognitionPending = getFinishSessionConfirmation({ total: 2, respondidas: 2 }, 0, 0, 1);
-assert.equal(metacognitionPending.items.at(-1).label, "Discursivas sem metacognição");
+assert.equal(metacognitionPending.items.at(-1).label, "Discursivas sem percepção inicial");
 assert.equal(metacognitionPending.items.at(-1).value, "1");
-assert.match(metacognitionPending.note, /sem autoavaliação/);
+assert.match(metacognitionPending.note, /sem percepção inicial/);
 
 const complete = getFinishSessionConfirmation({ total: 2, respondidas: 2 }, 0);
 assert.equal(complete.title, "Finalizar esta resolução?");

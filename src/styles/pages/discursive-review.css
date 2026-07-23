@@ -1,0 +1,688 @@
+/* =========================================================
+   CORREÇÃO DISCURSIVA GUIADA — TEST QUEST
+   O Wizard define o fluxo; os componentes seguem o shell nativo.
+   ========================================================= */
+
+body[data-screen="correcaoDiscursiva"] {
+  background:
+    radial-gradient(circle at 12% 8%, rgba(98, 101, 246, 0.14), transparent 30rem),
+    var(--tq-bg);
+  color: var(--tq-text);
+}
+
+body[data-screen="correcaoDiscursiva"] .legacy-topbar {
+  display: none;
+}
+
+/* Permite que a tela aproveite monitores amplos e também capturas em zoom reduzido. */
+body[data-screen="correcaoDiscursiva"] .app {
+  width: min(2400px, calc(100vw - var(--tq-app-gutter) - var(--tq-app-gutter)));
+}
+
+#telaCorrecaoDiscursiva.discursive-review-screen.active {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: clamp(0.65rem, 1vw, 0.9rem);
+  padding: 0;
+  color: var(--tq-text);
+  background: transparent;
+}
+
+.discursive-review-screen button,
+.discursive-review-screen textarea {
+  color: var(--tq-text);
+}
+
+/* Cabeçalho nativo da tela */
+.discursive-review-topbar {
+  min-height: 50px;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: clamp(0.65rem, 1.2vw, 1rem);
+}
+
+.discursive-review-home-action,
+.discursive-review-preferences .secondary,
+.discursive-review-preferences .motion-settings-button {
+  min-height: 44px;
+  box-shadow: none;
+  color: var(--tq-text);
+  background: var(--tq-surface);
+  border-color: var(--tq-border);
+}
+
+.discursive-review-preferences,
+.discursive-review-steps {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.discursive-review-preferences {
+  justify-content: flex-end;
+}
+
+.discursive-review-steps {
+  min-width: 0;
+  justify-content: center;
+  color: var(--tq-text-muted);
+  font-size: clamp(0.78rem, 0.95vw, 0.94rem);
+  white-space: nowrap;
+}
+
+.discursive-review-steps strong {
+  color: var(--tq-primary-light);
+}
+
+/* Estrutura principal — ocupa todo o espaço útil do app */
+.discursive-review-layout {
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) clamp(310px, 23vw, 390px);
+  align-items: stretch;
+  gap: clamp(0.75rem, 1.2vw, 1rem);
+}
+
+.discursive-review-main,
+.discursive-review-side-panel,
+.discursive-review-notice {
+  min-width: 0;
+  color: var(--tq-text);
+  background: var(--tq-surface);
+  border: 1px solid var(--tq-border);
+  border-radius: var(--tq-radius-lg);
+  box-shadow: 0 12px 34px rgba(23, 24, 47, 0.09);
+}
+
+.discursive-review-main {
+  min-height: 0;
+  overflow: hidden;
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr) auto;
+  gap: clamp(0.7rem, 1vw, 0.9rem);
+  padding: clamp(0.85rem, 1.25vw, 1.2rem);
+}
+
+/* Introdução */
+.discursive-review-intro {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, auto);
+  align-items: center;
+  gap: 1rem;
+}
+
+.discursive-review-intro__title {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.discursive-review-intro__icon {
+  width: 52px;
+  height: 52px;
+  flex: 0 0 52px;
+  display: grid;
+  place-items: center;
+  color: var(--tq-primary-light);
+  background: var(--tq-primary-soft);
+  border: 1px solid color-mix(in srgb, var(--tq-primary) 48%, var(--tq-border));
+  border-radius: var(--tq-radius-md);
+  font-size: 1.4rem;
+}
+
+.discursive-review-intro h1 {
+  margin: 0;
+  color: var(--tq-text);
+  font-size: clamp(1.45rem, 2.3vw, 2.15rem);
+  letter-spacing: -0.03em;
+}
+
+.discursive-review-intro p {
+  margin: 0.25rem 0 0;
+  color: var(--tq-text-muted);
+  font-size: clamp(0.88rem, 1vw, 1rem);
+  line-height: 1.45;
+}
+
+.discursive-review-session-info {
+  min-width: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.45rem;
+  text-align: right;
+  color: var(--tq-text-muted);
+  font-size: clamp(0.76rem, 0.9vw, 0.9rem);
+}
+
+.discursive-review-session-info span {
+  min-width: 0;
+  padding: 0.48rem 0.65rem;
+  overflow: hidden;
+  border: 1px solid var(--tq-border);
+  border-radius: 999px;
+  background: var(--tq-surface-soft);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.discursive-review-session-info strong {
+  color: var(--tq-text);
+}
+
+/* Identificação da questão */
+.discursive-review-question-heading {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.78rem 0.95rem;
+  color: #fff;
+  background: linear-gradient(
+    100deg,
+    color-mix(in srgb, var(--tq-primary) 78%, var(--tq-surface)),
+    color-mix(in srgb, var(--tq-primary) 48%, var(--tq-surface))
+  );
+  border: 1px solid color-mix(in srgb, var(--tq-primary) 62%, var(--tq-border));
+  border-radius: var(--tq-radius-md);
+}
+
+.discursive-review-question-heading h2 {
+  margin: 0;
+  font-size: clamp(1rem, 1.25vw, 1.18rem);
+}
+
+.discursive-review-question-heading span {
+  min-width: 0;
+  max-width: min(46%, 34rem);
+  padding: 0.32rem 0.65rem;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.11);
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.82rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Conteúdo rolável: o rodapé permanece sempre acessível no desktop */
+.discursive-review-content {
+  min-width: 0;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-auto-rows: max-content;
+  align-content: start;
+  gap: clamp(0.7rem, 1vw, 0.9rem);
+  padding-right: 0.35rem;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+}
+
+.discursive-review-block {
+  min-width: 0;
+  padding: clamp(0.9rem, 1.15vw, 1.15rem);
+  color: var(--tq-text);
+  background: color-mix(in srgb, var(--tq-surface-soft) 88%, var(--tq-surface));
+  border: 1px solid var(--tq-border);
+  border-radius: var(--tq-radius-md);
+}
+
+.discursive-review-block--statement,
+.discursive-review-block--verdict {
+  grid-column: 1 / -1;
+}
+
+.discursive-review-block--statement {
+  background: color-mix(in srgb, var(--tq-info-soft) 48%, var(--tq-surface));
+}
+
+.discursive-review-block h3 {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin: 0 0 0.65rem;
+  color: var(--tq-primary-light);
+  font-size: clamp(0.9rem, 1vw, 1rem);
+}
+
+.discursive-review-block p,
+.discursive-review-text {
+  margin: 0;
+  color: var(--tq-text);
+  font-size: clamp(0.9rem, 1vw, 1rem);
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+.discursive-review-block__heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.discursive-review-initial-badge {
+  max-width: 48%;
+  padding: 0.35rem 0.6rem;
+  border-radius: var(--tq-radius-sm);
+  background: color-mix(in srgb, var(--tq-warning) 16%, var(--tq-surface));
+  color: var(--tq-warning);
+  font-size: 0.78rem;
+  text-align: right;
+}
+
+.discursive-review-initial-badge[data-tone="completa"] {
+  color: var(--tq-success);
+  background: var(--tq-success-soft);
+}
+
+.discursive-review-initial-badge[data-tone="incorreta"] {
+  color: var(--tq-danger);
+  background: var(--tq-danger-soft);
+}
+
+/* Veredito: área de maior destaque */
+.discursive-review-block--verdict {
+  background: color-mix(in srgb, var(--tq-primary-soft) 38%, var(--tq-surface));
+  border-color: color-mix(in srgb, var(--tq-primary) 36%, var(--tq-border));
+}
+
+.discursive-review-block--verdict header p {
+  color: var(--tq-text-muted);
+  font-size: clamp(0.84rem, 0.95vw, 0.94rem);
+}
+
+.discursive-review-verdict-options {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(0.65rem, 1vw, 0.9rem);
+  margin: 0.95rem 0;
+}
+
+.discursive-review-verdict-option {
+  min-width: 0;
+  min-height: 82px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+  padding: 0.9rem;
+  color: var(--tq-text);
+  background: var(--tq-surface);
+  border: 1px solid var(--tq-border);
+  border-radius: var(--tq-radius-md);
+  text-align: left;
+  box-shadow: none;
+}
+
+.discursive-review-verdict-option span:first-child {
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
+  display: grid;
+  place-items: center;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+}
+
+.discursive-review-verdict-option strong,
+.discursive-review-verdict-option small {
+  display: block;
+}
+
+.discursive-review-verdict-option strong {
+  font-size: clamp(0.9rem, 1vw, 1rem);
+}
+
+.discursive-review-verdict-option small {
+  margin-top: 0.1rem;
+  font-size: 0.78rem;
+}
+
+.discursive-review-verdict-option[data-tone="completa"] { color: var(--tq-success); }
+.discursive-review-verdict-option[data-tone="parcial"] { color: var(--tq-warning); }
+.discursive-review-verdict-option[data-tone="incorreta"] { color: var(--tq-danger); }
+
+.discursive-review-verdict-option:hover {
+  border-color: currentColor;
+  background: color-mix(in srgb, currentColor 8%, var(--tq-surface));
+}
+
+.discursive-review-verdict-option.is-selected {
+  border-width: 2px;
+  border-color: currentColor;
+  background: color-mix(in srgb, currentColor 13%, var(--tq-surface));
+  box-shadow: 0 0 0 3px color-mix(in srgb, currentColor 14%, transparent);
+}
+
+.discursive-review-observation {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.discursive-review-observation textarea {
+  width: 100%;
+  min-height: 92px;
+  max-height: 220px;
+  resize: vertical;
+  color: var(--tq-text);
+  background: var(--tq-surface);
+  border-color: var(--tq-border);
+}
+
+/* Navegação fixa dentro do painel principal */
+.discursive-review-actionbar {
+  display: grid;
+  grid-template-columns: minmax(150px, 0.85fr) minmax(220px, 1.25fr) minmax(180px, 0.95fr);
+  gap: clamp(0.65rem, 1vw, 0.9rem);
+  padding-top: clamp(0.7rem, 1vw, 0.9rem);
+  border-top: 1px solid var(--tq-border);
+}
+
+.discursive-review-actionbar button {
+  min-height: 46px;
+  box-shadow: none;
+}
+
+/* Lateral */
+.discursive-review-sidebar {
+  min-width: 0;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: grid;
+  grid-auto-rows: max-content;
+  align-content: start;
+  gap: clamp(0.7rem, 1vw, 0.9rem);
+  padding-right: 0.25rem;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+}
+
+.discursive-review-side-panel {
+  padding: clamp(0.9rem, 1.1vw, 1.1rem);
+}
+
+.discursive-review-side-panel h2 {
+  margin: 0 0 0.9rem;
+  color: var(--tq-primary-light);
+  font-size: clamp(0.92rem, 1vw, 1.02rem);
+}
+
+.discursive-review-progress-copy {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.6rem;
+}
+
+.discursive-review-progress-track {
+  height: 10px;
+  overflow: hidden;
+  background: var(--tq-surface-soft);
+  border: 1px solid var(--tq-border);
+  border-radius: 999px;
+}
+
+.discursive-review-progress-value {
+  width: 0;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--tq-primary), var(--tq-primary-light));
+  transition: width 0.25s ease;
+}
+
+.discursive-review-question-list,
+.discursive-review-validation-list {
+  display: grid;
+  gap: 0.6rem;
+  margin: 0.9rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.discursive-review-question-button {
+  width: 100%;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.38rem 0;
+  color: var(--tq-text-muted);
+  background: transparent;
+  border: 0;
+  text-align: left;
+}
+
+.discursive-review-question-button:hover {
+  color: var(--tq-text);
+  transform: none;
+}
+
+.discursive-review-question-button.is-current { color: var(--tq-primary-light); }
+.discursive-review-question-button.is-complete { color: var(--tq-success); }
+.discursive-review-question-button.is-partial { color: var(--tq-warning); }
+.discursive-review-question-button.is-incorrect { color: var(--tq-danger); }
+
+.discursive-review-question-marker {
+  width: 22px;
+  height: 22px;
+  display: grid;
+  place-items: center;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  font-size: 0.72rem;
+}
+
+.discursive-review-validation-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.55rem;
+  color: var(--tq-text);
+  line-height: 1.4;
+}
+
+.discursive-review-validation-list li::before {
+  content: "○";
+  flex: 0 0 auto;
+  color: var(--tq-warning);
+}
+
+.discursive-review-validation-list li.is-valid::before {
+  content: "✓";
+  color: var(--tq-success);
+}
+
+.discursive-review-summary {
+  display: grid;
+  gap: 0.65rem;
+  margin: 0;
+}
+
+.discursive-review-summary div {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.discursive-review-summary dt,
+.discursive-review-summary dd {
+  margin: 0;
+}
+
+.discursive-review-summary dd {
+  font-weight: 850;
+}
+
+.discursive-review-summary div:nth-child(1) dd { color: var(--tq-success); }
+.discursive-review-summary div:nth-child(2) dd { color: var(--tq-warning); }
+.discursive-review-summary div:nth-child(3) dd { color: var(--tq-danger); }
+
+.discursive-review-summary__total {
+  margin-top: 0.25rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--tq-border);
+}
+
+.discursive-review-notice {
+  display: flex;
+  gap: 0.7rem;
+  margin: 0;
+  padding: 0.95rem;
+  color: var(--tq-primary-light);
+  background: color-mix(in srgb, var(--tq-primary-soft) 34%, var(--tq-surface));
+  border-style: dashed;
+  line-height: 1.45;
+}
+
+/* Tablet: uma rolagem geral e a lateral vira faixa de resumo. */
+@media (max-width: 1120px) {
+  body[data-screen="correcaoDiscursiva"] .app {
+    width: calc(100vw - var(--tq-app-gutter) - var(--tq-app-gutter));
+  }
+
+  #telaCorrecaoDiscursiva.discursive-review-screen.active {
+    overflow-y: auto;
+    overflow-x: hidden;
+    display: block;
+    padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+    scrollbar-gutter: stable;
+  }
+
+  .discursive-review-topbar {
+    position: sticky;
+    top: 0;
+    z-index: 4;
+    margin-bottom: 0.75rem;
+    padding: 0.35rem 0;
+    background: color-mix(in srgb, var(--tq-bg) 94%, transparent);
+    backdrop-filter: blur(10px);
+  }
+
+  .discursive-review-layout {
+    min-height: auto;
+    overflow: visible;
+    grid-template-columns: 1fr;
+  }
+
+  .discursive-review-main {
+    min-height: auto;
+    overflow: visible;
+    display: block;
+  }
+
+  .discursive-review-main > * + * {
+    margin-top: 0.75rem;
+  }
+
+  .discursive-review-content {
+    min-height: auto;
+    overflow: visible;
+    padding-right: 0;
+  }
+
+  .discursive-review-sidebar {
+    min-height: auto;
+    overflow: visible;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    padding-right: 0;
+  }
+
+  .discursive-review-notice {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 760px) {
+  .discursive-review-topbar {
+    grid-template-columns: 1fr auto;
+  }
+
+  .discursive-review-steps {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    justify-content: flex-start;
+    overflow-x: auto;
+    padding: 0.15rem 0 0.25rem;
+  }
+
+  .discursive-review-preferences {
+    flex-wrap: wrap;
+  }
+
+  .discursive-review-intro {
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+
+  .discursive-review-session-info {
+    justify-content: flex-start;
+    text-align: left;
+  }
+
+  .discursive-review-session-info span {
+    max-width: 100%;
+  }
+
+  .discursive-review-question-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .discursive-review-question-heading span,
+  .discursive-review-initial-badge {
+    max-width: 100%;
+  }
+
+  .discursive-review-content,
+  .discursive-review-sidebar,
+  .discursive-review-verdict-options,
+  .discursive-review-actionbar {
+    grid-template-columns: 1fr;
+  }
+
+  .discursive-review-actionbar button:nth-child(2) {
+    order: -1;
+  }
+}
+
+@media (max-width: 520px) {
+  .discursive-review-topbar {
+    grid-template-columns: 1fr;
+  }
+
+  .discursive-review-preferences {
+    justify-content: flex-start;
+  }
+
+  .discursive-review-intro__title {
+    align-items: flex-start;
+  }
+
+  .discursive-review-intro__icon {
+    width: 46px;
+    height: 46px;
+    flex-basis: 46px;
+  }
+
+  .discursive-review-block__heading {
+    display: grid;
+  }
+}
+
+body[data-motion="reduced"] .discursive-review-progress-value,
+body[data-motion-effective="reduced"] .discursive-review-progress-value {
+  transition: none;
+}

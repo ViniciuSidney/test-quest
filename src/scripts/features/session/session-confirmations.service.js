@@ -106,13 +106,13 @@ export function getFinishSessionConfirmation(result = {}, markedCount = 0, uncon
         tone: "warning"
       }] : []),
       ...(unassessedDiscursives > 0 ? [{
-        label: "Discursivas sem metacognição",
+        label: "Discursivas sem percepção inicial",
         value: String(unassessedDiscursives),
         tone: "warning"
       }] : [])
     ],
     note: unanswered > 0 || unconfirmed > 0 || unassessedDiscursives > 0
-      ? "A sessão pode ser finalizada, mas ainda existem questões pendentes, sem confirmação ou sem autoavaliação."
+      ? "A sessão pode ser finalizada, mas ainda existem questões pendentes, sem confirmação ou sem percepção inicial."
       : "Todas as questões foram respondidas. O resultado será exibido após a confirmação.",
     confirmText: "Finalizar resolução",
     variant: "warning"

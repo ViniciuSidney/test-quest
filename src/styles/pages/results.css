@@ -1267,3 +1267,18 @@ body[data-screen="resultado"] .legacy-topbar {
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
+
+/* Separação visual entre percepção inicial e veredito oficial */
+.result-discursive-detail--verdict {
+  grid-column: 1 / 7;
+}
+
+.result-discursive-detail--metacognition {
+  grid-column: 7 / 13;
+}
+
+@media (max-width: 980px) {
+  .result-discursive-detail--verdict {
+    grid-column: 1 / -1;
+  }
+}

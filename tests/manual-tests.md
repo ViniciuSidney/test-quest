@@ -383,3 +383,30 @@ Confirmar:
 - [ ] confirmar que objetivas e V/F selecionadas recebem destaque visual mais forte;
 - [ ] no Resultado Final, conferir fundo azul nos cards discursivos e bordas: verde para 100%, amarela/laranja para 50% e vermelha para 0%;
 - [ ] expandir uma discursiva e confirmar que Metacognição e Critérios possuem dimensões regulares, sem coluna estreita.
+
+
+---
+
+# Etapa 6.1 — Correção discursiva guiada
+
+## Fluxo com gabarito ao final
+
+- [ ] Finalizar uma sessão com pelo menos duas discursivas respondidas e confirmadas.
+- [ ] Confirmar que a tela Wizard aparece antes do Desempenho.
+- [ ] Conferir enunciado, resposta do usuário, Metacognição inicial, modelo e critérios.
+- [ ] Verificar que `Salvar e avançar` permanece bloqueado sem Veredito Final.
+- [ ] Registrar 100%, 50% e 0% em respostas diferentes e conferir o resumo lateral.
+- [ ] Voltar para uma discursiva anterior e confirmar que o veredito foi preservado.
+- [ ] Recarregar a página no meio da correção e usar `Continuar correção` pela Tela Inicial.
+- [ ] Confirmar que `Concluir correção` só é liberado sem pendências.
+- [ ] Verificar que o Desempenho Geral usa o Veredito Final, não a Metacognição inicial.
+- [ ] Conferir os dois registros no Resultado Final e nas exportações.
+- [ ] Confirmar que apenas discursivas com Veredito Final de 0% entram em `Refazer questões erradas`.
+
+## Cenários alternativos
+
+- [ ] Sessão sem discursivas pula o Wizard.
+- [ ] Discursiva não respondida não entra na correção guiada.
+- [ ] Modo de gabarito imediato conclui o Veredito Final dentro da Resolução e não abre o Wizard.
+- [ ] Tema claro, tema escuro e efeitos reduzidos mantêm a tela legível.
+- [ ] Validar desktop, mobile e zooms de 100%, 110%, 125% e 150%.

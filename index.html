@@ -307,7 +307,7 @@
                 <input type="radio" name="modoCorrecao" value="final" checked />
                 <span>
                   <strong>Somente no resultado final</strong>
-                  <small>O gabarito aparece ao encerrar; discursivas são confirmadas antes da autoavaliação.</small>
+                  <small>O gabarito aparece ao encerrar; discursivas registram a percepção inicial antes da correção guiada.</small>
                 </span>
               </label>
 
@@ -534,6 +534,157 @@
             </div>
           </footer>
         </main>
+      </div>
+    </section>
+
+    <section
+      id="telaCorrecaoDiscursiva"
+      class="screen discursive-review-screen"
+      aria-labelledby="tituloCorrecaoDiscursiva"
+    >
+      <header class="discursive-review-topbar">
+        <button id="btnInicioCorrecaoDiscursiva" class="secondary discursive-review-home-action" type="button">
+          ← Tela inicial
+        </button>
+
+        <nav class="discursive-review-steps" aria-label="Etapas da sessão">
+          <span>Resolução</span>
+          <span aria-hidden="true">›</span>
+          <strong aria-current="step">Correção discursiva</strong>
+          <span aria-hidden="true">›</span>
+          <span>Desempenho</span>
+          <span aria-hidden="true">›</span>
+          <span>Resultado</span>
+        </nav>
+
+        <div class="screen-preferences-actions discursive-review-preferences" aria-label="Preferências visuais">
+          <button
+            class="secondary motion-settings-button"
+            type="button"
+            data-motion-settings-open
+            aria-haspopup="dialog"
+            aria-controls="modalEfeitosVisuais"
+          >
+            <span aria-hidden="true">✨</span>
+            <span class="motion-settings-button__label" data-motion-settings-label>Efeitos: Sistema</span>
+          </button>
+          <button class="secondary" type="button" data-theme-toggle>
+            <span aria-hidden="true">◐</span>
+            <span>Tema</span>
+          </button>
+        </div>
+      </header>
+
+      <div class="discursive-review-layout">
+        <main class="discursive-review-main">
+          <header class="discursive-review-intro">
+            <div class="discursive-review-intro__title">
+              <span class="discursive-review-intro__icon" aria-hidden="true">✎</span>
+              <div>
+                <h1 id="tituloCorrecaoDiscursiva" tabindex="-1">Correção das respostas discursivas</h1>
+                <p>Compare suas respostas com o modelo e registre o veredito final.</p>
+              </div>
+            </div>
+            <div class="discursive-review-session-info">
+              <span>Lista: <strong id="nomeListaCorrecaoDiscursiva">Lista sem nome</strong></span>
+              <span>Modo de gabarito: <strong id="modoCorrecaoDiscursiva">Somente no resultado final</strong></span>
+            </div>
+          </header>
+
+          <section class="discursive-review-question-heading" aria-labelledby="tituloQuestaoCorrecaoDiscursiva">
+            <h2 id="tituloQuestaoCorrecaoDiscursiva">Questão discursiva 1 de 1</h2>
+            <span id="assuntoCorrecaoDiscursiva">Sem assunto</span>
+          </section>
+
+          <div class="discursive-review-content">
+            <section class="discursive-review-block discursive-review-block--statement">
+              <h3><span aria-hidden="true">⌗</span> Enunciado</h3>
+              <p id="enunciadoCorrecaoDiscursiva"></p>
+            </section>
+
+            <section class="discursive-review-block">
+              <h3><span aria-hidden="true">♙</span> Sua resposta</h3>
+              <div id="respostaUsuarioCorrecaoDiscursiva" class="discursive-review-text"></div>
+            </section>
+
+            <section class="discursive-review-block">
+              <div class="discursive-review-block__heading">
+                <h3><span aria-hidden="true">◉</span> Metacognição inicial</h3>
+                <strong id="nivelMetacognicaoInicialCorrecao" class="discursive-review-initial-badge">Não registrada</strong>
+              </div>
+              <div id="metacognicaoInicialCorrecaoDiscursiva" class="discursive-review-text"></div>
+            </section>
+
+            <section class="discursive-review-block">
+              <h3><span aria-hidden="true">▣</span> Resposta esperada (modelo)</h3>
+              <div id="respostaEsperadaCorrecaoDiscursiva" class="discursive-review-text"></div>
+            </section>
+
+            <section class="discursive-review-block">
+              <h3><span aria-hidden="true">▤</span> Critérios de correção</h3>
+              <div id="criteriosCorrecaoDiscursiva" class="discursive-review-text"></div>
+            </section>
+
+            <section class="discursive-review-block discursive-review-block--verdict">
+              <header>
+                <h3><span aria-hidden="true">⚖</span> Veredito final</h3>
+                <p>Após comparar sua resposta com o modelo e os critérios, qual é o veredito final?</p>
+              </header>
+
+              <div id="opcoesVereditoCorrecaoDiscursiva" class="discursive-review-verdict-options" role="radiogroup" aria-label="Veredito final"></div>
+
+              <label class="discursive-review-observation" for="observacaoVereditoCorrecaoDiscursiva">
+                <span>Observação após a correção <small>(opcional)</small></span>
+                <textarea
+                  id="observacaoVereditoCorrecaoDiscursiva"
+                  rows="3"
+                  placeholder="Registre algo que você percebeu ao comparar sua resposta com o modelo..."
+                ></textarea>
+              </label>
+            </section>
+          </div>
+
+          <footer class="discursive-review-actionbar" aria-label="Navegação da correção discursiva">
+            <button id="btnAnteriorCorrecaoDiscursiva" class="secondary" type="button">← Voltar</button>
+            <button id="btnSalvarAvancarCorrecaoDiscursiva" class="primary" type="button">Salvar e avançar →</button>
+            <button id="btnConcluirCorrecaoDiscursiva" class="secondary" type="button" disabled>✓ Concluir correção</button>
+          </footer>
+        </main>
+
+        <aside class="discursive-review-sidebar" aria-label="Progresso e validações da correção">
+          <section class="discursive-review-side-panel">
+            <h2>⌁ Progresso da correção</h2>
+            <div class="discursive-review-progress-copy">
+              <strong id="resumoProgressoCorrecaoDiscursiva">0 de 0 corrigidas</strong>
+              <span id="percentualCorrecaoDiscursiva">0%</span>
+            </div>
+            <div class="discursive-review-progress-track" role="progressbar" aria-label="Progresso da correção discursiva" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+              <div id="barraCorrecaoDiscursiva" class="discursive-review-progress-value"></div>
+            </div>
+            <ol id="listaProgressoCorrecaoDiscursiva" class="discursive-review-question-list"></ol>
+          </section>
+
+          <section class="discursive-review-side-panel">
+            <h2>♢ Validações</h2>
+            <ul id="validacoesCorrecaoDiscursiva" class="discursive-review-validation-list"></ul>
+          </section>
+
+          <section class="discursive-review-side-panel">
+            <h2>☷ Resumo da correção</h2>
+            <dl class="discursive-review-summary">
+              <div><dt>Completas (100%)</dt><dd id="totalCorrecaoCompleta">0</dd></div>
+              <div><dt>Parciais (50%)</dt><dd id="totalCorrecaoParcial">0</dd></div>
+              <div><dt>Incorretas (0%)</dt><dd id="totalCorrecaoIncorreta">0</dd></div>
+              <div><dt>Pendentes</dt><dd id="totalCorrecaoPendente">0</dd></div>
+              <div class="discursive-review-summary__total"><dt>Total de discursivas</dt><dd id="totalCorrecaoDiscursivas">0</dd></div>
+            </dl>
+          </section>
+
+          <p class="discursive-review-notice">
+            <span aria-hidden="true">ⓘ</span>
+            Todas as respostas discursivas precisam de um veredito final antes do desempenho geral.
+          </p>
+        </aside>
       </div>
     </section>
 

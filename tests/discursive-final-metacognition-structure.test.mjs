@@ -13,7 +13,7 @@ assert.match(feedback, /requiresQuestionConfirmation/);
 assert.match(feedback, /question\.categoria === "discursiva"/);
 assert.match(controller, /confirmada && !correcaoImediata/);
 assert.match(controller, /buildMetacognitionMarkup/);
-assert.match(index, /discursivas são confirmadas antes da autoavaliação/);
+assert.match(index, /discursivas registram a percepção inicial antes da correção guiada/);
 assert.match(resultsCss, /--review-card-outline/);
 assert.match(resultsCss, /result-discursive-detail--metacognition/);
 assert.match(resolutionCss, /resolution-confirmation-note/);

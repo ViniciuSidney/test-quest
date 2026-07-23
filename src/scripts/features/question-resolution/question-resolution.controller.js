@@ -1,5 +1,5 @@
 import { getAlternativeDisplayLetter, getCorrectAlternativeId, getObjectiveAlternatives, isTrueFalseQuestion, resolveObjectiveAnswerId } from "../../core/objective-question.js";
-import { createInitialState } from "../../core/state.js";
+import { createInitialState, SESSION_STATUS } from "../../core/state.js";
 import { createScreenManager } from "../../core/screens.js";
 import { calculateHistoryMetrics, readHistory, recordCompletedSessionSafe } from "../home/home.service.js";
 import { parseQuestions, QuestionImportError, summarizeQuestions } from "../question-import/question-import.parser.js";
@@ -19,11 +19,22 @@ import { calculateSessionResult as calcularResultado, calculateSessionTotalTime 
 import { buildQuestionMapLabel, buildTrueFalseOptionsMarkup, getMarkerInfo, getNextMarkerState, getQuestionTypeLabel, isQuestionAnswered, MARKER_STATES, normalizeMarkerState } from "./question-resolution.helpers.js";
 import { buildImmediateFeedbackMarkup, canConfirmQuestion, confirmQuestion, isImmediateCorrectionEnabled, isQuestionConfirmed, requiresQuestionConfirmation } from "./immediate-feedback.service.js";
 import {
+  getDiscursiveReviewProgress,
+  shouldOpenDiscursiveReview,
+  startDiscursiveReview
+} from "../discursive-review/discursive-review.service.js";
+import { createDiscursiveReviewController } from "../discursive-review/discursive-review.controller.js";
+import {
+  buildFinalVerdictMarkup,
   buildMetacognitionMarkup,
-  getMetacognitionAssessment,
-  hasMetacognitionAssessment,
-  setMetacognitionLevel,
-  setMetacognitionObservation
+  getFinalVerdict,
+  getInitialMetacognition,
+  hasFinalVerdict,
+  hasInitialMetacognition,
+  setFinalVerdictLevel,
+  setFinalVerdictObservation,
+  setInitialMetacognitionLevel,
+  setInitialMetacognitionObservation
 } from "./metacognition.service.js";
 
 export function initQuestionResolution() {
@@ -53,6 +64,7 @@ export function initQuestionResolution() {
     home: "#telaInicial",
     importacao: "#telaImportacao",
     resolucao: "#telaResolucao",
+    correcaoDiscursiva: "#telaCorrecaoDiscursiva",
     resultado: "#telaResultado"
   });
 
@@ -101,6 +113,20 @@ export function initQuestionResolution() {
   const visualEffectsController = createVisualEffectsController({
     onPersistenceError: reportSettingsPersistenceError
   });
+  const discursiveReviewController = createDiscursiveReviewController({
+    documentRef: document,
+    getState: () => estado,
+    setState: (nextState) => { estado = nextState; },
+    saveImmediate: salvarEstadoImediato,
+    saveDebounced: salvarEstadoDebounced,
+    showScreen: () => trocarTela("correcaoDiscursiva"),
+    onFinish: concluirSessaoEExibirResultado,
+    onHome: () => {
+      trocarTela("home");
+      atualizarHome();
+    },
+    escapeHtml
+  });
 
   inicializar();
 
@@ -109,6 +135,7 @@ export function initQuestionResolution() {
     const persistenceReport = loadSession();
     themeController.init();
     visualEffectsController.init();
+    discursiveReviewController.init();
     configurarEventos();
     sincronizarAcoesResultadoResponsivas();
     sincronizarFiltrosResultadoResponsivos();
@@ -496,9 +523,15 @@ export function initQuestionResolution() {
     estado = restoreActiveSession(salva);
     timerRodando = !Boolean(estado.temporizadorPausado);
     atualizarBotaoCronometro();
-    trocarTela("resolucao");
-    renderizarQuestao();
-    iniciarCronometro();
+
+    if (estado.status === SESSION_STATUS.REVIEWING) {
+      discursiveReviewController.open({ focusTitle: true });
+    } else {
+      trocarTela("resolucao");
+      renderizarQuestao();
+      iniciarCronometro();
+    }
+
     atualizarResumoTopo();
   }
   async function apagarSessaoSalva() {
@@ -663,9 +696,12 @@ export function initQuestionResolution() {
 
     const ultimaQuestao = estado.atual === total - 1;
     const exigeConfirmacao = requiresQuestionConfirmation(estado, questao) && !confirmada;
-    const exigeMetacognicao = confirmada && questao.categoria === "discursiva" &&
-      !hasMetacognitionAssessment(estado, questao.id);
-    const etapaPendente = exigeConfirmacao || exigeMetacognicao;
+    const exigeMetacognicaoInicial = confirmada && questao.categoria === "discursiva" &&
+      !hasInitialMetacognition(estado, questao.id);
+    const exigeVereditoImediato = confirmada && questao.categoria === "discursiva" &&
+      correcaoImediata && hasInitialMetacognition(estado, questao.id) &&
+      !hasFinalVerdict(estado, questao.id);
+    const etapaPendente = exigeConfirmacao || exigeMetacognicaoInicial || exigeVereditoImediato;
     $("#btnAnterior").disabled = estado.atual === 0;
     $("#btnConfirmarResposta")?.classList.toggle("hidden", !exigeConfirmacao);
     $("#btnConfirmarResposta").disabled = exigeConfirmacao && !canConfirmQuestion(estado, questao);
@@ -805,16 +841,19 @@ export function initQuestionResolution() {
     const respostaAtual = estado.respostas[questao.id] || "";
     const confirmada = isQuestionConfirmed(estado, questao.id);
     const correcaoImediata = isImmediateCorrectionEnabled(estado);
-    const avaliacao = getMetacognitionAssessment(estado, questao.id);
+    const metacognicaoInicial = getInitialMetacognition(estado, questao.id);
+    const vereditoFinal = getFinalVerdict(estado, questao.id);
+    const metacognicaoRegistrada = hasInitialMetacognition(estado, questao.id);
 
     $("#areaResposta").innerHTML = `
       <label class="resolution-discursive-field" for="respostaDiscursiva">
         <span>Sua resposta</span>
         <textarea class="resolution-discursive-textarea" id="respostaDiscursiva" placeholder="Responda aqui..." spellcheck="true" ${confirmada ? "readonly" : ""}>${escapeHtml(respostaAtual)}</textarea>
       </label>
-      ${confirmada && correcaoImediata ? buildImmediateFeedbackMarkup({ question: questao, answer: respostaAtual, escapeHtml }) : ""}
-      ${confirmada && !correcaoImediata ? `<p class="resolution-confirmation-note" role="status">Resposta confirmada. O modelo e os critérios de correção serão exibidos no Resultado Final.</p>` : ""}
-      ${confirmada ? buildMetacognitionMarkup({ assessment: avaliacao, referenceVisible: correcaoImediata, escapeHtml }) : ""}
+      ${confirmada && !correcaoImediata ? `<p class="resolution-confirmation-note" role="status">Resposta confirmada. Registre sua percepção inicial; o modelo será apresentado na etapa de Correção Discursiva.</p>` : ""}
+      ${confirmada ? buildMetacognitionMarkup({ assessment: metacognicaoInicial, referenceVisible: false, escapeHtml }) : ""}
+      ${confirmada && correcaoImediata && metacognicaoRegistrada ? buildImmediateFeedbackMarkup({ question: questao, answer: respostaAtual, escapeHtml }) : ""}
+      ${confirmada && correcaoImediata && metacognicaoRegistrada ? buildFinalVerdictMarkup({ verdict: vereditoFinal, escapeHtml }) : ""}
     `;
     $("#respostaDiscursiva").addEventListener("input", (evento) => {
       if (confirmada) return;
@@ -828,14 +867,14 @@ export function initQuestionResolution() {
     });
 
     if (confirmada) {
-      vincularMetacognicaoDiscursiva(questao);
+      vincularAvaliacaoDiscursivaNaResolucao(questao);
     }
   }
 
-  function vincularMetacognicaoDiscursiva(questao) {
+  function vincularAvaliacaoDiscursivaNaResolucao(questao) {
     document.querySelectorAll("[data-metacognition-level]").forEach((button) => {
       button.addEventListener("click", () => {
-        estado = setMetacognitionLevel(
+        estado = setInitialMetacognitionLevel(
           estado,
           questao.id,
           button.dataset.metacognitionLevel
@@ -843,17 +882,42 @@ export function initQuestionResolution() {
         salvarEstadoImediato();
         renderizarQuestao({ registrarTempo: false });
         requestAnimationFrame(() => {
+          const focusSelector = isImmediateCorrectionEnabled(estado)
+            ? ".resolution-feedback"
+            : `[data-metacognition-level="${button.dataset.metacognitionLevel}"]`;
+          document.querySelector(focusSelector)?.focus({ preventScroll: false });
+        });
+      });
+    });
+
+    $("#observacaoMetacognicao")?.addEventListener("input", (evento) => {
+      estado = setInitialMetacognitionObservation(
+        estado,
+        questao.id,
+        evento.target.value
+      );
+      salvarEstadoDebounced();
+    });
+
+    document.querySelectorAll("[data-final-verdict-level]").forEach((button) => {
+      button.addEventListener("click", () => {
+        estado = setFinalVerdictLevel(
+          estado,
+          questao.id,
+          button.dataset.finalVerdictLevel
+        );
+        salvarEstadoImediato();
+        renderizarQuestao({ registrarTempo: false });
+        requestAnimationFrame(() => {
           document.querySelector(
-            `[data-metacognition-level="${button.dataset.metacognitionLevel}"]`
+            `[data-final-verdict-level="${button.dataset.finalVerdictLevel}"]`
           )?.focus();
         });
       });
     });
 
-    const observation = $("#observacaoMetacognicao");
-
-    observation?.addEventListener("input", (evento) => {
-      estado = setMetacognitionObservation(
+    $("#observacaoVereditoFinal")?.addEventListener("input", (evento) => {
+      estado = setFinalVerdictObservation(
         estado,
         questao.id,
         evento.target.value
@@ -915,7 +979,9 @@ export function initQuestionResolution() {
     salvarEstadoImediato();
     renderizarQuestao({ registrarTempo: false });
     requestAnimationFrame(() => {
-      const target = isImmediateCorrectionEnabled(estado) ? $(".resolution-feedback") : $(".resolution-metacognition__choice");
+      const target = questao.categoria === "discursiva"
+        ? $(".resolution-metacognition__choice")
+        : $(".resolution-feedback");
       target?.focus({ preventScroll: false });
     });
   }
@@ -998,7 +1064,7 @@ export function initQuestionResolution() {
     ).length;
     const discursivasSemMetacognicao = estado.questoes.filter((questao) =>
       questao.categoria === "discursiva" && isQuestionConfirmed(estado, questao.id) &&
-      !hasMetacognitionAssessment(estado, questao.id)
+      !hasInitialMetacognition(estado, questao.id)
     ).length;
     const confirmado = await solicitarConfirmacao(
       getFinishSessionConfirmation(r, marcadas, naoConfirmadas, discursivasSemMetacognicao)
@@ -1008,8 +1074,35 @@ export function initQuestionResolution() {
       return;
     }
 
-    estado = finishSession(estado);
+    if (isImmediateCorrectionEnabled(estado)) {
+      const pendenteImediata = estado.questoes.find((questao) =>
+        questao.categoria === "discursiva" &&
+        isQuestionConfirmed(estado, questao.id) &&
+        hasInitialMetacognition(estado, questao.id) &&
+        !hasFinalVerdict(estado, questao.id)
+      );
 
+      if (pendenteImediata) {
+        const indice = estado.questoes.findIndex((questao) => questao.id === pendenteImediata.id);
+        irParaQuestao(indice, { focarTitulo: true });
+        return;
+      }
+    }
+
+    if (shouldOpenDiscursiveReview(estado)) {
+      estado = startDiscursiveReview(estado);
+      salvarEstadoImediato();
+      pararCronometro();
+      discursiveReviewController.open({ focusTitle: true });
+      atualizarHome();
+      return;
+    }
+
+    concluirSessaoEExibirResultado();
+  }
+
+  function concluirSessaoEExibirResultado() {
+    estado = finishSession(estado);
     const resultadoFinal = calcularResultado(estado);
 
     salvarEstadoImediato();
@@ -1302,7 +1395,7 @@ export function initQuestionResolution() {
     const textoAvisoDiscursivas = $("#textoAvisoResultadoDiscursivas");
     if (textoAvisoDiscursivas && resultado.discursivas > 0) {
       textoAvisoDiscursivas.textContent = resultado.discursivasAvaliadas > 0
-        ? `${resultado.discursivasAvaliadas}/${resultado.discursivas} discursivas contribuíram para o desempenho geral por autoavaliação.`
+        ? `${resultado.discursivasAvaliadas}/${resultado.discursivas} discursivas contribuíram para o desempenho geral pelo veredito final.`
         : "As questões discursivas não avaliadas não entram no desempenho geral.";
     }
 
@@ -1316,7 +1409,7 @@ export function initQuestionResolution() {
       notes: estado.anotacoes,
       timesMs: estado.temposMs,
       review: estado.revisao,
-      metacognition: estado.metacognicao,
+      discursiveAssessments: estado.avaliacoesDiscursivas,
       showAnswerKey: estado.opcoes.mostrarGabaritoFinal
     });
 
@@ -1500,7 +1593,7 @@ export function initQuestionResolution() {
       questions: estado.questoes,
       answers: estado.respostas,
       timesMs: estado.temposMs,
-      metacognition: estado.metacognicao
+      discursiveAssessments: estado.avaliacoesDiscursivas
     });
 
     if (assuntos.length === 0) {
@@ -1523,7 +1616,7 @@ export function initQuestionResolution() {
         partesAvaliadas.push(`${item.correct}/${item.objectives} objetivas`);
       }
       if (item.discursivesEvaluated > 0) {
-        partesAvaliadas.push(`${item.discursivesEvaluated} discursiva${item.discursivesEvaluated === 1 ? "" : "s"} autoavaliada${item.discursivesEvaluated === 1 ? "" : "s"}`);
+        partesAvaliadas.push(`${item.discursivesEvaluated} discursiva${item.discursivesEvaluated === 1 ? "" : "s"} com veredito final`);
       }
 
       const meta = `${partesAvaliadas.length ? partesAvaliadas.join(" • ") : "Sem questões avaliadas"} • ${formatarTempo(item.timeMs)}`;
@@ -1666,7 +1759,7 @@ export function initQuestionResolution() {
     const reviewText = item.markedForReview ? " • ★ Marcada para revisão" : "";
     const typeClass = item.isTrueFalse ? " is-true-false" : "";
     const metacognitionAttribute = item.category === "discursiva"
-      ? ` data-metacognition-level="${escapeHtml(item.metacognitionLevel || "pendente")}"` : "";
+      ? ` data-metacognition-level="${escapeHtml(item.finalVerdictLevel || "pendente")}"` : "";
     return `
       <article
         class="result-review-card${markedClass}${expandedClass}${typeClass}"
@@ -1719,13 +1812,13 @@ export function initQuestionResolution() {
       const metacognitionPresentation = {
         completa: { icon: "✓", spokenLabel: "resposta completa" }, parcial: { icon: "◐", spokenLabel: "resposta parcial" },
         incorreta: { icon: "✕", spokenLabel: "resposta incorreta" }
-      }[item.metacognitionLevel];
-      if (metacognitionPresentation && item.metacognitionLabel) {
+      }[item.finalVerdictLevel];
+      if (metacognitionPresentation && item.finalVerdictLabel) {
         return {
           statusAttribute: "discursive",
           icon: metacognitionPresentation.icon,
-          label: `${item.metacognitionLabel} (${item.metacognitionPercentage}%)`,
-          spokenLabel: `${metacognitionPresentation.spokenLabel}, ${item.metacognitionPercentage} por cento`
+          label: `${item.finalVerdictLabel} (${item.finalVerdictPercentage}%)`,
+          spokenLabel: `${metacognitionPresentation.spokenLabel}, ${item.finalVerdictPercentage} por cento`
         };
       }
       return {
@@ -1918,11 +2011,19 @@ export function initQuestionResolution() {
         ${criteria}
 
         ${renderizarBlocoDetalheResultado({
-          title: "Metacognição",
+          title: "Metacognição inicial",
           modifier: "result-detail-block--metacognition result-discursive-detail--metacognition",
-          content: item.metacognitionLabel
-            ? `<div class="result-metacognition-summary"><strong>${escapeHtml(item.metacognitionLabel)} (${item.metacognitionPercentage}%)</strong><p>${escapeHtml(item.metacognitionObservation || "Nenhuma observação registrada.")}</p></div>`
-            : `<p>Esta questão não recebeu autoavaliação.</p>`
+          content: item.initialMetacognitionLabel
+            ? `<div class="result-metacognition-summary"><strong>${escapeHtml(item.initialMetacognitionLabel)} (${item.initialMetacognitionPercentage}%)</strong><p>${escapeHtml(item.initialMetacognitionObservation || "Nenhuma observação inicial registrada.")}</p></div>`
+            : `<p>Esta questão não recebeu percepção inicial.</p>`
+        })}
+
+        ${renderizarBlocoDetalheResultado({
+          title: "Veredito final",
+          modifier: "result-detail-block--metacognition result-discursive-detail--verdict",
+          content: item.finalVerdictLabel
+            ? `<div class="result-metacognition-summary"><strong>${escapeHtml(item.finalVerdictLabel)} (${item.finalVerdictPercentage}%)</strong><p>${escapeHtml(item.finalVerdictObservation || "Nenhuma observação após a correção.")}</p></div>`
+            : `<p>Esta questão ainda não possui veredito final.</p>`
         })}
 
         ${renderizarBlocoDetalheResultado({
@@ -2087,21 +2188,32 @@ export function initQuestionResolution() {
 
     if (sessaoAtiva?.questoes?.length) {
       const resultado = calcularResultado(sessaoAtiva);
-      const progresso = resultado.total
-        ? Math.round((resultado.respondidas / resultado.total) * 100)
-        : 0;
+      const revisandoDiscursivas = sessaoAtiva.status === SESSION_STATUS.REVIEWING;
+      const progressoCorrecao = revisandoDiscursivas
+        ? getDiscursiveReviewProgress(sessaoAtiva)
+        : null;
+      const progresso = revisandoDiscursivas
+        ? progressoCorrecao.percentage
+        : resultado.total
+          ? Math.round((resultado.respondidas / resultado.total) * 100)
+          : 0;
 
       blocoSessao?.classList.remove("hidden");
       $("#nomeSessaoAtual").textContent = sessaoAtiva.listaNome || "Lista sem nome";
       $("#nomeSessaoAtual").title = sessaoAtiva.listaNome || "Lista sem nome";
-      $("#resumoSessaoAtual").textContent =
-        `${resultado.respondidas}/${resultado.total} respondidas • ${formatarTempo(resultado.tempoTotal)}`;
+      $("#btnContinuarSessao").textContent = revisandoDiscursivas
+        ? "Continuar correção"
+        : "Continuar resolução";
+      $("#resumoSessaoAtual").textContent = revisandoDiscursivas
+        ? `${progressoCorrecao.evaluated}/${progressoCorrecao.total} discursivas corrigidas • ${formatarTempo(resultado.tempoTotal)}`
+        : `${resultado.respondidas}/${resultado.total} respondidas • ${formatarTempo(resultado.tempoTotal)}`;
       $("#barraProgressoSessao").style.width = `${progresso}%`;
       $("#progressoSessaoAtual").setAttribute("aria-valuenow", String(progresso));
 
       botaoNovaResolucao?.classList.remove("primary");
       botaoNovaResolucao?.classList.add("secondary");
     } else {
+      $("#btnContinuarSessao").textContent = "Continuar resolução";
       blocoSessao?.classList.add("hidden");
       $("#barraProgressoSessao").style.width = "0%";
       $("#progressoSessaoAtual").setAttribute("aria-valuenow", "0");

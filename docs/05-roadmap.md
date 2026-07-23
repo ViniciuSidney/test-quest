@@ -170,7 +170,7 @@ Reduzir a concentração de responsabilidades, proteger os dados locais e prepar
 
 ## v0.5-dev — Flexibilidade de resolução e estudo ativo
 
-**Status:** Em desenvolvimento — Etapas 1 a 6 concluídas
+**Status:** Em desenvolvimento — Etapas 1 a 6 e 6.1 implementadas
 
 ### Objetivo
 
@@ -248,9 +248,21 @@ Ampliar as formas de responder, corrigir e revisar questões sem perder compatib
 - controlador e serviço próprios para evitar nova concentração no controlador principal;
 - suíte automatizada ampliada para 39 arquivos.
 
+### Etapa 6.1 — Correção discursiva guiada — implementada
+
+- Metacognição inicial separada do Veredito Final;
+- nova tela Wizard entre Resolução e Desempenho no modo de gabarito ao final;
+- comparação entre resposta do usuário, percepção inicial, modelo e critérios;
+- progresso, validações, resumo e navegação por discursiva;
+- pontuação oficial baseada somente no Veredito Final;
+- retomada da correção pela Tela Inicial;
+- migração segura para `schemaVersion: 7`;
+- integração com Resultado Final, histórico, exportações e revisão de erros;
+- suíte automatizada ampliada para 41 arquivos.
+
 ### Etapa seguinte
 
-7. integração, regressão e fechamento da v0.5.0.
+7. integração, regressão manual e fechamento da v0.5.0.
 
 ---
 

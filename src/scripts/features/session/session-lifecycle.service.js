@@ -75,14 +75,17 @@ export function restoreActiveSession(savedState) {
   return ensureSessionIdentity({
     ...base,
     ...savedState,
-    status: SESSION_STATUS.ACTIVE,
+    status: savedState.status === SESSION_STATUS.REVIEWING
+      ? SESSION_STATUS.REVIEWING
+      : SESSION_STATUS.ACTIVE,
     respostas: savedState.respostas || {},
     anotacoes: savedState.anotacoes || {},
     temposMs: savedState.temposMs || {},
     revisao: savedState.revisao || {},
     marcacoesAlternativas: savedState.marcacoesAlternativas || {},
     confirmacoes: savedState.confirmacoes || {},
-    metacognicao: savedState.metacognicao || {},
+    avaliacoesDiscursivas: savedState.avaliacoesDiscursivas || {},
+    correcaoDiscursiva: savedState.correcaoDiscursiva || base.correcaoDiscursiva,
     opcoes: {
       ...base.opcoes,
       ...(savedState.opcoes || {})

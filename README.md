@@ -25,9 +25,9 @@ A proposta não é apenas registrar acertos, mas ajudar o usuário a:
 
 **Versão estável:** `v0.4.0`  
 **Versão em desenvolvimento:** `v0.5-dev`  
-**Estado:** `Etapa 6 — controle de efeitos visuais implementado`
+**Estado:** `Etapa 6.1 — correção discursiva guiada implementada`
 
-**Fase atual:** novos modos de resolução e revisão concluídos, incluindo correção imediata, metacognição, revisão de erros e preferência manual de efeitos visuais.
+**Fase atual:** correção discursiva guiada integrada; próxima fase é regressão e fechamento da v0.5.0.
 
 ### Concluído
 
@@ -42,7 +42,7 @@ A proposta não é apenas registrar acertos, mas ajudar o usuário a:
 - repositório Git inicializado;
 - repositório remoto publicado no GitHub;
 - branches `main` e `feature/v0.5` organizadas;
-- layouts das cinco telas principais aprovados;
+- layouts das telas principais aprovados, incluindo o Wizard de Correção Discursiva;
 - manuais estruturais concluídos;
 - Tela Inicial oficial implementada;
 - Tela de Importação e Validação oficial implementada;
@@ -52,7 +52,7 @@ A proposta não é apenas registrar acertos, mas ajudar o usuário a:
 - estados inicial, pendente, validando, válido e inválido;
 - contadores definitivos de questões e assuntos;
 - parser de importação separado em módulo próprio;
-- navegação centralizada entre as cinco telas;
+- navegação centralizada entre as telas da aplicação;
 - sessão em andamento movida para a Tela Inicial;
 - indicadores históricos de sessões concluídas;
 - temporizador interrompido ao sair da Resolução;
@@ -90,7 +90,7 @@ A v0.4.0 conclui o ciclo de consolidação técnica. A suíte automatizada foi a
 - bloqueio do início enquanto a lista não estiver validada;
 - suporte a questões objetivas e discursivas curtas;
 - correção automática das objetivas;
-- exibição de resposta esperada e critérios das discursivas;
+- exibição de resposta esperada, critérios e correção discursiva guiada;
 - temporizador individual por questão;
 - tempo total e tempo médio;
 - anotações associadas a cada questão;
@@ -168,10 +168,10 @@ A v0.4.0 conclui o ciclo de consolidação técnica. A suíte automatizada foi a
 - respostas confirmadas ficam bloqueadas após a correção;
 - objetivas e V/F exibem acerto, erro, resposta correta e explicação;
 - discursivas exibem resposta esperada, critérios e Metacognição em 100%, 50% ou 0%;
-- confirmações e autoavaliações são preservadas ao recarregar e continuar a sessão;
+- confirmações, Metacognição inicial e Vereditos Finais são preservados ao recarregar e continuar a sessão;
 - sessões antigas migram para o modo de correção final;
-- desempenho geral combina objetivas e discursivas avaliadas;
-- esquema da sessão atualizado para `schemaVersion: 6`;
+- desempenho geral combina objetivas e discursivas pelo Veredito Final;
+- esquema da sessão atualizado para `schemaVersion: 7`;
 - suíte automatizada ampliada para 34 arquivos.
 
 **Etapa 5 — refazer questões erradas concluída:**
@@ -194,9 +194,19 @@ A v0.4.0 conclui o ciclo de consolidação técnica. A suíte automatizada foi a
 - implementação separada em controlador, serviço e estilos próprios;
 - suíte automatizada ampliada para 39 arquivos.
 
+**Etapa 6.1 — correção discursiva guiada implementada:**
+
+- Metacognição inicial separada da pontuação oficial;
+- tela Wizard no modo de gabarito ao final;
+- Veredito Final em 100%, 50% ou 0%;
+- progresso, validações, resumo e retomada da correção;
+- desempenho, histórico, exportações e revisão de erros baseados no Veredito Final;
+- migração para `schemaVersion: 7`;
+- suíte automatizada ampliada para 41 arquivos.
+
 **Próxima entrega planejada:**
 
-- integração, regressão e fechamento da v0.5.0.
+- integração, regressão manual e fechamento da v0.5.0.
 
 ## Fluxo oficial
 
@@ -209,7 +219,11 @@ Importação e Validação
 └── Começar → Resolução
 
 Resolução
-└── Finalizar → Tela de Desempenho
+├── Finalizar sem discursivas pendentes → Tela de Desempenho
+└── Finalizar com discursivas pendentes → Correção Discursiva
+
+Correção Discursiva
+└── Concluir correção → Tela de Desempenho
 
 Tela de Desempenho
 └── Continuar → Resultado Final

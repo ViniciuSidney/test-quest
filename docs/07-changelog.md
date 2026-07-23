@@ -15,6 +15,33 @@ Todas as mudanças importantes do Test Quest serão registradas neste arquivo.
 
 ## [Não lançado]
 
+### v0.5-dev — Correção discursiva guiada
+
+#### Adicionado
+
+- tela Wizard de Correção Discursiva entre Resolução e Desempenho no modo de gabarito ao final;
+- progresso, validações, resumo de avaliações e navegação por resposta discursiva;
+- Veredito Final independente em 100%, 50% ou 0%;
+- observação opcional após comparar a resposta com o modelo;
+- estado persistente `corrigindo_discursivas` e ação `Continuar correção` na Tela Inicial;
+- módulos próprios `discursive-review.controller.js` e `discursive-review.service.js`;
+- testes funcionais e estruturais do novo fluxo.
+
+#### Alterado
+
+- Metacognição passa a representar somente a percepção inicial do usuário;
+- desempenho, resultado, histórico, exportações e revisão de erros passam a usar somente o Veredito Final;
+- esquema da sessão passa a `schemaVersion: 7`;
+- avaliações antigas são migradas para preservar a pontuação histórica;
+- fluxo oficial passa a incluir Correção Discursiva antes do Desempenho quando houver vereditos pendentes;
+- suíte automatizada ampliada para 41 arquivos.
+
+#### Preservado
+
+- modo de gabarito imediato com correção dentro da própria Resolução;
+- respostas e observações já salvas;
+- sessões sem questões discursivas seguindo diretamente para o Desempenho.
+
 ### v0.5-dev — Refazer questões erradas
 
 #### Adicionado
@@ -485,3 +512,15 @@ Todas as mudanças importantes do Test Quest serão registradas neste arquivo.
 - tema claro e escuro;
 - estados, cores e mensagens semânticas;
 - sessões, histórico, exportações e migrações existentes.
+
+## [v0.5-dev] — Refinamento visual da Correção Discursiva
+
+### Alterado
+
+- a tela de Correção Discursiva passou a ocupar nativamente toda a área útil do Test Quest;
+- o cabeçalho legado é ocultado durante o Wizard, eliminando duplicações de identidade e preferências;
+- removido o limite interno de largura que comprimía a interface em monitores amplos e zoom reduzido;
+- conteúdo principal e painel lateral ganharam rolagens internas no desktop;
+- em tablets e celulares, a tela utiliza rolagem geral e empilhamento responsivo;
+- componentes visuais foram alinhados aos tokens, botões, superfícies e proporções da Resolução;
+- o bloco de Veredito Final recebeu maior destaque e estados semânticos mais claros.

@@ -79,11 +79,18 @@ const answers = {
 const notes = { q2: "Rever este assunto" };
 const timesMs = { q1: 62000, q2: 125000, q3: 185000, q4: 10000, q5: 30000, orphan: 999999 };
 const review = { q2: true, q3: true };
-const metacognition = {
+const discursiveAssessments = {
   q3: {
-    nivel: "parcial",
-    percentual: 50,
-    observacao: "Faltou desenvolver o raciocínio."
+    metacognicaoInicial: {
+      nivel: "completa",
+      percentual: 100,
+      observacao: "Eu achava que estava completa."
+    },
+    vereditoFinal: {
+      nivel: "parcial",
+      percentual: 50,
+      observacao: "Faltou desenvolver o raciocínio."
+    }
   }
 };
 
@@ -98,7 +105,7 @@ const sessionResult = calculateSessionResult({
   respostas: answers,
   temposMs: timesMs,
   revisao: review,
-  metacognicao: metacognition
+  avaliacoesDiscursivas: discursiveAssessments
 });
 assert.deepEqual(sessionResult, {
   total: 5,
@@ -124,7 +131,7 @@ const items = buildQuestionReviewItems({
   notes,
   timesMs,
   review,
-  metacognition,
+  discursiveAssessments,
   showAnswerKey: true
 });
 
@@ -133,9 +140,11 @@ assert.equal(items[0].status, "correct");
 assert.equal(items[1].status, "incorrect");
 assert.equal(items[1].markedForReview, true);
 assert.equal(items[2].expectedAnswer, "Modelo");
-assert.equal(items[2].metacognitionLabel, "Resposta parcial");
-assert.equal(items[2].metacognitionPercentage, 50);
-assert.equal(items[2].metacognitionObservation, "Faltou desenvolver o raciocínio.");
+assert.equal(items[2].initialMetacognitionLabel, "Resposta completa");
+assert.equal(items[2].initialMetacognitionPercentage, 100);
+assert.equal(items[2].finalVerdictLabel, "Resposta parcial");
+assert.equal(items[2].finalVerdictPercentage, 50);
+assert.equal(items[2].finalVerdictObservation, "Faltou desenvolver o raciocínio.");
 assert.equal(items[3].status, "unanswered");
 assert.equal(items[4].isTrueFalse, true);
 assert.equal(items[4].typeLabel, "Verdadeiro ou Falso");
@@ -147,7 +156,7 @@ assert.equal(filterQuestionReviewItems(items, RESULT_FILTERS.REVIEW).length, 2);
 assert.equal(filterQuestionReviewItems(items, RESULT_FILTERS.UNANSWERED).length, 1);
 assert.equal(filterQuestionReviewItems(items, RESULT_FILTERS.ALL).length, 5);
 
-const subjects = buildSubjectResultItems({ questions, answers, timesMs, metacognition });
+const subjects = buildSubjectResultItems({ questions, answers, timesMs, discursiveAssessments });
 const eventos = subjects.find((item) => item.subject === "Eventos");
 const mediana = subjects.find((item) => item.subject === "Mediana");
 

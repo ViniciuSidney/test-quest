@@ -1,6 +1,6 @@
 export const APP_VERSION = "0.5-dev";
 
-export const SESSION_SCHEMA_VERSION = 6;
+export const SESSION_SCHEMA_VERSION = 7;
 export const SETTINGS_SCHEMA_VERSION = 1;
 export const HISTORY_SCHEMA_VERSION = 3;
 

@@ -7,7 +7,7 @@ import {
 } from "./objective-question.js";
 import { createInitialState, SESSION_STATUS } from "./state.js";
 import { normalizeCorrectionMode } from "../features/question-resolution/immediate-feedback.service.js";
-import { normalizeMetacognitionMap } from "../features/question-resolution/metacognition.service.js";
+import { normalizeDiscursiveAssessmentsMap } from "../features/question-resolution/metacognition.service.js";
 
 const VALID_CATEGORIES = new Set(["objetiva", "discursiva"]);
 const VALID_MARKER_STATES = new Set(["neutro", "analise", "eliminada"]);
@@ -63,9 +63,13 @@ export function normalizeSessionState(rawState) {
       questions
     ),
     confirmacoes: normalizeBooleanMap(rawState.confirmacoes, questionIds),
-    metacognicao: normalizeMetacognitionMap(
-      rawState.metacognicao ?? rawState.autoavaliacoes,
+    avaliacoesDiscursivas: normalizeDiscursiveAssessmentsMap(
+      rawState.avaliacoesDiscursivas ?? rawState.metacognicao ?? rawState.autoavaliacoes,
       questions
+    ),
+    correcaoDiscursiva: normalizeDiscursiveReviewState(
+      rawState.correcaoDiscursiva,
+      questionIds
     ),
     temporizadorPausado: Boolean(rawState.temporizadorPausado),
     opcoes: {
@@ -271,6 +275,20 @@ function normalizeBooleanMap(rawMap, allowedIds) {
   );
 }
 
+function normalizeDiscursiveReviewState(rawState, allowedIds) {
+  if (!isPlainObject(rawState)) {
+    return { atualId: null, iniciadaEm: null, concluidaEm: null };
+  }
+
+  const currentId = normalizeText(rawState.atualId);
+
+  return {
+    atualId: allowedIds.has(currentId) ? currentId : null,
+    iniciadaEm: normalizeNullableDate(rawState.iniciadaEm),
+    concluidaEm: normalizeNullableDate(rawState.concluidaEm)
+  };
+}
+
 function normalizeMarkersMap(rawMap, questions) {
   if (!isPlainObject(rawMap)) {
     return {};
@@ -316,6 +334,10 @@ function normalizeStatus(rawStatus, finishedAt) {
 
   if (rawStatus === SESSION_STATUS.PREPARING) {
     return SESSION_STATUS.PREPARING;
+  }
+
+  if (rawStatus === SESSION_STATUS.REVIEWING) {
+    return SESSION_STATUS.REVIEWING;
   }
 
   return SESSION_STATUS.ACTIVE;

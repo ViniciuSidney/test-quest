@@ -35,10 +35,17 @@ session.anotacoes[questions[0].id] = "Revisar conjunções.";
 session.temposMs[questions[0].id] = 65000;
 session.temposMs[questions[1].id] = 95000;
 session.revisao[questions[1].id] = true;
-session.metacognicao[questions[1].id] = {
-  nivel: "parcial",
-  percentual: 50,
-  observacao: "Faltou apresentar um exemplo completo."
+session.avaliacoesDiscursivas[questions[1].id] = {
+  metacognicaoInicial: {
+    nivel: "parcial",
+    percentual: 50,
+    observacao: "Acho que faltou apresentar um exemplo completo."
+  },
+  vereditoFinal: {
+    nivel: "parcial",
+    percentual: 50,
+    observacao: "Faltou apresentar um exemplo completo."
+  }
 };
 session.atual = 1;
 
@@ -90,7 +97,7 @@ assert.match(answers.content, /RELATÓRIO DE RESPOSTAS/);
 assert.match(answers.content, /Questões respondidas: 2\/2/);
 assert.match(answers.content, /Desempenho geral: 75%/);
 assert.match(answers.content, /Marcadas para revisão: 1/);
-assert.match(answers.content, /Metacognição: parcial \(50%\)/);
+assert.match(answers.content, /Metacognição inicial: Resposta parcial \(50%\)/);
 
 const notes = createNotesExport(session, { now: new Date("2026-07-18T13:11:00.000Z") });
 assert.match(notes.content, /ANOTAÇÕES DA RESOLUÇÃO/);
@@ -98,7 +105,7 @@ assert.match(notes.content, /Revisar conjunções\./);
 
 const json = createSessionJsonExport(session);
 const parsedJson = JSON.parse(json.content);
-assert.equal(parsedJson.schemaVersion, 6);
+assert.equal(parsedJson.schemaVersion, 7);
 assert.equal(parsedJson.status, "finalizada");
 assert.equal(parsedJson.id, "full-flow-session");
 

@@ -4,6 +4,7 @@ import {
   isObjectiveAnswerCorrect
 } from "../../core/objective-question.js";
 import { calculateSessionResult } from "../results/results.service.js";
+import { getFinalVerdict, getInitialMetacognition, getMetacognitionLevel } from "../question-resolution/metacognition.service.js";
 import { formatDateTime, formatDuration, slugify } from "../../shared/formatters.js";
 
 export const EXPORT_MIME_TYPES = Object.freeze({
@@ -52,7 +53,7 @@ export function buildAnswersReport(state, { now = new Date() } = {}) {
     `Objetivas: ${result.objetivas}`,
     `Discursivas: ${result.discursivas}`,
     `Acertos nas objetivas: ${result.objetivas > 0 ? `${result.acertos}/${result.objetivas}` : "Não disponível"}`,
-    `Discursivas autoavaliadas: ${result.discursivasAvaliadas}/${result.discursivas}`,
+    `Discursivas com veredito final: ${result.discursivasAvaliadas}/${result.discursivas}`,
     `Desempenho geral: ${result.questoesAvaliadas > 0 ? `${result.percentual}%` : "Não disponível"}`,
     `Tempo total: ${formatDuration(result.tempoTotal)}`,
     `Tempo médio por questão: ${formatDuration(result.tempoMedio)}`,
@@ -93,16 +94,18 @@ export function buildAnswersReport(state, { now = new Date() } = {}) {
       return;
     }
 
-    const metacognition = state?.metacognicao?.[question.id] || {};
-    const performanceLabel = metacognition.nivel
-      ? `${metacognition.nivel} (${metacognition.percentual ?? 0}%)`
-      : "Não avaliada";
+    const initialMetacognition = getInitialMetacognition(state, question.id);
+    const initialLevel = getMetacognitionLevel(initialMetacognition?.nivel);
+    const finalVerdict = getFinalVerdict(state, question.id);
+    const finalLevel = getMetacognitionLevel(finalVerdict?.nivel);
 
     lines.push(`Sua resposta: ${answer || "—"}`);
     lines.push(`Resposta esperada: ${question.respostaEsperada}`);
     lines.push(`Critérios de correção: ${question.criterios}`);
-    lines.push(`Metacognição: ${performanceLabel}`);
-    lines.push(`Observações da metacognição: ${metacognition.observacao || "—"}`);
+    lines.push(`Metacognição inicial: ${initialLevel ? `${initialLevel.label} (${initialLevel.percentage}%)` : "Não registrada"}`);
+    lines.push(`Observação inicial: ${initialMetacognition?.observacao || "—"}`);
+    lines.push(`Veredito final: ${finalLevel ? `${finalLevel.label} (${finalLevel.percentage}%)` : "Não registrado"}`);
+    lines.push(`Observação após a correção: ${finalVerdict?.observacao || "—"}`);
   });
 
   return lines.join("\n");

@@ -8,15 +8,16 @@ Este diretório reúne a documentação oficial do **Test Quest — Now I Know.*
 - repositório Git criado e publicado;
 - branch estável `main` e desenvolvimento atual em `feature/v0.5`;
 - identidade visual oficial definida;
-- cinco telas principais planejadas e aprovadas;
+- telas principais planejadas e aprovadas, incluindo o Wizard de Correção Discursiva;
 - manuais estruturais concluídos;
 - Tela Inicial oficial implementada;
 - Tela de Importação e Validação oficial implementada;
 - Tela de Resolução oficial implementada;
 - Tela de Desempenho oficial implementada;
 - Tela de Resultado Final oficial implementada;
+- Tela de Correção Discursiva guiada implementada;
 - v0.4.0 concluída: persistência versionada, modularização, confiabilidade e preparação de release finalizadas.
-- v0.5-dev em desenvolvimento: alternativas estáveis, embaralhamento, Verdadeiro ou Falso, gabarito imediato, metacognição, revisão de erros e controle de efeitos visuais implementados.
+- v0.5-dev em desenvolvimento: alternativas estáveis, embaralhamento, Verdadeiro ou Falso, gabarito imediato, revisão de erros, efeitos visuais e correção discursiva guiada implementados.
 
 ## Documentos principais
 
@@ -42,6 +43,7 @@ Este diretório reúne a documentação oficial do **Test Quest — Now I Know.*
 | `18-v0.5-correcao-rolagem-resolucao.md` | Correção da rolagem interna e sobreposição na Resolução |
 | `19-v0.5-refazer-questoes-erradas.md` | Regras e fluxo da revisão focada em erros |
 | `20-v0.5-efeitos-visuais.md` | Preferência global de movimento e acessibilidade |
+| `21-v0.5-correcao-discursiva-guiada.md` | Wizard, Veredito Final e migração para o schema 7 |
 
 ## Manuais de telas
 

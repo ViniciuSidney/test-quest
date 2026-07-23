@@ -1,5 +1,5 @@
 import { isObjectiveAnswerCorrect } from "../../core/objective-question.js";
-import { getMetacognitionAssessment, getMetacognitionLevel } from "../question-resolution/metacognition.service.js";
+import { getFinalVerdict, getMetacognitionLevel } from "../question-resolution/metacognition.service.js";
 import { createActiveSession } from "../session/session-lifecycle.service.js";
 
 export const RETRY_WRONG_LIST_SUFFIX = " — Revisão de erros";
@@ -15,7 +15,7 @@ export function isRetryEligibleQuestion(state = {}, question = null) {
   }
 
   if (question.categoria === "discursiva") {
-    const assessment = getMetacognitionAssessment(state, question.id);
+    const assessment = getFinalVerdict(state, question.id);
     return getMetacognitionLevel(assessment?.nivel)?.key === "incorreta";
   }
 
