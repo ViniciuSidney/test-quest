@@ -1225,9 +1225,9 @@ body[data-screen="resolucao"] .legacy-topbar {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .screen--resolution *,
-  .screen--resolution *::before,
-  .screen--resolution *::after {
+  body:not([data-motion="full"]) .screen--resolution *,
+  body:not([data-motion="full"]) .screen--resolution *::before,
+  body:not([data-motion="full"]) .screen--resolution *::after {
     scroll-behavior: auto !important;
     transition-duration: 0.01ms !important;
     animation-duration: 0.01ms !important;

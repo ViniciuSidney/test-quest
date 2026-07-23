@@ -25,9 +25,9 @@ A proposta não é apenas registrar acertos, mas ajudar o usuário a:
 
 **Versão estável:** `v0.4.0`  
 **Versão em desenvolvimento:** `v0.5-dev`  
-**Estado:** `Etapa 5 — refazer questões erradas implementado`
+**Estado:** `Etapa 6 — controle de efeitos visuais implementado`
 
-**Fase atual:** novos modos de resolução e revisão, com alternativas estáveis, embaralhamento, Verdadeiro ou Falso, correção imediata, metacognição e revisão de erros concluídos.
+**Fase atual:** novos modos de resolução e revisão concluídos, incluindo correção imediata, metacognição, revisão de erros e preferência manual de efeitos visuais.
 
 ### Concluído
 
@@ -99,6 +99,7 @@ A v0.4.0 conclui o ciclo de consolidação técnica. A suíte automatizada foi a
 - Tela Inicial com retomada de sessão;
 - indicadores históricos de sessões concluídas;
 - temas claro e escuro;
+- preferência global de efeitos visuais: Sistema, Completos ou Reduzidos;
 - exportação de respostas em `.txt`;
 - exportação de anotações em `.txt`;
 - exportação da sessão em `.json`;
@@ -184,9 +185,17 @@ A v0.4.0 conclui o ciclo de consolidação técnica. A suíte automatizada foi a
 - filtro `Erradas` atualizado para o mesmo critério da revisão;
 - suíte automatizada ampliada para 36 arquivos.
 
-**Próximas entregas planejadas:**
+**Etapa 6 — controle de efeitos visuais concluída:**
 
-- controle manual dos efeitos visuais;
+- modos Sistema, Completos e Reduzidos;
+- preferência persistente e acessível nas telas principais;
+- integração com `prefers-reduced-motion`;
+- contador, aura, fades, transições e rolagem adaptados ao modo escolhido;
+- implementação separada em controlador, serviço e estilos próprios;
+- suíte automatizada ampliada para 39 arquivos.
+
+**Próxima entrega planejada:**
+
 - integração, regressão e fechamento da v0.5.0.
 
 ## Fluxo oficial

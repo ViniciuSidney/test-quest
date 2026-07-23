@@ -7,6 +7,7 @@
 
 @import url("./utilities/scrollbar.css");
 @import url("./utilities/states.css");
+@import url("./utilities/motion.css");
 
 
 @import url("./pages/test-quest.css");
@@ -19,3 +20,4 @@
 @import url("./pages/results.css");
 
 @import url("./components/confirmation-modal.css");
+@import url("./components/visual-effects-modal.css");

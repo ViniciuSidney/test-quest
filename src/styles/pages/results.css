@@ -1102,10 +1102,10 @@ body[data-screen="resultado"] .legacy-topbar {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .result-review-card__toggle,
-  .subject-result-progress__value,
-  .results-actions-toggle__icon,
-  .results-actions__exports {
+  body:not([data-motion="full"]) .result-review-card__toggle,
+  body:not([data-motion="full"]) .subject-result-progress__value,
+  body:not([data-motion="full"]) .results-actions-toggle__icon,
+  body:not([data-motion="full"]) .results-actions__exports {
     transition: none;
   }
 }

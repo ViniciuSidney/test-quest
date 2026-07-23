@@ -469,7 +469,7 @@ body[data-screen="home"] .legacy-topbar {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .session-progress__value {
+  body:not([data-motion="full"]) .session-progress__value {
     transition: none;
   }
 }

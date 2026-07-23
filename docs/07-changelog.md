@@ -462,3 +462,26 @@ Todas as mudanças importantes do Test Quest serão registradas neste arquivo.
 - embaralhamento de questões e alternativas;
 - ordem fixa das questões de Verdadeiro ou Falso;
 - anotações, revisão, temporizadores, resultado e exportações.
+
+## [v0.5-dev] — Etapa 6: controle de efeitos visuais
+
+### Adicionado
+
+- modal global de efeitos visuais com os modos Sistema, Completos e Reduzidos;
+- acesso à preferência nos cabeçalhos das telas Inicial, Importação, Resolução e Resultado Final;
+- serviço para normalizar e resolver a preferência efetiva de movimento;
+- controlador dedicado para persistência, foco, teclado e mudanças do sistema;
+- testes automatizados de comportamento e estrutura da nova preferência.
+
+### Alterado
+
+- Tela de Desempenho passou a respeitar a preferência manual no contador, aura e transições;
+- rolagens suaves e transições globais são desativadas no modo Reduzido;
+- o modo Completo passa a ignorar explicitamente `prefers-reduced-motion`;
+- a suíte automatizada foi ampliada para 39 arquivos.
+
+### Preservado
+
+- tema claro e escuro;
+- estados, cores e mensagens semânticas;
+- sessões, histórico, exportações e migrações existentes.

@@ -660,32 +660,32 @@ body.performance-open {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .performance-backdrop,
-  .performance-card,
-  .performance-copy-block,
-  .performance-action-block,
-  .performance-continue-button,
-  .performance-overlay::before,
-  .performance-overlay::after,
-  .performance-card::before,
-  .performance-score-block,
-  .performance-score-aura,
-  .performance-score-aura::before {
+  body:not([data-motion="full"]) .performance-backdrop,
+  body:not([data-motion="full"]) .performance-card,
+  body:not([data-motion="full"]) .performance-copy-block,
+  body:not([data-motion="full"]) .performance-action-block,
+  body:not([data-motion="full"]) .performance-continue-button,
+  body:not([data-motion="full"]) .performance-overlay::before,
+  body:not([data-motion="full"]) .performance-overlay::after,
+  body:not([data-motion="full"]) .performance-card::before,
+  body:not([data-motion="full"]) .performance-score-block,
+  body:not([data-motion="full"]) .performance-score-aura,
+  body:not([data-motion="full"]) .performance-score-aura::before {
     animation: none !important;
     transition: none !important;
   }
 
-  .performance-overlay.is-visible .performance-backdrop,
-  .performance-overlay.is-visible .performance-card,
-  .performance-overlay.is-visible .performance-copy-block,
-  .performance-overlay.is-visible .performance-action-block,
-  .performance-overlay.is-visible {
+  body:not([data-motion="full"]) .performance-overlay.is-visible .performance-backdrop,
+  body:not([data-motion="full"]) .performance-overlay.is-visible .performance-card,
+  body:not([data-motion="full"]) .performance-overlay.is-visible .performance-copy-block,
+  body:not([data-motion="full"]) .performance-overlay.is-visible .performance-action-block,
+  body:not([data-motion="full"]) .performance-overlay.is-visible {
     opacity: 1;
     transform: none;
     filter: none;
   }
 
-  .performance-overlay.is-visible .performance-score-aura {
+  body:not([data-motion="full"]) .performance-overlay.is-visible .performance-score-aura {
     opacity: 0.5;
     transform: translate(-50%, -50%) scale(1);
   }

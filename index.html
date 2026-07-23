@@ -10,7 +10,7 @@
   <link rel="manifest" href="./public/manifest.json" />
   <link rel="stylesheet" href="./src/styles/main.css" />
 </head>
-<body data-theme="light" data-screen="home">
+<body data-theme="light" data-screen="home" data-motion="system" data-motion-resolved="full">
   <main class="app">
     <aside
       id="avisoPersistencia"
@@ -45,9 +45,21 @@
 
     <section id="telaInicial" class="screen screen--home active" aria-labelledby="tituloMarcaTestQuest">
       <header class="home-toolbar">
-        <button id="btnTema" class="icon-button home-theme-toggle" type="button" data-theme-toggle>
-          🌙 Tema
-        </button>
+        <div class="screen-preferences-actions" aria-label="Preferências visuais">
+          <button
+            class="icon-button motion-settings-button"
+            type="button"
+            data-motion-settings-open
+            aria-haspopup="dialog"
+            aria-controls="modalEfeitosVisuais"
+          >
+            <span aria-hidden="true">✨</span>
+            <span class="motion-settings-button__label" data-motion-settings-label>Efeitos: Sistema</span>
+          </button>
+          <button id="btnTema" class="icon-button home-theme-toggle" type="button" data-theme-toggle>
+            🌙 Tema
+          </button>
+        </div>
       </header>
 
       <div class="home-layout">
@@ -166,9 +178,21 @@
           <p>Importe as questões e configure sua sessão.</p>
         </div>
 
-        <button id="btnTemaImportacao" class="icon-button import-theme-toggle" type="button" data-theme-toggle>
-          🌙 Tema
-        </button>
+        <div class="screen-preferences-actions import-header__preferences" aria-label="Preferências visuais">
+          <button
+            class="icon-button motion-settings-button"
+            type="button"
+            data-motion-settings-open
+            aria-haspopup="dialog"
+            aria-controls="modalEfeitosVisuais"
+          >
+            <span aria-hidden="true">✨</span>
+            <span class="motion-settings-button__label" data-motion-settings-label>Efeitos: Sistema</span>
+          </button>
+          <button id="btnTemaImportacao" class="icon-button import-theme-toggle" type="button" data-theme-toggle>
+            🌙 Tema
+          </button>
+        </div>
       </header>
 
       <div class="import-layout">
@@ -365,14 +389,26 @@
           <p id="nomeListaResolucao" title="Lista sem nome">Lista sem nome</p>
         </div>
 
-        <button
-          id="btnTemaResolucao"
-          class="icon-button resolution-theme-toggle"
-          type="button"
-          data-theme-toggle
-        >
-          🌙 Tema
-        </button>
+        <div class="screen-preferences-actions resolution-header__preferences" aria-label="Preferências visuais">
+          <button
+            class="icon-button motion-settings-button"
+            type="button"
+            data-motion-settings-open
+            aria-haspopup="dialog"
+            aria-controls="modalEfeitosVisuais"
+          >
+            <span aria-hidden="true">✨</span>
+            <span class="motion-settings-button__label" data-motion-settings-label>Efeitos: Sistema</span>
+          </button>
+          <button
+            id="btnTemaResolucao"
+            class="icon-button resolution-theme-toggle"
+            type="button"
+            data-theme-toggle
+          >
+            🌙 Tema
+          </button>
+        </div>
       </header>
 
       <div class="resolution-layout">
@@ -562,10 +598,22 @@
           <span id="nomeListaResultado" class="results-header__list-name">Lista sem nome</span>
         </div>
 
-        <button class="secondary results-header__theme" type="button" data-theme-toggle>
-          <span aria-hidden="true">◐</span>
-          <span>Tema</span>
-        </button>
+        <div class="screen-preferences-actions results-header__preferences" aria-label="Preferências visuais">
+          <button
+            class="secondary motion-settings-button"
+            type="button"
+            data-motion-settings-open
+            aria-haspopup="dialog"
+            aria-controls="modalEfeitosVisuais"
+          >
+            <span aria-hidden="true">✨</span>
+            <span class="motion-settings-button__label" data-motion-settings-label>Efeitos: Sistema</span>
+          </button>
+          <button class="secondary results-header__theme" type="button" data-theme-toggle>
+            <span aria-hidden="true">◐</span>
+            <span>Tema</span>
+          </button>
+        </div>
       </header>
 
       <div class="results-layout">
@@ -796,6 +844,86 @@ criterios_de_correcao: Critérios de correção
           </p>
         </div>
       </div>
+    </div>
+  </div>
+
+
+  <div
+    id="modalEfeitosVisuais"
+    class="modal visual-effects-modal hidden"
+    role="dialog"
+    aria-modal="true"
+    aria-hidden="true"
+    aria-labelledby="tituloModalEfeitosVisuais"
+    aria-describedby="descricaoModalEfeitosVisuais"
+  >
+    <button
+      class="modal-backdrop"
+      type="button"
+      data-motion-settings-close
+      aria-label="Fechar preferências de efeitos visuais"
+    ></button>
+
+    <div class="modal-card visual-effects-modal__card" role="document">
+      <header class="visual-effects-modal__header">
+        <span class="visual-effects-modal__icon" aria-hidden="true">✨</span>
+        <div>
+          <p class="eyebrow">Preferência de acessibilidade</p>
+          <h2 id="tituloModalEfeitosVisuais">Efeitos visuais</h2>
+          <p id="descricaoModalEfeitosVisuais">
+            Escolha como animações, brilhos e transições devem funcionar na aplicação.
+          </p>
+        </div>
+      </header>
+
+      <form id="formEfeitosVisuais" class="visual-effects-form">
+        <fieldset class="visual-effects-options">
+          <legend class="sr-only">Modo dos efeitos visuais</legend>
+
+          <label class="visual-effects-option">
+            <input type="radio" name="efeitosVisuais" value="system" />
+            <span class="visual-effects-option__content">
+              <span class="visual-effects-option__marker" aria-hidden="true"></span>
+              <span>
+                <strong>Seguir configuração do sistema</strong>
+                <small>Respeita a preferência de movimento reduzido definida no navegador ou dispositivo.</small>
+              </span>
+              <span class="visual-effects-option__badge">Sistema</span>
+            </span>
+          </label>
+
+          <label class="visual-effects-option">
+            <input type="radio" name="efeitosVisuais" value="full" />
+            <span class="visual-effects-option__content">
+              <span class="visual-effects-option__marker" aria-hidden="true"></span>
+              <span>
+                <strong>Efeitos completos</strong>
+                <small>Mantém animações, transições, contador e aura da Tela de Desempenho.</small>
+              </span>
+              <span class="visual-effects-option__badge">Completos</span>
+            </span>
+          </label>
+
+          <label class="visual-effects-option">
+            <input type="radio" name="efeitosVisuais" value="reduced" />
+            <span class="visual-effects-option__content">
+              <span class="visual-effects-option__marker" aria-hidden="true"></span>
+              <span>
+                <strong>Efeitos reduzidos</strong>
+                <small>Exibe os estados imediatamente e remove movimentos, fades e rolagens suaves.</small>
+              </span>
+              <span class="visual-effects-option__badge">Reduzidos</span>
+            </span>
+          </label>
+        </fieldset>
+
+        <p id="statusEfeitosVisuais" class="visual-effects-status" aria-live="polite"></p>
+
+        <div class="visual-effects-modal__actions">
+          <button id="btnCancelarEfeitosVisuais" class="secondary" type="button">Cancelar</button>
+          <button id="btnAplicarEfeitosVisuais" class="primary" type="submit">Aplicar preferência</button>
+        </div>
+      </form>
     </div>
   </div>
 

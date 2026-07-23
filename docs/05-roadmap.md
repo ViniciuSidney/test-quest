@@ -170,7 +170,7 @@ Reduzir a concentração de responsabilidades, proteger os dados locais e prepar
 
 ## v0.5-dev — Flexibilidade de resolução e estudo ativo
 
-**Status:** Em desenvolvimento — Etapas 1, 2, 3, 4 e 5 concluídas
+**Status:** Em desenvolvimento — Etapas 1 a 6 concluídas
 
 ### Objetivo
 
@@ -237,9 +237,19 @@ Ampliar as formas de responder, corrigir e revisar questões sem perder compatib
 - filtro `Erradas` alinhado ao mesmo critério da revisão;
 - suíte automatizada ampliada para 36 arquivos.
 
-### Etapas seguintes
+### Etapa 6 — Controle manual dos efeitos visuais — concluída
 
-6. controle manual dos efeitos visuais;
+- preferência global com os modos Sistema, Completos e Reduzidos;
+- aplicação persistida pelo repositório de configurações já existente;
+- sincronização dinâmica com `prefers-reduced-motion` no modo Sistema;
+- modo Completo capaz de manter os efeitos mesmo quando o sistema solicita redução;
+- modo Reduzido removendo movimentos, fades, contador animado e rolagem suave;
+- acesso ao modal pelos cabeçalhos das quatro telas navegáveis;
+- controlador e serviço próprios para evitar nova concentração no controlador principal;
+- suíte automatizada ampliada para 39 arquivos.
+
+### Etapa seguinte
+
 7. integração, regressão e fechamento da v0.5.0.
 
 ---

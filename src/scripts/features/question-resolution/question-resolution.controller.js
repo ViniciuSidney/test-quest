@@ -7,7 +7,9 @@ import { clearSession, loadSession, saveSession } from "../session/session.repos
 import { getClearImportConfirmation, getDeleteSessionConfirmation, getFinishSessionConfirmation, getNewResolutionConfirmation, getReplaceSessionConfirmation, getRetryWrongQuestionsConfirmation } from "../session/session-confirmations.service.js";
 import { createActiveSession, finishSession, isActiveSession, restoreActiveSession } from "../session/session-lifecycle.service.js";
 import { createRetryWrongSession, getRetryWrongSummary } from "../retry-wrong/retry-wrong.service.js";
-import { loadSettings, saveSettings } from "../settings/settings.repository.js";
+import { createThemeController } from "../settings/theme.controller.js";
+import { createVisualEffectsController } from "../settings/visual-effects.controller.js";
+import { shouldReduceVisualEffects } from "../settings/visual-effects.service.js";
 import { getPersistenceWarning, shouldProtectBeforeUnload } from "../storage/persistence-feedback.service.js";
 import { inspectStorage } from "../../shared/storage.js";
 import { createAnswersExport, createNotesExport, createSessionJsonExport, downloadExportFile } from "../exports/session-export.service.js";
@@ -37,7 +39,6 @@ export function initQuestionResolution() {
   correta: B
   explicacao: A opção correta usa "mais" para indicar intensidade ou quantidade e "mas" para expressar oposição. Nas demais opções, as duas palavras foram trocadas de forma inadequada.
   +++
-
   @discursiva
   assunto: Gramática: uso de mas e mais
   tipo: discursiva curta
@@ -55,7 +56,6 @@ export function initQuestionResolution() {
     resultado: "#telaResultado"
   });
 
-
   const estadoInicial = createInitialState;
 
   let estado = estadoInicial();
@@ -70,7 +70,6 @@ export function initQuestionResolution() {
   let confirmationPreviousFocus = null;
   let confirmationResolver = null;
   const PERFORMANCE_FADE_OUT_MS = 440;
-
   let performanceScoreAnimationFrame = null;
   let performanceCloseTimeout = null;
   let filtroResultadoAtivo = RESULT_FILTERS.ALL;
@@ -81,7 +80,6 @@ export function initQuestionResolution() {
   let persistenceWarningDismissed = false;
   const resultadoAcoesMobileMedia = window.matchMedia("(max-width: 720px)");
   const resultadoFiltrosCompactosMedia = window.matchMedia("(max-width: 900px)");
-
   const entradaQuestoes = $("#entradaQuestoes");
   const arquivoQuestoes = $("#arquivoQuestoes");
   const nomeLista = $("#nomeLista");
@@ -94,13 +92,23 @@ export function initQuestionResolution() {
   const avisoPersistencia = $("#avisoPersistencia");
   const tituloAvisoPersistencia = $("#tituloAvisoPersistencia");
   const descricaoAvisoPersistencia = $("#descricaoAvisoPersistencia");
+  const reportSettingsPersistenceError = ({ errorCode, error }) => {
+    registrarFalhaPersistencia(errorCode, error);
+  };
+  const themeController = createThemeController({
+    onPersistenceError: reportSettingsPersistenceError
+  });
+  const visualEffectsController = createVisualEffectsController({
+    onPersistenceError: reportSettingsPersistenceError
+  });
 
   inicializar();
 
   function inicializar() {
     const storageInspection = inspectStorage();
     const persistenceReport = loadSession();
-    carregarConfiguracoes();
+    themeController.init();
+    visualEffectsController.init();
     configurarEventos();
     sincronizarAcoesResultadoResponsivas();
     sincronizarFiltrosResultadoResponsivos();
@@ -115,10 +123,6 @@ export function initQuestionResolution() {
     }
   }
   function configurarEventos() {
-    document.querySelectorAll("[data-theme-toggle]").forEach((button) => {
-      button.addEventListener("click", alternarTema);
-    });
-
     $("#btnTentarPersistencia")?.addEventListener("click", tentarRestaurarPersistencia);
     $("#btnFecharAvisoPersistencia")?.addEventListener("click", () => {
       persistenceWarningDismissed = true;
@@ -403,7 +407,10 @@ export function initQuestionResolution() {
     modal.classList.add("hidden");
     modal.setAttribute("aria-hidden", "true");
 
-    if ($("#modalModelo")?.classList.contains("hidden")) {
+    if (
+      $("#modalModelo")?.classList.contains("hidden") &&
+      $("#modalEfeitosVisuais")?.classList.contains("hidden")
+    ) {
       document.body.classList.remove("modal-open");
     }
     const resolver = confirmationResolver;
@@ -436,7 +443,13 @@ export function initQuestionResolution() {
 
     modal.classList.add("hidden");
     modal.setAttribute("aria-hidden", "true");
-    document.body.classList.remove("modal-open");
+
+    if (
+      $("#modalConfirmacao")?.classList.contains("hidden") &&
+      $("#modalEfeitosVisuais")?.classList.contains("hidden")
+    ) {
+      document.body.classList.remove("modal-open");
+    }
 
     const focusTarget = modalPreviousFocus instanceof HTMLElement && modalPreviousFocus.isConnected
       ? modalPreviousFocus
@@ -466,35 +479,6 @@ export function initQuestionResolution() {
     }
   }
 
-  function carregarConfiguracoes() {
-    const config = loadSettings();
-    aplicarTema(config.tema || "light");
-  }
-  function salvarConfiguracoes() {
-    const configAtual = loadSettings();
-    const result = saveSettings({
-      ...configAtual,
-      tema: document.body.dataset.theme || "light"
-    });
-
-    if (!result.ok) {
-      registrarFalhaPersistencia(result.errorCode, result.error);
-    }
-  }
-  function aplicarTema(tema) {
-    document.body.dataset.theme = tema;
-    document.querySelectorAll("[data-theme-toggle]").forEach((button) => {
-      button.textContent = tema === "dark" ? "☀️ Tema" : "🌙 Tema";
-      button.setAttribute(
-        "aria-label",
-        tema === "dark" ? "Alternar para tema claro" : "Alternar para tema escuro"
-      );
-    });
-  }
-  function alternarTema() {
-    aplicarTema(document.body.dataset.theme === "dark" ? "light" : "dark");
-    salvarConfiguracoes();
-  }
   function verificarSessaoSalva() {
     atualizarHome();
   }
@@ -1178,7 +1162,7 @@ export function initQuestionResolution() {
     document.body.classList.add("performance-open", "performance-transitioning");
     screenManager.elements.resultado?.setAttribute("inert", "");
 
-    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const prefersReducedMotion = shouldReduceVisualEffects(document.body);
     const scoreElement = $("#valorDesempenho");
 
     if (scoreElement) {
@@ -1241,7 +1225,7 @@ export function initQuestionResolution() {
     tela.classList.add("is-leaving");
     tela.classList.remove("is-visible");
 
-    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const prefersReducedMotion = shouldReduceVisualEffects(document.body);
     const finalizarFechamento = () => {
       tela.classList.add("hidden");
       tela.classList.remove("is-leaving");
@@ -1667,7 +1651,7 @@ export function initQuestionResolution() {
 
       if (scrollIntoView) {
         button?.closest(".result-review-card")?.scrollIntoView({
-          behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+          behavior: shouldReduceVisualEffects(document.body) ? "auto" : "smooth",
           block: "nearest"
         });
       }

@@ -16,7 +16,7 @@ Este diretório reúne a documentação oficial do **Test Quest — Now I Know.*
 - Tela de Desempenho oficial implementada;
 - Tela de Resultado Final oficial implementada;
 - v0.4.0 concluída: persistência versionada, modularização, confiabilidade e preparação de release finalizadas.
-- v0.5-dev em desenvolvimento: alternativas estáveis, embaralhamento, Verdadeiro ou Falso, gabarito imediato, metacognição e revisão de erros implementados.
+- v0.5-dev em desenvolvimento: alternativas estáveis, embaralhamento, Verdadeiro ou Falso, gabarito imediato, metacognição, revisão de erros e controle de efeitos visuais implementados.
 
 ## Documentos principais
 
@@ -41,6 +41,7 @@ Este diretório reúne a documentação oficial do **Test Quest — Now I Know.*
 | `17-v0.5-refino-gabarito-e-metacognicao.md` | Responsividade do feedback, metacognição e desempenho geral |
 | `18-v0.5-correcao-rolagem-resolucao.md` | Correção da rolagem interna e sobreposição na Resolução |
 | `19-v0.5-refazer-questoes-erradas.md` | Regras e fluxo da revisão focada em erros |
+| `20-v0.5-efeitos-visuais.md` | Preferência global de movimento e acessibilidade |
 
 ## Manuais de telas
 

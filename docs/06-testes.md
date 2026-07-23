@@ -468,3 +468,20 @@ A suíte contém 34 arquivos de teste automatizado até a conclusão da Etapa 4.
 | T114 | Fluxo real no navegador | Finalizar, iniciar revisão e concluir nova tentativa mantém o histórico coerente | Pendente manual |
 
 A suíte contém 36 arquivos de teste automatizado.
+
+# v0.5 — Etapa 6: efeitos visuais
+
+| Código | Teste | Resultado esperado | Status |
+|---|---|---|---|
+| T115 | Modo Sistema sem redução | Efeitos completos são aplicados | Automatizado OK |
+| T116 | Modo Sistema com redução | Efeitos reduzidos são aplicados | Automatizado OK |
+| T117 | Modo Completo | Efeitos permanecem ativos mesmo com redução no sistema | Automatizado OK |
+| T118 | Modo Reduzido | Animações, transições e rolagem suave são removidas | Automatizado OK |
+| T119 | Persistência | Preferência permanece após recarregar a aplicação | Automatizado OK |
+| T120 | Tela de Desempenho | Contador e fechamento usam o modo efetivo | Automatizado OK |
+| T121 | Modal | Três opções, foco, Escape e restauração de foco estão disponíveis | Estrutural OK |
+| T122 | Cabeçalhos | Preferência pode ser aberta nas quatro telas principais | Estrutural OK |
+| T123 | Regressão automatizada | Os 39 arquivos da suíte terminam sem falhas | Automatizado OK |
+| T124 | Validação real | Conferir Sistema, Completos e Reduzidos nos temas claro e escuro | Pendente manual |
+
+A suíte contém 39 arquivos de teste automatizado.

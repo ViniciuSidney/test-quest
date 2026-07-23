@@ -871,9 +871,9 @@ body[data-screen="importacao"] .modal-backdrop:hover {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .screen--import *,
-  .screen--import *::before,
-  .screen--import *::after {
+  body:not([data-motion="full"]) .screen--import *,
+  body:not([data-motion="full"]) .screen--import *::before,
+  body:not([data-motion="full"]) .screen--import *::after {
     transition: none !important;
   }
 }
