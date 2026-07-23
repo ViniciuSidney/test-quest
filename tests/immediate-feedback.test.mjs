@@ -10,7 +10,8 @@ import {
   getImmediateFeedback,
   isImmediateCorrectionEnabled,
   isQuestionConfirmed,
-  normalizeCorrectionMode
+  normalizeCorrectionMode,
+  requiresQuestionConfirmation
 } from "../src/scripts/features/question-resolution/immediate-feedback.service.js";
 
 const alternatives = normalizeObjectiveAlternatives(
@@ -37,6 +38,7 @@ let state = {
 
 assert.equal(normalizeCorrectionMode("qualquer"), CORRECTION_MODES.FINAL);
 assert.equal(isImmediateCorrectionEnabled(state), true);
+assert.equal(requiresQuestionConfirmation(state, objective), true);
 assert.equal(canConfirmQuestion(state, objective), true);
 state = confirmQuestion(state, objective.id);
 assert.equal(isQuestionConfirmed(state, objective.id), true);
@@ -56,6 +58,10 @@ const discursive = {
   respostaEsperada: "Resposta modelo",
   criterios: "Critérios"
 };
+const finalState = { opcoes: { modoCorrecao: CORRECTION_MODES.FINAL } };
+assert.equal(requiresQuestionConfirmation(finalState, objective), false);
+assert.equal(requiresQuestionConfirmation(finalState, discursive), true);
+
 const discursiveFeedback = getImmediateFeedback(discursive, "Minha resposta");
 assert.equal(discursiveFeedback.category, "discursive");
 assert.equal(discursiveFeedback.expectedAnswer, "Resposta modelo");

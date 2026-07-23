@@ -374,3 +374,12 @@ Confirmar:
 - [ ] verificar que o modo de correção e as opções de embaralhamento foram preservados;
 - [ ] finalizar a revisão e confirmar que a sessão original e a nova tentativa aparecem separadamente nos indicadores históricos;
 - [ ] repetir o fluxo nos temas claro e escuro, em desktop e mobile.
+
+## Refinamento da Etapa 5 — Metacognição e seleção
+
+- [ ] no modo “Somente no resultado final”, responder uma discursiva e confirmar a resposta;
+- [ ] verificar que o modelo e os critérios permanecem ocultos durante a resolução;
+- [ ] verificar que a Metacognição aparece após a confirmação e exige uma avaliação antes de avançar;
+- [ ] confirmar que objetivas e V/F selecionadas recebem destaque visual mais forte;
+- [ ] no Resultado Final, conferir fundo azul nos cards discursivos e bordas: verde para 100%, amarela/laranja para 50% e vermelha para 0%;
+- [ ] expandir uma discursiva e confirmar que Metacognição e Critérios possuem dimensões regulares, sem coluna estreita.

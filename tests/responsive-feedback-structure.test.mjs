@@ -20,5 +20,9 @@ assert.match(resolutionCss, /\.resolution-feedback__comparison,[\s\S]*auto-fit/)
 assert.match(resolutionCss, /\.resolution-metacognition__choices/);
 assert.match(resolutionCss, /data-tone="completa"/);
 assert.match(resultsCss, /result-metacognition-summary/);
+assert.match(resultsCss, /result-discursive-detail--metacognition/);
+assert.match(resultsCss, /data-metacognition-level="completa"/);
+assert.match(resolutionCss, /resolution-option-card\.is-selected[\s\S]*0 0 0 3px/);
+assert.match(resolutionCss, /resolution-vf-choice\.is-selected[\s\S]*scale\(1\.012\)/);
 
 console.log("Responsive feedback structure: todos os testes passaram.");

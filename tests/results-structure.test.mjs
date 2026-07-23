@@ -59,6 +59,9 @@ assert.match(resultsCss, /@media \(max-width: 900px\)[\s\S]*?\.review-filters\.i
 assert.match(resultsCss, /\.results-actions__exports\.is-open/);
 assert.match(resultsCss, /\.result-discursive-detail--statement\s*\{[^}]*grid-column:\s*1\s*\/\s*11/s);
 assert.match(resultsCss, /\.result-discursive-detail--time\s*\{[^}]*grid-column:\s*11\s*\/\s*13[^}]*align-content:\s*start/s);
+assert.match(resultsCss, /\.result-discursive-detail--metacognition\s*\{[^}]*grid-column:\s*7\s*\/\s*13/s);
+assert.match(resultsCss, /data-metacognition-level="incorreta"/);
+assert.match(controller, /data-metacognition-level=/);
 assert.match(resultsCss, /prefers-reduced-motion/);
 
 assert.match(controller, /buildQuestionReviewItems/);

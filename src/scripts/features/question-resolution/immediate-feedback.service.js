@@ -19,6 +19,14 @@ export function isImmediateCorrectionEnabled(state) {
   return normalizeCorrectionMode(state?.opcoes?.modoCorrecao) === CORRECTION_MODES.IMMEDIATE;
 }
 
+export function requiresQuestionConfirmation(state, question) {
+  if (!question) {
+    return false;
+  }
+
+  return isImmediateCorrectionEnabled(state) || question.categoria === "discursiva";
+}
+
 export function isQuestionConfirmed(state, questionId) {
   return Boolean(questionId && state?.confirmacoes?.[questionId]);
 }
@@ -104,7 +112,7 @@ export function buildImmediateFeedbackMarkup({
           <div>
             <p>Correção imediata</p>
             <h3>${escapeHtml(feedback.title)}</h3>
-            <span>${escapeHtml(feedback.message)}</span>
+            <span class="resolution-feedback__message">${escapeHtml(feedback.message)}</span>
           </div>
         </header>
         <div class="resolution-feedback__comparison">
@@ -126,7 +134,7 @@ export function buildImmediateFeedbackMarkup({
         <div>
           <p>Correção orientada</p>
           <h3>${escapeHtml(feedback.title)}</h3>
-          <span>${escapeHtml(feedback.message)}</span>
+          <span class="resolution-feedback__message">${escapeHtml(feedback.message)}</span>
         </div>
       </header>
       <div class="resolution-feedback__discursive">

@@ -67,6 +67,12 @@ assert.match(markup, /Resposta incorreta \(0%\)/);
 assert.match(markup, /aria-checked="true"/);
 assert.match(markup, /Faltou um exemplo\./);
 
+const finalModeMarkup = buildMetacognitionMarkup({
+  assessment: state.metacognicao.d1,
+  referenceVisible: false
+});
+assert.match(finalModeMarkup, /modelo e os critérios serão exibidos ao final/);
+
 const discursiveResult = calculateSessionResult({
   questoes: [questions[0]],
   respostas: { d1: "Minha resposta" },

@@ -22,10 +22,13 @@ assert.match(schema, /confirmacoes:/);
 assert.match(schema, /normalizeMetacognitionMap/);
 assert.match(lifecycle, /correctionMode/);
 assert.match(controller, /confirmarRespostaAtual/);
+assert.match(controller, /requiresQuestionConfirmation/);
+assert.match(controller, /confirmada && !correcaoImediata/);
 assert.match(controller, /buildImmediateFeedbackMarkup/);
 assert.match(styles, /resolution-feedback--success/);
 assert.match(styles, /resolution-option-card\.is-correct/);
 assert.match(styles, /resolution-metacognition/);
+assert.match(styles, /resolution-confirmation-note/);
 assert.match(metacognition, /METACOGNITION_LEVELS/);
 
 console.log("Immediate feedback structure: todos os testes passaram.");

@@ -15,7 +15,7 @@ import { escapeHtml, formatDuration as formatarTempo, formatStudyDuration as for
 import { formatPerformanceBasis, getPerformanceState, PERFORMANCE_STATE_CLASSES, shouldShowPerformanceScreen } from "../performance/performance.service.js";
 import { calculateSessionResult as calcularResultado, calculateSessionTotalTime as calcularTempoTotal, RESULT_FILTERS, buildQuestionReviewItems, buildSubjectResultItems, filterQuestionReviewItems, getSubjectPerformanceTone, normalizeResultFilter } from "../results/results.service.js";
 import { buildQuestionMapLabel, buildTrueFalseOptionsMarkup, getMarkerInfo, getNextMarkerState, getQuestionTypeLabel, isQuestionAnswered, MARKER_STATES, normalizeMarkerState } from "./question-resolution.helpers.js";
-import { buildImmediateFeedbackMarkup, canConfirmQuestion, confirmQuestion, isImmediateCorrectionEnabled, isQuestionConfirmed } from "./immediate-feedback.service.js";
+import { buildImmediateFeedbackMarkup, canConfirmQuestion, confirmQuestion, isImmediateCorrectionEnabled, isQuestionConfirmed, requiresQuestionConfirmation } from "./immediate-feedback.service.js";
 import {
   buildMetacognitionMarkup,
   getMetacognitionAssessment,
@@ -678,12 +678,10 @@ export function initQuestionResolution() {
     };
 
     const ultimaQuestao = estado.atual === total - 1;
-    const exigeConfirmacao = correcaoImediata && !confirmada;
-    const exigeMetacognicao = correcaoImediata && confirmada &&
-      questao.categoria === "discursiva" &&
+    const exigeConfirmacao = requiresQuestionConfirmation(estado, questao) && !confirmada;
+    const exigeMetacognicao = confirmada && questao.categoria === "discursiva" &&
       !hasMetacognitionAssessment(estado, questao.id);
     const etapaPendente = exigeConfirmacao || exigeMetacognicao;
-
     $("#btnAnterior").disabled = estado.atual === 0;
     $("#btnConfirmarResposta")?.classList.toggle("hidden", !exigeConfirmacao);
     $("#btnConfirmarResposta").disabled = exigeConfirmacao && !canConfirmQuestion(estado, questao);
@@ -822,6 +820,7 @@ export function initQuestionResolution() {
   function renderizarDiscursiva(questao) {
     const respostaAtual = estado.respostas[questao.id] || "";
     const confirmada = isQuestionConfirmed(estado, questao.id);
+    const correcaoImediata = isImmediateCorrectionEnabled(estado);
     const avaliacao = getMetacognitionAssessment(estado, questao.id);
 
     $("#areaResposta").innerHTML = `
@@ -829,10 +828,10 @@ export function initQuestionResolution() {
         <span>Sua resposta</span>
         <textarea class="resolution-discursive-textarea" id="respostaDiscursiva" placeholder="Responda aqui..." spellcheck="true" ${confirmada ? "readonly" : ""}>${escapeHtml(respostaAtual)}</textarea>
       </label>
-      ${confirmada ? buildImmediateFeedbackMarkup({ question: questao, answer: respostaAtual, escapeHtml }) : ""}
-      ${confirmada ? buildMetacognitionMarkup({ assessment: avaliacao, escapeHtml }) : ""}
+      ${confirmada && correcaoImediata ? buildImmediateFeedbackMarkup({ question: questao, answer: respostaAtual, escapeHtml }) : ""}
+      ${confirmada && !correcaoImediata ? `<p class="resolution-confirmation-note" role="status">Resposta confirmada. O modelo e os critérios de correção serão exibidos no Resultado Final.</p>` : ""}
+      ${confirmada ? buildMetacognitionMarkup({ assessment: avaliacao, referenceVisible: correcaoImediata, escapeHtml }) : ""}
     `;
-
     $("#respostaDiscursiva").addEventListener("input", (evento) => {
       if (confirmada) return;
       const estavaRespondida = isQuestionAnswered(estado.respostas[questao.id]);
@@ -919,19 +918,22 @@ export function initQuestionResolution() {
 
   function atualizarEstadoBotaoConfirmar(questao = estado.questoes[estado.atual]) {
     const button = $("#btnConfirmarResposta");
-    if (button && isImmediateCorrectionEnabled(estado) && !isQuestionConfirmed(estado, questao?.id)) {
+    if (button && requiresQuestionConfirmation(estado, questao) && !isQuestionConfirmed(estado, questao?.id)) {
       button.disabled = !canConfirmQuestion(estado, questao);
     }
   }
 
   function confirmarRespostaAtual() {
     const questao = estado.questoes[estado.atual];
-    if (!questao || !isImmediateCorrectionEnabled(estado) || !canConfirmQuestion(estado, questao)) return;
+    if (!questao || !requiresQuestionConfirmation(estado, questao) || !canConfirmQuestion(estado, questao)) return;
     registrarTempoAtual();
     estado = confirmQuestion(estado, questao.id);
     salvarEstadoImediato();
     renderizarQuestao({ registrarTempo: false });
-    requestAnimationFrame(() => $(".resolution-feedback")?.focus({ preventScroll: false }));
+    requestAnimationFrame(() => {
+      const target = isImmediateCorrectionEnabled(estado) ? $(".resolution-feedback") : $(".resolution-metacognition__choice");
+      target?.focus({ preventScroll: false });
+    });
   }
 
   function irAnterior() {
@@ -1007,16 +1009,13 @@ export function initQuestionResolution() {
 
     const r = calcularResultado(estado);
     const marcadas = Object.values(estado.revisao || {}).filter(Boolean).length;
-    const naoConfirmadas = isImmediateCorrectionEnabled(estado)
-      ? estado.questoes.filter((questao) => !isQuestionConfirmed(estado, questao.id)).length
-      : 0;
-    const discursivasSemMetacognicao = isImmediateCorrectionEnabled(estado)
-      ? estado.questoes.filter((questao) =>
-        questao.categoria === "discursiva" &&
-        isQuestionConfirmed(estado, questao.id) &&
-        !hasMetacognitionAssessment(estado, questao.id)
-      ).length
-      : 0;
+    const naoConfirmadas = estado.questoes.filter((questao) =>
+      requiresQuestionConfirmation(estado, questao) && !isQuestionConfirmed(estado, questao.id)
+    ).length;
+    const discursivasSemMetacognicao = estado.questoes.filter((questao) =>
+      questao.categoria === "discursiva" && isQuestionConfirmed(estado, questao.id) &&
+      !hasMetacognitionAssessment(estado, questao.id)
+    ).length;
     const confirmado = await solicitarConfirmacao(
       getFinishSessionConfirmation(r, marcadas, naoConfirmadas, discursivasSemMetacognicao)
     );
@@ -1682,12 +1681,14 @@ export function initQuestionResolution() {
     const detailsId = `detalhes-resultado-${item.id}`;
     const reviewText = item.markedForReview ? " • ★ Marcada para revisão" : "";
     const typeClass = item.isTrueFalse ? " is-true-false" : "";
-
+    const metacognitionAttribute = item.category === "discursiva"
+      ? ` data-metacognition-level="${escapeHtml(item.metacognitionLevel || "pendente")}"` : "";
     return `
       <article
         class="result-review-card${markedClass}${expandedClass}${typeClass}"
         data-status="${presentation.statusAttribute}"
         data-question-type="${item.isTrueFalse ? "true-false" : item.category}"
+        ${metacognitionAttribute}
       >
         <button
           class="result-review-card__summary"
@@ -1731,6 +1732,18 @@ export function initQuestionResolution() {
     }
 
     if (item.status === "discursive") {
+      const metacognitionPresentation = {
+        completa: { icon: "✓", spokenLabel: "resposta completa" }, parcial: { icon: "◐", spokenLabel: "resposta parcial" },
+        incorreta: { icon: "✕", spokenLabel: "resposta incorreta" }
+      }[item.metacognitionLevel];
+      if (metacognitionPresentation && item.metacognitionLabel) {
+        return {
+          statusAttribute: "discursive",
+          icon: metacognitionPresentation.icon,
+          label: `${item.metacognitionLabel} (${item.metacognitionPercentage}%)`,
+          spokenLabel: `${metacognitionPresentation.spokenLabel}, ${item.metacognitionPercentage} por cento`
+        };
+      }
       return {
         statusAttribute: "discursive",
         icon: "✎",

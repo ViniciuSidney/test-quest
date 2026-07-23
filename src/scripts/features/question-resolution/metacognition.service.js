@@ -138,6 +138,7 @@ export function setMetacognitionObservation(state, questionId, observation) {
 
 export function buildMetacognitionMarkup({
   assessment = null,
+  referenceVisible = true,
   escapeHtml = (value) => String(value ?? "")
 } = {}) {
   const normalized = normalizeMetacognitionEntry(assessment) || {
@@ -153,7 +154,9 @@ export function buildMetacognitionMarkup({
         <div>
           <p>Metacognição</p>
           <h3 id="tituloMetacognicao">Como você avalia sua resposta?</h3>
-          <span>Compare sua resposta com o modelo e os critérios antes de escolher.</span>
+          <span>${referenceVisible
+            ? "Compare sua resposta com o modelo e os critérios antes de escolher."
+            : "Avalie sua resposta pelo próprio raciocínio; o modelo e os critérios serão exibidos ao final."}</span>
         </div>
         <strong class="resolution-metacognition__score" aria-live="polite">
           ${selectedLevel ? `${selectedLevel.percentage}%` : "—"}

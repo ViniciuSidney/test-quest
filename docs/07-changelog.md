@@ -1,3 +1,14 @@
+
+## v0.5-dev — refinamento visual da Metacognição e seleção
+
+### Ajustado
+
+- o bloco de Metacognição das discursivas no Resultado Final passou a ocupar uma coluna regular, alinhada aos demais campos;
+- os cards discursivos mantêm o fundo azul e usam borda verde, amarela/laranja ou vermelha conforme a autoavaliação de 100%, 50% ou 0%;
+- alternativas selecionadas em questões objetivas e de Verdadeiro ou Falso receberam destaque visual mais forte;
+- discursivas agora podem ser confirmadas também no modo de correção ao final, liberando a Metacognição sem revelar antecipadamente o modelo ou os critérios;
+- o texto explicativo do modo de correção ao final foi atualizado para refletir o fluxo de autoavaliação discursiva.
+
 # Changelog
 
 Todas as mudanças importantes do Test Quest serão registradas neste arquivo.

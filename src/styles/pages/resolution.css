@@ -528,9 +528,20 @@ body[data-screen="resolucao"] .legacy-topbar {
 }
 
 .resolution-option-card.is-selected {
-  background: var(--tq-primary-soft);
+  background: color-mix(in srgb, var(--tq-primary) 20%, var(--tq-surface-soft));
   border-color: var(--tq-primary);
-  box-shadow: inset 4px 0 0 var(--tq-primary);
+  box-shadow:
+    inset 6px 0 0 var(--tq-primary),
+    0 0 0 3px color-mix(in srgb, var(--tq-primary) 28%, transparent),
+    0 10px 24px rgba(23, 24, 47, 0.16);
+}
+
+.resolution-option-card.is-selected .resolution-option-letter {
+  color: color-mix(in srgb, var(--tq-primary) 82%, var(--tq-text));
+}
+
+.resolution-option-card.is-selected .resolution-option-text {
+  font-weight: 780;
 }
 
 .resolution-option-card.is-analysis:not(.is-selected) {
@@ -676,9 +687,13 @@ body[data-screen="resolucao"] .legacy-topbar {
 }
 
 .resolution-vf-choice.is-selected {
-  box-shadow: 0 0 0 4px var(--tq-primary-soft), 0 16px 36px rgba(23, 24, 47, 0.18);
+  transform: translateY(-2px) scale(1.012);
   border-color: var(--tq-primary);
-  filter: saturate(1.05);
+  box-shadow:
+    0 0 0 6px color-mix(in srgb, var(--tq-primary) 30%, transparent),
+    inset 0 0 0 2px color-mix(in srgb, var(--tq-primary) 72%, transparent),
+    0 18px 40px rgba(23, 24, 47, 0.24);
+  filter: saturate(1.12) brightness(1.04);
 }
 
 .resolution-vf-divider {
@@ -816,6 +831,18 @@ body[data-screen="resolucao"] .legacy-topbar {
   background: color-mix(in srgb, var(--tq-info-soft) 58%, var(--tq-surface));
 }
 
+.resolution-confirmation-note {
+  margin: 0;
+  padding: 0.75rem 0.9rem;
+  color: var(--tq-text-muted);
+  background: color-mix(in srgb, var(--tq-primary-soft) 42%, var(--tq-surface));
+  border: 1px solid color-mix(in srgb, var(--tq-primary) 34%, var(--tq-border));
+  border-radius: var(--tq-radius-sm);
+  font-size: 0.8rem;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
 .resolution-feedback__header {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
@@ -858,7 +885,7 @@ body[data-screen="resolucao"] .legacy-topbar {
   font-size: 1.05rem;
 }
 
-.resolution-feedback__header span,
+.resolution-feedback__message,
 .resolution-feedback article p {
   color: var(--tq-text-muted);
   font-size: 0.82rem;
