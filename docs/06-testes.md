@@ -3,9 +3,9 @@
 ## Informações
 
 **Projeto:** Test Quest  
-**Base:** v0.2.5-dev  
-**Fase:** implementação das telas oficiais  
-**Status geral:** Ok
+**Base:** v0.5.0  
+**Fase:** regressão e fechamento da Release  
+**Status geral:** Aprovado
 
 ## Legenda
 
@@ -394,7 +394,7 @@ A versão não pode ser enviada à `main` como estável enquanto houver:
 | V05-T05 | Migração dos marcadores | Marcações antigas por letra passam a usar IDs | OK |
 | V05-T06 | Correção após reordenação | A resposta permanece correta mesmo quando a alternativa muda de posição visual | OK |
 | V05-T07 | Letras visíveis | Interface, resultado e TXT continuam apresentando letras legíveis | OK |
-| V05-T08 | Exportação JSON | Sessão exportada registra `schemaVersion: 4` e respostas por ID | OK |
+| V05-T08 | Exportação JSON | Sessão exportada registra `schemaVersion: 7` e respostas por ID | OK |
 | V05-T09 | Fluxo completo | Importar, salvar, restaurar, finalizar e exportar mantém os dados coerentes | OK |
 | V05-T10 | Regressão automatizada | Os 26 arquivos da suíte terminam sem falhas | OK |
 | V05-T11 | Migração real no navegador | Uma sessão ativa da v0.4 reaparece com resposta e marcadores preservados | Pendente |
@@ -485,3 +485,38 @@ A suíte contém 36 arquivos de teste automatizado.
 | T124 | Validação real | Conferir Sistema, Completos e Reduzidos nos temas claro e escuro | Pendente manual |
 
 A suíte contém 39 arquivos de teste automatizado.
+
+
+## Aprovação final da v0.5.0 — 2026-07-24
+
+### Resultado
+
+- regressão manual completa: **aprovada pelo usuário**;
+- testes automatizados: **45/45 arquivos aprovados**;
+- bugs bloqueadores: **0**;
+- bugs importantes pendentes: **0**;
+- perda de dados identificada: **não**;
+- decisão: **aprovada para publicação como v0.5.0**.
+
+### Áreas validadas
+
+- Tela Inicial, Importação, Resolução, Correção Discursiva, Desempenho e Resultado Final;
+- questões objetivas, Verdadeiro ou Falso e discursivas;
+- gabarito ao final e gabarito imediato;
+- Metacognição inicial e Veredito Final;
+- revisão de questões erradas;
+- mapa semântico e detalhamento por assunto;
+- efeitos visuais, temas, zoom e responsividade;
+- persistência, retomada, migração, histórico e exportações.
+
+### Comando final
+
+```bash
+node tests/run-all-tests.mjs
+```
+
+Resultado obtido:
+
+```text
+✓ 45 arquivos de teste concluídos com sucesso.
+```

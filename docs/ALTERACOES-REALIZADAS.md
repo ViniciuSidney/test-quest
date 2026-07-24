@@ -91,3 +91,14 @@ Os quatro manuais em `manuais-de-telas/` foram mantidos sem alterações, pois j
 - configurações de embaralhamento e correção são preservadas;
 - filtro `Erradas` atualizado;
 - suíte automatizada ampliada para 36 arquivos.
+
+
+## v0.5.0 — Fechamento oficial
+
+- regressão manual final aprovada;
+- 45 arquivos de teste automatizados aprovados;
+- `APP_VERSION` promovida de `0.5-dev` para `0.5.0`;
+- roadmap e estado do projeto atualizados;
+- changelog consolidado na seção `v0.5.0`;
+- checklist de fechamento e notas oficiais da Release adicionados;
+- pacote preparado para merge, tag e publicação.

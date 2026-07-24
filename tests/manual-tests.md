@@ -278,7 +278,7 @@
 1. Na v0.4.0, inicie uma sessão com ao menos uma questão objetiva.
 2. Selecione uma resposta, marque outra alternativa como `em análise` e escreva uma anotação.
 3. Feche a página sem finalizar a sessão.
-4. Atualize os arquivos para a v0.5-dev e abra novamente pelo Live Server.
+4. Atualize os arquivos para a v0.5.0 e abra novamente pelo Live Server.
 5. Continue a sessão pela Home.
 
 Confirmar:
@@ -289,7 +289,7 @@ Confirmar:
 - [ ] anotações e tempos permanecem;
 - [ ] o resultado final calcula acertos corretamente;
 - [ ] o TXT mostra letras, não IDs internos;
-- [ ] o JSON usa `schemaVersion: 5`;
+- [ ] o JSON usa `schemaVersion: 7`;
 - [ ] `respostas` e `marcacoesAlternativas` usam IDs de alternativas.
 
 ### Regressão visual
@@ -410,3 +410,23 @@ Confirmar:
 - [ ] Modo de gabarito imediato conclui o Veredito Final dentro da Resolução e não abre o Wizard.
 - [ ] Tema claro, tema escuro e efeitos reduzidos mantêm a tela legível.
 - [ ] Validar desktop, mobile e zooms de 100%, 110%, 125% e 150%.
+
+
+## Registro de fechamento da v0.5.0
+
+**Data:** 2026-07-24  
+**Branch:** `feature/v0.5`  
+**Testes automatizados:** 45/45 arquivos aprovados  
+**Regressão manual:** aprovada pelo usuário  
+**Bugs bloqueadores:** 0  
+**Bugs importantes pendentes:** 0  
+**Decisão:** aprovar para v0.5.0
+
+- [x] fluxos objetivo, V/F e discursivo;
+- [x] gabarito ao final e imediato;
+- [x] Correção Discursiva guiada;
+- [x] desempenho, Resultado Final e revisão de erros;
+- [x] efeitos visuais, temas e acessibilidade básica;
+- [x] responsividade e zoom;
+- [x] persistência, retomada, migração e exportações;
+- [x] suíte automatizada concluída sem falhas.

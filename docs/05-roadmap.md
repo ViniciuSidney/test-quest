@@ -2,8 +2,8 @@
 
 ## Estado geral
 
-**Versão estável:** `v0.4.0`  
-**Versão em desenvolvimento:** `v0.5-dev`  
+**Versão estável:** `v0.5.0`  
+**Próxima versão:** a definir  
 **Estado:** `Etapa 5 — refazer questões erradas concluída`
 
 Concluído:
@@ -168,9 +168,9 @@ Reduzir a concentração de responsabilidades, proteger os dados locais e prepar
 
 # Marco 4 — Modos de resolução e revisão
 
-## v0.5-dev — Flexibilidade de resolução e estudo ativo
+## v0.5.0 — Flexibilidade de resolução e estudo ativo
 
-**Status:** Em desenvolvimento — Etapas 1 a 6 e 6.1 implementadas
+**Status:** Concluída e aprovada em 24/07/2026
 
 ### Objetivo
 
@@ -248,7 +248,7 @@ Ampliar as formas de responder, corrigir e revisar questões sem perder compatib
 - controlador e serviço próprios para evitar nova concentração no controlador principal;
 - suíte automatizada ampliada para 39 arquivos.
 
-### Etapa 6.1 — Correção discursiva guiada — implementada
+### Etapa 6.1 — Correção discursiva guiada — concluída
 
 - Metacognição inicial separada do Veredito Final;
 - nova tela Wizard entre Resolução e Desempenho no modo de gabarito ao final;
@@ -260,9 +260,14 @@ Ampliar as formas de responder, corrigir e revisar questões sem perder compatib
 - integração com Resultado Final, histórico, exportações e revisão de erros;
 - suíte automatizada ampliada para 41 arquivos.
 
-### Etapa seguinte
+### Etapa 7 — Integração, regressão e fechamento — concluída
 
-7. integração, regressão manual e fechamento da v0.5.0.
+- regressão manual completa aprovada;
+- 45 arquivos de teste automatizados aprovados;
+- versão promovida de `0.5-dev` para `0.5.0`;
+- README, roadmap, testes e changelog consolidados;
+- checklist e notas oficiais da Release adicionados;
+- pacote preparado para merge, tag e publicação.
 
 ---
 

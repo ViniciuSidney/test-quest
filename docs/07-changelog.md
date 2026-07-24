@@ -1,158 +1,65 @@
-
-## v0.5-dev — Refinamento de resultados e mapa semântico
-
-- removida a ação redundante de salvar na última questão da Correção Discursiva;
-- contador de respostas corretas passou a incluir discursivas avaliadas em 100%;
-- resumo por assunto ganhou detalhamento expansível por questão;
-- mapa da Resolução passou a usar cores semânticas no modo de correção imediata.
-
-
-## v0.5-dev — refinamento visual da Metacognição e seleção
-
-### Ajustado
-
-- o bloco de Metacognição das discursivas no Resultado Final passou a ocupar uma coluna regular, alinhada aos demais campos;
-- os cards discursivos mantêm o fundo azul e usam borda verde, amarela/laranja ou vermelha conforme a autoavaliação de 100%, 50% ou 0%;
-- alternativas selecionadas em questões objetivas e de Verdadeiro ou Falso receberam destaque visual mais forte;
-- discursivas agora podem ser confirmadas também no modo de correção ao final, liberando a Metacognição sem revelar antecipadamente o modelo ou os critérios;
-- o texto explicativo do modo de correção ao final foi atualizado para refletir o fluxo de autoavaliação discursiva.
-
 # Changelog
 
-Todas as mudanças importantes do Test Quest serão registradas neste arquivo.
+Todas as mudanças importantes do Test Quest são registradas neste arquivo.
 
 ## [Não lançado]
 
-### v0.5-dev — Correção discursiva guiada
+Nenhuma alteração registrada após a v0.5.0.
 
-#### Adicionado
+## [v0.5.0] — 2026-07-24
 
-- tela Wizard de Correção Discursiva entre Resolução e Desempenho no modo de gabarito ao final;
-- progresso, validações, resumo de avaliações e navegação por resposta discursiva;
+### Adicionado
+
+- alternativas objetivas com IDs estáveis e gabarito por `respostaCorretaId`;
+- opção de embaralhar alternativas preservando respostas, marcadores e correção;
+- questões de Verdadeiro ou Falso com ordem fixa e layout próprio;
+- modo de gabarito imediato com confirmação e bloqueio da resposta;
+- Metacognição inicial para respostas discursivas;
 - Veredito Final independente em 100%, 50% ou 0%;
-- observação opcional após comparar a resposta com o modelo;
-- estado persistente `corrigindo_discursivas` e ação `Continuar correção` na Tela Inicial;
-- módulos próprios `discursive-review.controller.js` e `discursive-review.service.js`;
-- testes funcionais e estruturais do novo fluxo.
+- tela Wizard de Correção Discursiva no modo de gabarito ao final;
+- retomada da Correção Discursiva pela Tela Inicial;
+- ação para refazer questões erradas em uma nova sessão;
+- controle manual de efeitos visuais: Sistema, Completos e Reduzidos;
+- detalhamento expansível do desempenho por assunto e por questão;
+- mapa semântico de acerto, desempenho parcial e erro;
+- ícone oficial, favicon e ícones do manifesto;
+- testes específicos dos novos fluxos e regras.
 
-#### Alterado
+### Alterado
 
-- Metacognição passa a representar somente a percepção inicial do usuário;
-- desempenho, resultado, histórico, exportações e revisão de erros passam a usar somente o Veredito Final;
-- esquema da sessão passa a `schemaVersion: 7`;
-- avaliações antigas são migradas para preservar a pontuação histórica;
-- fluxo oficial passa a incluir Correção Discursiva antes do Desempenho quando houver vereditos pendentes;
-- suíte automatizada ampliada para 41 arquivos.
+- esquema da sessão promovido para `schemaVersion: 7`;
+- respostas e marcações objetivas passam a usar IDs estáveis;
+- desempenho geral passa a combinar objetivas e discursivas pelo Veredito Final;
+- contador de respostas corretas inclui discursivas avaliadas em 100%;
+- revisão de erros usa o Veredito Final e inclui discursivas de 0%;
+- Resultado Final apresenta Metacognição inicial e Veredito Final separadamente;
+- desempenho por assunto usa resumo unificado de questões e tempo;
+- layout da Resolução recebeu rolagem interna e proteção contra sobreposição;
+- Correção Discursiva foi integrada ao App Shell e ao comportamento responsivo;
+- alternativas selecionadas e estados semânticos ganharam maior contraste;
+- exportações, histórico e migrações foram adaptados ao novo modelo.
 
-#### Preservado
+### Corrigido
 
-- modo de gabarito imediato com correção dentro da própria Resolução;
-- respostas e observações já salvas;
-- sessões sem questões discursivas seguindo diretamente para o Desempenho.
+- sobreposição dos painéis de correção em zoom elevado;
+- falta de acesso a conteúdos extensos na Resolução;
+- proporções irregulares dos blocos de Metacognição;
+- perda do estado semântico ao trocar a questão atual no mapa;
+- ação redundante de salvamento na última discursiva;
+- inconsistências visuais entre desktop, tablet, mobile e zoom reduzido.
 
-### v0.5-dev — Refazer questões erradas
+### Compatibilidade
 
-#### Adicionado
+- sessões anteriores são migradas automaticamente para `schemaVersion: 7`;
+- letras A–E permanecem na interface e nos relatórios legíveis;
+- V/F permanece fora do embaralhamento de alternativas;
+- dados continuam locais, sem backend ou sincronização obrigatória.
 
-- botão `Refazer questões erradas` no Resultado Final;
-- contador de questões elegíveis para a nova tentativa;
-- confirmação antes de substituir a sessão concluída por uma revisão ativa;
-- serviço dedicado `retry-wrong.service.js`;
-- testes funcionais e estruturais da Etapa 5.
+### Qualidade
 
-#### Alterado
-
-- o filtro `Erradas` passa a incluir discursivas avaliadas como incorretas em 0%;
-- a nova sessão preserva embaralhamento, modo de correção, conteúdo e gabarito;
-- respostas, tempos, confirmações, marcadores, revisão, anotações e metacognição são reiniciados;
-- a barra de ações do Resultado Final passa a acomodar a ação de revisão de forma responsiva;
-- suíte automatizada ampliada para 36 arquivos.
-
-#### Preservado
-
-- resultado original já registrado no histórico;
-- sessões anteriores e o esquema atual de persistência;
-- questões não respondidas fora da revisão automática;
-- discursivas parciais e completas fora da revisão automática.
-
-### v0.5-dev — Refinamento do gabarito imediato e metacognição
-
-#### Adicionado
-
-- bloco de metacognição para questões discursivas confirmadas;
-- autoavaliação em `Resposta completa (100%)`, `Resposta parcial (50%)` e `Resposta incorreta (0%)`;
-- campo opcional de observações metacognitivas;
-- cálculo de desempenho geral combinando objetivas e discursivas avaliadas;
-- testes automatizados de metacognição e responsividade do feedback.
-
-#### Alterado
-
-- esquema da sessão passa a `schemaVersion: 6`;
-- esquema do histórico passa à versão 3;
-- Tela de Desempenho, Resultado Final, histórico e exportações passam a usar o desempenho geral;
-- painéis de configuração e correção preservam altura natural em zooms maiores;
-- em desktop, a área de resposta passa a ter rolagem vertical interna mantendo a barra de ações visível;
-- em tablet e mobile, a Tela de Resolução mantém rolagem geral sem alturas artificiais;
-- alternativas, correção e metacognição passam a ocupar linhas de altura natural, sem sobreposição;
-- a grade da área de resposta usa linhas `max-content`, impedindo que painéis extensos sejam comprimidos.
-
-#### Preservado
-
-- modo de correção somente no resultado final;
-- correção automática das objetivas e de Verdadeiro ou Falso;
-- migração de sessões e históricos anteriores;
-- respostas, confirmações, tempos e anotações existentes.
-
-### v0.5-dev — Fundação de alternativas e respostas
-
-#### Adicionado
-
-- módulo `core/objective-question.js` para identidade, apresentação e correção das alternativas;
-- identificadores estáveis para cada alternativa objetiva;
-- campo canônico `respostaCorretaId`;
-- testes do modelo objetivo e da estrutura inicial da v0.5.
-
-#### Alterado
-
-- versão de desenvolvimento passa a `0.5-dev`;
-- esquema de sessão passa a `schemaVersion: 4`;
-- respostas objetivas e marcações auxiliares passam a usar IDs estáveis;
-- parser passa a produzir alternativas estruturadas;
-- controlador, resultados e exportações deixam de depender da letra original como identidade;
-- suíte automatizada passa de 23 para 26 arquivos.
-
-#### Preservado
-
-- visual e fluxo das cinco telas;
-- letras A–E apresentadas ao usuário;
-- formato textual legível dos relatórios;
-- migração automática e backups da v0.4;
-- sessões discursivas e demais funcionalidades existentes.
-
-### v0.5-dev — Embaralhamento de alternativas
-
-#### Adicionado
-
-- opção `Embaralhar alternativas` na configuração da sessão;
-- serviço de reordenação que preserva IDs, gabarito e respostas;
-- testes funcionais e estruturais do embaralhamento;
-- aviso no modelo de importação sobre explicações que dependem de letras.
-
-#### Alterado
-
-- sessões passam a registrar `embaralharQuestoes` e `embaralharAlternativas` em `opcoes`;
-- a ordem sorteada das alternativas passa a fazer parte do estado persistido;
-- Resultado Final mostra também o texto da resposta objetiva;
-- relatório TXT mostra letra visual e texto da alternativa;
-- exemplo de Gramática deixa de citar uma letra específica na explicação;
-- suíte automatizada passa de 26 para 28 arquivos.
-
-#### Preservado
-
-- correção automática pelo ID estável;
-- respostas e marcações após recarregar a página;
-- compatibilidade com sessões da v0.4 e com sessões da fundação da v0.5;
-- comportamento das questões discursivas.
+- regressão manual aprovada;
+- 45 arquivos de teste automatizados aprovados;
+- nenhum bug bloqueador ou importante pendente no fechamento.
 
 ## [v0.4.0] — 2026-07-18
 
@@ -532,3 +439,4 @@ Todas as mudanças importantes do Test Quest serão registradas neste arquivo.
 - em tablets e celulares, a tela utiliza rolagem geral e empilhamento responsivo;
 - componentes visuais foram alinhados aos tokens, botões, superfícies e proporções da Resolução;
 - o bloco de Veredito Final recebeu maior destaque e estados semânticos mais claros.
+

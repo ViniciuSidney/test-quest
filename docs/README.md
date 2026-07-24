@@ -16,8 +16,8 @@ Este diretório reúne a documentação oficial do **Test Quest — Now I Know.*
 - Tela de Desempenho oficial implementada;
 - Tela de Resultado Final oficial implementada;
 - Tela de Correção Discursiva guiada implementada;
-- v0.4.0 concluída: persistência versionada, modularização, confiabilidade e preparação de release finalizadas.
-- v0.5-dev em desenvolvimento: alternativas estáveis, embaralhamento, Verdadeiro ou Falso, gabarito imediato, revisão de erros, efeitos visuais e correção discursiva guiada implementados.
+- v0.4.0 concluída: persistência versionada, modularização e confiabilidade consolidadas.
+- v0.5.0 concluída: novos modos de resolução, Correção Discursiva, revisão de erros, efeitos visuais e desempenho combinado aprovados.
 
 ## Documentos principais
 
@@ -35,6 +35,8 @@ Este diretório reúne a documentação oficial do **Test Quest — Now I Know.*
 | `10-v0.4-consolidacao-tecnica.md` | Persistência, migração e etapas técnicas da v0.4 |
 | `11-checklist-fechamento-v0.4.md` | Regressão final, aprovação, merge, tag e publicação da v0.4.0 |
 | `12-notas-release-v0.4.0.md` | Resumo oficial e conteúdo-base da Release v0.4.0 |
+| `23-checklist-fechamento-v0.5.md` | Aprovação final, critérios e comandos de publicação da v0.5.0 |
+| `24-notas-release-v0.5.0.md` | Resumo oficial e conteúdo-base da Release v0.5.0 |
 | `13-v0.5-fundacao-alternativas.md` | Modelo estável de alternativas, respostas e migração do esquema 4 |
 | `14-v0.5-embaralhamento-alternativas.md` | Regras e persistência do embaralhamento de alternativas |
 | `15-v0.5-verdadeiro-falso.md` | Formato, comportamento e validação de Verdadeiro ou Falso |
