@@ -2,9 +2,9 @@
 
 ## Estado geral
 
-**Versão estável:** `v0.4.0`  
-**Próxima versão planejada:** `v0.5-dev`  
-**Estado:** `v0.4.0 concluída e pronta para publicação`
+**Versão estável:** `v0.5.0`  
+**Próxima versão:** a definir  
+**Estado:** `Etapa 5 — refazer questões erradas concluída`
 
 Concluído:
 
@@ -168,20 +168,106 @@ Reduzir a concentração de responsabilidades, proteger os dados locais e prepar
 
 # Marco 4 — Modos de resolução e revisão
 
-## v0.5-dev — Flexibilidade de estudo
+## v0.5.0 — Flexibilidade de resolução e estudo ativo
+
+**Status:** Concluída e aprovada em 24/07/2026
 
 ### Objetivo
 
-Ampliar as formas de responder, corrigir e refazer questões.
+Ampliar as formas de responder, corrigir e revisar questões sem perder compatibilidade com as sessões existentes.
 
-### Planejado
+### Etapa 1 — Fundação de alternativas e respostas — concluída
 
-- gabarito após cada questão;
-- embaralhamento de alternativas com IDs estáveis;
-- questões de verdadeiro ou falso;
-- opção manual para reduzir efeitos visuais;
-- criar nova sessão somente com questões erradas;
-- integração dos novos modos com histórico, exportações e Resultado Final.
+- `APP_VERSION` atualizada para `0.5-dev`;
+- esquema de sessão atualizado para `schemaVersion: 4`;
+- alternativas objetivas convertidas de um mapa por letras para uma lista de objetos;
+- cada alternativa recebe `id`, `chaveOriginal`, `texto` e `ordemOriginal`;
+- gabarito objetivo passa a usar `respostaCorretaId` como referência canônica;
+- respostas e marcações auxiliares passam a usar o ID estável da alternativa;
+- sessões da v0.4 são migradas automaticamente;
+- letras continuam sendo exibidas e exportadas para preservar a experiência atual;
+- correção permanece válida mesmo quando a ordem das alternativas muda;
+- testes automatizados ampliados para 26 arquivos.
+
+### Etapa 2 — Embaralhamento de alternativas — concluída
+
+- configuração própria na importação;
+- reordenação somente das alternativas objetivas;
+- ordem persistida dentro da sessão;
+- gabarito, respostas e marcadores vinculados aos IDs estáveis;
+- Resultado Final e exportações convertendo IDs para a letra visual atual;
+- nova ordem gerada somente em uma nova sessão;
+- orientação para explicações independentes de letras;
+- testes automatizados ampliados para 28 arquivos.
+
+### Etapa 3 — Verdadeiro ou Falso — concluída
+
+- importação própria com `tipo: verdadeiro ou falso`;
+- alternativas Verdadeiro e Falso geradas automaticamente;
+- ordem fixa V → F, sem interferência do embaralhamento;
+- tela de resolução específica e responsiva;
+- Resultado Final com apresentação especial;
+- guia de importação dividido por tipo;
+- testes automatizados ampliados para 29 arquivos.
+
+
+### Etapa 4 — Gabarito imediato por questão — concluída
+
+- configuração de correção na tela de Importação;
+- modo padrão mantém o gabarito somente no Resultado Final;
+- modo imediato exige confirmação explícita da resposta;
+- respostas objetivas, V/F e discursivas ficam bloqueadas após a confirmação;
+- objetivas e V/F exibem acerto, erro, gabarito e explicação;
+- discursivas exibem resposta esperada, critérios e Metacognição em 100%, 50% ou 0%;
+- confirmações e autoavaliações persistem no `localStorage` e após a retomada da sessão;
+- sessões anteriores migram para o modo de correção final;
+- desempenho geral combina objetivas e discursivas avaliadas;
+- esquema de sessão atualizado para `schemaVersion: 6`;
+- testes automatizados ampliados para 34 arquivos.
+
+### Etapa 5 — Refazer questões erradas — concluída
+
+- ação própria no Resultado Final, exibida somente quando há erros elegíveis;
+- nova sessão composta por objetivas e V/F incorretas;
+- inclusão de discursivas avaliadas como `Resposta incorreta (0%)`;
+- exclusão de questões não respondidas e discursivas parciais ou completas;
+- respostas, confirmações, tempos, revisão, marcadores, anotações e metacognição reiniciados;
+- conteúdo, gabarito e configurações da sessão preservados;
+- sessão original mantida no histórico e nova tentativa registrada separadamente;
+- filtro `Erradas` alinhado ao mesmo critério da revisão;
+- suíte automatizada ampliada para 36 arquivos.
+
+### Etapa 6 — Controle manual dos efeitos visuais — concluída
+
+- preferência global com os modos Sistema, Completos e Reduzidos;
+- aplicação persistida pelo repositório de configurações já existente;
+- sincronização dinâmica com `prefers-reduced-motion` no modo Sistema;
+- modo Completo capaz de manter os efeitos mesmo quando o sistema solicita redução;
+- modo Reduzido removendo movimentos, fades, contador animado e rolagem suave;
+- acesso ao modal pelos cabeçalhos das quatro telas navegáveis;
+- controlador e serviço próprios para evitar nova concentração no controlador principal;
+- suíte automatizada ampliada para 39 arquivos.
+
+### Etapa 6.1 — Correção discursiva guiada — concluída
+
+- Metacognição inicial separada do Veredito Final;
+- nova tela Wizard entre Resolução e Desempenho no modo de gabarito ao final;
+- comparação entre resposta do usuário, percepção inicial, modelo e critérios;
+- progresso, validações, resumo e navegação por discursiva;
+- pontuação oficial baseada somente no Veredito Final;
+- retomada da correção pela Tela Inicial;
+- migração segura para `schemaVersion: 7`;
+- integração com Resultado Final, histórico, exportações e revisão de erros;
+- suíte automatizada ampliada para 41 arquivos.
+
+### Etapa 7 — Integração, regressão e fechamento — concluída
+
+- regressão manual completa aprovada;
+- 45 arquivos de teste automatizados aprovados;
+- versão promovida de `0.5-dev` para `0.5.0`;
+- README, roadmap, testes e changelog consolidados;
+- checklist e notas oficiais da Release adicionados;
+- pacote preparado para merge, tag e publicação.
 
 ---
 

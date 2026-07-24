@@ -1,4 +1,10 @@
+import {
+  getAlternativePresentation,
+  getCorrectAlternativePresentation,
+  isObjectiveAnswerCorrect
+} from "../../core/objective-question.js";
 import { calculateSessionResult } from "../results/results.service.js";
+import { getFinalVerdict, getInitialMetacognition, getMetacognitionLevel } from "../question-resolution/metacognition.service.js";
 import { formatDateTime, formatDuration, slugify } from "../../shared/formatters.js";
 
 export const EXPORT_MIME_TYPES = Object.freeze({
@@ -47,7 +53,8 @@ export function buildAnswersReport(state, { now = new Date() } = {}) {
     `Objetivas: ${result.objetivas}`,
     `Discursivas: ${result.discursivas}`,
     `Acertos nas objetivas: ${result.objetivas > 0 ? `${result.acertos}/${result.objetivas}` : "Não disponível"}`,
-    `Desempenho nas objetivas: ${result.objetivas > 0 ? `${result.percentual}%` : "Não disponível"}`,
+    `Discursivas com veredito final: ${result.discursivasAvaliadas}/${result.discursivas}`,
+    `Desempenho geral: ${result.questoesAvaliadas > 0 ? `${result.percentual}%` : "Não disponível"}`,
     `Tempo total: ${formatDuration(result.tempoTotal)}`,
     `Tempo médio por questão: ${formatDuration(result.tempoMedio)}`,
     `Marcadas para revisão: ${result.marcadas}`,
@@ -68,25 +75,51 @@ export function buildAnswersReport(state, { now = new Date() } = {}) {
     lines.push(`Enunciado: ${question.enunciado}`);
 
     if (question.categoria === "objetiva") {
+      const answerPresentation = getAlternativePresentation(question, answer);
+      const correctPresentation = getCorrectAlternativePresentation(question);
       const status = !answer
         ? "Não respondida"
-        : answer.toUpperCase() === question.correta
+        : isObjectiveAnswerCorrect(question, answer)
           ? "Correta"
           : "Incorreta";
 
-      lines.push(`Sua resposta: ${answer || "—"}`);
-      lines.push(`Resposta correta: ${question.correta}`);
+      lines.push(
+        `Sua resposta: ${formatObjectiveAlternativeForReport(answerPresentation)}`
+      );
+      lines.push(
+        `Resposta correta: ${formatObjectiveAlternativeForReport(correctPresentation)}`
+      );
       lines.push(`Status: ${status}`);
       lines.push(`Explicação: ${question.explicacao}`);
       return;
     }
 
+    const initialMetacognition = getInitialMetacognition(state, question.id);
+    const initialLevel = getMetacognitionLevel(initialMetacognition?.nivel);
+    const finalVerdict = getFinalVerdict(state, question.id);
+    const finalLevel = getMetacognitionLevel(finalVerdict?.nivel);
+
     lines.push(`Sua resposta: ${answer || "—"}`);
     lines.push(`Resposta esperada: ${question.respostaEsperada}`);
     lines.push(`Critérios de correção: ${question.criterios}`);
+    lines.push(`Metacognição inicial: ${initialLevel ? `${initialLevel.label} (${initialLevel.percentage}%)` : "Não registrada"}`);
+    lines.push(`Observação inicial: ${initialMetacognition?.observacao || "—"}`);
+    lines.push(`Veredito final: ${finalLevel ? `${finalLevel.label} (${finalLevel.percentage}%)` : "Não registrado"}`);
+    lines.push(`Observação após a correção: ${finalVerdict?.observacao || "—"}`);
   });
 
   return lines.join("\n");
+}
+
+
+function formatObjectiveAlternativeForReport(presentation) {
+  if (!presentation) {
+    return "—";
+  }
+
+  const letter = presentation.displayLetter || "—";
+  const text = String(presentation.text || "").trim();
+  return text ? `${letter}) ${text}` : letter;
 }
 
 export function buildNotesReport(state, { now = new Date() } = {}) {

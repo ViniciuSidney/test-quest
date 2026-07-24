@@ -3,6 +3,7 @@ import { SESSION_SCHEMA_VERSION } from "./constants.js";
 export const SESSION_STATUS = Object.freeze({
   PREPARING: "preparando",
   ACTIVE: "em_andamento",
+  REVIEWING: "corrigindo_discursivas",
   FINISHED: "finalizada"
 });
 
@@ -21,9 +22,19 @@ export function createInitialState() {
     temposMs: {},
     revisao: {},
     marcacoesAlternativas: {},
+    confirmacoes: {},
+    avaliacoesDiscursivas: {},
+    correcaoDiscursiva: {
+      atualId: null,
+      iniciadaEm: null,
+      concluidaEm: null
+    },
     temporizadorPausado: false,
     opcoes: {
-      mostrarGabaritoFinal: true
+      mostrarGabaritoFinal: true,
+      embaralharQuestoes: false,
+      embaralharAlternativas: false,
+      modoCorrecao: "final"
     },
     importadoEm: null,
     iniciadoEm: null,

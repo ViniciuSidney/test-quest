@@ -3,9 +3,9 @@
 ## Informações
 
 **Projeto:** Test Quest  
-**Base:** v0.2.5-dev  
-**Fase:** implementação das telas oficiais  
-**Status geral:** Ok
+**Base:** v0.5.0  
+**Fase:** regressão e fechamento da Release  
+**Status geral:** Aprovado
 
 ## Legenda
 
@@ -16,6 +16,27 @@
 
 ---
 
+
+
+## Pré-validação técnica — Rolagem interna da Resolução — 2026-07-22
+
+Foram verificadas as seguintes condições:
+
+- área de resposta com `overflow-y: auto` em larguras a partir de 981 px;
+- barra de ações separada e sempre abaixo do painel da questão;
+- alternativas, correção e metacognição sem sobreposição;
+- rolagem interna alcançando o fim do bloco de Metacognição;
+- rolagem geral preservada em tablet e mobile;
+- cenários equivalentes a 100%, 110% e 125% de zoom;
+- 34 arquivos de teste automatizado concluídos com sucesso.
+
+Teste estrutural adicionado:
+
+```bash
+node tests/resolution-internal-scroll.test.mjs
+```
+
+---
 
 ## Pré-validação técnica da Importação — 2026-07-15
 
@@ -360,3 +381,142 @@ A versão não pode ser enviada à `main` como estável enquanto houver:
 | V04-T30 | Regressão manual final | Fluxo completo funciona no navegador em desktop e mobile | OK |
 | V04-T31 | Aviso visual real | Simulação no DevTools mostra o aviso sem bloquear a interface | OK |
 | V04-T32 | Recuperação real | Após restabelecer o armazenamento, `Tentar novamente` salva e remove o aviso | OK |
+
+
+# v0.5 — Fundação de alternativas e respostas
+
+| Código | Teste | Resultado esperado | Status |
+|---|---|---|---|
+| V05-T01 | Conversão das alternativas | Questões antigas recebem cinco objetos com IDs estáveis | OK |
+| V05-T02 | Determinismo dos IDs | A mesma questão produz os mesmos IDs durante a migração | OK |
+| V05-T03 | Gabarito canônico | `respostaCorretaId` aponta para uma alternativa existente | OK |
+| V05-T04 | Migração da resposta | Respostas antigas em letras são convertidas para IDs | OK |
+| V05-T05 | Migração dos marcadores | Marcações antigas por letra passam a usar IDs | OK |
+| V05-T06 | Correção após reordenação | A resposta permanece correta mesmo quando a alternativa muda de posição visual | OK |
+| V05-T07 | Letras visíveis | Interface, resultado e TXT continuam apresentando letras legíveis | OK |
+| V05-T08 | Exportação JSON | Sessão exportada registra `schemaVersion: 7` e respostas por ID | OK |
+| V05-T09 | Fluxo completo | Importar, salvar, restaurar, finalizar e exportar mantém os dados coerentes | OK |
+| V05-T10 | Regressão automatizada | Os 26 arquivos da suíte terminam sem falhas | OK |
+| V05-T11 | Migração real no navegador | Uma sessão ativa da v0.4 reaparece com resposta e marcadores preservados | Pendente |
+| V05-T12 | Regressão visual | As cinco telas permanecem visualmente iguais à v0.4 | Pendente |
+
+
+# v0.5 — Embaralhamento de alternativas
+
+| Código | Teste | Resultado esperado | Status |
+|---|---|---|---|
+| V05-T13 | Opção de sessão | A Importação oferece `Embaralhar alternativas` separadamente de `Embaralhar questões` | OK |
+| V05-T14 | Ordem alterada | Uma sessão nova com a opção ativa recebe ordem diferente da importada | OK |
+| V05-T15 | IDs preservados | O embaralhamento não modifica os IDs nem o `respostaCorretaId` | OK |
+| V05-T16 | Correção automática | Uma alternativa correta continua correta em qualquer posição visual | OK |
+| V05-T17 | Marcadores auxiliares | Estados em análise e eliminada continuam ligados à alternativa certa | OK |
+| V05-T18 | Restauração | A mesma ordem reaparece depois de salvar e restaurar a sessão | OK |
+| V05-T19 | Nova sessão | Uma nova sessão pode gerar outra ordem sem modificar a sessão anterior | OK |
+| V05-T20 | Resultado Final | Letra visual e texto da resposta aparecem corretamente no card expandido | OK |
+| V05-T21 | Relatório TXT | Resposta e gabarito usam letra visual atual acompanhada do texto | OK |
+| V05-T22 | Opção desativada | A ordem importada é preservada quando o embaralhamento está desligado | OK |
+| V05-T23 | Regressão automatizada | Os 28 arquivos da suíte terminam sem falhas | OK |
+| V05-T24 | Teste real no navegador | Responder, marcar, recarregar e finalizar mantém alternativa e gabarito corretos | Pendente |
+| V05-T25 | Combinação das opções | Embaralhar questões e alternativas simultaneamente mantém o fluxo correto | OK |
+
+# v0.5 — Verdadeiro ou Falso
+
+| Código | Teste | Resultado esperado | Status |
+|---|---|---|---|
+| T-VF-01 | Importar `correta: V` | Questão aceita e gabarito associado a Verdadeiro | Automatizado — OK |
+| T-VF-02 | Importar `correta: F` | Questão aceita e gabarito associado a Falso | Automatizado — OK |
+| T-VF-03 | Embaralhar alternativas | Questão V/F mantém a ordem Verdadeiro → Falso | Automatizado — OK |
+| T-VF-04 | Responder e recarregar | Escolha permanece salva após restauração | Pendente manual |
+| T-VF-05 | Resultado correto | Card V/F mostra acerto, gabarito, explicação e tempo | Pendente manual |
+| T-VF-06 | Resultado incorreto | Card V/F diferencia resposta escolhida e correta | Pendente manual |
+| T-VF-07 | Guia de importação | Os três formatos aparecem separados e legíveis | Pendente manual |
+| T-VF-08 | Mobile | Escolhas empilham sem extrapolação horizontal | Pendente manual |
+
+
+# v0.5 — Etapa 4: gabarito imediato
+
+| Código | Teste | Resultado esperado | Status |
+|---|---|---|---|
+| T90 | Modo final | A resolução mantém o comportamento anterior e não exibe o botão de confirmação | Automatizado OK |
+| T91 | Modo imediato objetivo | Confirmar bloqueia a alternativa e revela acerto, gabarito e explicação | Automatizado OK |
+| T92 | Modo imediato V/F | Confirmar preserva a ordem V → F e revela a correção | Automatizado OK |
+| T93 | Modo imediato discursivo | Confirmar bloqueia o texto e mostra resposta esperada e critérios | Automatizado OK |
+| T94 | Persistência | Recarregar mantém respostas confirmadas e o painel de correção | Automatizado OK |
+| T95 | Migração | Sessões antigas recebem `modoCorrecao: final` e `confirmacoes: {}` | Automatizado OK |
+| T96 | Encerramento | O modal informa a quantidade de questões sem confirmação imediata | Automatizado OK |
+| T97 | Regressão | Embaralhamento, resultado, exportações e histórico continuam funcionando | Automatizado OK |
+
+A suíte contém 34 arquivos de teste automatizado até a conclusão da Etapa 4.
+
+
+# v0.5 — Etapa 5: refazer questões erradas
+
+| Código | Teste | Resultado esperado | Status |
+|---|---|---|---|
+| T102 | Objetiva incorreta | Questão entra na nova sessão | Automatizado OK |
+| T103 | Verdadeiro ou Falso incorreta | Questão entra mantendo o modelo V/F | Automatizado OK |
+| T104 | Objetiva não respondida | Questão não entra automaticamente | Automatizado OK |
+| T105 | Discursiva incorreta em 0% | Questão entra na revisão | Automatizado OK |
+| T106 | Discursiva parcial ou completa | Questão não entra automaticamente | Automatizado OK |
+| T107 | Sessão original | Dados da sessão concluída não são modificados | Automatizado OK |
+| T108 | Nova tentativa | Respostas, tempos, confirmações, revisão, marcadores, anotações e metacognição começam vazios | Automatizado OK |
+| T109 | Configurações | Embaralhamento e modo de correção são preservados | Automatizado OK |
+| T110 | Resultado sem erros | O botão de revisão permanece oculto | Estrutural OK |
+| T111 | Filtro Erradas | Objetivas incorretas e discursivas em 0% aparecem juntas | Automatizado OK |
+| T112 | Histórico | A nova tentativa recebe ID próprio e pode ser registrada separadamente | Automatizado OK |
+| T113 | Regressão automatizada | Os 36 arquivos da suíte terminam sem falhas | Automatizado OK |
+| T114 | Fluxo real no navegador | Finalizar, iniciar revisão e concluir nova tentativa mantém o histórico coerente | Pendente manual |
+
+A suíte contém 36 arquivos de teste automatizado.
+
+# v0.5 — Etapa 6: efeitos visuais
+
+| Código | Teste | Resultado esperado | Status |
+|---|---|---|---|
+| T115 | Modo Sistema sem redução | Efeitos completos são aplicados | Automatizado OK |
+| T116 | Modo Sistema com redução | Efeitos reduzidos são aplicados | Automatizado OK |
+| T117 | Modo Completo | Efeitos permanecem ativos mesmo com redução no sistema | Automatizado OK |
+| T118 | Modo Reduzido | Animações, transições e rolagem suave são removidas | Automatizado OK |
+| T119 | Persistência | Preferência permanece após recarregar a aplicação | Automatizado OK |
+| T120 | Tela de Desempenho | Contador e fechamento usam o modo efetivo | Automatizado OK |
+| T121 | Modal | Três opções, foco, Escape e restauração de foco estão disponíveis | Estrutural OK |
+| T122 | Cabeçalhos | Preferência pode ser aberta nas quatro telas principais | Estrutural OK |
+| T123 | Regressão automatizada | Os 39 arquivos da suíte terminam sem falhas | Automatizado OK |
+| T124 | Validação real | Conferir Sistema, Completos e Reduzidos nos temas claro e escuro | Pendente manual |
+
+A suíte contém 39 arquivos de teste automatizado.
+
+
+## Aprovação final da v0.5.0 — 2026-07-24
+
+### Resultado
+
+- regressão manual completa: **aprovada pelo usuário**;
+- testes automatizados: **45/45 arquivos aprovados**;
+- bugs bloqueadores: **0**;
+- bugs importantes pendentes: **0**;
+- perda de dados identificada: **não**;
+- decisão: **aprovada para publicação como v0.5.0**.
+
+### Áreas validadas
+
+- Tela Inicial, Importação, Resolução, Correção Discursiva, Desempenho e Resultado Final;
+- questões objetivas, Verdadeiro ou Falso e discursivas;
+- gabarito ao final e gabarito imediato;
+- Metacognição inicial e Veredito Final;
+- revisão de questões erradas;
+- mapa semântico e detalhamento por assunto;
+- efeitos visuais, temas, zoom e responsividade;
+- persistência, retomada, migração, histórico e exportações.
+
+### Comando final
+
+```bash
+node tests/run-all-tests.mjs
+```
+
+Resultado obtido:
+
+```text
+✓ 45 arquivos de teste concluídos com sucesso.
+```

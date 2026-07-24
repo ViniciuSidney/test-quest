@@ -71,6 +71,8 @@ Importação e Validação
     ↓
 Resolução
     ↓
+Correção Discursiva, quando necessária
+    ↓
 Tela de Desempenho
     ↓
 Resultado Final
@@ -78,51 +80,40 @@ Resultado Final
 Tela Inicial
 ```
 
-A Tela Inicial também permite continuar uma sessão salva diretamente na Tela de Resolução.
+A Tela Inicial permite continuar uma sessão salva diretamente na Resolução ou na Correção Discursiva.
 
 ## Estado atual
 
-**Versão estável:** `v0.4.0`  
-**Próximo ciclo planejado:** `v0.5-dev`
+**Versão estável:** `v0.5.0`  
+**Status:** concluída e aprovada para publicação
 
-**Fase do projeto:** v0.4.0 concluída; preparação para modos de resolução e revisão.
+A v0.5.0 consolida:
 
-Concluído:
+- alternativas com IDs estáveis;
+- embaralhamento de alternativas;
+- questões de Verdadeiro ou Falso;
+- gabarito imediato opcional;
+- Metacognição inicial e Veredito Final separados;
+- Correção Discursiva guiada;
+- revisão de questões erradas;
+- controle manual de efeitos visuais;
+- desempenho combinado e detalhamento por assunto;
+- mapa semântico de resultados;
+- migração de sessões para `schemaVersion: 7`;
+- 45 arquivos de teste automatizados aprovados;
+- regressão manual aprovada pelo usuário.
 
-- estrutura baseada no Modelo de Projeto;
-- Git inicializado;
-- repositório remoto publicado;
-- branches `main` e `dev` configuradas;
-- identidade visual documentada;
-- layouts das cinco telas aprovados;
-- manuais estruturais concluídos;
-- Tela Inicial oficial implementada;
-- Tela de Importação e Validação oficial implementada;
-- Tela de Resolução oficial implementada;
-- Tela de Desempenho oficial implementada com seis estados dinâmicos;
-- Tela de Resultado Final oficial implementada com filtros e revisão expansível;
-- estados completos de validação e contadores implementados;
-- parser de importação separado;
-- navegação centralizada entre as cinco telas;
-- histórico local e indicadores de sessões concluídas implementados.
+## Critérios de sucesso da v0.5
 
-Consolidação concluída na v0.4.0:
-
-- versionar e validar o estado salvo — concluído na primeira etapa;
-- migrar as chaves legadas com backup — concluído na primeira etapa;
-- separar persistência e configurações do controlador — concluído na primeira etapa;
-- normalizar e deduplicar o histórico — concluído na primeira etapa;
-- modularizar ciclo de vida, resultados, formatadores, confirmações e exportações — concluído na segunda etapa;
-- executar testes de fluxo, falhas de armazenamento e regressão completa — concluído na terceira etapa.
-
-## Critérios de sucesso da v0.4
-
-- sessões da v0.3 migradas sem perda de dados;
-- dados inválidos não impedem a inicialização;
-- controlador principal reduzido gradualmente;
-- nenhuma regressão nas cinco telas;
-- persistência e histórico cobertos por testes automatizados;
-- documentação atualizada para o novo esquema.
+- sessões anteriores migradas sem perda de dados — aprovado;
+- respostas e gabaritos preservados com embaralhamento — aprovado;
+- fluxos de correção final e imediata concluídos — aprovado;
+- Correção Discursiva retomável e persistente — aprovado;
+- desempenho baseado no Veredito Final — aprovado;
+- revisão de erros selecionando apenas questões elegíveis — aprovado;
+- temas, efeitos visuais, responsividade e zoom validados — aprovado;
+- exportações, histórico e persistência validados — aprovado;
+- suíte automatizada com 45 arquivos aprovada — aprovado.
 
 ## Limites atuais
 
@@ -131,5 +122,5 @@ Consolidação concluída na v0.4.0:
 - os dados ficam no navegador por meio do `localStorage`;
 - a arquitetura JavaScript ainda mantém parte da lógica concentrada;
 - o histórico atual registra resumos locais, mas ainda não possui visualização detalhada de sessões;
-- as cinco telas oficiais estão implementadas e integradas;
-- novas modalidades de resolução permanecem reservadas para a v0.5.
+- as telas oficiais, incluindo a Correção Discursiva, estão implementadas e integradas;
+- novas expansões permanecem reservadas para ciclos posteriores.

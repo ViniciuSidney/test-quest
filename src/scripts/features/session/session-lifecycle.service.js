@@ -1,4 +1,6 @@
+import { isTrueFalseQuestion } from "../../core/objective-question.js";
 import { createInitialState, SESSION_STATUS } from "../../core/state.js";
+import { normalizeCorrectionMode } from "../question-resolution/immediate-feedback.service.js";
 
 export function createSessionId({
   cryptoRef = globalThis.crypto,
@@ -28,15 +30,20 @@ export function createActiveSession({
   listName = "",
   showAnswerKey = true,
   shuffleQuestions = false,
+  shuffleAlternatives = false,
+  correctionMode = "final",
   now = () => new Date().toISOString(),
   idFactory = createSessionId,
   random = Math.random
 } = {}) {
   const importedAt = now();
   const clonedQuestions = cloneQuestions(questions);
-  const orderedQuestions = shuffleQuestions
-    ? shuffleItems(clonedQuestions, random)
+  const questionsWithAlternativeOrder = shuffleAlternatives
+    ? clonedQuestions.map((question) => shuffleQuestionAlternatives(question, random))
     : clonedQuestions;
+  const orderedQuestions = shuffleQuestions
+    ? shuffleItems(questionsWithAlternativeOrder, random)
+    : questionsWithAlternativeOrder;
   const state = createInitialState();
 
   return {
@@ -47,7 +54,10 @@ export function createActiveSession({
     questoes: orderedQuestions,
     opcoes: {
       ...state.opcoes,
-      mostrarGabaritoFinal: Boolean(showAnswerKey)
+      mostrarGabaritoFinal: Boolean(showAnswerKey),
+      embaralharQuestoes: Boolean(shuffleQuestions),
+      embaralharAlternativas: Boolean(shuffleAlternatives),
+      modoCorrecao: normalizeCorrectionMode(correctionMode)
     },
     importadoEm: importedAt,
     iniciadoEm: importedAt,
@@ -65,12 +75,17 @@ export function restoreActiveSession(savedState) {
   return ensureSessionIdentity({
     ...base,
     ...savedState,
-    status: SESSION_STATUS.ACTIVE,
+    status: savedState.status === SESSION_STATUS.REVIEWING
+      ? SESSION_STATUS.REVIEWING
+      : SESSION_STATUS.ACTIVE,
     respostas: savedState.respostas || {},
     anotacoes: savedState.anotacoes || {},
     temposMs: savedState.temposMs || {},
     revisao: savedState.revisao || {},
     marcacoesAlternativas: savedState.marcacoesAlternativas || {},
+    confirmacoes: savedState.confirmacoes || {},
+    avaliacoesDiscursivas: savedState.avaliacoesDiscursivas || {},
+    correcaoDiscursiva: savedState.correcaoDiscursiva || base.correcaoDiscursiva,
     opcoes: {
       ...base.opcoes,
       ...(savedState.opcoes || {})
@@ -112,9 +127,48 @@ export function isActiveSession(state) {
   );
 }
 
+export function shuffleQuestionAlternatives(question, random = Math.random) {
+  if (
+    question?.categoria !== "objetiva" ||
+    !Array.isArray(question.alternativas) ||
+    isTrueFalseQuestion(question)
+  ) {
+    return question;
+  }
+
+  const originalAlternatives = question.alternativas;
+
+  if (originalAlternatives.length < 2) {
+    return question;
+  }
+
+  let shuffledAlternatives = shuffleItems(originalAlternatives, random);
+  const unchanged = shuffledAlternatives.every(
+    (alternative, index) => alternative === originalAlternatives[index]
+  );
+
+  // Evita que a opção pareça não ter funcionado quando o sorteio produz
+  // exatamente a mesma ordem (chance de 1 em 120 para cinco alternativas).
+  if (unchanged) {
+    shuffledAlternatives = [
+      ...originalAlternatives.slice(1),
+      originalAlternatives[0]
+    ];
+  }
+
+  return {
+    ...question,
+    alternativas: shuffledAlternatives
+  };
+}
+
 function cloneQuestions(questions) {
   return questions.map((question) => ({
     ...question,
-    alternativas: question?.alternativas ? { ...question.alternativas } : null
+    alternativas: Array.isArray(question?.alternativas)
+      ? question.alternativas.map((alternative) => ({ ...alternative }))
+      : question?.alternativas
+        ? { ...question.alternativas }
+        : null
   }));
 }

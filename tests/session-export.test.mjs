@@ -1,3 +1,7 @@
+import {
+  getCorrectAlternativeId,
+  normalizeObjectiveAlternatives
+} from "../src/scripts/core/objective-question.js";
 import assert from "node:assert/strict";
 import {
   buildAnswersReport,
@@ -7,19 +11,30 @@ import {
   createSessionJsonExport
 } from "../src/scripts/features/exports/session-export.service.js";
 
+const objectiveAlternatives = normalizeObjectiveAlternatives(
+  { A: "A", B: "B", C: "C", D: "D", E: "E" },
+  "q1"
+);
+const objectiveQuestionBase = {
+  id: "q1",
+  categoria: "objetiva",
+  assunto: "Mas e mais",
+  enunciado: "Escolha a opção correta.",
+  alternativas: objectiveAlternatives,
+  correta: "B",
+  respostaCorretaId: "",
+  explicacao: "Mas indica oposição."
+};
+const objectiveQuestion = {
+  ...objectiveQuestionBase,
+  respostaCorretaId: getCorrectAlternativeId(objectiveQuestionBase)
+};
 const state = {
-  schemaVersion: 3,
+  schemaVersion: 4,
   id: "session-1",
   listaNome: "Lista de Gramática",
   questoes: [
-    {
-      id: "q1",
-      categoria: "objetiva",
-      assunto: "Mas e mais",
-      enunciado: "Escolha a opção correta.",
-      correta: "B",
-      explicacao: "Mas indica oposição."
-    },
+    objectiveQuestion,
     {
       id: "q2",
       categoria: "discursiva",
@@ -29,7 +44,7 @@ const state = {
       criterios: "Distinguir os termos."
     }
   ],
-  respostas: { q1: "B", q2: "Minha resposta" },
+  respostas: { q1: objectiveQuestion.respostaCorretaId, q2: "Minha resposta" },
   anotacoes: { q2: "Revisar depois" },
   temposMs: { q1: 61000, q2: 120000 },
   revisao: { q2: true },
@@ -43,6 +58,8 @@ assert.match(answers, /RELATÓRIO DE RESPOSTAS/);
 assert.match(answers, /Questões respondidas: 2\/2/);
 assert.match(answers, /Acertos nas objetivas: 1\/1/);
 assert.match(answers, /Tempo total: 03:01/);
+assert.match(answers, /Sua resposta: B\) B/);
+assert.match(answers, /Resposta correta: B\) B/);
 assert.match(answers, /Status: Correta/);
 assert.match(answers, /Resposta esperada: Uma explicação\./);
 

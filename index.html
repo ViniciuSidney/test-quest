@@ -4,10 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Test Quest — Now I Know.</title>
+  <link rel="icon" type="image/svg+xml" href="./public/icons/favicon.svg" />
+  <link rel="icon" type="image/png" sizes="32x32" href="./public/icons/favicon-32.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="./public/icons/apple-touch-icon.png" />
   <link rel="manifest" href="./public/manifest.json" />
   <link rel="stylesheet" href="./src/styles/main.css" />
 </head>
-<body data-theme="light" data-screen="home">
+<body data-theme="light" data-screen="home" data-motion="system" data-motion-resolved="full">
   <main class="app">
     <aside
       id="avisoPersistencia"
@@ -42,19 +45,41 @@
 
     <section id="telaInicial" class="screen screen--home active" aria-labelledby="tituloMarcaTestQuest">
       <header class="home-toolbar">
-        <button id="btnTema" class="icon-button home-theme-toggle" type="button" data-theme-toggle>
-          🌙 Tema
-        </button>
+        <div class="screen-preferences-actions" aria-label="Preferências visuais">
+          <button
+            class="icon-button motion-settings-button"
+            type="button"
+            data-motion-settings-open
+            aria-haspopup="dialog"
+            aria-controls="modalEfeitosVisuais"
+          >
+            <span aria-hidden="true">✨</span>
+            <span class="motion-settings-button__label" data-motion-settings-label>Efeitos: Sistema</span>
+          </button>
+          <button id="btnTema" class="icon-button home-theme-toggle" type="button" data-theme-toggle>
+            🌙 Tema
+          </button>
+        </div>
       </header>
 
       <div class="home-layout">
         <div class="home-left-column">
           <section class="home-panel brand-panel">
-            <div class="brand-panel__content">
-              <p class="brand-kicker">Aplicação de estudo ativo</p>
-              <h1 id="tituloMarcaTestQuest" class="brand-title">Test Quest</h1>
-              <p class="brand-slogan">Now I Know.</p>
-              <p class="brand-message">Resolver, compreender e avançar.</p>
+            <div class="brand-panel__content brand-panel__content--split">
+              <img
+                class="brand-icon"
+                src="./src/assets/images/test-quest-icon.png"
+                alt="Ícone do aplicativo Test Quest"
+                width="180"
+                height="180"
+                decoding="async"
+              />
+              <div class="brand-copy">
+                <p class="brand-kicker">Aplicação de estudo ativo</p>
+                <h1 id="tituloMarcaTestQuest" class="brand-title">Test Quest</h1>
+                <p class="brand-slogan">Now I Know.</p>
+                <p class="brand-message">Resolver, compreender e avançar.</p>
+              </div>
             </div>
           </section>
 
@@ -153,9 +178,21 @@
           <p>Importe as questões e configure sua sessão.</p>
         </div>
 
-        <button id="btnTemaImportacao" class="icon-button import-theme-toggle" type="button" data-theme-toggle>
-          🌙 Tema
-        </button>
+        <div class="screen-preferences-actions import-header__preferences" aria-label="Preferências visuais">
+          <button
+            class="icon-button motion-settings-button"
+            type="button"
+            data-motion-settings-open
+            aria-haspopup="dialog"
+            aria-controls="modalEfeitosVisuais"
+          >
+            <span aria-hidden="true">✨</span>
+            <span class="motion-settings-button__label" data-motion-settings-label>Efeitos: Sistema</span>
+          </button>
+          <button id="btnTemaImportacao" class="icon-button import-theme-toggle" type="button" data-theme-toggle>
+            🌙 Tema
+          </button>
+        </div>
       </header>
 
       <div class="import-layout">
@@ -254,13 +291,36 @@
               </label>
 
               <label class="import-check-option">
-                <input id="opcaoMostrarGabaritoFinal" type="checkbox" checked />
+                <input id="opcaoEmbaralharAlternativas" type="checkbox" />
                 <span>
-                  <strong>Mostrar gabarito</strong>
-                  <small>Exibe respostas e explicações no resultado.</small>
+                  <strong>Embaralhar alternativas</strong>
+                  <small>Mantém o gabarito correto; prefira explicações que não dependam das letras.</small>
+                </span>
+              </label>
+
+            </fieldset>
+
+            <fieldset class="session-options correction-options">
+              <legend>Correção das questões</legend>
+
+              <label class="import-check-option import-radio-option">
+                <input type="radio" name="modoCorrecao" value="final" checked />
+                <span>
+                  <strong>Somente no resultado final</strong>
+                  <small>O gabarito aparece ao encerrar; discursivas registram a percepção inicial antes da correção guiada.</small>
+                </span>
+              </label>
+
+              <label class="import-check-option import-radio-option">
+                <input type="radio" name="modoCorrecao" value="imediata" />
+                <span>
+                  <strong>Após confirmar cada questão</strong>
+                  <small>Bloqueia a resposta e mostra o gabarito ou o modelo de correção imediatamente.</small>
                 </span>
               </label>
             </fieldset>
+
+            <input id="opcaoMostrarGabaritoFinal" type="checkbox" checked hidden aria-hidden="true" tabindex="-1" />
           </section>
 
           <section class="import-panel validation-panel" aria-labelledby="tituloValidacaoImportacao">
@@ -329,14 +389,26 @@
           <p id="nomeListaResolucao" title="Lista sem nome">Lista sem nome</p>
         </div>
 
-        <button
-          id="btnTemaResolucao"
-          class="icon-button resolution-theme-toggle"
-          type="button"
-          data-theme-toggle
-        >
-          🌙 Tema
-        </button>
+        <div class="screen-preferences-actions resolution-header__preferences" aria-label="Preferências visuais">
+          <button
+            class="icon-button motion-settings-button"
+            type="button"
+            data-motion-settings-open
+            aria-haspopup="dialog"
+            aria-controls="modalEfeitosVisuais"
+          >
+            <span aria-hidden="true">✨</span>
+            <span class="motion-settings-button__label" data-motion-settings-label>Efeitos: Sistema</span>
+          </button>
+          <button
+            id="btnTemaResolucao"
+            class="icon-button resolution-theme-toggle"
+            type="button"
+            data-theme-toggle
+          >
+            🌙 Tema
+          </button>
+        </div>
       </header>
 
       <div class="resolution-layout">
@@ -454,11 +526,165 @@
 
             <div class="resolution-actions__navigation">
               <button id="btnAnterior" class="secondary" type="button">Anterior</button>
+              <button id="btnConfirmarResposta" class="primary resolution-confirm-action hidden" type="button">
+                Confirmar resposta
+              </button>
               <button id="btnProxima" class="primary" type="button">Próxima</button>
               <button id="btnFinalizar" class="primary hidden" type="button">Finalizar</button>
             </div>
           </footer>
         </main>
+      </div>
+    </section>
+
+    <section
+      id="telaCorrecaoDiscursiva"
+      class="screen discursive-review-screen"
+      aria-labelledby="tituloCorrecaoDiscursiva"
+    >
+      <header class="discursive-review-topbar">
+        <button id="btnInicioCorrecaoDiscursiva" class="secondary discursive-review-home-action" type="button">
+          ← Tela inicial
+        </button>
+
+        <nav class="discursive-review-steps" aria-label="Etapas da sessão">
+          <span>Resolução</span>
+          <span aria-hidden="true">›</span>
+          <strong aria-current="step">Correção discursiva</strong>
+          <span aria-hidden="true">›</span>
+          <span>Desempenho</span>
+          <span aria-hidden="true">›</span>
+          <span>Resultado</span>
+        </nav>
+
+        <div class="screen-preferences-actions discursive-review-preferences" aria-label="Preferências visuais">
+          <button
+            class="secondary motion-settings-button"
+            type="button"
+            data-motion-settings-open
+            aria-haspopup="dialog"
+            aria-controls="modalEfeitosVisuais"
+          >
+            <span aria-hidden="true">✨</span>
+            <span class="motion-settings-button__label" data-motion-settings-label>Efeitos: Sistema</span>
+          </button>
+          <button class="secondary" type="button" data-theme-toggle>
+            <span aria-hidden="true">◐</span>
+            <span>Tema</span>
+          </button>
+        </div>
+      </header>
+
+      <div class="discursive-review-layout">
+        <main class="discursive-review-main">
+          <header class="discursive-review-intro">
+            <div class="discursive-review-intro__title">
+              <span class="discursive-review-intro__icon" aria-hidden="true">✎</span>
+              <div>
+                <h1 id="tituloCorrecaoDiscursiva" tabindex="-1">Correção das respostas discursivas</h1>
+                <p>Compare suas respostas com o modelo e registre o veredito final.</p>
+              </div>
+            </div>
+            <div class="discursive-review-session-info">
+              <span>Lista: <strong id="nomeListaCorrecaoDiscursiva">Lista sem nome</strong></span>
+              <span>Modo de gabarito: <strong id="modoCorrecaoDiscursiva">Somente no resultado final</strong></span>
+            </div>
+          </header>
+
+          <section class="discursive-review-question-heading" aria-labelledby="tituloQuestaoCorrecaoDiscursiva">
+            <h2 id="tituloQuestaoCorrecaoDiscursiva">Questão discursiva 1 de 1</h2>
+            <span id="assuntoCorrecaoDiscursiva">Sem assunto</span>
+          </section>
+
+          <div class="discursive-review-content">
+            <section class="discursive-review-block discursive-review-block--statement">
+              <h3><span aria-hidden="true">⌗</span> Enunciado</h3>
+              <p id="enunciadoCorrecaoDiscursiva"></p>
+            </section>
+
+            <section class="discursive-review-block">
+              <h3><span aria-hidden="true">♙</span> Sua resposta</h3>
+              <div id="respostaUsuarioCorrecaoDiscursiva" class="discursive-review-text"></div>
+            </section>
+
+            <section class="discursive-review-block">
+              <div class="discursive-review-block__heading">
+                <h3><span aria-hidden="true">◉</span> Metacognição inicial</h3>
+                <strong id="nivelMetacognicaoInicialCorrecao" class="discursive-review-initial-badge">Não registrada</strong>
+              </div>
+              <div id="metacognicaoInicialCorrecaoDiscursiva" class="discursive-review-text"></div>
+            </section>
+
+            <section class="discursive-review-block">
+              <h3><span aria-hidden="true">▣</span> Resposta esperada (modelo)</h3>
+              <div id="respostaEsperadaCorrecaoDiscursiva" class="discursive-review-text"></div>
+            </section>
+
+            <section class="discursive-review-block">
+              <h3><span aria-hidden="true">▤</span> Critérios de correção</h3>
+              <div id="criteriosCorrecaoDiscursiva" class="discursive-review-text"></div>
+            </section>
+
+            <section class="discursive-review-block discursive-review-block--verdict">
+              <header>
+                <h3><span aria-hidden="true">⚖</span> Veredito final</h3>
+                <p>Após comparar sua resposta com o modelo e os critérios, qual é o veredito final?</p>
+              </header>
+
+              <div id="opcoesVereditoCorrecaoDiscursiva" class="discursive-review-verdict-options" role="radiogroup" aria-label="Veredito final"></div>
+
+              <label class="discursive-review-observation" for="observacaoVereditoCorrecaoDiscursiva">
+                <span>Observação após a correção <small>(opcional)</small></span>
+                <textarea
+                  id="observacaoVereditoCorrecaoDiscursiva"
+                  rows="3"
+                  placeholder="Registre algo que você percebeu ao comparar sua resposta com o modelo..."
+                ></textarea>
+              </label>
+            </section>
+          </div>
+
+          <footer class="discursive-review-actionbar" aria-label="Navegação da correção discursiva">
+            <button id="btnAnteriorCorrecaoDiscursiva" class="secondary" type="button">← Voltar</button>
+            <button id="btnSalvarAvancarCorrecaoDiscursiva" class="primary" type="button">Salvar e avançar →</button>
+            <button id="btnConcluirCorrecaoDiscursiva" class="primary" type="button" disabled>✓ Concluir correção</button>
+          </footer>
+        </main>
+
+        <aside class="discursive-review-sidebar" aria-label="Progresso e validações da correção">
+          <section class="discursive-review-side-panel">
+            <h2>⌁ Progresso da correção</h2>
+            <div class="discursive-review-progress-copy">
+              <strong id="resumoProgressoCorrecaoDiscursiva">0 de 0 corrigidas</strong>
+              <span id="percentualCorrecaoDiscursiva">0%</span>
+            </div>
+            <div class="discursive-review-progress-track" role="progressbar" aria-label="Progresso da correção discursiva" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+              <div id="barraCorrecaoDiscursiva" class="discursive-review-progress-value"></div>
+            </div>
+            <ol id="listaProgressoCorrecaoDiscursiva" class="discursive-review-question-list"></ol>
+          </section>
+
+          <section class="discursive-review-side-panel">
+            <h2>♢ Validações</h2>
+            <ul id="validacoesCorrecaoDiscursiva" class="discursive-review-validation-list"></ul>
+          </section>
+
+          <section class="discursive-review-side-panel">
+            <h2>☷ Resumo da correção</h2>
+            <dl class="discursive-review-summary">
+              <div><dt>Completas (100%)</dt><dd id="totalCorrecaoCompleta">0</dd></div>
+              <div><dt>Parciais (50%)</dt><dd id="totalCorrecaoParcial">0</dd></div>
+              <div><dt>Incorretas (0%)</dt><dd id="totalCorrecaoIncorreta">0</dd></div>
+              <div><dt>Pendentes</dt><dd id="totalCorrecaoPendente">0</dd></div>
+              <div class="discursive-review-summary__total"><dt>Total de discursivas</dt><dd id="totalCorrecaoDiscursivas">0</dd></div>
+            </dl>
+          </section>
+
+          <p class="discursive-review-notice">
+            <span aria-hidden="true">ⓘ</span>
+            Todas as respostas discursivas precisam de um veredito final antes do desempenho geral.
+          </p>
+        </aside>
       </div>
     </section>
 
@@ -523,10 +749,22 @@
           <span id="nomeListaResultado" class="results-header__list-name">Lista sem nome</span>
         </div>
 
-        <button class="secondary results-header__theme" type="button" data-theme-toggle>
-          <span aria-hidden="true">◐</span>
-          <span>Tema</span>
-        </button>
+        <div class="screen-preferences-actions results-header__preferences" aria-label="Preferências visuais">
+          <button
+            class="secondary motion-settings-button"
+            type="button"
+            data-motion-settings-open
+            aria-haspopup="dialog"
+            aria-controls="modalEfeitosVisuais"
+          >
+            <span aria-hidden="true">✨</span>
+            <span class="motion-settings-button__label" data-motion-settings-label>Efeitos: Sistema</span>
+          </button>
+          <button class="secondary results-header__theme" type="button" data-theme-toggle>
+            <span aria-hidden="true">◐</span>
+            <span>Tema</span>
+          </button>
+        </div>
       </header>
 
       <div class="results-layout">
@@ -552,7 +790,7 @@
 
               <article class="result-metric">
                 <strong id="resultadoDesempenho">—</strong>
-                <span>Desempenho nas objetivas</span>
+                <span>Desempenho geral</span>
               </article>
 
               <article class="result-metric">
@@ -568,7 +806,7 @@
 
             <p id="avisoResultadoDiscursivas" class="results-discursive-notice hidden">
               <span aria-hidden="true">✎</span>
-              As questões discursivas devem ser revisadas manualmente.
+              <span id="textoAvisoResultadoDiscursivas">As questões discursivas não avaliadas não entram no desempenho geral.</span>
             </p>
           </section>
 
@@ -648,6 +886,21 @@
           </div>
 
           <div class="results-actions__navigation">
+            <button
+              id="btnRefazerErradas"
+              class="secondary results-retry-button"
+              type="button"
+              aria-describedby="descricaoRefazerErradas"
+              hidden
+            >
+              <span aria-hidden="true">↻</span>
+              <span>Refazer questões erradas</span>
+              <strong id="quantidadeRefazerErradas" class="results-retry-count">0</strong>
+            </button>
+            <span id="descricaoRefazerErradas" class="sr-only">
+              Cria uma nova sessão somente com as questões objetivas incorretas e as discursivas avaliadas com zero por cento.
+            </span>
+
             <button id="btnNovaLista" class="primary" type="button">
               <span aria-hidden="true">←</span>
               Voltar ao início
@@ -666,13 +919,22 @@
         <div>
           <p class="eyebrow">Guia de importação</p>
           <h2 id="tituloModalModelo">Modelo aceito pela aplicação</h2>
-          <p>Use estes formatos para importar questões objetivas e discursivas.</p>
+          <p>Use estes formatos para importar questões objetivas, discursivas e de Verdadeiro ou Falso.</p>
         </div>
         <button id="btnFecharModelo" class="icon-button modal-close" type="button" aria-label="Fechar modelo">✕</button>
       </div>
 
-      <div class="modal-content">
-        <pre><code>@questao
+      <div class="modal-content import-model-content">
+        <div class="import-model-grid">
+          <article class="import-model-card">
+            <header class="import-model-card__header">
+              <span class="import-model-card__badge">A–E</span>
+              <div>
+                <h3>Questão objetiva</h3>
+                <p>Use cinco alternativas e indique a correta pela letra original.</p>
+              </div>
+            </header>
+            <pre><code>@questao
 assunto: Nome do assunto
 tipo: objetiva
 enunciado: Texto do enunciado
@@ -682,17 +944,137 @@ c: Alternativa C
 d: Alternativa D
 e: Alternativa E
 correta: B
-explicacao: Explicação da alternativa correta
-+++
+explicacao: Explicação da resposta correta
++++</code></pre>
+          </article>
 
-@discursiva
+          <article class="import-model-card import-model-card--vf">
+            <header class="import-model-card__header">
+              <span class="import-model-card__badge">V/F</span>
+              <div>
+                <h3>Verdadeiro ou Falso</h3>
+                <p>Não informe alternativas: a aplicação cria Verdadeiro e Falso automaticamente.</p>
+              </div>
+            </header>
+            <pre><code>@questao
+assunto: Nome do assunto
+tipo: verdadeiro ou falso
+enunciado: A média é influenciada por valores extremos.
+correta: V
+explicacao: A média pode ser alterada por valores muito altos ou muito baixos.
++++</code></pre>
+            <p class="import-model-card__hint"><strong>Gabarito aceito:</strong> V, F, Verdadeiro ou Falso.</p>
+          </article>
+
+          <article class="import-model-card import-model-card--discursive">
+            <header class="import-model-card__header">
+              <span class="import-model-card__badge">TXT</span>
+              <div>
+                <h3>Questão discursiva</h3>
+                <p>Inclua uma resposta modelo e os critérios que orientarão a revisão manual.</p>
+              </div>
+            </header>
+            <pre><code>@discursiva
 assunto: Nome do assunto
 tipo: discursiva curta
 enunciado: Texto da pergunta
 resposta_esperada: Resposta modelo
 criterios_de_correcao: Critérios de correção
 +++</code></pre>
+          </article>
+        </div>
+
+        <div class="import-model-notes">
+          <p class="import-model-note">
+            <strong>Embaralhamento:</strong>
+            afeta somente questões objetivas A–E. A ordem Verdadeiro → Falso permanece fixa.
+          </p>
+          <p class="import-model-note">
+            <strong>Explicações:</strong>
+            descreva o conteúdo correto, evitando referências como “a alternativa B”.
+          </p>
+        </div>
       </div>
+    </div>
+  </div>
+
+
+  <div
+    id="modalEfeitosVisuais"
+    class="modal visual-effects-modal hidden"
+    role="dialog"
+    aria-modal="true"
+    aria-hidden="true"
+    aria-labelledby="tituloModalEfeitosVisuais"
+    aria-describedby="descricaoModalEfeitosVisuais"
+  >
+    <button
+      class="modal-backdrop"
+      type="button"
+      data-motion-settings-close
+      aria-label="Fechar preferências de efeitos visuais"
+    ></button>
+
+    <div class="modal-card visual-effects-modal__card" role="document">
+      <header class="visual-effects-modal__header">
+        <span class="visual-effects-modal__icon" aria-hidden="true">✨</span>
+        <div>
+          <p class="eyebrow">Preferência de acessibilidade</p>
+          <h2 id="tituloModalEfeitosVisuais">Efeitos visuais</h2>
+          <p id="descricaoModalEfeitosVisuais">
+            Escolha como animações, brilhos e transições devem funcionar na aplicação.
+          </p>
+        </div>
+      </header>
+
+      <form id="formEfeitosVisuais" class="visual-effects-form">
+        <fieldset class="visual-effects-options">
+          <legend class="sr-only">Modo dos efeitos visuais</legend>
+
+          <label class="visual-effects-option">
+            <input type="radio" name="efeitosVisuais" value="system" />
+            <span class="visual-effects-option__content">
+              <span class="visual-effects-option__marker" aria-hidden="true"></span>
+              <span>
+                <strong>Seguir configuração do sistema</strong>
+                <small>Respeita a preferência de movimento reduzido definida no navegador ou dispositivo.</small>
+              </span>
+              <span class="visual-effects-option__badge">Sistema</span>
+            </span>
+          </label>
+
+          <label class="visual-effects-option">
+            <input type="radio" name="efeitosVisuais" value="full" />
+            <span class="visual-effects-option__content">
+              <span class="visual-effects-option__marker" aria-hidden="true"></span>
+              <span>
+                <strong>Efeitos completos</strong>
+                <small>Mantém animações, transições, contador e aura da Tela de Desempenho.</small>
+              </span>
+              <span class="visual-effects-option__badge">Completos</span>
+            </span>
+          </label>
+
+          <label class="visual-effects-option">
+            <input type="radio" name="efeitosVisuais" value="reduced" />
+            <span class="visual-effects-option__content">
+              <span class="visual-effects-option__marker" aria-hidden="true"></span>
+              <span>
+                <strong>Efeitos reduzidos</strong>
+                <small>Exibe os estados imediatamente e remove movimentos, fades e rolagens suaves.</small>
+              </span>
+              <span class="visual-effects-option__badge">Reduzidos</span>
+            </span>
+          </label>
+        </fieldset>
+
+        <p id="statusEfeitosVisuais" class="visual-effects-status" aria-live="polite"></p>
+
+        <div class="visual-effects-modal__actions">
+          <button id="btnCancelarEfeitosVisuais" class="secondary" type="button">Cancelar</button>
+          <button id="btnAplicarEfeitosVisuais" class="primary" type="submit">Aplicar preferência</button>
+        </div>
+      </form>
     </div>
   </div>
 

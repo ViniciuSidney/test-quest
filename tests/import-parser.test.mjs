@@ -1,3 +1,4 @@
+import { getAlternativePresentation } from "../src/scripts/core/objective-question.js";
 import assert from "node:assert/strict";
 import { parseQuestions, QuestionImportError, summarizeQuestions } from "../src/scripts/features/question-import/question-import.parser.js";
 
@@ -26,7 +27,31 @@ const questions = parseQuestions(validText);
 assert.equal(questions.length, 2);
 assert.equal(questions[0].categoria, "objetiva");
 assert.equal(questions[0].correta, "B");
+assert.equal(Array.isArray(questions[0].alternativas), true);
+assert.equal(questions[0].alternativas.length, 5);
+assert.ok(questions[0].alternativas.every((alternative) => alternative.id));
+assert.equal(
+  getAlternativePresentation(questions[0], questions[0].respostaCorretaId)?.displayLetter,
+  "B"
+);
 assert.equal(questions[1].categoria, "discursiva");
+
+const trueFalseText = `@questao
+assunto: Estatística
+tipo: verdadeiro ou falso
+enunciado: Em uma pesquisa, toda população corresponde ao conjunto completo dos elementos estudados.
+correta: V
+explicacao: A afirmação está correta porque população representa o conjunto total dos elementos analisados.
++++`;
+
+const trueFalseQuestions = parseQuestions(trueFalseText);
+assert.equal(trueFalseQuestions.length, 1);
+assert.equal(trueFalseQuestions[0].alternativas.length, 2);
+assert.equal(trueFalseQuestions[0].correta, "V");
+assert.equal(
+  getAlternativePresentation(trueFalseQuestions[0], trueFalseQuestions[0].respostaCorretaId)?.displayLetter,
+  "V"
+);
 assert.deepEqual(summarizeQuestions(questions), {
   total: 2,
   objective: 1,

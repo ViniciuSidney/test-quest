@@ -270,3 +270,163 @@
 - Navegador e dimensões: não registrados no documento enviado
 - Bugs bloqueadores informados: nenhum
 - Observação: a aprovação para avançar ao fechamento foi considerada como confirmação da regressão manual final.
+
+## v0.5 — Fundação de alternativas e respostas
+
+### Migração real da v0.4
+
+1. Na v0.4.0, inicie uma sessão com ao menos uma questão objetiva.
+2. Selecione uma resposta, marque outra alternativa como `em análise` e escreva uma anotação.
+3. Feche a página sem finalizar a sessão.
+4. Atualize os arquivos para a v0.5.0 e abra novamente pelo Live Server.
+5. Continue a sessão pela Home.
+
+Confirmar:
+
+- [ ] a questão atual foi preservada;
+- [ ] a resposta oficial continua selecionada;
+- [ ] a marcação auxiliar continua na alternativa correta;
+- [ ] anotações e tempos permanecem;
+- [ ] o resultado final calcula acertos corretamente;
+- [ ] o TXT mostra letras, não IDs internos;
+- [ ] o JSON usa `schemaVersion: 7`;
+- [ ] `respostas` e `marcacoesAlternativas` usam IDs de alternativas.
+
+### Regressão visual
+
+- [ ] a Tela de Importação permanece igual;
+- [ ] as alternativas continuam exibindo A–E;
+- [ ] seleção e marcadores mantêm os mesmos estilos;
+- [ ] mapa, temporizador e anotações continuam funcionando;
+- [ ] Resultado Final continua mostrando resposta e gabarito por letras;
+- [ ] temas claro e escuro não apresentam regressões.
+
+## Verdadeiro ou Falso — refinamento visual
+
+1. Importe uma questão V/F com `correta: V`.
+2. Ative `Embaralhar alternativas` e inicie a sessão.
+3. Confirme que Verdadeiro permanece à esquerda e Falso à direita.
+4. Selecione Falso, recarregue a página e continue a sessão.
+5. Confirme que a resposta continua selecionada.
+6. Finalize e abra o card no Resultado Final.
+7. Confira selo V/F, afirmativa, resposta escolhida, resposta correta, explicação, tempo e anotação.
+8. Repita em 1366×768, 754×817, 390×844 e nos temas claro e escuro.
+
+## Refinamento visual da resolução V/F
+
+- [ ] assunto curto produz uma pill compacta, sem largura artificial;
+- [ ] assunto longo termina com reticências e não invade outras pills;
+- [ ] questões respondidas usam cor informativa, diferente de verde/sucesso;
+- [ ] Verdadeiro e Falso permanecem menores que a área interna e centralizados;
+- [ ] em mobile, Verdadeiro, “ou” e Falso continuam empilhados e legíveis.
+
+
+## Etapa 4 — Gabarito imediato
+
+- [ ] iniciar uma sessão com `Somente no resultado final` e confirmar que o fluxo antigo permanece igual;
+- [ ] iniciar uma sessão com `Após confirmar cada questão`;
+- [ ] verificar que `Confirmar resposta` fica desabilitado enquanto não houver resposta;
+- [ ] confirmar uma objetiva correta e conferir bloqueio, gabarito e explicação;
+- [ ] confirmar uma objetiva incorreta e conferir destaque da escolhida e da correta;
+- [ ] confirmar uma questão V/F e conferir a ordem Verdadeiro → Falso;
+- [ ] confirmar uma discursiva e conferir resposta esperada e critérios;
+- [ ] recarregar a página e verificar que a resposta continua bloqueada;
+- [ ] continuar a sessão pela Home e verificar que o painel de correção reaparece;
+- [ ] navegar para uma questão não confirmada e verificar que ela continua editável;
+- [ ] finalizar com questões não confirmadas e conferir o aviso no modal;
+- [ ] testar tema claro, tema escuro, desktop e mobile.
+
+
+## Etapa 4 — Refinamento responsivo e metacognição
+
+### Zoom e rolagem
+
+- [ ] conferir a configuração da sessão em 90%, 100%, 125% e 150%;
+- [ ] confirmar que opções e modos de correção não se sobrepõem;
+- [ ] conferir a correção objetiva com explicação curta e extensa;
+- [ ] confirmar rolagem vertical da Resolução em desktop, tablet e mobile;
+- [ ] verificar que a última parte do feedback e as ações continuam alcançáveis;
+- [ ] repetir nos temas claro e escuro.
+
+### Metacognição discursiva
+
+- [ ] confirmar uma discursiva no modo imediato;
+- [ ] conferir resposta esperada, critérios e bloco de Metacognição;
+- [ ] selecionar `Resposta completa` e verificar 100%;
+- [ ] selecionar `Resposta parcial` e verificar 50%;
+- [ ] selecionar `Resposta incorreta` e verificar 0%;
+- [ ] escrever uma observação, recarregar e confirmar persistência;
+- [ ] verificar que Próxima/Finalizar só é liberado após a seleção;
+- [ ] finalizar com uma discursiva sem avaliação e conferir o aviso;
+- [ ] confirmar o desempenho geral combinado no Resultado Final;
+- [ ] conferir metacognição no histórico e nas exportações TXT/JSON.
+
+
+## Etapa 5 — Refazer questões erradas
+
+- [ ] finalizar uma sessão com uma objetiva incorreta e confirmar que o botão `Refazer questões erradas` aparece com contador `1`;
+- [ ] finalizar uma sessão sem erros e confirmar que o botão não aparece;
+- [ ] criar uma revisão contendo uma objetiva incorreta, uma V/F incorreta e uma discursiva avaliada em 0%;
+- [ ] confirmar que objetivas não respondidas não entram automaticamente;
+- [ ] confirmar que discursivas avaliadas em 50% ou 100% não entram automaticamente;
+- [ ] confirmar no modal a quantidade total, objetiva/V/F e discursiva;
+- [ ] iniciar a revisão e verificar que respostas, tempos, anotações, revisão, marcações, confirmações e Metacognição estão vazios;
+- [ ] verificar que o modo de correção e as opções de embaralhamento foram preservados;
+- [ ] finalizar a revisão e confirmar que a sessão original e a nova tentativa aparecem separadamente nos indicadores históricos;
+- [ ] repetir o fluxo nos temas claro e escuro, em desktop e mobile.
+
+## Refinamento da Etapa 5 — Metacognição e seleção
+
+- [ ] no modo “Somente no resultado final”, responder uma discursiva e confirmar a resposta;
+- [ ] verificar que o modelo e os critérios permanecem ocultos durante a resolução;
+- [ ] verificar que a Metacognição aparece após a confirmação e exige uma avaliação antes de avançar;
+- [ ] confirmar que objetivas e V/F selecionadas recebem destaque visual mais forte;
+- [ ] no Resultado Final, conferir fundo azul nos cards discursivos e bordas: verde para 100%, amarela/laranja para 50% e vermelha para 0%;
+- [ ] expandir uma discursiva e confirmar que Metacognição e Critérios possuem dimensões regulares, sem coluna estreita.
+
+
+---
+
+# Etapa 6.1 — Correção discursiva guiada
+
+## Fluxo com gabarito ao final
+
+- [ ] Finalizar uma sessão com pelo menos duas discursivas respondidas e confirmadas.
+- [ ] Confirmar que a tela Wizard aparece antes do Desempenho.
+- [ ] Conferir enunciado, resposta do usuário, Metacognição inicial, modelo e critérios.
+- [ ] Verificar que `Salvar e avançar` permanece bloqueado sem Veredito Final.
+- [ ] Registrar 100%, 50% e 0% em respostas diferentes e conferir o resumo lateral.
+- [ ] Voltar para uma discursiva anterior e confirmar que o veredito foi preservado.
+- [ ] Recarregar a página no meio da correção e usar `Continuar correção` pela Tela Inicial.
+- [ ] Confirmar que `Concluir correção` só é liberado sem pendências.
+- [ ] Verificar que o Desempenho Geral usa o Veredito Final, não a Metacognição inicial.
+- [ ] Conferir os dois registros no Resultado Final e nas exportações.
+- [ ] Confirmar que apenas discursivas com Veredito Final de 0% entram em `Refazer questões erradas`.
+
+## Cenários alternativos
+
+- [ ] Sessão sem discursivas pula o Wizard.
+- [ ] Discursiva não respondida não entra na correção guiada.
+- [ ] Modo de gabarito imediato conclui o Veredito Final dentro da Resolução e não abre o Wizard.
+- [ ] Tema claro, tema escuro e efeitos reduzidos mantêm a tela legível.
+- [ ] Validar desktop, mobile e zooms de 100%, 110%, 125% e 150%.
+
+
+## Registro de fechamento da v0.5.0
+
+**Data:** 2026-07-24  
+**Branch:** `feature/v0.5`  
+**Testes automatizados:** 45/45 arquivos aprovados  
+**Regressão manual:** aprovada pelo usuário  
+**Bugs bloqueadores:** 0  
+**Bugs importantes pendentes:** 0  
+**Decisão:** aprovar para v0.5.0
+
+- [x] fluxos objetivo, V/F e discursivo;
+- [x] gabarito ao final e imediato;
+- [x] Correção Discursiva guiada;
+- [x] desempenho, Resultado Final e revisão de erros;
+- [x] efeitos visuais, temas e acessibilidade básica;
+- [x] responsividade e zoom;
+- [x] persistência, retomada, migração e exportações;
+- [x] suíte automatizada concluída sem falhas.

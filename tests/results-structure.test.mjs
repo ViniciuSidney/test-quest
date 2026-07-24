@@ -59,6 +59,9 @@ assert.match(resultsCss, /@media \(max-width: 900px\)[\s\S]*?\.review-filters\.i
 assert.match(resultsCss, /\.results-actions__exports\.is-open/);
 assert.match(resultsCss, /\.result-discursive-detail--statement\s*\{[^}]*grid-column:\s*1\s*\/\s*11/s);
 assert.match(resultsCss, /\.result-discursive-detail--time\s*\{[^}]*grid-column:\s*11\s*\/\s*13[^}]*align-content:\s*start/s);
+assert.match(resultsCss, /\.result-discursive-detail--metacognition\s*\{[^}]*grid-column:\s*7\s*\/\s*13/s);
+assert.match(resultsCss, /data-metacognition-level="incorreta"/);
+assert.match(controller, /data-metacognition-level=/);
 assert.match(resultsCss, /prefers-reduced-motion/);
 
 assert.match(controller, /buildQuestionReviewItems/);
@@ -68,6 +71,12 @@ assert.match(controller, /function selecionarFiltroResultado/);
 assert.match(controller, /function alternarCardResultado/);
 assert.match(controller, /function renderizarDetalhesObjetivaResultado/);
 assert.match(controller, /function renderizarDetalhesDiscursivaResultado/);
+assert.match(resultsCss, /\.result-vf-details/);
+assert.match(resultsCss, /\.result-vf-verdict-grid/);
+assert.match(resultsCss, /\.result-review-card__type-badge/);
+assert.match(controller, /function renderizarDetalhesVerdadeiroFalsoResultado/);
+assert.match(controller, /data-question-type=/);
+
 assert.match(controller, /function alternarAcoesResultado/);
 assert.match(controller, /function sincronizarAcoesResultadoResponsivas/);
 assert.match(controller, /function alternarFiltrosResultado/);

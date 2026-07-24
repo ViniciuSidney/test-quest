@@ -130,4 +130,75 @@
 - dados locais preservados;
 - testes automatizados e manuais essenciais aprovados;
 - documentação atualizada;
-- Pull Request de `dev` para `main` revisado.
+- Pull Request de `feature/v0.5` para `main` revisado.
+
+## Requisitos estruturais da v0.5
+
+### RF-V05-01 — Identidade estável das alternativas
+
+Cada alternativa objetiva deve possuir um identificador interno independente da letra apresentada na tela.
+
+### RF-V05-02 — Resposta objetiva por ID
+
+A resposta oficial do usuário deve ser salva pelo ID da alternativa. Letras são apenas rótulos visuais calculados conforme a posição atual.
+
+### RF-V05-03 — Gabarito por ID
+
+A resposta correta deve ser referenciada por `respostaCorretaId`, permitindo reordenar as alternativas sem alterar a correção.
+
+### RF-V05-04 — Migração do esquema 3
+
+Sessões da v0.4 devem ser convertidas para o esquema 4 preservando resposta, marcações, anotações, tempos e revisão.
+
+### RF-V05-05 — Compatibilidade visual
+
+A primeira etapa da v0.5 não deve modificar a aparência ou o fluxo das telas. Resultados e relatórios continuam apresentando letras legíveis.
+
+### Critérios desta etapa
+
+- nenhuma resposta antiga pode ser atribuída à alternativa errada;
+- IDs devem permanecer iguais após salvar e restaurar a sessão;
+- reordenar o array de alternativas não pode alterar o gabarito;
+- exportações TXT não devem expor IDs internos;
+- o JSON deve refletir integralmente o esquema 4.
+
+
+### RF-V05-06 — Questões de Verdadeiro ou Falso
+
+A aplicação deve aceitar questões objetivas com `tipo: verdadeiro ou falso`, criando automaticamente duas opções com IDs estáveis.
+
+### RF-V05-07 — Ordem fixa V/F
+
+A configuração de embaralhamento de alternativas não deve alterar a ordem Verdadeiro → Falso.
+
+### RF-V05-08 — Resultado específico V/F
+
+O Resultado Final deve identificar visualmente o tipo V/F e comparar resposta do usuário, gabarito, explicação, tempo e anotação.
+
+### RF-V05-09 — Guia de importação por tipo
+
+O modal de modelo deve separar claramente objetiva A–E, Verdadeiro ou Falso e discursiva, incluindo as regras específicas de cada formato.
+
+
+## RF-v0.5-04 — Correção após cada questão
+
+- permitir escolher entre correção final e correção imediata;
+- exigir resposta antes da confirmação;
+- impedir alteração depois da confirmação;
+- mostrar acerto, erro, resposta correta e explicação nas objetivas e V/F;
+- mostrar resposta esperada e critérios nas discursivas;
+- persistir confirmações durante recarregamento e retomada;
+- manter compatibilidade com sessões anteriores.
+
+
+## RF-v0.5-05 — Refazer questões erradas
+
+- disponibilizar a ação no Resultado Final somente quando houver questões elegíveis;
+- incluir objetivas e Verdadeiro ou Falso respondidas incorretamente;
+- incluir discursivas avaliadas como `Resposta incorreta (0%)`;
+- não incluir automaticamente objetivas não respondidas ou discursivas avaliadas em 50% e 100%;
+- criar uma sessão ativa com novo ID sem modificar o resultado original;
+- reiniciar respostas, confirmações, tempos, revisão, marcadores, anotações e metacognição;
+- preservar conteúdo, gabarito, embaralhamento e modo de correção;
+- registrar a nova tentativa separadamente no histórico quando ela for concluída;
+- manter o filtro `Erradas` coerente com os critérios da revisão.

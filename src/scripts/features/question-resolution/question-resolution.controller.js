@@ -1,62 +1,43 @@
-import { createInitialState } from "../../core/state.js";
+import { getAlternativeDisplayLetter, getCorrectAlternativeId, getObjectiveAlternatives, isTrueFalseQuestion, resolveObjectiveAnswerId } from "../../core/objective-question.js";
+import { createInitialState, SESSION_STATUS } from "../../core/state.js";
 import { createScreenManager } from "../../core/screens.js";
 import { calculateHistoryMetrics, readHistory, recordCompletedSessionSafe } from "../home/home.service.js";
 import { parseQuestions, QuestionImportError, summarizeQuestions } from "../question-import/question-import.parser.js";
 import { clearSession, loadSession, saveSession } from "../session/session.repository.js";
-import {
-  getClearImportConfirmation,
-  getDeleteSessionConfirmation,
-  getFinishSessionConfirmation,
-  getNewResolutionConfirmation,
-  getReplaceSessionConfirmation
-} from "../session/session-confirmations.service.js";
-import {
-  createActiveSession,
-  finishSession,
-  isActiveSession,
-  restoreActiveSession
-} from "../session/session-lifecycle.service.js";
-import { loadSettings, saveSettings } from "../settings/settings.repository.js";
-import {
-  getPersistenceWarning,
-  shouldProtectBeforeUnload
-} from "../storage/persistence-feedback.service.js";
+import { getClearImportConfirmation, getDeleteSessionConfirmation, getFinishSessionConfirmation, getNewResolutionConfirmation, getReplaceSessionConfirmation, getRetryWrongQuestionsConfirmation } from "../session/session-confirmations.service.js";
+import { createActiveSession, finishSession, isActiveSession, restoreActiveSession } from "../session/session-lifecycle.service.js";
+import { createRetryWrongSession, getRetryWrongSummary } from "../retry-wrong/retry-wrong.service.js";
+import { createThemeController } from "../settings/theme.controller.js";
+import { createVisualEffectsController } from "../settings/visual-effects.controller.js";
+import { shouldReduceVisualEffects } from "../settings/visual-effects.service.js";
+import { getPersistenceWarning, shouldProtectBeforeUnload } from "../storage/persistence-feedback.service.js";
 import { inspectStorage } from "../../shared/storage.js";
+import { createAnswersExport, createNotesExport, createSessionJsonExport, downloadExportFile } from "../exports/session-export.service.js";
+import { escapeHtml, formatDuration as formatarTempo, formatStudyDuration as formatarTempoHistorico } from "../../shared/formatters.js";
+import { formatPerformanceBasis, getPerformanceState, PERFORMANCE_STATE_CLASSES, shouldShowPerformanceScreen } from "../performance/performance.service.js";
+import { calculateSessionResult as calcularResultado, calculateSessionTotalTime as calcularTempoTotal, RESULT_FILTERS, buildQuestionReviewItems, buildSubjectResultItems, filterQuestionReviewItems, normalizeResultFilter } from "../results/results.service.js";
+import { buildSubjectResultsMarkup } from "../results/subject-results.view.js";
+import { buildQuestionMapLabel, buildTrueFalseOptionsMarkup, getMarkerInfo, getNextMarkerState, getQuestionTypeLabel, isQuestionAnswered, MARKER_STATES, normalizeMarkerState } from "./question-resolution.helpers.js";
+import { getImmediateQuestionMapStatus } from "./question-map-status.service.js";
+import { buildImmediateFeedbackMarkup, canConfirmQuestion, confirmQuestion, isImmediateCorrectionEnabled, isQuestionConfirmed, requiresQuestionConfirmation } from "./immediate-feedback.service.js";
 import {
-  createAnswersExport,
-  createNotesExport,
-  createSessionJsonExport,
-  downloadExportFile
-} from "../exports/session-export.service.js";
+  getDiscursiveReviewProgress,
+  shouldOpenDiscursiveReview,
+  startDiscursiveReview
+} from "../discursive-review/discursive-review.service.js";
+import { createDiscursiveReviewController } from "../discursive-review/discursive-review.controller.js";
 import {
-  escapeHtml,
-  formatDuration as formatarTempo,
-  formatStudyDuration as formatarTempoHistorico
-} from "../../shared/formatters.js";
-import {
-  formatPerformanceBasis,
-  getPerformanceState,
-  PERFORMANCE_STATE_CLASSES,
-  shouldShowPerformanceScreen
-} from "../performance/performance.service.js";
-import {
-  calculateSessionResult as calcularResultado,
-  calculateSessionTotalTime as calcularTempoTotal,
-  RESULT_FILTERS,
-  buildQuestionReviewItems,
-  buildSubjectResultItems,
-  filterQuestionReviewItems,
-  getSubjectPerformanceTone,
-  normalizeResultFilter
-} from "../results/results.service.js";
-import {
-  buildQuestionMapLabel,
-  getMarkerInfo,
-  getNextMarkerState,
-  isQuestionAnswered,
-  MARKER_STATES,
-  normalizeMarkerState
-} from "./question-resolution.helpers.js";
+  buildFinalVerdictMarkup,
+  buildMetacognitionMarkup,
+  getFinalVerdict,
+  getInitialMetacognition,
+  hasFinalVerdict,
+  hasInitialMetacognition,
+  setFinalVerdictLevel,
+  setFinalVerdictObservation,
+  setInitialMetacognitionLevel,
+  setInitialMetacognitionObservation
+} from "./metacognition.service.js";
 
 export function initQuestionResolution() {
   const exemploQuestoes = `@questao
@@ -69,9 +50,8 @@ export function initQuestionResolution() {
   d: O professor explicou o conteúdo, mais ninguém anotou.
   e: Preciso de mas exemplos para entender a regra.
   correta: B
-  explicacao: A alternativa B está correta porque "mais" indica intensidade ou quantidade, enquanto "mas" expressa oposição. Nas demais alternativas, as duas palavras foram trocadas de forma inadequada.
+  explicacao: A opção correta usa "mais" para indicar intensidade ou quantidade e "mas" para expressar oposição. Nas demais opções, as duas palavras foram trocadas de forma inadequada.
   +++
-
   @discursiva
   assunto: Gramática: uso de mas e mais
   tipo: discursiva curta
@@ -86,9 +66,9 @@ export function initQuestionResolution() {
     home: "#telaInicial",
     importacao: "#telaImportacao",
     resolucao: "#telaResolucao",
+    correcaoDiscursiva: "#telaCorrecaoDiscursiva",
     resultado: "#telaResultado"
   });
-
 
   const estadoInicial = createInitialState;
 
@@ -104,18 +84,17 @@ export function initQuestionResolution() {
   let confirmationPreviousFocus = null;
   let confirmationResolver = null;
   const PERFORMANCE_FADE_OUT_MS = 440;
-
   let performanceScoreAnimationFrame = null;
   let performanceCloseTimeout = null;
   let filtroResultadoAtivo = RESULT_FILTERS.ALL;
   let questaoResultadoExpandidaId = null;
   let itensRevisaoResultado = [];
+  const assuntosResultadoExpandidos = new Set();
   let persistenceAtRisk = false;
   let persistenceErrorCode = null;
   let persistenceWarningDismissed = false;
   const resultadoAcoesMobileMedia = window.matchMedia("(max-width: 720px)");
   const resultadoFiltrosCompactosMedia = window.matchMedia("(max-width: 900px)");
-
   const entradaQuestoes = $("#entradaQuestoes");
   const arquivoQuestoes = $("#arquivoQuestoes");
   const nomeLista = $("#nomeLista");
@@ -128,13 +107,38 @@ export function initQuestionResolution() {
   const avisoPersistencia = $("#avisoPersistencia");
   const tituloAvisoPersistencia = $("#tituloAvisoPersistencia");
   const descricaoAvisoPersistencia = $("#descricaoAvisoPersistencia");
+  const reportSettingsPersistenceError = ({ errorCode, error }) => {
+    registrarFalhaPersistencia(errorCode, error);
+  };
+  const themeController = createThemeController({
+    onPersistenceError: reportSettingsPersistenceError
+  });
+  const visualEffectsController = createVisualEffectsController({
+    onPersistenceError: reportSettingsPersistenceError
+  });
+  const discursiveReviewController = createDiscursiveReviewController({
+    documentRef: document,
+    getState: () => estado,
+    setState: (nextState) => { estado = nextState; },
+    saveImmediate: salvarEstadoImediato,
+    saveDebounced: salvarEstadoDebounced,
+    showScreen: () => trocarTela("correcaoDiscursiva"),
+    onFinish: concluirSessaoEExibirResultado,
+    onHome: () => {
+      trocarTela("home");
+      atualizarHome();
+    },
+    escapeHtml
+  });
 
   inicializar();
 
   function inicializar() {
     const storageInspection = inspectStorage();
     const persistenceReport = loadSession();
-    carregarConfiguracoes();
+    themeController.init();
+    visualEffectsController.init();
+    discursiveReviewController.init();
     configurarEventos();
     sincronizarAcoesResultadoResponsivas();
     sincronizarFiltrosResultadoResponsivos();
@@ -148,12 +152,7 @@ export function initQuestionResolution() {
       registrarFalhaPersistencia(storageInspection.errorCode, storageInspection.error);
     }
   }
-
   function configurarEventos() {
-    document.querySelectorAll("[data-theme-toggle]").forEach((button) => {
-      button.addEventListener("click", alternarTema);
-    });
-
     $("#btnTentarPersistencia")?.addEventListener("click", tentarRestaurarPersistencia);
     $("#btnFecharAvisoPersistencia")?.addEventListener("click", () => {
       persistenceWarningDismissed = true;
@@ -202,14 +201,11 @@ export function initQuestionResolution() {
           fecharModalConfirmacao(false);
           return;
         }
-
         if (evento.key === "Tab") {
           manterFocoNoModal(evento, modalConfirmacao);
         }
-
         return;
       }
-
       const desempenho = $("#telaDesempenho");
 
       if (desempenho && !desempenho.classList.contains("hidden")) {
@@ -217,22 +213,18 @@ export function initQuestionResolution() {
           evento.preventDefault();
           $("#btnVerResultadoFinal")?.focus();
         }
-
         return;
       }
-
       const modal = $("#modalModelo");
 
       if (!modal || modal.classList.contains("hidden")) {
         return;
       }
-
       if (evento.key === "Escape") {
         evento.preventDefault();
         fecharModalModelo();
         return;
       }
-
       if (evento.key === "Tab") {
         manterFocoNoModal(evento, modal);
       }
@@ -246,27 +238,23 @@ export function initQuestionResolution() {
         atualizarNomeArquivo();
         return;
       }
-
       try {
         const texto = await arquivo.text();
 
         if (readToken !== importFileReadToken) {
           return;
         }
-
         entradaQuestoes.value = texto;
         atualizarNomeArquivo(arquivo.name);
 
         if (!nomeLista.value.trim()) {
           nomeLista.value = arquivo.name.replace(/\.[^/.]+$/, "");
         }
-
         invalidarValidacaoImportacao(`Arquivo “${arquivo.name}” carregado. Valide o conteúdo.`);
       } catch {
         if (readToken !== importFileReadToken) {
           return;
         }
-
         definirEstadoValidacao("invalid", {
           errors: ["Não foi possível ler o arquivo selecionado. Escolha outro arquivo TXT."]
         });
@@ -278,6 +266,7 @@ export function initQuestionResolution() {
     $("#btnApagarSessao").addEventListener("click", apagarSessaoSalva);
 
     $("#btnAnterior").addEventListener("click", irAnterior);
+    $("#btnConfirmarResposta")?.addEventListener("click", confirmarRespostaAtual);
     $("#btnProxima").addEventListener("click", irProxima);
     $("#btnFinalizar").addEventListener("click", finalizar);
     $("#btnFinalizarSessao")?.addEventListener("click", finalizar);
@@ -291,6 +280,7 @@ export function initQuestionResolution() {
     $("#btnVerResultadoFinal")?.addEventListener("click", fecharDesempenho);
     $("#btnInicioResultado")?.addEventListener("click", voltarAoInicioAposResultado);
     $("#btnNovaLista")?.addEventListener("click", voltarAoInicioAposResultado);
+    $("#btnRefazerErradas")?.addEventListener("click", refazerQuestoesErradas);
     document.querySelectorAll("[data-result-filter]").forEach((button) => {
       button.addEventListener("click", () => selecionarFiltroResultado(button.dataset.resultFilter));
     });
@@ -300,6 +290,14 @@ export function initQuestionResolution() {
 
       if (button) {
         alternarCardResultado(button.dataset.resultQuestionId);
+      }
+    });
+
+    $("#listaDesempenhoAssuntos")?.addEventListener("click", (evento) => {
+      const button = evento.target.closest("[data-subject-result-toggle]");
+
+      if (button) {
+        alternarDetalhesAssuntoResultado(button.dataset.subjectResultToggle);
       }
     });
 
@@ -327,7 +325,6 @@ export function initQuestionResolution() {
       salvarEstadoImediato();
     });
   }
-
   async function limparCamposImportacao({ confirmar = false } = {}) {
     const possuiDados = Boolean(
       entradaQuestoes.value.trim() ||
@@ -342,19 +339,19 @@ export function initQuestionResolution() {
         return false;
       }
     }
-
     importFileReadToken += 1;
     entradaQuestoes.value = "";
     arquivoQuestoes.value = "";
     nomeLista.value = "";
     $("#opcaoEmbaralhar").checked = false;
+    $("#opcaoEmbaralharAlternativas").checked = false;
+    document.querySelector('input[name="modoCorrecao"][value="final"]').checked = true;
     $("#opcaoMostrarGabaritoFinal").checked = true;
     atualizarNomeArquivo();
     importValidation = createImportValidationState();
     definirEstadoValidacao("idle");
     return true;
   }
-
   function solicitarConfirmacao({
     label = "Confirmar ação",
     title = "Deseja continuar?",
@@ -369,11 +366,9 @@ export function initQuestionResolution() {
     if (!modal) {
       return Promise.resolve(false);
     }
-
     if (confirmationResolver) {
       fecharModalConfirmacao(false);
     }
-
     registrarTempoAtual();
     ultimoTick = Date.now();
     confirmationPreviousFocus = document.activeElement;
@@ -429,7 +424,6 @@ export function initQuestionResolution() {
     } else if (variant === "warning") {
       confirmButton.classList.add("confirmation-modal__confirm--warning");
     }
-
     modal.classList.remove("hidden");
     modal.setAttribute("aria-hidden", "false");
     document.body.classList.add("modal-open");
@@ -442,21 +436,21 @@ export function initQuestionResolution() {
       confirmationResolver = resolve;
     });
   }
-
   function fecharModalConfirmacao(confirmado) {
     const modal = $("#modalConfirmacao");
 
     if (!modal || modal.classList.contains("hidden")) {
       return;
     }
-
     modal.classList.add("hidden");
     modal.setAttribute("aria-hidden", "true");
 
-    if ($("#modalModelo")?.classList.contains("hidden")) {
+    if (
+      $("#modalModelo")?.classList.contains("hidden") &&
+      $("#modalEfeitosVisuais")?.classList.contains("hidden")
+    ) {
       document.body.classList.remove("modal-open");
     }
-
     const resolver = confirmationResolver;
     confirmationResolver = null;
 
@@ -471,7 +465,6 @@ export function initQuestionResolution() {
     focusTarget?.focus();
     resolver?.(Boolean(confirmado));
   }
-
   function abrirModalModelo() {
     const modal = $("#modalModelo");
     if (!modal) return;
@@ -482,14 +475,19 @@ export function initQuestionResolution() {
     document.body.classList.add("modal-open");
     $("#btnFecharModelo")?.focus();
   }
-
   function fecharModalModelo() {
     const modal = $("#modalModelo");
     if (!modal) return;
 
     modal.classList.add("hidden");
     modal.setAttribute("aria-hidden", "true");
-    document.body.classList.remove("modal-open");
+
+    if (
+      $("#modalConfirmacao")?.classList.contains("hidden") &&
+      $("#modalEfeitosVisuais")?.classList.contains("hidden")
+    ) {
+      document.body.classList.remove("modal-open");
+    }
 
     const focusTarget = modalPreviousFocus instanceof HTMLElement && modalPreviousFocus.isConnected
       ? modalPreviousFocus
@@ -498,7 +496,6 @@ export function initQuestionResolution() {
     focusTarget?.focus();
     modalPreviousFocus = null;
   }
-
   function manterFocoNoModal(evento, modal) {
     const focusable = [...modal.querySelectorAll(
       'button:not([disabled]), [href], input:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
@@ -508,7 +505,6 @@ export function initQuestionResolution() {
       evento.preventDefault();
       return;
     }
-
     const first = focusable[0];
     const last = focusable[focusable.length - 1];
 
@@ -521,48 +517,12 @@ export function initQuestionResolution() {
     }
   }
 
-
-  function carregarConfiguracoes() {
-    const config = loadSettings();
-    aplicarTema(config.tema || "light");
-  }
-
-  function salvarConfiguracoes() {
-    const configAtual = loadSettings();
-    const result = saveSettings({
-      ...configAtual,
-      tema: document.body.dataset.theme || "light"
-    });
-
-    if (!result.ok) {
-      registrarFalhaPersistencia(result.errorCode, result.error);
-    }
-  }
-
-  function aplicarTema(tema) {
-    document.body.dataset.theme = tema;
-    document.querySelectorAll("[data-theme-toggle]").forEach((button) => {
-      button.textContent = tema === "dark" ? "☀️ Tema" : "🌙 Tema";
-      button.setAttribute(
-        "aria-label",
-        tema === "dark" ? "Alternar para tema claro" : "Alternar para tema escuro"
-      );
-    });
-  }
-
-  function alternarTema() {
-    aplicarTema(document.body.dataset.theme === "dark" ? "light" : "dark");
-    salvarConfiguracoes();
-  }
-
   function verificarSessaoSalva() {
     atualizarHome();
   }
-
   function obterSessaoSalva() {
     return loadSession().session;
   }
-
   function continuarSessao() {
     const salva = obterSessaoAtiva();
 
@@ -571,16 +531,20 @@ export function initQuestionResolution() {
       atualizarHome();
       return;
     }
-
     estado = restoreActiveSession(salva);
     timerRodando = !Boolean(estado.temporizadorPausado);
     atualizarBotaoCronometro();
-    trocarTela("resolucao");
-    renderizarQuestao();
-    iniciarCronometro();
+
+    if (estado.status === SESSION_STATUS.REVIEWING) {
+      discursiveReviewController.open({ focusTitle: true });
+    } else {
+      trocarTela("resolucao");
+      renderizarQuestao();
+      iniciarCronometro();
+    }
+
     atualizarResumoTopo();
   }
-
   async function apagarSessaoSalva() {
     const confirmado = await solicitarConfirmacao(getDeleteSessionConfirmation());
 
@@ -594,7 +558,6 @@ export function initQuestionResolution() {
       registrarFalhaPersistencia(inspection.errorCode, inspection.error);
       return;
     }
-
     resolverFalhaPersistencia();
     estado = estadoInicial();
     limparCamposImportacao();
@@ -603,7 +566,6 @@ export function initQuestionResolution() {
     atualizarHome();
     mostrarMensagemInicial("Progresso da sessão apagado.", "ok");
   }
-
   async function validarImportacao() {
     const texto = entradaQuestoes.value.trim();
 
@@ -614,7 +576,6 @@ export function initQuestionResolution() {
       entradaQuestoes.focus();
       return;
     }
-
     definirEstadoValidacao("loading");
     await new Promise((resolve) => requestAnimationFrame(resolve));
 
@@ -645,7 +606,6 @@ export function initQuestionResolution() {
       definirEstadoValidacao("invalid", { errors });
     }
   }
-
   async function importarQuestoes() {
     const texto = entradaQuestoes.value.trim();
 
@@ -655,12 +615,10 @@ export function initQuestionResolution() {
       });
       return;
     }
-
     if (importValidation.status !== "valid" || importValidation.snapshot !== texto) {
       invalidarValidacaoImportacao("O conteúdo precisa ser validado antes de começar.");
       return;
     }
-
     const sessaoExistente = obterSessaoAtiva();
     if (sessaoExistente?.questoes?.length && !substituicaoAutorizada) {
       const confirmado = await solicitarConfirmacao(getReplaceSessionConfirmation());
@@ -669,13 +627,14 @@ export function initQuestionResolution() {
         return;
       }
     }
-
     try {
       estado = createActiveSession({
         questions: importValidation.questions,
         listName: nomeLista.value,
-        showAnswerKey: $("#opcaoMostrarGabaritoFinal").checked,
-        shuffleQuestions: $("#opcaoEmbaralhar").checked
+        showAnswerKey: true,
+        shuffleQuestions: $("#opcaoEmbaralhar").checked,
+        shuffleAlternatives: $("#opcaoEmbaralharAlternativas").checked,
+        correctionMode: document.querySelector('input[name="modoCorrecao"]:checked')?.value || "final"
       });
       substituicaoAutorizada = false;
 
@@ -699,7 +658,6 @@ export function initQuestionResolution() {
     if (registrarTempo) {
       registrarTempoAtual();
     }
-
     ultimoTick = Date.now();
 
     const questao = estado.questoes[estado.atual];
@@ -709,6 +667,13 @@ export function initQuestionResolution() {
     const numero = estado.atual + 1;
     const progresso = total ? Math.round((numero / total) * 100) : 0;
     const marcadaParaRevisao = Boolean(estado.revisao[questao.id]);
+    const verdadeiroFalso = isTrueFalseQuestion(questao);
+    const correcaoImediata = isImmediateCorrectionEnabled(estado);
+    const confirmada = isQuestionConfirmed(estado, questao.id);
+
+    $(".resolution-question-panel")?.classList.toggle("is-true-false", verdadeiroFalso);
+    $("#areaResposta")?.classList.toggle("is-true-false", verdadeiroFalso);
+    $("#areaResposta")?.classList.toggle("has-feedback", confirmada);
 
     $("#nomeListaResolucao").textContent = estado.listaNome || "Lista sem nome";
     $("#nomeListaResolucao").title = estado.listaNome || "Lista sem nome";
@@ -718,9 +683,10 @@ export function initQuestionResolution() {
     $("#progressoResolucao")?.setAttribute("aria-valuenow", String(progresso));
 
     $("#numeroQuestao").textContent = `Questão ${numero}`;
-    $("#tipoQuestao").textContent = questao.categoria === "objetiva" ? "Objetiva" : "Discursiva";
+    $("#tipoQuestao").textContent = getQuestionTypeLabel(questao);
     $("#assuntoQuestao").textContent = questao.assunto || "Sem assunto";
     $("#assuntoQuestao").title = questao.assunto || "Sem assunto";
+    $("#tituloEnunciadoQuestao").textContent = verdadeiroFalso ? "Afirmativa" : "Enunciado";
     $("#enunciadoQuestao").textContent = questao.enunciado;
 
     $("#revisaoQuestao").classList.toggle("hidden", !marcadaParaRevisao);
@@ -733,7 +699,6 @@ export function initQuestionResolution() {
     } else {
       renderizarDiscursiva(questao);
     }
-
     $("#anotacaoQuestao").value = estado.anotacoes[questao.id] || "";
     $("#anotacaoQuestao").oninput = (evento) => {
       estado.anotacoes[questao.id] = evento.target.value;
@@ -741,9 +706,18 @@ export function initQuestionResolution() {
     };
 
     const ultimaQuestao = estado.atual === total - 1;
+    const exigeConfirmacao = requiresQuestionConfirmation(estado, questao) && !confirmada;
+    const exigeMetacognicaoInicial = confirmada && questao.categoria === "discursiva" &&
+      !hasInitialMetacognition(estado, questao.id);
+    const exigeVereditoImediato = confirmada && questao.categoria === "discursiva" &&
+      correcaoImediata && hasInitialMetacognition(estado, questao.id) &&
+      !hasFinalVerdict(estado, questao.id);
+    const etapaPendente = exigeConfirmacao || exigeMetacognicaoInicial || exigeVereditoImediato;
     $("#btnAnterior").disabled = estado.atual === 0;
-    $("#btnProxima").classList.toggle("hidden", ultimaQuestao);
-    $("#btnFinalizar").classList.toggle("hidden", !ultimaQuestao);
+    $("#btnConfirmarResposta")?.classList.toggle("hidden", !exigeConfirmacao);
+    $("#btnConfirmarResposta").disabled = exigeConfirmacao && !canConfirmQuestion(estado, questao);
+    $("#btnProxima").classList.toggle("hidden", ultimaQuestao || etapaPendente);
+    $("#btnFinalizar").classList.toggle("hidden", !ultimaQuestao || etapaPendente);
     $("#btnFinalizarSessao")?.classList.toggle("hidden", ultimaQuestao);
 
     renderizarMapa();
@@ -756,42 +730,54 @@ export function initQuestionResolution() {
       requestAnimationFrame(() => $("#tituloResolverQuestao")?.focus({ preventScroll: true }));
     }
   }
-
   function renderizarObjetiva(questao) {
-    const respostaAtual = (estado.respostas[questao.id] || "").toUpperCase();
+    if (isTrueFalseQuestion(questao)) {
+      renderizarVerdadeiroFalso(questao);
+      return;
+    }
+
+    const alternativas = getObjectiveAlternatives(questao);
+    const respostaAtual = resolveObjectiveAnswerId(
+      questao,
+      estado.respostas[questao.id]
+    );
     const marcacoes = estado.marcacoesAlternativas[questao.id] || {};
+    const confirmada = isQuestionConfirmed(estado, questao.id);
+    const corretaId = getCorrectAlternativeId(questao);
 
     $("#areaResposta").innerHTML = `
       <fieldset class="resolution-objective-options">
         <legend class="sr-only">Selecione uma alternativa como resposta oficial</legend>
-        ${Object.entries(questao.alternativas).map(([letraOriginal, textoAlternativa]) => {
-          const letra = letraOriginal.toUpperCase();
-          const selected = respostaAtual === letra;
-          const markerState = normalizeMarkerState(marcacoes[letra]);
+        ${alternativas.map((alternativa, indice) => {
+          const letra = getAlternativeDisplayLetter(questao, alternativa.id);
+          const selected = respostaAtual === alternativa.id;
+          const markerState = normalizeMarkerState(marcacoes[alternativa.id]);
           const markerInfo = getMarkerInfo(markerState, letra);
-          const inputId = `resposta-${questao.id}-${letra}`;
+          const inputId = `resposta-${questao.id}-${indice + 1}`;
 
           return `
-            <div class="resolution-option-card ${selected ? "is-selected" : ""} ${markerState === MARKER_STATES.ANALYSIS ? "is-analysis" : ""} ${markerState === MARKER_STATES.ELIMINATED ? "is-eliminated" : ""}">
+            <div class="resolution-option-card ${selected ? "is-selected" : ""} ${confirmada && alternativa.id === corretaId ? "is-correct" : ""} ${confirmada && selected && alternativa.id !== corretaId ? "is-incorrect" : ""} ${confirmada ? "is-locked" : ""} ${markerState === MARKER_STATES.ANALYSIS ? "is-analysis" : ""} ${markerState === MARKER_STATES.ELIMINATED ? "is-eliminated" : ""}">
               <input
                 id="${escapeHtml(inputId)}"
                 class="resolution-option-radio"
                 type="radio"
                 name="respostaObjetiva"
-                value="${escapeHtml(letra)}"
+                value="${escapeHtml(alternativa.id)}"
                 ${selected ? "checked" : ""}
+                ${confirmada ? "disabled" : ""}
               >
               <label class="resolution-option-answer" for="${escapeHtml(inputId)}">
                 <span class="resolution-option-letter">${escapeHtml(letra)})</span>
-                <span class="resolution-option-text">${escapeHtml(textoAlternativa)}</span>
+                <span class="resolution-option-text">${escapeHtml(alternativa.texto)}</span>
               </label>
               <button
                 class="resolution-option-marker"
                 type="button"
-                data-letra="${escapeHtml(letra)}"
+                data-alternative-id="${escapeHtml(alternativa.id)}"
                 data-marker-state="${markerState}"
                 title="${escapeHtml(markerInfo.title)}"
                 aria-label="${escapeHtml(markerInfo.label)}"
+                ${confirmada ? "disabled" : ""}
               >
                 <span aria-hidden="true">${markerInfo.icon}</span>
               </button>
@@ -799,65 +785,154 @@ export function initQuestionResolution() {
           `;
         }).join("")}
         <p class="resolution-marker-legend">
-          O card define a resposta oficial. O botão lateral alterna entre sem marcação, em análise e eliminada.
+          ${confirmada
+            ? "Resposta confirmada. As alternativas e marcações foram bloqueadas."
+            : "O card define a resposta oficial. O botão lateral alterna entre sem marcação, em análise e eliminada."}
         </p>
       </fieldset>
+      ${confirmada ? buildImmediateFeedbackMarkup({ question: questao, answer: respostaAtual, escapeHtml }) : ""}
     `;
 
     document.querySelectorAll("input[name='respostaObjetiva']").forEach((input) => {
       input.addEventListener("change", (evento) => {
-        const letra = evento.target.value.toUpperCase();
-        estado.respostas[questao.id] = letra;
-
-        if (estado.marcacoesAlternativas[questao.id]?.[letra]) {
-          delete estado.marcacoesAlternativas[questao.id][letra];
-          limparMarcacoesVazias(questao.id);
-        }
-
-        renderizarObjetiva(questao);
-        renderizarMapa();
-        atualizarResumoTopo();
-        salvarEstadoImediato();
-
-        requestAnimationFrame(() => {
-          document.querySelector(`input[name="respostaObjetiva"][value="${letra}"]`)?.focus();
-        });
+        const alternativeId = evento.target.value;
+        selecionarRespostaObjetiva(questao, alternativeId, { refocusSelector: "input[name='respostaObjetiva']" });
       });
     });
 
     document.querySelectorAll(".resolution-option-marker").forEach((button) => {
       button.addEventListener("click", () => {
-        const letra = button.dataset.letra;
-        alternarMarcadorAlternativa(questao, letra);
+        alternarMarcadorAlternativa(questao, button.dataset.alternativeId);
       });
     });
   }
 
+  function renderizarVerdadeiroFalso(questao) {
+    const alternativas = getObjectiveAlternatives(questao);
+    const respostaAtual = resolveObjectiveAnswerId(questao, estado.respostas[questao.id]);
+
+    const confirmada = isQuestionConfirmed(estado, questao.id);
+    $("#areaResposta").innerHTML = buildTrueFalseOptionsMarkup({
+      alternatives: alternativas,
+      selectedId: respostaAtual,
+      correctId: getCorrectAlternativeId(questao),
+      confirmed: confirmada,
+      escapeHtml
+    }) + (confirmada ? buildImmediateFeedbackMarkup({ question: questao, answer: respostaAtual, escapeHtml }) : "");
+
+    document.querySelectorAll("[data-vf-choice-id]").forEach((button) => {
+      button.addEventListener("click", () => selecionarRespostaObjetiva(questao, button.dataset.vfChoiceId, { refocusSelector: "[data-vf-choice-id]" }));
+    });
+  }
+
+  function selecionarRespostaObjetiva(questao, alternativeId, { refocusSelector = "" } = {}) {
+    if (!alternativeId || isQuestionConfirmed(estado, questao.id)) return;
+
+    estado.respostas[questao.id] = alternativeId;
+
+    if (estado.marcacoesAlternativas[questao.id]?.[alternativeId]) {
+      delete estado.marcacoesAlternativas[questao.id][alternativeId];
+      limparMarcacoesVazias(questao.id);
+    }
+
+    renderizarObjetiva(questao);
+    renderizarMapa();
+    atualizarEstadoBotaoConfirmar(questao);
+    atualizarResumoTopo();
+    salvarEstadoImediato();
+
+    if (refocusSelector) {
+      requestAnimationFrame(() => Array.from(document.querySelectorAll(refocusSelector))
+        .find((item) => item.value === alternativeId || item.dataset.vfChoiceId === alternativeId)
+        ?.focus());
+    }
+  }
+
   function renderizarDiscursiva(questao) {
     const respostaAtual = estado.respostas[questao.id] || "";
+    const confirmada = isQuestionConfirmed(estado, questao.id);
+    const correcaoImediata = isImmediateCorrectionEnabled(estado);
+    const metacognicaoInicial = getInitialMetacognition(estado, questao.id);
+    const vereditoFinal = getFinalVerdict(estado, questao.id);
+    const metacognicaoRegistrada = hasInitialMetacognition(estado, questao.id);
 
     $("#areaResposta").innerHTML = `
       <label class="resolution-discursive-field" for="respostaDiscursiva">
         <span>Sua resposta</span>
-        <textarea
-          class="resolution-discursive-textarea"
-          id="respostaDiscursiva"
-          placeholder="Responda aqui..."
-          spellcheck="true"
-        >${escapeHtml(respostaAtual)}</textarea>
+        <textarea class="resolution-discursive-textarea" id="respostaDiscursiva" placeholder="Responda aqui..." spellcheck="true" ${confirmada ? "readonly" : ""}>${escapeHtml(respostaAtual)}</textarea>
       </label>
+      ${confirmada && !correcaoImediata ? `<p class="resolution-confirmation-note" role="status">Resposta confirmada. Registre sua percepção inicial; o modelo será apresentado na etapa de Correção Discursiva.</p>` : ""}
+      ${confirmada ? buildMetacognitionMarkup({ assessment: metacognicaoInicial, referenceVisible: false, escapeHtml }) : ""}
+      ${confirmada && correcaoImediata && metacognicaoRegistrada ? buildImmediateFeedbackMarkup({ question: questao, answer: respostaAtual, escapeHtml }) : ""}
+      ${confirmada && correcaoImediata && metacognicaoRegistrada ? buildFinalVerdictMarkup({ verdict: vereditoFinal, escapeHtml }) : ""}
     `;
-
     $("#respostaDiscursiva").addEventListener("input", (evento) => {
+      if (confirmada) return;
       const estavaRespondida = isQuestionAnswered(estado.respostas[questao.id]);
       estado.respostas[questao.id] = evento.target.value;
       const estaRespondida = isQuestionAnswered(estado.respostas[questao.id]);
-
-      if (estavaRespondida !== estaRespondida) {
-        renderizarMapa();
-      }
-
+      if (estavaRespondida !== estaRespondida) renderizarMapa();
+      atualizarEstadoBotaoConfirmar(questao);
       atualizarResumoTopo();
+      salvarEstadoDebounced();
+    });
+
+    if (confirmada) {
+      vincularAvaliacaoDiscursivaNaResolucao(questao);
+    }
+  }
+
+  function vincularAvaliacaoDiscursivaNaResolucao(questao) {
+    document.querySelectorAll("[data-metacognition-level]").forEach((button) => {
+      button.addEventListener("click", () => {
+        estado = setInitialMetacognitionLevel(
+          estado,
+          questao.id,
+          button.dataset.metacognitionLevel
+        );
+        salvarEstadoImediato();
+        renderizarQuestao({ registrarTempo: false });
+        requestAnimationFrame(() => {
+          const focusSelector = isImmediateCorrectionEnabled(estado)
+            ? ".resolution-feedback"
+            : `[data-metacognition-level="${button.dataset.metacognitionLevel}"]`;
+          document.querySelector(focusSelector)?.focus({ preventScroll: false });
+        });
+      });
+    });
+
+    $("#observacaoMetacognicao")?.addEventListener("input", (evento) => {
+      estado = setInitialMetacognitionObservation(
+        estado,
+        questao.id,
+        evento.target.value
+      );
+      salvarEstadoDebounced();
+    });
+
+    document.querySelectorAll("[data-final-verdict-level]").forEach((button) => {
+      button.addEventListener("click", () => {
+        estado = setFinalVerdictLevel(
+          estado,
+          questao.id,
+          button.dataset.finalVerdictLevel
+        );
+        salvarEstadoImediato();
+        renderizarQuestao({ registrarTempo: false });
+        requestAnimationFrame(() => {
+          document.querySelector(
+            `[data-final-verdict-level="${button.dataset.finalVerdictLevel}"]`
+          )?.focus();
+        });
+      });
+    });
+
+    $("#observacaoVereditoFinal")?.addEventListener("input", (evento) => {
+      estado = setFinalVerdictObservation(
+        estado,
+        questao.id,
+        evento.target.value
+      );
       salvarEstadoDebounced();
     });
   }
@@ -869,11 +944,19 @@ export function initQuestionResolution() {
       const respondida = isQuestionAnswered(estado.respostas[questao.id]);
       const atual = indice === estado.atual;
       const revisao = Boolean(estado.revisao[questao.id]);
-      const ariaLabel = buildQuestionMapLabel({ number: indice + 1, current: atual, answered: respondida, review: revisao });
+      const confirmada = isQuestionConfirmed(estado, questao.id);
+      const mapResult = getImmediateQuestionMapStatus({
+        state: estado,
+        question: questao,
+        immediate: isImmediateCorrectionEnabled(estado),
+        confirmed: confirmada
+      });
+      const baseAriaLabel = buildQuestionMapLabel({ number: indice + 1, current: atual, answered: respondida, review: revisao, confirmed: confirmada });
+      const ariaLabel = mapResult.label ? `${baseAriaLabel}, resposta ${mapResult.label}` : baseAriaLabel;
 
       return `
         <button
-          class="resolution-map-button ${respondida ? "is-answered" : ""} ${atual ? "is-current" : ""} ${revisao ? "is-review" : ""}"
+          class="resolution-map-button ${respondida ? "is-answered" : ""} ${confirmada ? "is-confirmed" : ""} ${mapResult.className} ${atual ? "is-current" : ""} ${revisao ? "is-review" : ""}"
           type="button"
           data-indice="${indice}"
           aria-label="${escapeHtml(ariaLabel)}"
@@ -899,6 +982,28 @@ export function initQuestionResolution() {
     });
   }
 
+  function atualizarEstadoBotaoConfirmar(questao = estado.questoes[estado.atual]) {
+    const button = $("#btnConfirmarResposta");
+    if (button && requiresQuestionConfirmation(estado, questao) && !isQuestionConfirmed(estado, questao?.id)) {
+      button.disabled = !canConfirmQuestion(estado, questao);
+    }
+  }
+
+  function confirmarRespostaAtual() {
+    const questao = estado.questoes[estado.atual];
+    if (!questao || !requiresQuestionConfirmation(estado, questao) || !canConfirmQuestion(estado, questao)) return;
+    registrarTempoAtual();
+    estado = confirmQuestion(estado, questao.id);
+    salvarEstadoImediato();
+    renderizarQuestao({ registrarTempo: false });
+    requestAnimationFrame(() => {
+      const target = questao.categoria === "discursiva"
+        ? $(".resolution-metacognition__choice")
+        : $(".resolution-feedback");
+      target?.focus({ preventScroll: false });
+    });
+  }
+
   function irAnterior() {
     if (estado.atual > 0) {
       irParaQuestao(estado.atual - 1, { focarTitulo: true });
@@ -921,23 +1026,28 @@ export function initQuestionResolution() {
     renderizarQuestao({ registrarTempo: false, focarTitulo });
   }
 
-  function alternarMarcadorAlternativa(questao, letra) {
-    const proximo = getNextMarkerState(estado.marcacoesAlternativas[questao.id]?.[letra]);
+  function alternarMarcadorAlternativa(questao, alternativeId) {
+    if (isQuestionConfirmed(estado, questao.id)) return;
+    const proximo = getNextMarkerState(
+      estado.marcacoesAlternativas[questao.id]?.[alternativeId]
+    );
 
     estado.marcacoesAlternativas[questao.id] ||= {};
 
     if (proximo === MARKER_STATES.NEUTRAL) {
-      delete estado.marcacoesAlternativas[questao.id][letra];
+      delete estado.marcacoesAlternativas[questao.id][alternativeId];
       limparMarcacoesVazias(questao.id);
     } else {
-      estado.marcacoesAlternativas[questao.id][letra] = proximo;
+      estado.marcacoesAlternativas[questao.id][alternativeId] = proximo;
     }
 
     renderizarObjetiva(questao);
     salvarEstadoImediato();
 
     requestAnimationFrame(() => {
-      document.querySelector(`.resolution-option-marker[data-letra="${letra}"]`)?.focus();
+      Array.from(document.querySelectorAll(".resolution-option-marker"))
+        .find((item) => item.dataset.alternativeId === alternativeId)
+        ?.focus();
     });
   }
 
@@ -967,23 +1077,57 @@ export function initQuestionResolution() {
 
     const r = calcularResultado(estado);
     const marcadas = Object.values(estado.revisao || {}).filter(Boolean).length;
+    const naoConfirmadas = estado.questoes.filter((questao) =>
+      requiresQuestionConfirmation(estado, questao) && !isQuestionConfirmed(estado, questao.id)
+    ).length;
+    const discursivasSemMetacognicao = estado.questoes.filter((questao) =>
+      questao.categoria === "discursiva" && isQuestionConfirmed(estado, questao.id) &&
+      !hasInitialMetacognition(estado, questao.id)
+    ).length;
     const confirmado = await solicitarConfirmacao(
-      getFinishSessionConfirmation(r, marcadas)
+      getFinishSessionConfirmation(r, marcadas, naoConfirmadas, discursivasSemMetacognicao)
     );
 
     if (!confirmado) {
       return;
     }
 
-    estado = finishSession(estado);
+    if (isImmediateCorrectionEnabled(estado)) {
+      const pendenteImediata = estado.questoes.find((questao) =>
+        questao.categoria === "discursiva" &&
+        isQuestionConfirmed(estado, questao.id) &&
+        hasInitialMetacognition(estado, questao.id) &&
+        !hasFinalVerdict(estado, questao.id)
+      );
 
+      if (pendenteImediata) {
+        const indice = estado.questoes.findIndex((questao) => questao.id === pendenteImediata.id);
+        irParaQuestao(indice, { focarTitulo: true });
+        return;
+      }
+    }
+
+    if (shouldOpenDiscursiveReview(estado)) {
+      estado = startDiscursiveReview(estado);
+      salvarEstadoImediato();
+      pararCronometro();
+      discursiveReviewController.open({ focusTitle: true });
+      atualizarHome();
+      return;
+    }
+
+    concluirSessaoEExibirResultado();
+  }
+
+  function concluirSessaoEExibirResultado() {
+    estado = finishSession(estado);
     const resultadoFinal = calcularResultado(estado);
 
     salvarEstadoImediato();
     registrarResultadoNoHistorico(estado, resultadoFinal);
     pararCronometro();
 
-    if (shouldShowPerformanceScreen(resultadoFinal.objetivas)) {
+    if (shouldShowPerformanceScreen(resultadoFinal.questoesAvaliadas)) {
       abrirResultadoFinal({ focar: false });
       mostrarDesempenho(resultadoFinal);
     } else {
@@ -1094,10 +1238,12 @@ export function initQuestionResolution() {
     $("#valorDesempenho").textContent = String(state.percentage);
     $("#tituloDesempenho").textContent = state.title;
     $("#subtituloDesempenho").textContent = state.subtitle;
-    $("#detalheDesempenho").textContent = formatPerformanceBasis(
-      resultado?.acertos,
-      resultado?.objetivas
-    );
+    $("#detalheDesempenho").textContent = formatPerformanceBasis({
+      earnedPoints: resultado?.pontosObtidos,
+      scoredQuestions: resultado?.questoesAvaliadas,
+      objectives: resultado?.objetivas,
+      discursivesEvaluated: resultado?.discursivasAvaliadas
+    });
     $("#btnVerResultadoFinal").textContent = state.buttonLabel;
     $("#blocoPontuacaoDesempenho").setAttribute(
       "aria-label",
@@ -1127,7 +1273,7 @@ export function initQuestionResolution() {
     document.body.classList.add("performance-open", "performance-transitioning");
     screenManager.elements.resultado?.setAttribute("inert", "");
 
-    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const prefersReducedMotion = shouldReduceVisualEffects(document.body);
     const scoreElement = $("#valorDesempenho");
 
     if (scoreElement) {
@@ -1190,7 +1336,7 @@ export function initQuestionResolution() {
     tela.classList.add("is-leaving");
     tela.classList.remove("is-visible");
 
-    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const prefersReducedMotion = shouldReduceVisualEffects(document.body);
     const finalizarFechamento = () => {
       tela.classList.add("hidden");
       tela.classList.remove("is-leaving");
@@ -1233,6 +1379,7 @@ export function initQuestionResolution() {
   function abrirResultadoFinal({ focar = true } = {}) {
     filtroResultadoAtivo = RESULT_FILTERS.ALL;
     questaoResultadoExpandidaId = null;
+    assuntosResultadoExpandidos.clear();
     trocarTela("resultado");
     renderizarResultado();
 
@@ -1252,18 +1399,26 @@ export function initQuestionResolution() {
     }
 
     $("#resultadoRespondidas").textContent = `${resultado.respondidas}/${resultado.total}`;
-    $("#resultadoCorretas").textContent = resultado.objetivas > 0
-      ? `${resultado.acertos}/${resultado.objetivas}`
+    $("#resultadoCorretas").textContent = resultado.questoesAvaliadas > 0
+      ? `${resultado.questoesCorretas}/${resultado.questoesAvaliadas}`
       : "—";
     $("#resultadoTempoTotal").textContent = formatarTempo(resultado.tempoTotal);
-    $("#resultadoDesempenho").textContent = resultado.objetivas > 0
+    $("#resultadoDesempenho").textContent = resultado.questoesAvaliadas > 0
       ? `${resultado.percentual}%`
       : "—";
     $("#resultadoRevisao").textContent = String(resultado.marcadas);
     $("#resultadoTempoMedio").textContent = formatarTempo(resultado.tempoMedio);
 
-    $("#avisoResultadoDiscursivas")?.classList.toggle("hidden", resultado.discursivas === 0);
+    const avisoDiscursivas = $("#avisoResultadoDiscursivas");
+    avisoDiscursivas?.classList.toggle("hidden", resultado.discursivas === 0);
+    const textoAvisoDiscursivas = $("#textoAvisoResultadoDiscursivas");
+    if (textoAvisoDiscursivas && resultado.discursivas > 0) {
+      textoAvisoDiscursivas.textContent = resultado.discursivasAvaliadas > 0
+        ? `${resultado.discursivasAvaliadas}/${resultado.discursivas} discursivas contribuíram para o desempenho geral pelo veredito final.`
+        : "As questões discursivas não avaliadas não entram no desempenho geral.";
+    }
 
+    atualizarAcaoRefazerQuestoesErradas();
     recolherAcoesResultadoMobile();
     renderizarResumoPorAssunto();
 
@@ -1273,12 +1428,87 @@ export function initQuestionResolution() {
       notes: estado.anotacoes,
       timesMs: estado.temposMs,
       review: estado.revisao,
+      discursiveAssessments: estado.avaliacoesDiscursivas,
       showAnswerKey: estado.opcoes.mostrarGabaritoFinal
     });
 
     atualizarBotoesFiltroResultado();
     renderizarListaRevisaoResultado();
     atualizarResumoTopo();
+  }
+
+  function atualizarAcaoRefazerQuestoesErradas() {
+    const button = $("#btnRefazerErradas");
+    const countElement = $("#quantidadeRefazerErradas");
+
+    if (!button) {
+      return;
+    }
+
+    const summary = getRetryWrongSummary(estado);
+    const available = summary.total > 0;
+
+    button.hidden = !available;
+    button.disabled = !available;
+    button.dataset.retryCount = String(summary.total);
+    button.setAttribute(
+      "aria-label",
+      available
+        ? `Refazer ${summary.total} ${summary.total === 1 ? "questão errada" : "questões erradas"}`
+        : "Nenhuma questão errada para refazer"
+    );
+
+    if (countElement) {
+      countElement.textContent = String(summary.total);
+    }
+  }
+
+  async function refazerQuestoesErradas() {
+    const summary = getRetryWrongSummary(estado);
+
+    if (summary.total === 0) {
+      atualizarAcaoRefazerQuestoesErradas();
+      return;
+    }
+
+    const confirmed = await solicitarConfirmacao(
+      getRetryWrongQuestionsConfirmation(summary, estado.listaNome)
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    const sourceState = estado;
+
+    try {
+      const retrySession = createRetryWrongSession(sourceState);
+
+      ocultarDesempenhoImediato();
+      pararCronometro();
+      estado = retrySession;
+      filtroResultadoAtivo = RESULT_FILTERS.ALL;
+      questaoResultadoExpandidaId = null;
+      itensRevisaoResultado = [];
+      timerRodando = true;
+      atualizarBotaoCronometro();
+
+      if (!salvarEstadoImediato()) {
+        estado = sourceState;
+        renderizarResultado();
+        return;
+      }
+
+      atualizarResumoTopo();
+      trocarTela("resolucao");
+      renderizarQuestao({ registrarTempo: false, focarTitulo: true });
+      iniciarCronometro();
+      atualizarHome();
+    } catch (error) {
+      estado = sourceState;
+      console.error("Não foi possível iniciar a revisão de erros.", error);
+      atualizarAcaoRefazerQuestoesErradas();
+    }
   }
 
   function alternarAcoesResultado() {
@@ -1374,59 +1604,42 @@ export function initQuestionResolution() {
   function renderizarResumoPorAssunto() {
     const container = $("#listaDesempenhoAssuntos");
 
-    if (!container) {
-      return;
-    }
+    if (!container) return;
 
     const assuntos = buildSubjectResultItems({
       questions: estado.questoes,
       answers: estado.respostas,
-      timesMs: estado.temposMs
+      timesMs: estado.temposMs,
+      discursiveAssessments: estado.avaliacoesDiscursivas
     });
 
-    if (assuntos.length === 0) {
-      container.innerHTML = `
-        <div class="results-empty-state">
-          <strong>Nenhum assunto encontrado.</strong>
-          <p>A lista finalizada não possui assuntos para resumir.</p>
-        </div>
-      `;
+    container.innerHTML = assuntos.length
+      ? buildSubjectResultsMarkup({
+          items: assuntos,
+          expandedKeys: assuntosResultadoExpandidos,
+          formatDuration: formatarTempo,
+          escapeHtml
+        })
+      : `<div class="results-empty-state"><strong>Nenhum assunto encontrado.</strong><p>A lista finalizada não possui assuntos para resumir.</p></div>`;
+  }
+
+  function alternarDetalhesAssuntoResultado(subjectKey) {
+    if (!subjectKey) {
       return;
     }
 
-    container.innerHTML = assuntos.map((item) => {
-      const possuiObjetivas = item.objectives > 0;
-      const percentual = possuiObjetivas ? item.percentage : null;
-      const tone = getSubjectPerformanceTone(percentual);
-      const meta = possuiObjetivas
-        ? `${item.correct}/${item.objectives} objetivas • ${formatarTempo(item.timeMs)}`
-        : `Sem questões objetivas • ${formatarTempo(item.timeMs)}`;
-      const progress = possuiObjetivas
-        ? `
-          <div
-            class="subject-result-progress"
-            role="progressbar"
-            aria-label="Desempenho em ${escapeHtml(item.subject)}"
-            aria-valuemin="0"
-            aria-valuemax="100"
-            aria-valuenow="${percentual}"
-          >
-            <div class="subject-result-progress__value" style="--subject-percentage: ${percentual}%;"></div>
-          </div>
-        `
-        : "";
+    if (assuntosResultadoExpandidos.has(subjectKey)) {
+      assuntosResultadoExpandidos.delete(subjectKey);
+    } else {
+      assuntosResultadoExpandidos.add(subjectKey);
+    }
 
-      return `
-        <article class="subject-result-item" data-tone="${tone}">
-          <div class="subject-result-item__header">
-            <strong title="${escapeHtml(item.subject)}">${escapeHtml(item.subject)}</strong>
-            <span class="subject-result-item__percentage">${possuiObjetivas ? `${percentual}%` : "—"}</span>
-          </div>
-          <p class="subject-result-item__meta">${meta}</p>
-          ${progress}
-        </article>
-      `;
-    }).join("");
+    renderizarResumoPorAssunto();
+    requestAnimationFrame(() => {
+      Array.from(document.querySelectorAll("[data-subject-result-toggle]"))
+        .find((button) => button.dataset.subjectResultToggle === subjectKey)
+        ?.focus();
+    });
   }
 
   function selecionarFiltroResultado(filter) {
@@ -1525,7 +1738,7 @@ export function initQuestionResolution() {
 
       if (scrollIntoView) {
         button?.closest(".result-review-card")?.scrollIntoView({
-          behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+          behavior: shouldReduceVisualEffects(document.body) ? "auto" : "smooth",
           block: "nearest"
         });
       }
@@ -1538,11 +1751,15 @@ export function initQuestionResolution() {
     const expandedClass = expanded ? " is-expanded" : "";
     const detailsId = `detalhes-resultado-${item.id}`;
     const reviewText = item.markedForReview ? " • ★ Marcada para revisão" : "";
-
+    const typeClass = item.isTrueFalse ? " is-true-false" : "";
+    const metacognitionAttribute = item.category === "discursiva"
+      ? ` data-metacognition-level="${escapeHtml(item.finalVerdictLevel || "pendente")}"` : "";
     return `
       <article
-        class="result-review-card${markedClass}${expandedClass}"
+        class="result-review-card${markedClass}${expandedClass}${typeClass}"
         data-status="${presentation.statusAttribute}"
+        data-question-type="${item.isTrueFalse ? "true-false" : item.category}"
+        ${metacognitionAttribute}
       >
         <button
           class="result-review-card__summary"
@@ -1557,6 +1774,7 @@ export function initQuestionResolution() {
             <strong>${item.typeLabel} • ${escapeHtml(item.subject)}</strong>
             <span class="result-review-card__status">${presentation.icon} ${presentation.label} • ${formatarTempo(item.timeMs)}${reviewText}</span>
           </span>
+          ${item.isTrueFalse ? '<span class="result-review-card__type-badge" aria-hidden="true">V/F</span>' : ""}
           <span class="result-review-card__toggle" aria-hidden="true">▶</span>
         </button>
 
@@ -1585,6 +1803,18 @@ export function initQuestionResolution() {
     }
 
     if (item.status === "discursive") {
+      const metacognitionPresentation = {
+        completa: { icon: "✓", spokenLabel: "resposta completa" }, parcial: { icon: "◐", spokenLabel: "resposta parcial" },
+        incorreta: { icon: "✕", spokenLabel: "resposta incorreta" }
+      }[item.finalVerdictLevel];
+      if (metacognitionPresentation && item.finalVerdictLabel) {
+        return {
+          statusAttribute: "discursive",
+          icon: metacognitionPresentation.icon,
+          label: `${item.finalVerdictLabel} (${item.finalVerdictPercentage}%)`,
+          spokenLabel: `${metacognitionPresentation.spokenLabel}, ${item.finalVerdictPercentage} por cento`
+        };
+      }
       return {
         statusAttribute: "discursive",
         icon: "✎",
@@ -1602,6 +1832,10 @@ export function initQuestionResolution() {
   }
 
   function renderizarDetalhesResultado(item, detailsId) {
+    if (item.isTrueFalse) {
+      return renderizarDetalhesVerdadeiroFalsoResultado(item, detailsId);
+    }
+
     if (item.category === "objetiva") {
       return renderizarDetalhesObjetivaResultado(item, detailsId);
     }
@@ -1620,6 +1854,57 @@ export function initQuestionResolution() {
     `;
   }
 
+  function renderizarDetalhesVerdadeiroFalsoResultado(item, detailsId) {
+    const respondeu = Boolean(item.answer);
+    const acertou = item.status === "correct";
+    const respostaUsuario = respondeu ? item.answerText || item.answer : "Não respondida";
+    const respostaCorreta = item.answerKeyVisible ? item.correctAnswerText || item.correctAnswer : "Gabarito oculto";
+    const explanation = item.answerKeyVisible
+      ? renderizarBlocoDetalheResultado({
+          title: "Explicação",
+          modifier: "result-detail-block--explanation result-vf-detail--explanation",
+          content: `<p>${escapeHtml(item.explanation || "Nenhuma explicação informada.")}</p>`
+        })
+      : `<p class="result-answer-key-hidden result-vf-detail--explanation">O gabarito e a explicação foram ocultados pelas configurações desta sessão.</p>`;
+
+    return `
+      <div id="${detailsId}" class="result-review-card__details result-vf-details">
+        ${renderizarBlocoDetalheResultado({
+          title: "Afirmativa",
+          modifier: "result-detail-block--statement result-vf-detail--statement",
+          content: `<p>${escapeHtml(item.statement)}</p>`
+        })}
+
+        <div class="result-vf-verdict-grid" aria-label="Comparação da resposta de Verdadeiro ou Falso">
+          <div class="result-vf-verdict result-vf-verdict--user" data-correct="${acertou}" data-value="${escapeHtml(item.answer || "")}">
+            <span>Sua resposta</span>
+            <strong>${escapeHtml(respostaUsuario)}</strong>
+            <small>${respondeu ? (acertou ? "Resposta correta" : "Resposta incorreta") : "Questão não respondida"}</small>
+          </div>
+
+          <div class="result-vf-verdict result-vf-verdict--correct" data-value="${escapeHtml(item.correctAnswer || "")}">
+            <span>Resposta correta</span>
+            <strong>${escapeHtml(respostaCorreta)}</strong>
+            <small>${item.answerKeyVisible ? "Gabarito da afirmativa" : "Indisponível nesta sessão"}</small>
+          </div>
+
+          <div class="result-time-block result-vf-detail--time">
+            <span>Tempo utilizado</span>
+            <strong>${formatarTempo(item.timeMs)}</strong>
+          </div>
+        </div>
+
+        ${explanation}
+
+        ${renderizarBlocoDetalheResultado({
+          title: "Anotação",
+          modifier: "result-detail-block--note result-vf-detail--note",
+          content: `<p>${escapeHtml(item.note || "Nenhuma anotação registrada.")}</p>`
+        })}
+      </div>
+    `;
+  }
+
   function renderizarDetalhesObjetivaResultado(item, detailsId) {
     const respondeu = Boolean(item.answer);
     const acertou = item.status === "correct";
@@ -1628,6 +1913,7 @@ export function initQuestionResolution() {
         <div class="result-answer-stat result-answer-stat--correct">
           <span>Resposta correta</span>
           <strong>${escapeHtml(item.correctAnswer || "—")} ✓</strong>
+          ${item.correctAnswerText ? `<small class="result-answer-stat__text">${escapeHtml(item.correctAnswerText)}</small>` : ""}
         </div>
       `
       : "";
@@ -1654,6 +1940,7 @@ export function initQuestionResolution() {
             <div class="result-answer-stat result-answer-stat--user" data-correct="${acertou}">
               <span>Sua resposta</span>
               <strong>${respondeu ? `${escapeHtml(item.answer)} ${acertou ? "✓" : "✕"}` : "Não respondida"}</strong>
+              ${respondeu && item.answerText ? `<small class="result-answer-stat__text">${escapeHtml(item.answerText)}</small>` : ""}
             </div>
             ${answerKey}
             <div class="result-answer-stat">
@@ -1718,6 +2005,22 @@ export function initQuestionResolution() {
         ${criteria}
 
         ${renderizarBlocoDetalheResultado({
+          title: "Metacognição inicial",
+          modifier: "result-detail-block--metacognition result-discursive-detail--metacognition",
+          content: item.initialMetacognitionLabel
+            ? `<div class="result-metacognition-summary"><strong>${escapeHtml(item.initialMetacognitionLabel)} (${item.initialMetacognitionPercentage}%)</strong><p>${escapeHtml(item.initialMetacognitionObservation || "Nenhuma observação inicial registrada.")}</p></div>`
+            : `<p>Esta questão não recebeu percepção inicial.</p>`
+        })}
+
+        ${renderizarBlocoDetalheResultado({
+          title: "Veredito final",
+          modifier: "result-detail-block--metacognition result-discursive-detail--verdict",
+          content: item.finalVerdictLabel
+            ? `<div class="result-metacognition-summary"><strong>${escapeHtml(item.finalVerdictLabel)} (${item.finalVerdictPercentage}%)</strong><p>${escapeHtml(item.finalVerdictObservation || "Nenhuma observação após a correção.")}</p></div>`
+            : `<p>Esta questão ainda não possui veredito final.</p>`
+        })}
+
+        ${renderizarBlocoDetalheResultado({
           title: "Anotações",
           modifier: "result-detail-block--note result-discursive-detail--note",
           content: `<p>${escapeHtml(item.note || "Nenhuma anotação registrada.")}</p>`
@@ -1730,7 +2033,7 @@ export function initQuestionResolution() {
     const mensagens = {
       [RESULT_FILTERS.INCORRECT]: [
         "Nenhuma questão errada.",
-        "As questões objetivas respondidas corretamente não aparecem neste filtro."
+        "Este filtro reúne objetivas incorretas e discursivas avaliadas como resposta incorreta (0%)."
       ],
       [RESULT_FILTERS.DISCURSIVE]: [
         "Nenhuma questão discursiva.",
@@ -1879,21 +2182,32 @@ export function initQuestionResolution() {
 
     if (sessaoAtiva?.questoes?.length) {
       const resultado = calcularResultado(sessaoAtiva);
-      const progresso = resultado.total
-        ? Math.round((resultado.respondidas / resultado.total) * 100)
-        : 0;
+      const revisandoDiscursivas = sessaoAtiva.status === SESSION_STATUS.REVIEWING;
+      const progressoCorrecao = revisandoDiscursivas
+        ? getDiscursiveReviewProgress(sessaoAtiva)
+        : null;
+      const progresso = revisandoDiscursivas
+        ? progressoCorrecao.percentage
+        : resultado.total
+          ? Math.round((resultado.respondidas / resultado.total) * 100)
+          : 0;
 
       blocoSessao?.classList.remove("hidden");
       $("#nomeSessaoAtual").textContent = sessaoAtiva.listaNome || "Lista sem nome";
       $("#nomeSessaoAtual").title = sessaoAtiva.listaNome || "Lista sem nome";
-      $("#resumoSessaoAtual").textContent =
-        `${resultado.respondidas}/${resultado.total} respondidas • ${formatarTempo(resultado.tempoTotal)}`;
+      $("#btnContinuarSessao").textContent = revisandoDiscursivas
+        ? "Continuar correção"
+        : "Continuar resolução";
+      $("#resumoSessaoAtual").textContent = revisandoDiscursivas
+        ? `${progressoCorrecao.evaluated}/${progressoCorrecao.total} discursivas corrigidas • ${formatarTempo(resultado.tempoTotal)}`
+        : `${resultado.respondidas}/${resultado.total} respondidas • ${formatarTempo(resultado.tempoTotal)}`;
       $("#barraProgressoSessao").style.width = `${progresso}%`;
       $("#progressoSessaoAtual").setAttribute("aria-valuenow", String(progresso));
 
       botaoNovaResolucao?.classList.remove("primary");
       botaoNovaResolucao?.classList.add("secondary");
     } else {
+      $("#btnContinuarSessao").textContent = "Continuar resolução";
       blocoSessao?.classList.add("hidden");
       $("#barraProgressoSessao").style.width = "0%";
       $("#progressoSessaoAtual").setAttribute("aria-valuenow", "0");

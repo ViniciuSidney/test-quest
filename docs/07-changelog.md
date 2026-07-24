@@ -1,10 +1,65 @@
 # Changelog
 
-Todas as mudanças importantes do Test Quest serão registradas neste arquivo.
+Todas as mudanças importantes do Test Quest são registradas neste arquivo.
 
 ## [Não lançado]
 
-Ainda não há alterações registradas para o próximo ciclo.
+Nenhuma alteração registrada após a v0.5.0.
+
+## [v0.5.0] — 2026-07-24
+
+### Adicionado
+
+- alternativas objetivas com IDs estáveis e gabarito por `respostaCorretaId`;
+- opção de embaralhar alternativas preservando respostas, marcadores e correção;
+- questões de Verdadeiro ou Falso com ordem fixa e layout próprio;
+- modo de gabarito imediato com confirmação e bloqueio da resposta;
+- Metacognição inicial para respostas discursivas;
+- Veredito Final independente em 100%, 50% ou 0%;
+- tela Wizard de Correção Discursiva no modo de gabarito ao final;
+- retomada da Correção Discursiva pela Tela Inicial;
+- ação para refazer questões erradas em uma nova sessão;
+- controle manual de efeitos visuais: Sistema, Completos e Reduzidos;
+- detalhamento expansível do desempenho por assunto e por questão;
+- mapa semântico de acerto, desempenho parcial e erro;
+- ícone oficial, favicon e ícones do manifesto;
+- testes específicos dos novos fluxos e regras.
+
+### Alterado
+
+- esquema da sessão promovido para `schemaVersion: 7`;
+- respostas e marcações objetivas passam a usar IDs estáveis;
+- desempenho geral passa a combinar objetivas e discursivas pelo Veredito Final;
+- contador de respostas corretas inclui discursivas avaliadas em 100%;
+- revisão de erros usa o Veredito Final e inclui discursivas de 0%;
+- Resultado Final apresenta Metacognição inicial e Veredito Final separadamente;
+- desempenho por assunto usa resumo unificado de questões e tempo;
+- layout da Resolução recebeu rolagem interna e proteção contra sobreposição;
+- Correção Discursiva foi integrada ao App Shell e ao comportamento responsivo;
+- alternativas selecionadas e estados semânticos ganharam maior contraste;
+- exportações, histórico e migrações foram adaptados ao novo modelo.
+
+### Corrigido
+
+- sobreposição dos painéis de correção em zoom elevado;
+- falta de acesso a conteúdos extensos na Resolução;
+- proporções irregulares dos blocos de Metacognição;
+- perda do estado semântico ao trocar a questão atual no mapa;
+- ação redundante de salvamento na última discursiva;
+- inconsistências visuais entre desktop, tablet, mobile e zoom reduzido.
+
+### Compatibilidade
+
+- sessões anteriores são migradas automaticamente para `schemaVersion: 7`;
+- letras A–E permanecem na interface e nos relatórios legíveis;
+- V/F permanece fora do embaralhamento de alternativas;
+- dados continuam locais, sem backend ou sincronização obrigatória.
+
+### Qualidade
+
+- regressão manual aprovada;
+- 45 arquivos de teste automatizados aprovados;
+- nenhum bug bloqueador ou importante pendente no fechamento.
 
 ## [v0.4.0] — 2026-07-18
 
@@ -285,3 +340,103 @@ Ainda não há alterações registradas para o próximo ciclo.
 - o filtro ativo é informado no próprio toggle;
 - ao selecionar um filtro em tela compacta, o painel é recolhido automaticamente para devolver espaço à listagem;
 - filtros e exportações recolhidos são removidos da navegação por teclado.
+
+## [v0.5-dev] — Etapa 3: Verdadeiro ou Falso
+
+### Adicionado
+
+- suporte a questões objetivas de Verdadeiro ou Falso;
+- layout próprio de resolução com escolhas semânticas;
+- tratamento visual especial no Resultado Final;
+- seção dedicada a V/F no guia de importação;
+- testes de estrutura, correção e integração do novo tipo.
+
+### Corrigido
+
+- o embaralhamento de alternativas não altera mais a ordem Verdadeiro → Falso;
+- o guia de importação separa claramente objetiva A–E, V/F e discursiva.
+
+### Melhorado
+
+- proporções, afirmativa e área de resposta da tela V/F aproximadas do mockup oficial;
+- Resultado Final mostra comparação específica entre resposta e gabarito V/F.
+
+### Refinamento da Resolução V/F
+
+- a pill do assunto passou a acompanhar o tamanho do texto e aplicar reticências quando necessário;
+- questões respondidas no mapa agora usam a cor informativa, sem sugerir acerto antes da correção;
+- os cards Verdadeiro e Falso ficaram menores e mais próximos das proporções do mockup oficial;
+- foram preservados o empilhamento mobile, foco por teclado e estados selecionados.
+
+## [v0.5-dev] — atualização do ícone do Test Quest
+
+### Alterado
+
+- o novo ícone monocromático foi adicionado à Tela Inicial;
+- as bordas externas do PNG passaram a ser transparentes;
+- o favicon principal passou a usar SVG vetorial;
+- os ícones do manifesto e do atalho móvel foram sincronizados com a nova identidade.
+
+
+## [v0.5-dev] — Etapa 4: gabarito imediato por questão
+
+### Adicionado
+
+- opção de correção somente no Resultado Final ou após confirmar cada questão;
+- botão `Confirmar resposta` no fluxo de resolução imediata;
+- painel de correção para objetivas e Verdadeiro ou Falso;
+- comparação orientada para questões discursivas;
+- mapa `confirmacoes` persistido no estado da sessão;
+- serviço dedicado `immediate-feedback.service.js`;
+- testes de comportamento, estrutura, migração e persistência da correção imediata.
+
+### Alterado
+
+- esquema da sessão atualizado para `schemaVersion: 5`;
+- respostas confirmadas são bloqueadas contra alterações posteriores;
+- o fluxo de navegação libera `Próxima` ou `Finalizar` depois da confirmação;
+- o modal de encerramento informa questões ainda sem confirmação imediata;
+- sessões antigas são migradas para o modo de correção final.
+
+### Preservado
+
+- modo tradicional de resolução sem confirmação por questão;
+- embaralhamento de questões e alternativas;
+- ordem fixa das questões de Verdadeiro ou Falso;
+- anotações, revisão, temporizadores, resultado e exportações.
+
+## [v0.5-dev] — Etapa 6: controle de efeitos visuais
+
+### Adicionado
+
+- modal global de efeitos visuais com os modos Sistema, Completos e Reduzidos;
+- acesso à preferência nos cabeçalhos das telas Inicial, Importação, Resolução e Resultado Final;
+- serviço para normalizar e resolver a preferência efetiva de movimento;
+- controlador dedicado para persistência, foco, teclado e mudanças do sistema;
+- testes automatizados de comportamento e estrutura da nova preferência.
+
+### Alterado
+
+- Tela de Desempenho passou a respeitar a preferência manual no contador, aura e transições;
+- rolagens suaves e transições globais são desativadas no modo Reduzido;
+- o modo Completo passa a ignorar explicitamente `prefers-reduced-motion`;
+- a suíte automatizada foi ampliada para 39 arquivos.
+
+### Preservado
+
+- tema claro e escuro;
+- estados, cores e mensagens semânticas;
+- sessões, histórico, exportações e migrações existentes.
+
+## [v0.5-dev] — Refinamento visual da Correção Discursiva
+
+### Alterado
+
+- a tela de Correção Discursiva passou a ocupar nativamente toda a área útil do Test Quest;
+- o cabeçalho legado é ocultado durante o Wizard, eliminando duplicações de identidade e preferências;
+- removido o limite interno de largura que comprimía a interface em monitores amplos e zoom reduzido;
+- conteúdo principal e painel lateral ganharam rolagens internas no desktop;
+- em tablets e celulares, a tela utiliza rolagem geral e empilhamento responsivo;
+- componentes visuais foram alinhados aos tokens, botões, superfícies e proporções da Resolução;
+- o bloco de Veredito Final recebeu maior destaque e estados semânticos mais claros.
+

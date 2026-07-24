@@ -29,12 +29,24 @@ let session = createActiveSession({
   now: () => "2026-07-18T13:00:00.000Z"
 });
 
-session.respostas[questions[0].id] = "B";
+session.respostas[questions[0].id] = questions[0].respostaCorretaId;
 session.respostas[questions[1].id] = "Mas indica oposição; mais indica quantidade.";
 session.anotacoes[questions[0].id] = "Revisar conjunções.";
 session.temposMs[questions[0].id] = 65000;
 session.temposMs[questions[1].id] = 95000;
 session.revisao[questions[1].id] = true;
+session.avaliacoesDiscursivas[questions[1].id] = {
+  metacognicaoInicial: {
+    nivel: "parcial",
+    percentual: 50,
+    observacao: "Acho que faltou apresentar um exemplo completo."
+  },
+  vereditoFinal: {
+    nivel: "parcial",
+    percentual: 50,
+    observacao: "Faltou apresentar um exemplo completo."
+  }
+};
 session.atual = 1;
 
 const firstSave = saveSession(session, storage);
@@ -42,7 +54,7 @@ assert.equal(firstSave.ok, true);
 
 const reloaded = loadSession(storage);
 assert.equal(reloaded.source, "current");
-assert.equal(reloaded.session.respostas[questions[0].id], "B");
+assert.equal(reloaded.session.respostas[questions[0].id], questions[0].respostaCorretaId);
 assert.equal(reloaded.session.anotacoes[questions[0].id], "Revisar conjunções.");
 assert.equal(reloaded.session.revisao[questions[1].id], true);
 assert.equal(reloaded.session.atual, 1);
@@ -59,9 +71,15 @@ assert.deepEqual(result, {
   respondidas: 2,
   objetivas: 1,
   discursivas: 1,
+  discursivasAvaliadas: 1,
+  questoesAvaliadas: 2,
+  pontosObtidos: 150,
   acertos: 1,
+  discursivasCorretas: 0,
+  questoesCorretas: 1,
   erros: 0,
-  percentual: 100,
+  percentual: 75,
+  percentualObjetivas: 100,
   tempoTotal: 160000,
   tempoMedio: 80000,
   marcadas: 1
@@ -79,8 +97,9 @@ assert.equal(readHistory(storage).sessions.length, 1);
 const answers = createAnswersExport(session, { now: new Date("2026-07-18T13:11:00.000Z") });
 assert.match(answers.content, /RELATÓRIO DE RESPOSTAS/);
 assert.match(answers.content, /Questões respondidas: 2\/2/);
-assert.match(answers.content, /Desempenho nas objetivas: 100%/);
+assert.match(answers.content, /Desempenho geral: 75%/);
 assert.match(answers.content, /Marcadas para revisão: 1/);
+assert.match(answers.content, /Metacognição inicial: Resposta parcial \(50%\)/);
 
 const notes = createNotesExport(session, { now: new Date("2026-07-18T13:11:00.000Z") });
 assert.match(notes.content, /ANOTAÇÕES DA RESOLUÇÃO/);
@@ -88,7 +107,7 @@ assert.match(notes.content, /Revisar conjunções\./);
 
 const json = createSessionJsonExport(session);
 const parsedJson = JSON.parse(json.content);
-assert.equal(parsedJson.schemaVersion, 3);
+assert.equal(parsedJson.schemaVersion, 7);
 assert.equal(parsedJson.status, "finalizada");
 assert.equal(parsedJson.id, "full-flow-session");
 

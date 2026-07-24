@@ -30,6 +30,7 @@ assert.equal(controller.includes("localStorage."), false);
 
 assert.match(statesCss, /\.persistence-warning/);
 assert.match(mainCss, /utilities\/states\.css/);
-assert.match(constants, /APP_VERSION\s*=\s*"0\.4\.0"/);
+assert.match(constants, /APP_VERSION\s*=\s*"0\.5\.0"/);
+assert.match(constants, /SESSION_SCHEMA_VERSION\s*=\s*7/);
 
 console.log("Release regression: todos os testes passaram.");

@@ -8,7 +8,7 @@ c: Ela falou mas alto para ser ouvida.
 d: O professor explicou o conteúdo, mais ninguém anotou.
 e: Preciso de mas exemplos para entender a regra.
 correta: B
-explicacao: A alternativa B está correta porque "mais" indica intensidade ou quantidade, enquanto "mas" expressa oposição. Nas demais alternativas, as duas palavras foram trocadas de forma inadequada.
+explicacao: A opção correta usa "mais" para indicar intensidade ou quantidade e "mas" para expressar oposição. Nas demais opções, as duas palavras foram trocadas de forma inadequada.
 +++
 
 @discursiva
@@ -17,4 +17,4 @@ tipo: discursiva curta
 enunciado: Explique a diferença entre "mas" e "mais" e escreva um exemplo com cada uma das palavras.
 resposta_esperada: "Mas" é uma conjunção adversativa e indica oposição, como em "Estudei, mas fiquei com dúvida". "Mais" indica quantidade, intensidade ou comparação, como em "Preciso de mais exercícios para treinar". Portanto, embora tenham som parecido, as duas palavras exercem funções diferentes na frase.
 criterios_de_correcao: Explicar que "mas" indica oposição; explicar que "mais" indica quantidade, intensidade ou comparação; apresentar um exemplo adequado com "mas"; apresentar um exemplo adequado com "mais".
-+++
+
