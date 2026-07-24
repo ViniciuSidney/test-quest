@@ -221,19 +221,51 @@ body[data-screen="resultado"] .legacy-topbar {
   border-radius: var(--tq-radius-md);
 }
 
-.subject-result-item__header {
+.subject-result-toggle {
   min-width: 0;
-  display: flex;
+  width: 100%;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
   align-items: center;
-  justify-content: space-between;
-  gap: var(--tq-space-3);
+  gap: var(--tq-space-2);
+  padding: 0;
+  color: var(--tq-text);
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  text-align: left;
 }
 
-.subject-result-item__header strong {
+.subject-result-toggle:hover {
+  color: var(--tq-text);
+  background: transparent;
+  transform: none;
+}
+
+.subject-result-toggle__copy {
+  min-width: 0;
+  display: grid;
+  gap: 0.18rem;
+}
+
+.subject-result-toggle__copy strong {
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.subject-result-toggle__chevron {
+  color: var(--tq-text-muted);
+  font-size: 1rem;
+  line-height: 1;
+  transition: transform 180ms ease;
+}
+
+.subject-result-item.is-expanded .subject-result-toggle__chevron {
+  transform: rotate(180deg);
 }
 
 .subject-result-item__percentage {
@@ -279,6 +311,77 @@ body[data-screen="resultado"] .legacy-topbar {
 
 .subject-result-item[data-tone="neutral"] .subject-result-item__percentage {
   color: var(--tq-text-muted);
+}
+
+.subject-result-details {
+  padding-top: 0.55rem;
+  border-top: 1px solid var(--tq-border);
+}
+
+.subject-result-details ol {
+  display: grid;
+  gap: 0.38rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.subject-result-question {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto auto auto;
+  align-items: center;
+  gap: 0.42rem;
+  padding: 0.42rem 0.5rem;
+  color: var(--tq-text-muted);
+  background: color-mix(in srgb, var(--tq-surface) 82%, transparent);
+  border: 1px solid var(--tq-border);
+  border-radius: var(--tq-radius-sm);
+  font-size: 0.72rem;
+  line-height: 1.25;
+}
+
+.subject-result-question__number,
+.subject-result-question__time,
+.subject-result-question__contribution {
+  font-family: "Cascadia Mono", "Cascadia Code", Consolas, monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+.subject-result-question__number {
+  color: var(--tq-primary-light);
+  font-weight: 900;
+}
+
+.subject-result-question__type {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.subject-result-question__status {
+  color: var(--tq-text);
+}
+
+.subject-result-question__contribution {
+  color: var(--tq-text-muted);
+  font-weight: 800;
+}
+
+.subject-result-question[data-tone="success"] .subject-result-question__status,
+.subject-result-question[data-tone="success"] .subject-result-question__contribution {
+  color: var(--tq-success);
+}
+
+.subject-result-question[data-tone="warning"] .subject-result-question__status,
+.subject-result-question[data-tone="warning"] .subject-result-question__contribution {
+  color: var(--tq-warning);
+}
+
+.subject-result-question[data-tone="danger"] .subject-result-question__status,
+.subject-result-question[data-tone="danger"] .subject-result-question__contribution {
+  color: var(--tq-danger);
 }
 
 .review-panel {
@@ -912,6 +1015,26 @@ body[data-screen="resultado"] .legacy-topbar {
   }
 }
 
+@media (max-width: 520px) {
+  .subject-result-question {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+  }
+
+  .subject-result-question__status {
+    grid-column: 2;
+  }
+
+  .subject-result-question__time {
+    grid-column: 3;
+    grid-row: 1;
+  }
+
+  .subject-result-question__contribution {
+    grid-column: 3;
+    grid-row: 2;
+  }
+}
+
 @media (max-width: 720px) {
   .results-header {
     grid-template-columns: auto minmax(0, 1fr) auto;
@@ -1222,6 +1345,26 @@ body[data-screen="resultado"] .legacy-topbar {
 
 .result-vf-detail--note {
   grid-area: note;
+}
+
+@media (max-width: 520px) {
+  .subject-result-question {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+  }
+
+  .subject-result-question__status {
+    grid-column: 2;
+  }
+
+  .subject-result-question__time {
+    grid-column: 3;
+    grid-row: 1;
+  }
+
+  .subject-result-question__contribution {
+    grid-column: 3;
+    grid-row: 2;
+  }
 }
 
 @media (max-width: 720px) {

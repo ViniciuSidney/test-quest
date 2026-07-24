@@ -324,7 +324,7 @@ body[data-screen="resolucao"] .legacy-topbar {
   font-size: 0.82rem;
 }
 
-.resolution-map-button.is-answered:not(.is-current) {
+.resolution-map-button.is-answered:not(.is-current):not(.is-correct):not(.is-partial):not(.is-incorrect) {
   color: color-mix(in srgb, var(--tq-info) 82%, var(--tq-text));
   background: var(--tq-info-soft);
   border-color: color-mix(in srgb, var(--tq-info) 42%, var(--tq-border));
@@ -335,6 +335,29 @@ body[data-screen="resolucao"] .legacy-topbar {
   background: var(--tq-primary);
   border-color: var(--tq-primary);
   box-shadow: 0 0 0 3px var(--tq-primary-soft);
+}
+
+.resolution-map-button.is-correct {
+  color: color-mix(in srgb, var(--tq-success) 82%, var(--tq-text));
+  background: var(--tq-success-soft);
+  border-color: color-mix(in srgb, var(--tq-success) 58%, var(--tq-border));
+}
+
+.resolution-map-button.is-partial {
+  color: color-mix(in srgb, var(--tq-warning) 88%, var(--tq-text));
+  background: var(--tq-warning-soft);
+  border-color: color-mix(in srgb, var(--tq-warning) 62%, var(--tq-border));
+}
+
+.resolution-map-button.is-incorrect {
+  color: color-mix(in srgb, var(--tq-danger) 88%, var(--tq-text));
+  background: var(--tq-danger-soft);
+  border-color: color-mix(in srgb, var(--tq-danger) 62%, var(--tq-border));
+}
+
+.resolution-map-button.is-current:is(.is-correct, .is-partial, .is-incorrect) {
+  color: var(--tq-text);
+  box-shadow: 0 0 0 3px var(--tq-primary-soft), inset 0 0 0 1px color-mix(in srgb, currentColor 34%, transparent);
 }
 
 .resolution-map-button.is-review::after {

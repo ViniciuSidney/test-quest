@@ -19,7 +19,9 @@ const requiredModules = [
   "../src/scripts/features/question-resolution/immediate-feedback.service.js",
   "../src/scripts/features/question-resolution/metacognition.service.js",
   "../src/scripts/features/discursive-review/discursive-review.controller.js",
-  "../src/scripts/features/discursive-review/discursive-review.service.js"
+  "../src/scripts/features/discursive-review/discursive-review.service.js",
+  "../src/scripts/features/results/subject-results.view.js",
+  "../src/scripts/features/question-resolution/question-map-status.service.js"
 ];
 
 for (const modulePath of requiredModules) {

@@ -116,6 +116,8 @@ assert.deepEqual(sessionResult, {
   questoesAvaliadas: 5,
   pontosObtidos: 250,
   acertos: 2,
+  discursivasCorretas: 0,
+  questoesCorretas: 2,
   erros: 1,
   percentual: 50,
   percentualObjetivas: 50,
@@ -168,6 +170,11 @@ assert.equal(mediana.objectives, 0);
 assert.equal(mediana.discursivesEvaluated, 1);
 assert.equal(mediana.scoredQuestions, 1);
 assert.equal(mediana.percentage, 50);
+assert.equal(mediana.questions.length, 1);
+assert.equal(mediana.questions[0].statusLabel, "Parcial");
+assert.equal(mediana.questions[0].contributionPercentage, 50);
+assert.equal(eventos.questions[0].contributionPercentage, 50);
+assert.equal(eventos.questions[1].contributionPercentage, 0);
 assert.equal(getSubjectPerformanceTone(90), "success");
 assert.equal(getSubjectPerformanceTone(60), "warning");
 assert.equal(getSubjectPerformanceTone(30), "danger");

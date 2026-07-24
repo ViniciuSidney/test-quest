@@ -54,9 +54,13 @@ export function calculateSessionResult(state = {}) {
     (sum, { assessment }) => sum + Number(assessment.percentual || 0),
     0
   );
+  const completeDiscursives = evaluatedDiscursives.filter(({ assessment }) =>
+    getMetacognitionLevel(assessment?.nivel)?.key === "completa"
+  ).length;
   const objectivePoints = correct * 100;
   const scoredQuestions = objectives.length + evaluatedDiscursives.length;
   const earnedPoints = objectivePoints + discursivePoints;
+  const correctQuestions = correct + completeDiscursives;
   const percentage = scoredQuestions
     ? Math.round(earnedPoints / scoredQuestions)
     : 0;
@@ -76,6 +80,8 @@ export function calculateSessionResult(state = {}) {
     questoesAvaliadas: scoredQuestions,
     pontosObtidos: earnedPoints,
     acertos: correct,
+    discursivasCorretas: completeDiscursives,
+    questoesCorretas: correctQuestions,
     erros: incorrect,
     percentual: percentage,
     percentualObjetivas: objectivePercentage,
@@ -228,8 +234,9 @@ export function buildSubjectResultItems({
 } = {}) {
   const subjectMap = new Map();
 
-  questions.forEach((question) => {
+  questions.forEach((question, questionIndex) => {
     const subject = normalizeText(question.assunto) || "Sem assunto";
+    const questionTimeMs = normalizeTime(timesMs[question.id]);
     const current = subjectMap.get(subject) || {
       subject,
       total: 0,
@@ -238,20 +245,40 @@ export function buildSubjectResultItems({
       discursivesEvaluated: 0,
       scoredQuestions: 0,
       earnedPoints: 0,
-      timeMs: 0
+      timeMs: 0,
+      questions: []
     };
 
     current.total += 1;
-    current.timeMs += normalizeTime(timesMs[question.id]);
+    current.timeMs += questionTimeMs;
 
     if (question.categoria === "objetiva") {
+      const status = getQuestionResultStatus(question, answers[question.id]);
+      const correctAnswer = status === "correct";
+      const statusLabel = status === "correct"
+        ? "Correta"
+        : status === "incorrect"
+          ? "Incorreta"
+          : "Não respondida";
+
       current.objectives += 1;
       current.scoredQuestions += 1;
 
-      if (getQuestionResultStatus(question, answers[question.id]) === "correct") {
+      if (correctAnswer) {
         current.correct += 1;
         current.earnedPoints += 100;
       }
+
+      current.questions.push({
+        id: question.id,
+        number: questionIndex + 1,
+        typeLabel: isTrueFalseQuestion(question) ? "Verdadeiro ou Falso" : "Objetiva",
+        statusLabel,
+        tone: status === "correct" ? "success" : status === "incorrect" ? "danger" : "neutral",
+        scored: true,
+        scorePercentage: correctAnswer ? 100 : 0,
+        timeMs: questionTimeMs
+      });
     } else if (question.categoria === "discursiva") {
       const assessment = getFinalVerdict(
         { avaliacoesDiscursivas: discursiveAssessments },
@@ -264,6 +291,25 @@ export function buildSubjectResultItems({
         current.scoredQuestions += 1;
         current.earnedPoints += level.percentage;
       }
+
+      current.questions.push({
+        id: question.id,
+        number: questionIndex + 1,
+        typeLabel: "Discursiva",
+        statusLabel: level
+          ? level.label.replace(/^Resposta\s+/i, "").replace(/^./, (character) => character.toUpperCase())
+          : "Pendente",
+        tone: level?.key === "completa"
+          ? "success"
+          : level?.key === "parcial"
+            ? "warning"
+            : level?.key === "incorreta"
+              ? "danger"
+              : "neutral",
+        scored: Boolean(level),
+        scorePercentage: level?.percentage ?? null,
+        timeMs: questionTimeMs
+      });
     }
 
     subjectMap.set(subject, current);
@@ -273,7 +319,13 @@ export function buildSubjectResultItems({
     ...item,
     percentage: item.scoredQuestions > 0
       ? Math.round(item.earnedPoints / item.scoredQuestions)
-      : null
+      : null,
+    questions: item.questions.map((question) => ({
+      ...question,
+      contributionPercentage: question.scored && item.scoredQuestions > 0
+        ? Math.round(Number(question.scorePercentage || 0) / item.scoredQuestions)
+        : null
+    }))
   }));
 }
 

@@ -15,8 +15,10 @@ import { inspectStorage } from "../../shared/storage.js";
 import { createAnswersExport, createNotesExport, createSessionJsonExport, downloadExportFile } from "../exports/session-export.service.js";
 import { escapeHtml, formatDuration as formatarTempo, formatStudyDuration as formatarTempoHistorico } from "../../shared/formatters.js";
 import { formatPerformanceBasis, getPerformanceState, PERFORMANCE_STATE_CLASSES, shouldShowPerformanceScreen } from "../performance/performance.service.js";
-import { calculateSessionResult as calcularResultado, calculateSessionTotalTime as calcularTempoTotal, RESULT_FILTERS, buildQuestionReviewItems, buildSubjectResultItems, filterQuestionReviewItems, getSubjectPerformanceTone, normalizeResultFilter } from "../results/results.service.js";
+import { calculateSessionResult as calcularResultado, calculateSessionTotalTime as calcularTempoTotal, RESULT_FILTERS, buildQuestionReviewItems, buildSubjectResultItems, filterQuestionReviewItems, normalizeResultFilter } from "../results/results.service.js";
+import { buildSubjectResultsMarkup } from "../results/subject-results.view.js";
 import { buildQuestionMapLabel, buildTrueFalseOptionsMarkup, getMarkerInfo, getNextMarkerState, getQuestionTypeLabel, isQuestionAnswered, MARKER_STATES, normalizeMarkerState } from "./question-resolution.helpers.js";
+import { getImmediateQuestionMapStatus } from "./question-map-status.service.js";
 import { buildImmediateFeedbackMarkup, canConfirmQuestion, confirmQuestion, isImmediateCorrectionEnabled, isQuestionConfirmed, requiresQuestionConfirmation } from "./immediate-feedback.service.js";
 import {
   getDiscursiveReviewProgress,
@@ -87,6 +89,7 @@ export function initQuestionResolution() {
   let filtroResultadoAtivo = RESULT_FILTERS.ALL;
   let questaoResultadoExpandidaId = null;
   let itensRevisaoResultado = [];
+  const assuntosResultadoExpandidos = new Set();
   let persistenceAtRisk = false;
   let persistenceErrorCode = null;
   let persistenceWarningDismissed = false;
@@ -287,6 +290,14 @@ export function initQuestionResolution() {
 
       if (button) {
         alternarCardResultado(button.dataset.resultQuestionId);
+      }
+    });
+
+    $("#listaDesempenhoAssuntos")?.addEventListener("click", (evento) => {
+      const button = evento.target.closest("[data-subject-result-toggle]");
+
+      if (button) {
+        alternarDetalhesAssuntoResultado(button.dataset.subjectResultToggle);
       }
     });
 
@@ -934,11 +945,18 @@ export function initQuestionResolution() {
       const atual = indice === estado.atual;
       const revisao = Boolean(estado.revisao[questao.id]);
       const confirmada = isQuestionConfirmed(estado, questao.id);
-      const ariaLabel = buildQuestionMapLabel({ number: indice + 1, current: atual, answered: respondida, review: revisao, confirmed: confirmada });
+      const mapResult = getImmediateQuestionMapStatus({
+        state: estado,
+        question: questao,
+        immediate: isImmediateCorrectionEnabled(estado),
+        confirmed: confirmada
+      });
+      const baseAriaLabel = buildQuestionMapLabel({ number: indice + 1, current: atual, answered: respondida, review: revisao, confirmed: confirmada });
+      const ariaLabel = mapResult.label ? `${baseAriaLabel}, resposta ${mapResult.label}` : baseAriaLabel;
 
       return `
         <button
-          class="resolution-map-button ${respondida ? "is-answered" : ""} ${confirmada ? "is-confirmed" : ""} ${atual ? "is-current" : ""} ${revisao ? "is-review" : ""}"
+          class="resolution-map-button ${respondida ? "is-answered" : ""} ${confirmada ? "is-confirmed" : ""} ${mapResult.className} ${atual ? "is-current" : ""} ${revisao ? "is-review" : ""}"
           type="button"
           data-indice="${indice}"
           aria-label="${escapeHtml(ariaLabel)}"
@@ -1361,6 +1379,7 @@ export function initQuestionResolution() {
   function abrirResultadoFinal({ focar = true } = {}) {
     filtroResultadoAtivo = RESULT_FILTERS.ALL;
     questaoResultadoExpandidaId = null;
+    assuntosResultadoExpandidos.clear();
     trocarTela("resultado");
     renderizarResultado();
 
@@ -1380,8 +1399,8 @@ export function initQuestionResolution() {
     }
 
     $("#resultadoRespondidas").textContent = `${resultado.respondidas}/${resultado.total}`;
-    $("#resultadoCorretas").textContent = resultado.objetivas > 0
-      ? `${resultado.acertos}/${resultado.objetivas}`
+    $("#resultadoCorretas").textContent = resultado.questoesAvaliadas > 0
+      ? `${resultado.questoesCorretas}/${resultado.questoesAvaliadas}`
       : "—";
     $("#resultadoTempoTotal").textContent = formatarTempo(resultado.tempoTotal);
     $("#resultadoDesempenho").textContent = resultado.questoesAvaliadas > 0
@@ -1585,9 +1604,7 @@ export function initQuestionResolution() {
   function renderizarResumoPorAssunto() {
     const container = $("#listaDesempenhoAssuntos");
 
-    if (!container) {
-      return;
-    }
+    if (!container) return;
 
     const assuntos = buildSubjectResultItems({
       questions: estado.questoes,
@@ -1596,56 +1613,33 @@ export function initQuestionResolution() {
       discursiveAssessments: estado.avaliacoesDiscursivas
     });
 
-    if (assuntos.length === 0) {
-      container.innerHTML = `
-        <div class="results-empty-state">
-          <strong>Nenhum assunto encontrado.</strong>
-          <p>A lista finalizada não possui assuntos para resumir.</p>
-        </div>
-      `;
+    container.innerHTML = assuntos.length
+      ? buildSubjectResultsMarkup({
+          items: assuntos,
+          expandedKeys: assuntosResultadoExpandidos,
+          formatDuration: formatarTempo,
+          escapeHtml
+        })
+      : `<div class="results-empty-state"><strong>Nenhum assunto encontrado.</strong><p>A lista finalizada não possui assuntos para resumir.</p></div>`;
+  }
+
+  function alternarDetalhesAssuntoResultado(subjectKey) {
+    if (!subjectKey) {
       return;
     }
 
-    container.innerHTML = assuntos.map((item) => {
-      const possuiAvaliacao = item.scoredQuestions > 0;
-      const percentual = possuiAvaliacao ? item.percentage : null;
-      const tone = getSubjectPerformanceTone(percentual);
-      const partesAvaliadas = [];
+    if (assuntosResultadoExpandidos.has(subjectKey)) {
+      assuntosResultadoExpandidos.delete(subjectKey);
+    } else {
+      assuntosResultadoExpandidos.add(subjectKey);
+    }
 
-      if (item.objectives > 0) {
-        partesAvaliadas.push(`${item.correct}/${item.objectives} objetivas`);
-      }
-      if (item.discursivesEvaluated > 0) {
-        partesAvaliadas.push(`${item.discursivesEvaluated} discursiva${item.discursivesEvaluated === 1 ? "" : "s"} com veredito final`);
-      }
-
-      const meta = `${partesAvaliadas.length ? partesAvaliadas.join(" • ") : "Sem questões avaliadas"} • ${formatarTempo(item.timeMs)}`;
-      const progress = possuiAvaliacao
-        ? `
-          <div
-            class="subject-result-progress"
-            role="progressbar"
-            aria-label="Desempenho em ${escapeHtml(item.subject)}"
-            aria-valuemin="0"
-            aria-valuemax="100"
-            aria-valuenow="${percentual}"
-          >
-            <div class="subject-result-progress__value" style="--subject-percentage: ${percentual}%;"></div>
-          </div>
-        `
-        : "";
-
-      return `
-        <article class="subject-result-item" data-tone="${tone}">
-          <div class="subject-result-item__header">
-            <strong title="${escapeHtml(item.subject)}">${escapeHtml(item.subject)}</strong>
-            <span class="subject-result-item__percentage">${possuiAvaliacao ? `${percentual}%` : "—"}</span>
-          </div>
-          <p class="subject-result-item__meta">${meta}</p>
-          ${progress}
-        </article>
-      `;
-    }).join("");
+    renderizarResumoPorAssunto();
+    requestAnimationFrame(() => {
+      Array.from(document.querySelectorAll("[data-subject-result-toggle]"))
+        .find((button) => button.dataset.subjectResultToggle === subjectKey)
+        ?.focus();
+    });
   }
 
   function selecionarFiltroResultado(filter) {

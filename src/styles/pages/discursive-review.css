@@ -396,6 +396,22 @@ body[data-screen="correcaoDiscursiva"] .app {
   box-shadow: none;
 }
 
+.discursive-review-actionbar.is-last-question {
+  grid-template-columns: minmax(150px, 0.85fr) minmax(220px, 1.25fr);
+}
+
+.discursive-review-actionbar.is-last-question #btnConcluirCorrecaoDiscursiva {
+  grid-column: 2;
+}
+
+.discursive-review-actionbar.is-only-question {
+  grid-template-columns: minmax(220px, 1fr);
+}
+
+.discursive-review-actionbar.is-only-question #btnConcluirCorrecaoDiscursiva {
+  grid-column: 1;
+}
+
 /* Lateral */
 .discursive-review-sidebar {
   min-width: 0;

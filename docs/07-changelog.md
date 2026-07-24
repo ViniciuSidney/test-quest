@@ -1,4 +1,12 @@
 
+## v0.5-dev — Refinamento de resultados e mapa semântico
+
+- removida a ação redundante de salvar na última questão da Correção Discursiva;
+- contador de respostas corretas passou a incluir discursivas avaliadas em 100%;
+- resumo por assunto ganhou detalhamento expansível por questão;
+- mapa da Resolução passou a usar cores semânticas no modo de correção imediata.
+
+
 ## v0.5-dev — refinamento visual da Metacognição e seleção
 
 ### Ajustado

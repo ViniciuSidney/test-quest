@@ -75,6 +75,8 @@ assert.deepEqual(result, {
   questoesAvaliadas: 2,
   pontosObtidos: 150,
   acertos: 1,
+  discursivasCorretas: 0,
+  questoesCorretas: 1,
   erros: 0,
   percentual: 75,
   percentualObjetivas: 100,

@@ -97,11 +97,19 @@ export function createDiscursiveReviewController({
     renderValidations(state, question, finalLevel);
     renderSummary(progress);
 
-    $("#btnAnteriorCorrecaoDiscursiva").disabled = index <= 0;
-    $("#btnSalvarAvancarCorrecaoDiscursiva").disabled = !finalLevel;
-    $("#btnSalvarAvancarCorrecaoDiscursiva").textContent = index === progress.total - 1
-      ? "Salvar avaliação"
-      : "Salvar e avançar →";
+    const isLastQuestion = index === progress.total - 1;
+    const isOnlyQuestion = progress.total === 1;
+    const previousButton = $("#btnAnteriorCorrecaoDiscursiva");
+    const saveAndAdvanceButton = $("#btnSalvarAvancarCorrecaoDiscursiva");
+    const actionbar = $(".discursive-review-actionbar");
+
+    previousButton.hidden = isOnlyQuestion;
+    previousButton.disabled = index <= 0;
+    saveAndAdvanceButton.hidden = isLastQuestion;
+    saveAndAdvanceButton.disabled = !finalLevel;
+    saveAndAdvanceButton.textContent = "Salvar e avançar →";
+    actionbar?.classList.toggle("is-last-question", isLastQuestion);
+    actionbar?.classList.toggle("is-only-question", isOnlyQuestion);
     $("#btnConcluirCorrecaoDiscursiva").disabled = progress.pending > 0;
 
     saveDebounced();
