@@ -147,6 +147,11 @@ A aplicação utiliza ES Modules e separa responsabilidades por recursos, inclui
 
 Os dados permanecem no navegador por meio do `localStorage`. Sessões antigas são normalizadas e migradas automaticamente, com proteção contra dados inválidos e falhas de armazenamento.
 
+Quando aberto a partir de um Assunto do Study Stack, o Resultado Final também
+pode gerar o contrato de integração `1.1.0`, salvar o resultado e retornar à
+aplicação de origem. Essa camada é separada do `schemaVersion: 7` e da exportação
+nativa de sessão. Consulte [`docs/25-study-stack-handoff-v1.1.md`](docs/25-study-stack-handoff-v1.1.md).
+
 ## Limites atuais
 
 - não há backend ou sincronização entre dispositivos;

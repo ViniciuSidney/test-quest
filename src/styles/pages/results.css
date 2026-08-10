@@ -827,6 +827,7 @@ body[data-screen="resultado"] .legacy-topbar {
 }
 
 .results-actions__exports,
+.results-actions__study-stack,
 .results-actions__navigation {
   min-width: 0;
   display: flex;
@@ -836,6 +837,46 @@ body[data-screen="resultado"] .legacy-topbar {
 
 .results-actions__exports {
   flex-wrap: wrap;
+}
+
+.results-actions__study-stack {
+  flex: 1 1 360px;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+.results-actions__study-stack-context {
+  min-width: 0;
+  display: grid;
+  gap: 0.08rem;
+  text-align: right;
+}
+
+.results-actions__study-stack-context > span,
+.results-actions__study-stack-context > small {
+  color: var(--tq-text-muted);
+  font-size: 0.68rem;
+  line-height: 1.25;
+}
+
+.results-actions__study-stack-context > strong {
+  max-width: 260px;
+  overflow: hidden;
+  font-size: 0.82rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.results-actions__study-stack-context > small[data-tone="success"] {
+  color: var(--tq-success);
+}
+
+.results-actions__study-stack-context > small[data-tone="danger"] {
+  color: var(--tq-danger);
+}
+
+.results-actions__study-stack-context > small[data-tone="warning"] {
+  color: var(--results-review);
 }
 
 .results-actionbar button {
@@ -992,6 +1033,7 @@ body[data-screen="resultado"] .legacy-topbar {
   }
 
   .results-actions__exports,
+  .results-actions__study-stack,
   .results-actions__navigation {
     width: 100%;
     display: grid;
@@ -1002,7 +1044,16 @@ body[data-screen="resultado"] .legacy-topbar {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .results-actions__study-stack {
+    grid-template-columns: minmax(0, 1fr) minmax(210px, 0.6fr);
+  }
+
+  .results-actions__study-stack-context {
+    text-align: left;
+  }
+
   .results-actions__exports button,
+  .results-actions__study-stack button,
   .results-actions__navigation button {
     width: 100%;
     min-width: 0;
@@ -1167,6 +1218,14 @@ body[data-screen="resultado"] .legacy-topbar {
 
   .results-actions__navigation {
     grid-template-columns: 1fr;
+  }
+
+  .results-actions__study-stack {
+    grid-template-columns: 1fr;
+  }
+
+  .results-actions__study-stack-context {
+    text-align: left;
   }
 
   .results-actions__navigation button {

@@ -26,6 +26,7 @@ import {
   startDiscursiveReview
 } from "../discursive-review/discursive-review.service.js";
 import { createDiscursiveReviewController } from "../discursive-review/discursive-review.controller.js";
+import { createStudyStackIntegrationController } from "../integrations/study-stack-integration.controller.js";
 import {
   buildFinalVerdictMarkup,
   buildMetacognitionMarkup,
@@ -116,6 +117,12 @@ export function initQuestionResolution() {
   const visualEffectsController = createVisualEffectsController({
     onPersistenceError: reportSettingsPersistenceError
   });
+  const studyStackIntegrationController = createStudyStackIntegrationController({
+    documentRef: document,
+    windowRef: window,
+    getState: () => estado,
+    prepareState: prepararEstadoParaExportacao
+  });
   const discursiveReviewController = createDiscursiveReviewController({
     documentRef: document,
     getState: () => estado,
@@ -142,6 +149,7 @@ export function initQuestionResolution() {
     configurarEventos();
     sincronizarAcoesResultadoResponsivas();
     sincronizarFiltrosResultadoResponsivos();
+    studyStackIntegrationController.init();
     sincronizarSessaoFinalizadaComHistorico();
     trocarTela("home");
     atualizarHome();
@@ -1419,6 +1427,7 @@ export function initQuestionResolution() {
     }
 
     atualizarAcaoRefazerQuestoesErradas();
+    studyStackIntegrationController.sync();
     recolherAcoesResultadoMobile();
     renderizarResumoPorAssunto();
 
