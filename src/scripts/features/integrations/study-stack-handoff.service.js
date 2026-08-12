@@ -21,6 +21,20 @@ function normalizeText(value) {
   return String(value ?? "").trim();
 }
 
+function normalizeOptionalSequence(value) {
+  if (value === null || value === undefined || value === "") {
+    return null;
+  }
+
+  const sequence = Number(value);
+
+  if (!Number.isInteger(sequence) || sequence <= 0) {
+    throw new TypeError("A sequência da lista recebida do Study Stack é inválida.");
+  }
+
+  return sequence;
+}
+
 function formatAlternative(presentation) {
   if (!presentation) {
     return null;
@@ -134,6 +148,7 @@ export function createStudyStackResultPayload(state, context, {
   }
 
   const sentAt = now();
+  const sequence = normalizeOptionalSequence(context?.suggestedListSequence);
 
   if (Number.isNaN(Date.parse(sentAt))) {
     throw new TypeError("Não foi possível definir sentAt para o resultado.");
@@ -147,7 +162,8 @@ export function createStudyStackResultPayload(state, context, {
     subjectContext: { ...context.subjectContext },
     session: {
       title: normalizeText(state.listaNome) || "Lista sem nome",
-      date: new Date(state.finalizadoEm || state.iniciadoEm || sentAt).toISOString()
+      date: new Date(state.finalizadoEm || state.iniciadoEm || sentAt).toISOString(),
+      ...(sequence ? { sequence } : {})
     },
     questions: state.questoes.map((question) => buildQuestionPayload(state, question)),
     resultUrl

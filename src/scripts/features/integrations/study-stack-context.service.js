@@ -6,8 +6,13 @@ import {
 } from "../../shared/storage.js";
 
 export const STUDY_STACK_CONTEXT_KEY = "testQuest.integration.studyStackContext.v1";
-export const STUDY_STACK_CONTEXT_CONTRACT_VERSION = "1.0.0";
+export const STUDY_STACK_CONTEXT_CONTRACT_VERSION = "1.1.0";
+export const STUDY_STACK_CONTEXT_CONTRACT_VERSIONS = Object.freeze([
+  "1.0.0",
+  STUDY_STACK_CONTEXT_CONTRACT_VERSION
+]);
 export const STUDY_STACK_SOURCE_APP = "study_stack";
+export const STUDY_STACK_IMPORT_ENTRY_POINT = "import";
 
 const CONTEXT_FIELDS = Object.freeze([
   "matterId",
@@ -20,6 +25,22 @@ const CONTEXT_FIELDS = Object.freeze([
 
 function normalizeText(value) {
   return String(value ?? "").trim();
+}
+
+function normalizeOptionalSequence(value) {
+  const normalized = normalizeText(value);
+
+  if (!normalized) {
+    return null;
+  }
+
+  const sequence = Number(normalized);
+
+  if (!Number.isInteger(sequence) || sequence <= 0) {
+    throw new TypeError("suggestedListSequence deve ser um número inteiro positivo.");
+  }
+
+  return sequence;
 }
 
 function normalizeDate(value, fieldName) {
@@ -62,6 +83,23 @@ export function validateStudyStackReturnUrl(value) {
   return url.toString();
 }
 
+export function getStudyStackLaunchDirective(context) {
+  const subjectName = normalizeText(context?.subjectContext?.subjectName);
+  const suggestedListSequence = normalizeOptionalSequence(context?.suggestedListSequence);
+  const suggestedListName = normalizeText(context?.suggestedListName) || (
+    subjectName && suggestedListSequence
+      ? `${subjectName} — Lista ${suggestedListSequence}`
+      : ""
+  );
+
+  return Object.freeze({
+    openImport: context?.entryPoint === STUDY_STACK_IMPORT_ENTRY_POINT,
+    subjectName,
+    suggestedListName,
+    suggestedListSequence
+  });
+}
+
 export function parseStudyStackContext(locationRef = globalThis.location) {
   if (!locationRef?.href) {
     return { found: false, context: null, error: null };
@@ -83,7 +121,7 @@ export function parseStudyStackContext(locationRef = globalThis.location) {
       throw new TypeError("sourceApp deve ser study_stack.");
     }
 
-    if (contractVersion !== STUDY_STACK_CONTEXT_CONTRACT_VERSION) {
+    if (!STUDY_STACK_CONTEXT_CONTRACT_VERSIONS.includes(contractVersion)) {
       throw new TypeError(`Versão de contexto incompatível: ${contractVersion || "ausente"}.`);
     }
 
@@ -98,6 +136,11 @@ export function parseStudyStackContext(locationRef = globalThis.location) {
         .map((field) => [field, normalizeText(url.searchParams.get(field))])
         .filter(([, value]) => value)
     );
+    const entryPoint = normalizeText(url.searchParams.get("entryPoint"));
+
+    if (entryPoint && entryPoint !== STUDY_STACK_IMPORT_ENTRY_POINT) {
+      throw new TypeError(`entryPoint incompatível: ${entryPoint}.`);
+    }
 
     return {
       found: true,
@@ -107,6 +150,11 @@ export function parseStudyStackContext(locationRef = globalThis.location) {
         sourceApp,
         sentAt: normalizeDate(url.searchParams.get("sentAt"), "sentAt"),
         subjectContext,
+        entryPoint: entryPoint || null,
+        suggestedListName: normalizeText(url.searchParams.get("suggestedListName")) || null,
+        suggestedListSequence: normalizeOptionalSequence(
+          url.searchParams.get("suggestedListSequence")
+        ),
         returnUrl: validateStudyStackReturnUrl(url.searchParams.get("returnUrl")),
         receivedAt: new Date().toISOString()
       }
@@ -144,7 +192,7 @@ export function loadStudyStackContext(storage = getDefaultStorage()) {
 
   try {
     if (
-      raw?.contractVersion !== STUDY_STACK_CONTEXT_CONTRACT_VERSION ||
+      !STUDY_STACK_CONTEXT_CONTRACT_VERSIONS.includes(raw?.contractVersion) ||
       raw?.sourceApp !== STUDY_STACK_SOURCE_APP ||
       !normalizeText(raw?.subjectContext?.subjectId)
     ) {
@@ -153,6 +201,9 @@ export function loadStudyStackContext(storage = getDefaultStorage()) {
 
     return {
       ...raw,
+      entryPoint: normalizeText(raw.entryPoint) || null,
+      suggestedListName: normalizeText(raw.suggestedListName) || null,
+      suggestedListSequence: normalizeOptionalSequence(raw.suggestedListSequence),
       returnUrl: validateStudyStackReturnUrl(raw.returnUrl)
     };
   } catch {
@@ -214,6 +265,9 @@ export function clearStudyStackContextParams(locationRef, historyRef) {
     "themeName",
     "subjectId",
     "subjectName",
+    "entryPoint",
+    "suggestedListName",
+    "suggestedListSequence",
     "returnUrl"
   ].forEach((field) => url.searchParams.delete(field));
 

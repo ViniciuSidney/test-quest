@@ -1,5 +1,8 @@
 import { downloadExportFile } from "../exports/session-export.service.js";
-import { consumeStudyStackContext } from "./study-stack-context.service.js";
+import {
+  consumeStudyStackContext,
+  getStudyStackLaunchDirective
+} from "./study-stack-context.service.js";
 import {
   createStudyStackJsonExport,
   saveToStudyStackAndReturn
@@ -27,8 +30,21 @@ export function createStudyStackIntegrationController({
     $("#btnExportarStudyStack")?.addEventListener("click", exportResult);
     $("#btnSalvarStudyStack")?.addEventListener("click", saveAndReturn);
     sync();
+    const launch = getStudyStackLaunchDirective(context);
 
-    return { context, error: contextError };
+    if (launch.openImport && launch.suggestedListName) {
+      const listNameInput = $("#nomeLista");
+
+      if (listNameInput && !listNameInput.value.trim()) {
+        listNameInput.value = launch.suggestedListName;
+      }
+    }
+
+    return {
+      context,
+      error: contextError,
+      launch
+    };
   }
 
   function exportResult() {
@@ -102,10 +118,32 @@ export function createStudyStackIntegrationController({
         : "Vínculo indisponível";
     }
 
+    syncImportContext();
+
     if (contextError) {
       showMessage(contextError.message, "danger");
     } else if (available) {
       showMessage("Resultado vinculado ao Assunto do Study Stack.", "info");
+    }
+  }
+
+  function syncImportContext() {
+    const panel = $("#contextoStudyStackImportacao");
+    const subjectElement = $("#assuntoStudyStackImportacao");
+    const sequenceElement = $("#sequenciaStudyStackImportacao");
+    const directive = getStudyStackLaunchDirective(context);
+    const available = Boolean(context?.subjectContext?.subjectId);
+
+    panel?.classList.toggle("hidden", !available);
+
+    if (subjectElement && available) {
+      subjectElement.textContent = directive.subjectName || "Assunto vinculado";
+    }
+
+    if (sequenceElement) {
+      sequenceElement.textContent = directive.suggestedListSequence
+        ? `Lista ${directive.suggestedListSequence}`
+        : "Lista vinculada";
     }
   }
 

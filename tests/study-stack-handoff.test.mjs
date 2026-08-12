@@ -8,6 +8,7 @@ import { SESSION_STATUS } from "../src/scripts/core/state.js";
 import {
   STUDY_STACK_CONTEXT_KEY,
   consumeStudyStackContext,
+  getStudyStackLaunchDirective,
   loadStudyStackContext,
   parseStudyStackContext,
   validateStudyStackReturnUrl
@@ -22,7 +23,7 @@ import { MemoryStorage } from "./helpers/memory-storage.mjs";
 
 function createContextUrl(overrides = {}) {
   const params = new URLSearchParams({
-    contractVersion: "1.0.0",
+    contractVersion: "1.1.0",
     sentAt: "2026-08-10T14:00:00.000Z",
     sourceApp: "study_stack",
     matterId: "matter-biology",
@@ -31,10 +32,19 @@ function createContextUrl(overrides = {}) {
     themeName: "Ecologia",
     subjectId: "subject-food-webs",
     subjectName: "Cadeias e Teias Alimentares",
+    entryPoint: "import",
+    suggestedListName: "Cadeias e Teias Alimentares — Lista 3",
+    suggestedListSequence: "3",
     returnUrl: "https://viniciusidney.github.io/study-stack/?section=exercises"
   });
 
-  Object.entries(overrides).forEach(([key, value]) => params.set(key, value));
+  Object.entries(overrides).forEach(([key, value]) => {
+    if (value === null) {
+      params.delete(key);
+    } else {
+      params.set(key, value);
+    }
+  });
   return `https://viniciusidney.github.io/test-quest/?${params}`;
 }
 
@@ -44,6 +54,37 @@ assert.equal(parsed.error, null);
 assert.equal(parsed.context.sourceApp, "study_stack");
 assert.equal(parsed.context.subjectContext.subjectId, "subject-food-webs");
 assert.equal(parsed.context.subjectContext.themeName, "Ecologia");
+assert.equal(parsed.context.entryPoint, "import");
+assert.equal(parsed.context.suggestedListName, "Cadeias e Teias Alimentares — Lista 3");
+assert.equal(parsed.context.suggestedListSequence, 3);
+assert.deepEqual(getStudyStackLaunchDirective(parsed.context), {
+  openImport: true,
+  subjectName: "Cadeias e Teias Alimentares",
+  suggestedListName: "Cadeias e Teias Alimentares — Lista 3",
+  suggestedListSequence: 3
+});
+
+const legacyParsed = parseStudyStackContext({
+  href: createContextUrl({
+    contractVersion: "1.0.0",
+    entryPoint: null,
+    suggestedListName: null,
+    suggestedListSequence: null
+  })
+});
+assert.equal(legacyParsed.error, null);
+assert.deepEqual(getStudyStackLaunchDirective(legacyParsed.context), {
+  openImport: false,
+  subjectName: "Cadeias e Teias Alimentares",
+  suggestedListName: "",
+  suggestedListSequence: null
+});
+
+const transitionalParsed = parseStudyStackContext({
+  href: createContextUrl({ contractVersion: "1.0.0" })
+});
+assert.equal(transitionalParsed.error, null);
+assert.equal(getStudyStackLaunchDirective(transitionalParsed.context).openImport, true);
 
 const storage = new MemoryStorage();
 let cleanedUrl = "";
@@ -57,12 +98,19 @@ assert.equal(loadStudyStackContext(storage).subjectContext.subjectId, "subject-f
 assert.ok(storage.getItem(STUDY_STACK_CONTEXT_KEY));
 assert.match(cleanedUrl, /keep=1/);
 assert.doesNotMatch(cleanedUrl, /subjectId=/);
+assert.doesNotMatch(cleanedUrl, /suggestedListName=/);
 
 const invalidSource = parseStudyStackContext({
   href: createContextUrl({ sourceApp: "unknown_app" })
 });
 assert.equal(invalidSource.found, true);
 assert.match(invalidSource.error.message, /sourceApp/);
+
+const invalidSequence = parseStudyStackContext({
+  href: createContextUrl({ suggestedListSequence: "0" })
+});
+assert.equal(invalidSequence.found, true);
+assert.match(invalidSequence.error.message, /inteiro positivo/);
 
 assert.throws(
   () => validateStudyStackReturnUrl("https://example.com/steal-result"),
@@ -147,6 +195,8 @@ assert.equal(payload.contractVersion, "1.1.0");
 assert.equal(payload.sourceApp, "test_quest");
 assert.equal(payload.sessionId, state.id);
 assert.equal(payload.subjectContext.subjectId, "subject-food-webs");
+assert.equal(payload.session.title, "Lista de Ecologia");
+assert.equal(payload.session.sequence, 3);
 assert.equal(payload.questions[0].result, "correct");
 assert.equal(payload.questions[0].scorePercentage, 100);
 assert.equal(payload.questions[0].userAnswer, "B) Produtor");
@@ -156,6 +206,11 @@ assert.match(payload.questions[1].metacognition, /Resposta completa \(100%\)/);
 assert.equal(payload.questions[2].result, "unanswered");
 assert.equal(payload.questions[2].scorePercentage, null);
 assert.deepEqual(state, originalState, "O adaptador não deve alterar o schema interno da sessão.");
+
+const legacyPayload = createStudyStackResultPayload(state, legacyParsed.context, {
+  now: () => "2026-08-10T14:05:00.000Z"
+});
+assert.equal("sequence" in legacyPayload.session, false);
 
 const exportFile = createStudyStackJsonExport(state, parsed.context, {
   now: () => "2026-08-10T14:05:00.000Z"
