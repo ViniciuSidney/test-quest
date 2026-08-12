@@ -7,10 +7,13 @@ import { SESSION_SCHEMA_VERSION } from "../src/scripts/core/constants.js";
 import { SESSION_STATUS } from "../src/scripts/core/state.js";
 import {
   STUDY_STACK_CONTEXT_KEY,
+  bindStudyStackContextToSession,
   consumeStudyStackContext,
   getStudyStackLaunchDirective,
   loadStudyStackContext,
   parseStudyStackContext,
+  reconcileStudyStackContext,
+  saveStudyStackContext,
   validateStudyStackReturnUrl
 } from "../src/scripts/features/integrations/study-stack-context.service.js";
 import {
@@ -19,6 +22,7 @@ import {
   createStudyStackResultPayload,
   saveToStudyStackAndReturn
 } from "../src/scripts/features/integrations/study-stack-handoff.service.js";
+import { createStudyStackIntegrationController } from "../src/scripts/features/integrations/study-stack-integration.controller.js";
 import { MemoryStorage } from "./helpers/memory-storage.mjs";
 
 function createContextUrl(overrides = {}) {
@@ -57,6 +61,7 @@ assert.equal(parsed.context.subjectContext.themeName, "Ecologia");
 assert.equal(parsed.context.entryPoint, "import");
 assert.equal(parsed.context.suggestedListName, "Cadeias e Teias Alimentares — Lista 3");
 assert.equal(parsed.context.suggestedListSequence, 3);
+assert.equal(parsed.context.sessionId, null);
 assert.deepEqual(getStudyStackLaunchDirective(parsed.context), {
   openImport: true,
   subjectName: "Cadeias e Teias Alimentares",
@@ -99,6 +104,103 @@ assert.ok(storage.getItem(STUDY_STACK_CONTEXT_KEY));
 assert.match(cleanedUrl, /keep=1/);
 assert.doesNotMatch(cleanedUrl, /subjectId=/);
 assert.doesNotMatch(cleanedUrl, /suggestedListName=/);
+
+const boundStorage = new MemoryStorage();
+const boundContext = bindStudyStackContextToSession(
+  parsed.context,
+  "session-linked-1",
+  boundStorage
+);
+assert.equal(boundContext.sessionId, "session-linked-1");
+assert.equal(loadStudyStackContext(boundStorage).sessionId, "session-linked-1");
+assert.equal(
+  reconcileStudyStackContext(boundContext, "session-linked-1", boundStorage)?.sessionId,
+  "session-linked-1"
+);
+assert.ok(boundStorage.getItem(STUDY_STACK_CONTEXT_KEY));
+
+const abandonedStorage = new MemoryStorage();
+saveStudyStackContext(parsed.context, abandonedStorage);
+assert.equal(
+  reconcileStudyStackContext(parsed.context, null, abandonedStorage),
+  null,
+  "Contexto sem sessão vinculada deve ser descartado em uma abertura direta."
+);
+assert.equal(abandonedStorage.getItem(STUDY_STACK_CONTEXT_KEY), null);
+
+const mismatchedStorage = new MemoryStorage();
+saveStudyStackContext(boundContext, mismatchedStorage);
+assert.equal(
+  reconcileStudyStackContext(boundContext, "session-unrelated-2", mismatchedStorage),
+  null,
+  "Contexto de outra sessão não pode contaminar uma resolução independente."
+);
+assert.equal(mismatchedStorage.getItem(STUDY_STACK_CONTEXT_KEY), null);
+
+assert.throws(
+  () => bindStudyStackContextToSession(parsed.context, "", new MemoryStorage()),
+  /identificador/
+);
+
+const originalLocalStorageDescriptor = Object.getOwnPropertyDescriptor(globalThis, "localStorage");
+const lifecycleStorage = new MemoryStorage();
+saveStudyStackContext(boundContext, lifecycleStorage);
+Object.defineProperty(globalThis, "localStorage", {
+  configurable: true,
+  value: lifecycleStorage
+});
+
+try {
+  const listNameInput = { value: "" };
+  const documentRef = {
+    querySelector: (selector) => selector === "#nomeLista" ? listNameInput : null
+  };
+  const incomingController = createStudyStackIntegrationController({
+    documentRef,
+    windowRef: {
+      location: { href: createContextUrl({ subjectId: "subject-new" }) },
+      history: { replaceState: () => {} }
+    },
+    getState: () => ({})
+  });
+  const incomingLaunch = incomingController.init({ activeSessionId: "session-linked-1" }).launch;
+
+  assert.equal(incomingLaunch.openImport, true);
+  assert.equal(loadStudyStackContext(lifecycleStorage).subjectContext.subjectId, "subject-new");
+  incomingController.cancelImport({ clearSuggestedListName: true });
+  assert.equal(loadStudyStackContext(lifecycleStorage).sessionId, "session-linked-1");
+  assert.equal(
+    loadStudyStackContext(lifecycleStorage).subjectContext.subjectId,
+    "subject-food-webs",
+    "Cancelar uma nova entrada deve restaurar o vínculo da sessão anterior."
+  );
+
+  const resumedController = createStudyStackIntegrationController({
+    documentRef,
+    windowRef: {
+      location: { href: "https://viniciusidney.github.io/test-quest/" },
+      history: { replaceState: () => {} }
+    },
+    getState: () => ({})
+  });
+  const resumedLaunch = resumedController.init({ activeSessionId: "session-linked-1" }).launch;
+
+  assert.equal(resumedLaunch.openImport, false);
+  resumedController.prepareStandaloneImport({ clearSuggestedListName: true });
+  assert.equal(loadStudyStackContext(lifecycleStorage).sessionId, "session-linked-1");
+  resumedController.commitSession("session-standalone-2");
+  assert.equal(
+    lifecycleStorage.getItem(STUDY_STACK_CONTEXT_KEY),
+    null,
+    "O vínculo anterior só deve ser removido quando a nova sessão independente for criada."
+  );
+} finally {
+  if (originalLocalStorageDescriptor) {
+    Object.defineProperty(globalThis, "localStorage", originalLocalStorageDescriptor);
+  } else {
+    delete globalThis.localStorage;
+  }
+}
 
 const invalidSource = parseStudyStackContext({
   href: createContextUrl({ sourceApp: "unknown_app" })

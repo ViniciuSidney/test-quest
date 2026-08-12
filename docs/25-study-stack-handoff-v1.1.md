@@ -28,8 +28,14 @@ Quando o contexto válido contém `entryPoint=import`, o Test Quest:
 4. mantém o nome da lista editável;
 5. preserva a sequência em campo estruturado, independentemente do título.
 
+Ao criar a resolução, o Test Quest grava o `sessionId` no contexto interno. Em
+uma abertura posterior, o vínculo só é retomado quando esse identificador
+corresponde à sessão ativa. Contextos ainda não vinculados, órfãos ou ligados a
+outra sessão são removidos.
+
 A ausência de contexto mantém o fluxo comum da aplicação. Abrir o Test Quest
-diretamente não deve reaproveitar o vínculo de uma sessão já entregue.
+diretamente não deve reaproveitar o vínculo de uma entrada abandonada ou de uma
+sessão já entregue.
 
 ## Pontuação
 
@@ -67,6 +73,8 @@ contexto rejeitado informa vínculo indisponível sem habilitar a entrega.
 - `sourceApp`, versão, `subjectId`, data e `returnUrl` são validados;
 - URLs externas não autorizadas são rejeitadas;
 - parâmetros só saem da URL depois da persistência;
+- o contexto interno é vinculado ao `sessionId` da sessão criada;
+- contexto abandonado ou incompatível é removido antes de uma abertura direta;
 - o contexto é removido após o handoff automático;
 - o adaptador não modifica a sessão;
 - tentativas refeitas preservam o Assunto e recebem novo `sessionId`;

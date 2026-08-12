@@ -1,7 +1,11 @@
 import { downloadExportFile } from "../exports/session-export.service.js";
 import {
+  bindStudyStackContextToSession,
+  clearStudyStackContext,
   consumeStudyStackContext,
-  getStudyStackLaunchDirective
+  getStudyStackLaunchDirective,
+  reconcileStudyStackContext,
+  saveStudyStackContext
 } from "./study-stack-context.service.js";
 import {
   createStudyStackJsonExport,
@@ -17,10 +21,11 @@ export function createStudyStackIntegrationController({
   let context = null;
   let contextError = null;
   let returnFailed = false;
+  let suspendedContext = null;
 
   const $ = (selector) => documentRef?.querySelector?.(selector);
 
-  function init() {
+  function init({ activeSessionId = null } = {}) {
     const reception = consumeStudyStackContext({
       locationRef: windowRef?.location,
       historyRef: windowRef?.history
@@ -28,10 +33,24 @@ export function createStudyStackIntegrationController({
     context = reception.context;
     contextError = reception.error;
 
+    if (!reception.found && context) {
+      context = reconcileStudyStackContext(context, activeSessionId);
+    } else if (
+      reception.found &&
+      reception.previousContext?.sessionId &&
+      reception.previousContext.sessionId === String(activeSessionId || "").trim()
+    ) {
+      suspendedContext = reception.previousContext;
+    }
+
     $("#btnExportarStudyStack")?.addEventListener("click", exportResult);
     $("#btnSalvarStudyStack")?.addEventListener("click", saveAndReturn);
     sync();
-    const launch = getStudyStackLaunchDirective(context);
+    const directive = getStudyStackLaunchDirective(context);
+    const launch = Object.freeze({
+      ...directive,
+      openImport: Boolean(reception.found && directive.openImport)
+    });
 
     if (launch.openImport && launch.suggestedListName) {
       const listNameInput = $("#nomeLista");
@@ -46,6 +65,95 @@ export function createStudyStackIntegrationController({
       error: contextError,
       launch
     };
+  }
+
+  function bindSession(sessionId) {
+    if (!context) {
+      return false;
+    }
+
+    try {
+      context = bindStudyStackContextToSession(context, sessionId);
+      contextError = null;
+      sync();
+      return true;
+    } catch (error) {
+      contextError = error instanceof Error
+        ? error
+        : new Error("Não foi possível vincular o contexto do Study Stack à sessão.");
+      sync();
+      return false;
+    }
+  }
+
+  function prepareStandaloneImport({ clearSuggestedListName = false } = {}) {
+    if (!context) {
+      return false;
+    }
+
+    clearSuggestedNameIfUnedited(context, clearSuggestedListName);
+    suspendedContext = context;
+    context = null;
+    contextError = null;
+    returnFailed = false;
+    sync();
+    return true;
+  }
+
+  function commitSession(sessionId) {
+    if (suspendedContext && !context) {
+      clearStudyStackContext();
+    }
+
+    suspendedContext = null;
+    return bindSession(sessionId);
+  }
+
+  function cancelImport({ clearSuggestedListName = false } = {}) {
+    if (!suspendedContext) {
+      return detachContext({ clearSuggestedListName });
+    }
+
+    clearSuggestedNameIfUnedited(context, clearSuggestedListName);
+    context = suspendedContext;
+    suspendedContext = null;
+    contextError = null;
+    returnFailed = false;
+
+    try {
+      saveStudyStackContext(context);
+    } catch (error) {
+      contextError = error instanceof Error
+        ? error
+        : new Error("Não foi possível restaurar o vínculo anterior com o Study Stack.");
+    }
+
+    sync();
+    return true;
+  }
+
+  function detachContext({ clearSuggestedListName = false } = {}) {
+    const removed = clearStudyStackContext();
+
+    clearSuggestedNameIfUnedited(context, clearSuggestedListName);
+
+    context = null;
+    suspendedContext = null;
+    contextError = removed
+      ? null
+      : new Error("Não foi possível remover o vínculo salvo com o Study Stack.");
+    returnFailed = false;
+    sync();
+    return removed;
+  }
+
+  function clearSuggestedNameIfUnedited(targetContext, enabled) {
+    const suggestedListName = getStudyStackLaunchDirective(targetContext).suggestedListName;
+    const listNameInput = $("#nomeLista");
+
+    if (enabled && suggestedListName && listNameInput?.value.trim() === suggestedListName) {
+      listNameInput.value = "";
+    }
   }
 
   function exportResult() {
@@ -158,5 +266,15 @@ export function createStudyStackIntegrationController({
     element.dataset.tone = tone;
   }
 
-  return Object.freeze({ init, sync, exportResult, saveAndReturn });
+  return Object.freeze({
+    init,
+    sync,
+    bindSession,
+    prepareStandaloneImport,
+    commitSession,
+    cancelImport,
+    detachContext,
+    exportResult,
+    saveAndReturn
+  });
 }

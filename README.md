@@ -12,13 +12,23 @@ O **Test Quest** acompanha o estudante entre tentativa, correção e compreensã
 
 ## Estado atual
 
-**Versão candidata:** `v0.6.0`
+**Versão candidata:** `v0.6.1`
 
-**Status:** integração com o Study Stack concluída e aprovada para publicação
+**Status:** correção do ciclo de vida do vínculo com o Study Stack pronta para validação conjunta
 
 **Esquema de sessão:** `schemaVersion: 7`
 
-A v0.6.0 foi aprovada após validação conjunta com o Study Stack e uma suíte com **47 arquivos de teste automatizados**.
+A v0.6.1 impede que uma entrada vinculada abandonada seja reutilizada por outra
+sessão. A correção preserva a compatibilidade da v0.6.0 e mantém a suíte com
+**47 arquivos de teste automatizados**.
+
+## Correção da v0.6.1
+
+- contexto do Study Stack vinculado ao `sessionId` da resolução criada;
+- retomada permitida somente quando contexto e sessão ativa correspondem;
+- vínculo abandonado, órfão ou incompatível descartado na abertura direta;
+- retorno da importação, exclusão da sessão e encerramento do resultado removem o vínculo;
+- recarregar uma sessão vinculada válida abre a Tela Inicial para retomada, sem iniciar outra importação.
 
 ## Destaques da v0.6.0
 
@@ -121,7 +131,7 @@ Acesse `http://localhost:5501`.
 node tests/run-all-tests.mjs
 ```
 
-Resultado esperado na v0.6.0:
+Resultado esperado na v0.6.1:
 
 ```text
 ✓ 47 arquivos de teste concluídos com sucesso.
@@ -143,7 +153,8 @@ test-quest/
 │   ├── 24-notas-release-v0.5.0.md
 │   ├── 25-study-stack-handoff-v1.1.md
 │   ├── 26-validacao-integracao-study-stack.md
-│   └── 27-notas-release-v0.6.0.md
+│   ├── 27-notas-release-v0.6.0.md
+│   └── 28-notas-release-v0.6.1.md
 ├── public/
 ├── src/
 │   ├── assets/

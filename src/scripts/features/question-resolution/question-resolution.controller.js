@@ -149,7 +149,7 @@ export function initQuestionResolution() {
     configurarEventos();
     sincronizarAcoesResultadoResponsivas();
     sincronizarFiltrosResultadoResponsivos();
-    const studyStackLaunch = studyStackIntegrationController.init().launch;
+    const studyStackLaunch = studyStackIntegrationController.init({ activeSessionId: isActiveSession(persistenceReport.session) ? persistenceReport.session.id : null }).launch;
     sincronizarSessaoFinalizadaComHistorico();
     trocarTela(studyStackLaunch.openImport ? "importacao" : "home");
     atualizarHome();
@@ -567,6 +567,7 @@ export function initQuestionResolution() {
       return;
     }
     resolverFalhaPersistencia();
+    studyStackIntegrationController.detachContext({ clearSuggestedListName: true });
     estado = estadoInicial();
     limparCamposImportacao();
     atualizarResumoTopo();
@@ -644,14 +645,13 @@ export function initQuestionResolution() {
         shuffleAlternatives: $("#opcaoEmbaralharAlternativas").checked,
         correctionMode: document.querySelector('input[name="modoCorrecao"]:checked')?.value || "final"
       });
+      studyStackIntegrationController.commitSession(estado.id);
       substituicaoAutorizada = false;
-
       timerRodando = true;
       atualizarBotaoCronometro();
       salvarEstadoImediato();
       verificarSessaoSalva();
       atualizarResumoTopo();
-
       trocarTela("resolucao");
       renderizarQuestao();
       iniciarCronometro();
@@ -2133,21 +2133,20 @@ export function initQuestionResolution() {
 
   async function abrirNovaResolucao() {
     const sessaoAtiva = obterSessaoAtiva();
-
     if (sessaoAtiva?.questoes?.length) {
       const confirmado = await solicitarConfirmacao(getNewResolutionConfirmation());
-
       if (!confirmado) {
         return;
       }
     }
-
+    studyStackIntegrationController.prepareStandaloneImport({ clearSuggestedListName: true });
     substituicaoAutorizada = Boolean(sessaoAtiva?.questoes?.length);
     esconderMensagemInicial();
     trocarTela("importacao");
   }
 
   function voltarAoInicioDaImportacao() {
+    studyStackIntegrationController.cancelImport({ clearSuggestedListName: true });
     substituicaoAutorizada = false;
     trocarTela("home");
     atualizarHome();
@@ -2165,6 +2164,7 @@ export function initQuestionResolution() {
     ocultarDesempenhoImediato();
     pararCronometro();
     clearSession();
+    studyStackIntegrationController.detachContext({ clearSuggestedListName: true });
     estado = estadoInicial();
     limparCamposImportacao();
     $("#listaRevisaoResultado")?.replaceChildren();

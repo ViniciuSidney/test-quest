@@ -16,6 +16,26 @@
 
 ---
 
+## Regressão do vínculo Study Stack — v0.6.1 — 2026-08-12
+
+Foram adicionadas verificações para garantir que:
+
+- um contexto recém-recebido começa sem `sessionId` e abre a importação vinculada;
+- ao criar a resolução, o contexto recebe o mesmo `sessionId` da sessão;
+- contexto e sessão correspondentes sobrevivem ao recarregamento para retomada;
+- contexto abandonado, órfão ou ligado a outra sessão é removido;
+- voltar da importação, apagar a sessão ou encerrar o resultado desfaz o vínculo;
+- a abertura direta comum não herda Assunto, sequência ou ação de retorno antigos.
+
+Testes automatizados principais:
+
+```bash
+node tests/study-stack-handoff.test.mjs
+node tests/study-stack-handoff-structure.test.mjs
+```
+
+---
+
 
 
 ## Pré-validação técnica — Rolagem interna da Resolução — 2026-07-22

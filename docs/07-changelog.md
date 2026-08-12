@@ -4,6 +4,26 @@ Todas as mudanças importantes do Test Quest são registradas neste arquivo.
 
 ## [Não lançado]
 
+## [v0.6.1] — 2026-08-12
+
+### Corrigido
+
+- contexto abandonado do Study Stack não é mais reutilizado por uma resolução independente;
+- retomada do vínculo agora exige correspondência entre o `sessionId` salvo no contexto e a sessão ativa;
+- voltar da importação, apagar a sessão ou encerrar o resultado remove o vínculo pendente;
+- recarregar uma sessão vinculada válida não reabre indevidamente a importação.
+
+### Compatibilidade
+
+- schema nativo da sessão preservado em `7`;
+- contratos de integração preservados em `1.0.0`/`1.1.0`;
+- o novo `sessionId` existe apenas no contexto interno persistido do Test Quest.
+
+### Qualidade
+
+- regressões automatizadas cobrem vínculo válido, contexto abandonado e sessão incompatível;
+- 47 arquivos de teste mantidos na suíte completa.
+
 ## [v0.6.0] — 2026-08-12
 
 ### Integração

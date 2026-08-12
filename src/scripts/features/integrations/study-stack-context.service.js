@@ -155,6 +155,7 @@ export function parseStudyStackContext(locationRef = globalThis.location) {
         suggestedListSequence: normalizeOptionalSequence(
           url.searchParams.get("suggestedListSequence")
         ),
+        sessionId: null,
         returnUrl: validateStudyStackReturnUrl(url.searchParams.get("returnUrl")),
         receivedAt: new Date().toISOString()
       }
@@ -204,6 +205,7 @@ export function loadStudyStackContext(storage = getDefaultStorage()) {
       entryPoint: normalizeText(raw.entryPoint) || null,
       suggestedListName: normalizeText(raw.suggestedListName) || null,
       suggestedListSequence: normalizeOptionalSequence(raw.suggestedListSequence),
+      sessionId: normalizeText(raw.sessionId) || null,
       returnUrl: validateStudyStackReturnUrl(raw.returnUrl)
     };
   } catch {
@@ -216,17 +218,66 @@ export function clearStudyStackContext(storage = getDefaultStorage()) {
   return removeStoredValueSafe(STUDY_STACK_CONTEXT_KEY, storage).ok;
 }
 
+export function bindStudyStackContextToSession(
+  context,
+  sessionId,
+  storage = getDefaultStorage()
+) {
+  const normalizedSessionId = normalizeText(sessionId);
+
+  if (!context?.subjectContext?.subjectId) {
+    throw new TypeError("Não há contexto do Study Stack para vincular à sessão.");
+  }
+  if (!normalizedSessionId) {
+    throw new TypeError("A sessão precisa de um identificador para receber o vínculo do Study Stack.");
+  }
+
+  const boundContext = {
+    ...context,
+    sessionId: normalizedSessionId
+  };
+
+  saveStudyStackContext(boundContext, storage);
+  return boundContext;
+}
+
+export function reconcileStudyStackContext(
+  context,
+  activeSessionId,
+  storage = getDefaultStorage()
+) {
+  if (!context) {
+    return null;
+  }
+
+  const contextSessionId = normalizeText(context.sessionId);
+  const normalizedActiveSessionId = normalizeText(activeSessionId);
+  const belongsToActiveSession = Boolean(
+    contextSessionId &&
+    normalizedActiveSessionId &&
+    contextSessionId === normalizedActiveSessionId
+  );
+
+  if (!belongsToActiveSession) {
+    clearStudyStackContext(storage);
+    return null;
+  }
+
+  return context;
+}
+
 export function consumeStudyStackContext({
   locationRef = globalThis.location,
   historyRef = globalThis.history,
   storage = getDefaultStorage()
 } = {}) {
+  const previousContext = loadStudyStackContext(storage);
   const received = parseStudyStackContext(locationRef);
 
   if (!received.found) {
     return {
       found: false,
-      context: loadStudyStackContext(storage),
+      context: previousContext,
       error: null
     };
   }
@@ -238,7 +289,7 @@ export function consumeStudyStackContext({
   try {
     saveStudyStackContext(received.context, storage);
     clearStudyStackContextParams(locationRef, historyRef);
-    return received;
+    return { ...received, previousContext };
   } catch (error) {
     return {
       found: true,
