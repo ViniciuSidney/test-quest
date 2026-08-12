@@ -6,7 +6,7 @@ Este diretório reúne a documentação oficial do **Test Quest — Now I Know.*
 
 - base funcional local preservada;
 - repositório Git criado e publicado;
-- branch estável `main` e desenvolvimento atual em `feature/v0.5`;
+- branch estável `main` e desenvolvimento atual em `dev`;
 - identidade visual oficial definida;
 - telas principais planejadas e aprovadas, incluindo o Wizard de Correção Discursiva;
 - manuais estruturais concluídos;
@@ -18,6 +18,7 @@ Este diretório reúne a documentação oficial do **Test Quest — Now I Know.*
 - Tela de Correção Discursiva guiada implementada;
 - v0.4.0 concluída: persistência versionada, modularização e confiabilidade consolidadas.
 - v0.5.0 concluída: novos modos de resolução, Correção Discursiva, revisão de erros, efeitos visuais e desempenho combinado aprovados.
+- v0.6.0 candidata: integração orientada de ida e volta com o Study Stack aprovada.
 
 ## Documentos principais
 
@@ -39,6 +40,7 @@ Este diretório reúne a documentação oficial do **Test Quest — Now I Know.*
 | `24-notas-release-v0.5.0.md` | Resumo oficial e conteúdo-base da Release v0.5.0 |
 | `25-study-stack-handoff-v1.1.md` | Contratos e comportamento da integração com o Study Stack |
 | `26-validacao-integracao-study-stack.md` | Evidências da validação conjunta e roteiro de publicação |
+| `27-notas-release-v0.6.0.md` | Resumo oficial e conteúdo-base da Release v0.6.0 |
 | `13-v0.5-fundacao-alternativas.md` | Modelo estável de alternativas, respostas e migração do esquema 4 |
 | `14-v0.5-embaralhamento-alternativas.md` | Regras e persistência do embaralhamento de alternativas |
 | `15-v0.5-verdadeiro-falso.md` | Formato, comportamento e validação de Verdadeiro ou Falso |

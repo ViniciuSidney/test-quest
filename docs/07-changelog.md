@@ -4,6 +4,8 @@ Todas as mudanças importantes do Test Quest são registradas neste arquivo.
 
 ## [Não lançado]
 
+## [v0.6.0] — 2026-08-12
+
 ### Integração
 
 - entrada orientada pelo Study Stack com abertura direta da importação, vínculo
@@ -459,4 +461,3 @@ Todas as mudanças importantes do Test Quest são registradas neste arquivo.
 - em tablets e celulares, a tela utiliza rolagem geral e empilhamento responsivo;
 - componentes visuais foram alinhados aos tokens, botões, superfícies e proporções da Resolução;
 - o bloco de Veredito Final recebeu maior destaque e estados semânticos mais claros.
-

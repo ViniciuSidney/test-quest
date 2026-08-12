@@ -12,11 +12,25 @@ O **Test Quest** acompanha o estudante entre tentativa, correção e compreensã
 
 ## Estado atual
 
-**Versão estável:** `v0.5.0`  
-**Status:** concluída e aprovada para publicação  
+**Versão candidata:** `v0.6.0`
+
+**Status:** integração com o Study Stack concluída e aprovada para publicação
+
 **Esquema de sessão:** `schemaVersion: 7`
 
-A v0.5.0 foi aprovada após regressão manual e uma suíte com **45 arquivos de teste automatizados**.
+A v0.6.0 foi aprovada após validação conjunta com o Study Stack e uma suíte com **47 arquivos de teste automatizados**.
+
+## Destaques da v0.6.0
+
+- entrada vinculada pelo Study Stack diretamente em **Preparar resolução**;
+- Assunto, sequência e nome sugerido preservados como contexto estruturado;
+- nome da lista editável sem perda da sequência;
+- resultado entregue pelo contrato `1.1.0` com suporte a respostas parciais;
+- ação principal **Salvar no Study Stack e voltar**;
+- backup nativo identificado como **Baixar cópia da sessão**;
+- exportação manual de recuperação exibida apenas quando o retorno falha;
+- base do aproveitamento e quantidades por assunto apresentadas com clareza;
+- contexto consumido após a entrega para impedir vínculo residual.
 
 ## Destaques da v0.5.0
 
@@ -107,10 +121,10 @@ Acesse `http://localhost:5501`.
 node tests/run-all-tests.mjs
 ```
 
-Resultado esperado na v0.5.0:
+Resultado esperado na v0.6.0:
 
 ```text
-✓ 45 arquivos de teste concluídos com sucesso.
+✓ 47 arquivos de teste concluídos com sucesso.
 ```
 
 A suíte cobre parser, alternativas estáveis, embaralhamento, V/F, gabarito imediato, Metacognição, Veredito Final, Correção Discursiva, revisão de erros, efeitos visuais, persistência, migrações, histórico, exportações e regressão estrutural.
@@ -126,7 +140,10 @@ test-quest/
 │   ├── 06-testes.md
 │   ├── 07-changelog.md
 │   ├── 23-checklist-fechamento-v0.5.md
-│   └── 24-notas-release-v0.5.0.md
+│   ├── 24-notas-release-v0.5.0.md
+│   ├── 25-study-stack-handoff-v1.1.md
+│   ├── 26-validacao-integracao-study-stack.md
+│   └── 27-notas-release-v0.6.0.md
 ├── public/
 ├── src/
 │   ├── assets/
