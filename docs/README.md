@@ -37,6 +37,8 @@ Este diretório reúne a documentação oficial do **Test Quest — Now I Know.*
 | `12-notas-release-v0.4.0.md` | Resumo oficial e conteúdo-base da Release v0.4.0 |
 | `23-checklist-fechamento-v0.5.md` | Aprovação final, critérios e comandos de publicação da v0.5.0 |
 | `24-notas-release-v0.5.0.md` | Resumo oficial e conteúdo-base da Release v0.5.0 |
+| `25-study-stack-handoff-v1.1.md` | Contratos e comportamento da integração com o Study Stack |
+| `26-validacao-integracao-study-stack.md` | Evidências da validação conjunta e roteiro de publicação |
 | `13-v0.5-fundacao-alternativas.md` | Modelo estável de alternativas, respostas e migração do esquema 4 |
 | `14-v0.5-embaralhamento-alternativas.md` | Regras e persistência do embaralhamento de alternativas |
 | `15-v0.5-verdadeiro-falso.md` | Formato, comportamento e validação de Verdadeiro ou Falso |

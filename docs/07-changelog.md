@@ -4,7 +4,27 @@ Todas as mudanças importantes do Test Quest são registradas neste arquivo.
 
 ## [Não lançado]
 
-Nenhuma alteração registrada após a v0.5.0.
+### Integração
+
+- entrada orientada pelo Study Stack com abertura direta da importação, vínculo
+  visível, nome sugerido editável e sequência estruturada;
+- retorno automático da sessão pelo contrato `1.1.0`;
+- contexto removido após a entrega para impedir vínculo residual;
+- exportação manual de recuperação exibida apenas quando o retorno falha.
+
+### Interface
+
+- backup nativo renomeado para **Baixar cópia da sessão**;
+- **Salvar no Study Stack e voltar** permanece como ação principal vinculada;
+- resultado informa a base do aproveitamento;
+- desempenho por assunto separa total, respondidas e tempo.
+
+### Qualidade
+
+- 47 arquivos de teste aprovados;
+- fluxo conjunto validado e registrado em
+  `26-validacao-integracao-study-stack.md`;
+- schema nativo preservado em `7`.
 
 ## [v0.5.0] — 2026-07-24
 
