@@ -18,6 +18,7 @@ Assunto anterior.
 - apagar uma sessão ou sair do Resultado Final também encerra o vínculo;
 - recarregar uma sessão vinculada válida abre a Tela Inicial para retomada, sem
   reabrir a importação.
+- **Refazer questões erradas** transfere o vínculo para o `sessionId` da nova tentativa.
 
 ## Compatibilidade
 

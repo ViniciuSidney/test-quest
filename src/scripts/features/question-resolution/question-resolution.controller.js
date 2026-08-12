@@ -1490,7 +1490,6 @@ export function initQuestionResolution() {
     }
 
     const sourceState = estado;
-
     try {
       const retrySession = createRetryWrongSession(sourceState);
 
@@ -1509,6 +1508,7 @@ export function initQuestionResolution() {
         return;
       }
 
+      studyStackIntegrationController.bindSession(estado.id);
       atualizarResumoTopo();
       trocarTela("resolucao");
       renderizarQuestao({ registrarTempo: false, focarTitulo: true });

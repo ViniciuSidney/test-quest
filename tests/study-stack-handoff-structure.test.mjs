@@ -30,6 +30,7 @@ assert.match(integrationController, /function cancelImport/);
 assert.match(integrationController, /function detachContext/);
 assert.match(controller, /init\(\{ activeSessionId:/);
 assert.match(controller, /commitSession\(estado\.id\)/);
+assert.match(controller, /salvarEstadoImediato\(\)[\s\S]*bindSession\(estado\.id\)/);
 assert.match(controller, /prepareStandaloneImport\(\{ clearSuggestedListName: true \}\)/);
 assert.match(controller, /cancelImport\(\{ clearSuggestedListName: true \}\)/);
 assert.match(controller, /detachContext\(\{ clearSuggestedListName: true \}\)/);

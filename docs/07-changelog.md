@@ -10,6 +10,7 @@ Todas as mudanças importantes do Test Quest são registradas neste arquivo.
 
 - contexto abandonado do Study Stack não é mais reutilizado por uma resolução independente;
 - retomada do vínculo agora exige correspondência entre o `sessionId` salvo no contexto e a sessão ativa;
+- revisão de questões erradas transfere o vínculo para o novo `sessionId`;
 - voltar da importação, apagar a sessão ou encerrar o resultado remove o vínculo pendente;
 - recarregar uma sessão vinculada válida não reabre indevidamente a importação.
 
