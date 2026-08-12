@@ -16,6 +16,7 @@ export function createStudyStackIntegrationController({
 } = {}) {
   let context = null;
   let contextError = null;
+  let returnFailed = false;
 
   const $ = (selector) => documentRef?.querySelector?.(selector);
 
@@ -87,8 +88,10 @@ export function createStudyStackIntegrationController({
       });
     } catch (error) {
       if (button) button.disabled = false;
+      returnFailed = true;
+      $("#btnExportarStudyStack")?.classList.remove("hidden");
       showMessage(
-        error instanceof Error ? error.message : "Não foi possível retornar ao Study Stack.",
+        `${error instanceof Error ? error.message : "Não foi possível retornar ao Study Stack."} Use “Exportar para o Study Stack” para baixar o resultado.`,
         "danger"
       );
     }
@@ -109,7 +112,7 @@ export function createStudyStackIntegrationController({
     const available = Boolean(context?.subjectContext?.subjectId);
 
     panel?.classList.toggle("hidden", !available && !contextError);
-    exportButton?.classList.toggle("hidden", !available);
+    exportButton?.classList.toggle("hidden", !available || !returnFailed);
     saveButton?.classList.toggle("hidden", !available);
 
     if (subjectElement) {

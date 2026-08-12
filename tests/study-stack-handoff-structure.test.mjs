@@ -45,9 +45,11 @@ for (const id of [
   assert.match(index, new RegExp(`id=["']${id}["']`));
 }
 
-assert.match(index, /Exportar sessão/);
+assert.match(index, /Baixar cópia da sessão/);
 assert.match(index, /Exportar para o Study Stack/);
 assert.match(index, /Salvar no Study Stack e voltar/);
+assert.match(integrationController, /returnFailed/);
+assert.match(integrationController, /Use “Exportar para o Study Stack”/);
 assert.match(resultsCss, /\.results-actions__study-stack/);
 assert.match(importCss, /\.import-study-stack-context/);
 

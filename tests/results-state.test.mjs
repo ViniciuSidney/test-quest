@@ -10,10 +10,20 @@ import {
   calculateSessionTotalTime,
   buildSubjectResultItems,
   filterQuestionReviewItems,
+  formatResultPerformanceBasis,
   getQuestionResultStatus,
   getSubjectPerformanceTone,
   normalizeResultFilter
 } from "../src/scripts/features/results/results.service.js";
+
+assert.equal(
+  formatResultPerformanceBasis({ total: 4, scoredQuestions: 4 }),
+  "Calculado sobre as 4 questões da lista."
+);
+assert.equal(
+  formatResultPerformanceBasis({ total: 4, scoredQuestions: 3 }),
+  "Calculado sobre 3 das 4 questões da lista."
+);
 
 function createObjective({ id, subject, statement, correct }) {
   const alternativas = normalizeObjectiveAlternatives(
@@ -163,12 +173,13 @@ const eventos = subjects.find((item) => item.subject === "Eventos");
 const mediana = subjects.find((item) => item.subject === "Mediana");
 
 assert.deepEqual(
-  { objectives: eventos.objectives, correct: eventos.correct, percentage: eventos.percentage },
-  { objectives: 2, correct: 1, percentage: 50 }
+  { objectives: eventos.objectives, correct: eventos.correct, answered: eventos.answered, percentage: eventos.percentage },
+  { objectives: 2, correct: 1, answered: 2, percentage: 50 }
 );
 assert.equal(mediana.objectives, 0);
 assert.equal(mediana.discursivesEvaluated, 1);
 assert.equal(mediana.scoredQuestions, 1);
+assert.equal(mediana.answered, 1);
 assert.equal(mediana.percentage, 50);
 assert.equal(mediana.questions.length, 1);
 assert.equal(mediana.questions[0].statusLabel, "Parcial");

@@ -15,7 +15,7 @@ import { inspectStorage } from "../../shared/storage.js";
 import { createAnswersExport, createNotesExport, createSessionJsonExport, downloadExportFile } from "../exports/session-export.service.js";
 import { escapeHtml, formatDuration as formatarTempo, formatStudyDuration as formatarTempoHistorico } from "../../shared/formatters.js";
 import { formatPerformanceBasis, getPerformanceState, PERFORMANCE_STATE_CLASSES, shouldShowPerformanceScreen } from "../performance/performance.service.js";
-import { calculateSessionResult as calcularResultado, calculateSessionTotalTime as calcularTempoTotal, RESULT_FILTERS, buildQuestionReviewItems, buildSubjectResultItems, filterQuestionReviewItems, normalizeResultFilter } from "../results/results.service.js";
+import { calculateSessionResult as calcularResultado, calculateSessionTotalTime as calcularTempoTotal, formatResultPerformanceBasis, RESULT_FILTERS, buildQuestionReviewItems, buildSubjectResultItems, filterQuestionReviewItems, normalizeResultFilter } from "../results/results.service.js";
 import { buildSubjectResultsMarkup } from "../results/subject-results.view.js";
 import { buildQuestionMapLabel, buildTrueFalseOptionsMarkup, getMarkerInfo, getNextMarkerState, getQuestionTypeLabel, isQuestionAnswered, MARKER_STATES, normalizeMarkerState } from "./question-resolution.helpers.js";
 import { getImmediateQuestionMapStatus } from "./question-map-status.service.js";
@@ -1405,7 +1405,6 @@ export function initQuestionResolution() {
       nomeListaElement.textContent = nomeDaLista;
       nomeListaElement.title = nomeDaLista;
     }
-
     $("#resultadoRespondidas").textContent = `${resultado.respondidas}/${resultado.total}`;
     $("#resultadoCorretas").textContent = resultado.questoesAvaliadas > 0
       ? `${resultado.questoesCorretas}/${resultado.questoesAvaliadas}`
@@ -1414,6 +1413,8 @@ export function initQuestionResolution() {
     $("#resultadoDesempenho").textContent = resultado.questoesAvaliadas > 0
       ? `${resultado.percentual}%`
       : "—";
+    const performanceBasis = $("#resultadoBaseDesempenho");
+    if (performanceBasis) performanceBasis.textContent = formatResultPerformanceBasis({ total: resultado.total, scoredQuestions: resultado.questoesAvaliadas });
     $("#resultadoRevisao").textContent = String(resultado.marcadas);
     $("#resultadoTempoMedio").textContent = formatarTempo(resultado.tempoMedio);
 

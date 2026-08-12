@@ -91,6 +91,16 @@ export function calculateSessionResult(state = {}) {
   };
 }
 
+export function formatResultPerformanceBasis({ total = 0, scoredQuestions = 0 } = {}) {
+  if (total <= 0) return "Nenhuma questão entrou no cálculo.";
+  if (scoredQuestions === total) {
+    return total === 1
+      ? "Calculado sobre a questão da lista."
+      : `Calculado sobre as ${total} questões da lista.`;
+  }
+  return `Calculado sobre ${scoredQuestions} das ${total} questões da lista.`;
+}
+
 function normalizeText(value) {
   return String(value ?? "").trim();
 }
@@ -242,6 +252,7 @@ export function buildSubjectResultItems({
       total: 0,
       objectives: 0,
       correct: 0,
+      answered: 0,
       discursivesEvaluated: 0,
       scoredQuestions: 0,
       earnedPoints: 0,
@@ -262,6 +273,7 @@ export function buildSubjectResultItems({
           : "Não respondida";
 
       current.objectives += 1;
+      current.answered += Number(status !== "unanswered");
       current.scoredQuestions += 1;
 
       if (correctAnswer) {
@@ -280,6 +292,7 @@ export function buildSubjectResultItems({
         timeMs: questionTimeMs
       });
     } else if (question.categoria === "discursiva") {
+      current.answered += Number(Boolean(normalizeText(answers[question.id])));
       const assessment = getFinalVerdict(
         { avaliacoesDiscursivas: discursiveAssessments },
         question.id

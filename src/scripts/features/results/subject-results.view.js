@@ -12,7 +12,13 @@ export function buildSubjectResultsMarkup({
     const tone = getSubjectPerformanceTone(percentage);
     const subjectKey = encodeURIComponent(item.subject);
     const expanded = expandedKeys.has(subjectKey);
-    const meta = `${item.scoredQuestions}/${item.total} ${item.total === 1 ? "questão" : "questões"} • ${formatDuration(item.timeMs)}`;
+    const totalLabel = item.total === 1
+      ? "1 questão nesta lista"
+      : `${item.total} questões nesta lista`;
+    const answeredLabel = item.answered === 1
+      ? "1 respondida"
+      : `${item.answered} respondidas`;
+    const meta = `${totalLabel} • ${answeredLabel} • ${formatDuration(item.timeMs)}`;
     const progress = hasAssessment
       ? `
         <div

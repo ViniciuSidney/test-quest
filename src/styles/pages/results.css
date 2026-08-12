@@ -180,6 +180,14 @@ body[data-screen="resultado"] .legacy-topbar {
   hyphens: auto;
 }
 
+.result-metric small {
+  display: block;
+  margin-top: 0.22rem;
+  color: var(--tq-text-muted);
+  font-size: 0.62rem;
+  line-height: 1.2;
+}
+
 .results-discursive-notice {
   display: flex;
   align-items: flex-start;
